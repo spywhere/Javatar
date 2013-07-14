@@ -3,7 +3,7 @@ import sublime_plugin
 
 class JavatarCallCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        self.view.insert(edit, 0, "Create Package")
+        self.view.insert(edit, 0, "Javatar Call")
 
 
 class PackageNameCommand(sublime_plugin.TextCommand):
