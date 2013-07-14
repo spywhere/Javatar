@@ -1,0 +1,70 @@
+[
+    {
+        "caption": "Javatar: Package Name",
+        "command": "package_name"
+    },
+    {
+        "caption": "Javatar: Full Package Name",
+        "command": "full_package_name"
+    },
+    {
+        "caption": "Javatar: Create Package",
+        "command": "create_package"
+    },
+    {
+        "caption": "Javatar: Create Subpackage",
+        "command": "create_subpackage"
+    },
+    {
+        "caption": "Javatar: Create Class",
+        "command": "create_class"
+    },
+    {
+        "caption": "Javatar: Create Interface",
+        "command": "create_interface"
+    },
+    {
+        "caption": "Javatar: Create Enum",
+        "command": "create_enum"
+    },
+    {
+        "caption": "Javatar: Build Project",
+        "command": "build_project"
+    },
+    {
+        "caption": "Javatar: Create JAR File",
+        "command": "create_jar_file"
+    },
+    {
+        "caption": "Javatar: Create Executable JAR File",
+        "command": "create_exe_jar_file"
+    },
+    {
+        "caption": "Preferences: Javatar Settings – Default",
+        "command": "open_file", "args":
+        {
+            "file": "${packages}/Javatar/Javatar.sublime-settings"
+        }
+    },
+    {
+        "caption": "Preferences: Javatar Settings – User",
+        "command": "open_file", "args":
+        {
+            "file": "${packages}/User/Javatar.sublime-settings"
+        }
+    },
+    {
+        "caption": "Preferences: Javatar Key Bindings – Default",
+        "command": "open_file", "args":
+        {
+            "file": "${packages}/Javatar/Javatar.sublime-keymap"
+        }
+    },
+    {
+        "caption": "Preferences: Javatar Key Bindings – User",
+        "command": "open_file", "args":
+        {
+            "file": "${packages}/User/Javatar.sublime-keymap"
+        }
+    }
+]

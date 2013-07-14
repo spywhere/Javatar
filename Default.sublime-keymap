@@ -1,0 +1,6 @@
+[
+    {
+        "keys": ["super+shift+k","super+shift+j"],
+        "command": "javatar_call"
+    }
+]
