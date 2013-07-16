@@ -1,11 +1,7 @@
 [
     {
-        "caption": "Javatar: Package Name",
-        "command": "package_name"
-    },
-    {
-        "caption": "Javatar: Full Package Name",
-        "command": "full_package_name"
+        "caption": "Javatar: Informations",
+        "command": "javatar_call"
     },
     {
         "caption": "Javatar: Create Package",

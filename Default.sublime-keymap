@@ -2,5 +2,23 @@
     {
         "keys": ["super+shift+k","super+shift+j"],
         "command": "javatar_call"
+    },{
+        "keys": ["super+shift+k","super+shift+p"],
+        "command": "javatar_call",
+        "args": {
+        	"type" : "package_name"
+        }
+    },{
+        "keys": ["super+shift+k","super+shift+c"],
+        "command": "javatar_call",
+        "args": {
+        	"type" : "class_name"
+        }
+    },{
+        "keys": ["super+shift+k","super+shift+f"],
+        "command": "javatar_call",
+        "args": {
+        	"type" : "full_class_name"
+        }
     }
 ]
