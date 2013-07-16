@@ -31,7 +31,7 @@ def hideStatus():
     if not isJava():
         return
     if getSettings("show_package_path"):
-        view.set_status(STATUS, "Package: " + toReadablePackage(getPackageRootDir()))
+        view.set_status(STATUS, "Package: " + toReadablePackage(getPath("current_dir")))
     else:
         view.erase_status(STATUS)
 
@@ -63,6 +63,21 @@ def getPackageRootDir(isSub=False):
         return getPath("current_dir")
     else:
         return ""
+
+
+def containsJava(directory):
+    from .javatar_validator import isJava
+    java = [_file for _file in os.listdir(directory) if isJava(_file) or os.path.isdir(os.path.join(directory, _file))]
+
+    for files in java:
+        dirPath = os.path.join(directory, files)
+        if os.path.isdir(dirPath):
+            if containsJava(dirPath):
+                return True
+        else:
+            if isJava(dirPath):
+                return True
+    return False
 
 
 def containsFile(directory, file):

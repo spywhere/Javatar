@@ -1,4 +1,5 @@
 import sublime_plugin
+from Javatar.utils import *
 
 
 class JavatarCallCommand(sublime_plugin.TextCommand):
