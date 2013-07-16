@@ -1,4 +1,4 @@
 {
-	// Some comment for dummy settings file
-	"dummy": "Nope :D"
+	//Show package path in status bar
+	"show_package_path" : true
 }

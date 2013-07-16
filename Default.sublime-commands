@@ -5,35 +5,35 @@
     },
     {
         "caption": "Javatar: Create Package",
-        "command": "create_package"
+        "command": "javatar_create_package"
     },
     {
         "caption": "Javatar: Create Subpackage",
-        "command": "create_subpackage"
+        "command": "javatar_create_subpackage"
     },
     {
         "caption": "Javatar: Create Class",
-        "command": "create_class"
+        "command": "javatar_create_class"
     },
     {
         "caption": "Javatar: Create Interface",
-        "command": "create_interface"
+        "command": "javatar_create_interface"
     },
     {
         "caption": "Javatar: Create Enum",
-        "command": "create_enum"
+        "command": "javatar_create_enum"
     },
     {
         "caption": "Javatar: Build Project",
-        "command": "build_project"
+        "command": "javatar_build_project"
     },
     {
         "caption": "Javatar: Create JAR File",
-        "command": "create_jar_file"
+        "command": "javatar_create_jar_file"
     },
     {
         "caption": "Javatar: Create Executable JAR File",
-        "command": "create_exe_jar_file"
+        "command": "javatar_create_exe_jar_file"
     },
     {
         "caption": "Preferences: Javatar Settings – Default",
