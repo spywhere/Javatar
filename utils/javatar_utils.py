@@ -31,7 +31,7 @@ def hideStatus():
     if not isJava():
         return
     if getSettings("show_package_path"):
-        view.set_status(STATUS, "Package: " + toReadablePackage(getPath("current_dir")))
+        view.set_status(STATUS, "Package: " + toReadablePackage(getPackageRootDir()))
     else:
         view.erase_status(STATUS)
 
@@ -65,19 +65,31 @@ def getPackageRootDir(isSub=False):
         return ""
 
 
+def containsFile(directory, file):
+    from .javatar_validator import isJava
+    java = [_file for _file in os.listdir(directory) if isJava(_file) or os.path.isdir(os.path.join(directory, _file))]
+
+    for files in java:
+        dirPath = os.path.join(directory, files)
+        if os.path.isdir(dirPath):
+            if containsFile(dirPath, file):
+                return True
+        else:
+            if os.path.basename(dirPath) == file:
+                return True
+    return False
+
+
 def getPath(type="", dir=""):
     window = sublime.active_window()
     if type == "project_dir":
-        project_data = window.project_data()
-        folder_entries = []
-        folders = ""
-        if project_data is not None:
-            folder_entries = project_data.get("folders", [])
-            for index in range(len(folder_entries)):
-                folder_entry = folder_entries[index]
-                if "path" in folder_entry:
-                    return folder_entry["path"]
-        return folders
+        path = ""
+        folders = window.folders()
+        for folder in folders:
+            if containsFile(folder, getPath("name", getPath("current_file"))):
+                path = folder
+                break
+        return path
     elif type == "current_dir":
         return getPath("parent", getPath("current_file"))
     elif type == "current_file":

@@ -2,10 +2,11 @@ import sublime
 import re
 
 
-def isJava():
+def isJava(file=""):
     from .javatar_utils import getSettings
-    view = sublime.active_window().active_view()
-    return re.match(getSettings("java_file_validation"), view.file_name(), re.I | re.M) is not None
+    if file is "" or file is None:
+        file = sublime.active_window().active_view().file_name()
+    return re.match(getSettings("java_file_validation"), file, re.I | re.M) is not None
 
 
 def isPackage(package):
