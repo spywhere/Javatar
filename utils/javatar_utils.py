@@ -65,34 +65,9 @@ def getPackageRootDir(isSub=False):
         return ""
 
 
-def containsJava(directory):
-    from .javatar_validator import isJava
-    java = [_file for _file in os.listdir(directory) if isJava(_file) or os.path.isdir(os.path.join(directory, _file))]
-
-    for files in java:
-        dirPath = os.path.join(directory, files)
-        if os.path.isdir(dirPath):
-            if containsJava(dirPath):
-                return True
-        else:
-            if isJava(dirPath):
-                return True
-    return False
-
-
 def containsFile(directory, file):
     from .javatar_validator import isJava
-    java = [_file for _file in os.listdir(directory) if isJava(_file) or os.path.isdir(os.path.join(directory, _file))]
-
-    for files in java:
-        dirPath = os.path.join(directory, files)
-        if os.path.isdir(dirPath):
-            if containsFile(dirPath, file):
-                return True
-        else:
-            if os.path.basename(dirPath) == file:
-                return True
-    return False
+    return isJava(file) and os.path.normcase(os.path.normpath(file)).startswith(os.path.normcase(os.path.normpath(directory)))
 
 
 def getPath(type="", dir=""):
@@ -101,7 +76,7 @@ def getPath(type="", dir=""):
         path = ""
         folders = window.folders()
         for folder in folders:
-            if containsFile(folder, getPath("name", getPath("current_file"))):
+            if containsFile(folder, getPath("current_file")):
                 path = folder
                 break
         return path
