@@ -11,7 +11,7 @@ def getInfo(text):
         text = text[1:]
         relative = False
 
-    if not isProject() and not isFile():
+    if not isFile():
         sublime.error_message("Unknown package location")
         return
     if not isPackage(text):
@@ -58,43 +58,23 @@ def createClassFile(file, contents, msg):
     sublime.set_timeout(lambda: view.run_command("save"), 100)
 
 
-class JavatarCreateClassCommand(sublime_plugin.WindowCommand):
-    def run(self):
-        self.showInput()
+class JavatarCreateCommand(sublime_plugin.WindowCommand):
+    def run(self, text="", type=""):
+        if type != "":
+            self.showInput(-1, type)
+            return
+        if text != "":
+            info = getInfo(text)
+            createClassFile(info["file"], getFileContents(self.type, info), self.type + " already exists")
+            sublime.set_timeout(lambda: showStatus(self.type + " \"" + info["class"] + "\" is created within package \"" + toReadablePackage(info["package"], True) + "\""), 500)
+        else:
+            sublime.active_window().show_quick_panel(getSnippetList(), self.showInput)
 
-    def showInput(self):
-        view = sublime.active_window().show_input_panel("Class Name:", "", self.createClass, "", "")
-        view.set_name("JavatarCreateClass")
-
-    def createClass(self, text):
-        info = getInfo(text)
-        createClassFile(info["file"], getFileContents("Class.javatar", info), "Class already exists")
-        sublime.set_timeout(lambda: showStatus("Class \"" + info["class"] + "\" is created within package \"" + toReadablePackage(info["package"], True) + "\""), 500)
-
-
-class JavatarCreateInterfaceCommand(sublime_plugin.WindowCommand):
-    def run(self):
-        self.showInput()
-
-    def showInput(self):
-        view = sublime.active_window().show_input_panel("Interface Name:", "", self.createInterface, "", "")
-        view.set_name("JavatarCreateInterface")
-
-    def createInterface(self, text):
-        info = getInfo(text)
-        createClassFile(info["file"], getFileContents("Interface.javatar", info), "Interface already exists")
-        sublime.set_timeout(lambda: showStatus("Interface \"" + info["class"] + "\" is created within package \"" + toReadablePackage(info["package"], True) + "\""), 500)
-
-
-class JavatarCreateEnumCommand(sublime_plugin.WindowCommand):
-    def run(self):
-        self.showInput()
-
-    def showInput(self):
-        view = sublime.active_window().show_input_panel("Enumerator Name:", "", self.createEnum, "", "")
-        view.set_name("JavatarCreateEnum")
-
-    def createEnum(self, text):
-        info = getInfo(text)
-        createClassFile(info["file"], getFileContents("Enumerator.javatar", info), "Enumerator already exists")
-        sublime.set_timeout(lambda: showStatus("Enumerator \"" + info["class"] + "\" is created within package \"" + toReadablePackage(info["package"], True) + "\""), 500)
+    def showInput(self, index, type=""):
+        if type != "" or index >= 0:
+            if type != "":
+                self.type = type
+            else:
+                self.type = getSnippetName(index)
+            view = sublime.active_window().show_input_panel(self.type + " Name:", "", self.run, "", "")
+            view.set_name("JavatarCreate")

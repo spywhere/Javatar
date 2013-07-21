@@ -4,27 +4,12 @@ import os
 
 STATUS = "Javatar"
 SETTINGS = None
-SNIPPETS = []
-
-
-def getSnippetFiles():
-    SNIPPETS = []
-    for root, dirnames, filenames in os.walk(sublime.packages_path()):
-        for filename in filenames:
-            if filename.endswith(".javatar"):
-                SNIPPETS.append({"file": filename, "path": os.path.join(root, filename)})
-
-
-def getSnippet(name):
-    for snippet in SNIPPETS:
-        if snippet["file"] == name:
-            return snippet["path"]
-    return ""
 
 
 def readSettings(config):
     global SETTINGS
     SETTINGS = config
+    from .javatar_collections import getSnippetFiles
     getSnippetFiles()
 
 

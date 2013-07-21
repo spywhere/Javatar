@@ -1,7 +1,11 @@
 [
     {
-        "caption": "Javatar: Informations",
+        "caption": "Javatar: Call...",
         "command": "javatar_call"
+    },
+    {
+        "caption": "Javatar: Create...",
+        "command": "javatar_create"
     },
     {
         "caption": "Javatar: Create Package",
@@ -13,15 +17,24 @@
     },
     {
         "caption": "Javatar: Create Class",
-        "command": "javatar_create_class"
+        "command": "javatar_create", "args":
+        {
+            "type": "Class"
+        }
     },
     {
         "caption": "Javatar: Create Interface",
-        "command": "javatar_create_interface"
+        "command": "javatar_create", "args":
+        {
+            "type": "Interface"
+        }
     },
     {
-        "caption": "Javatar: Create Enum",
-        "command": "javatar_create_enum"
+        "caption": "Javatar: Create Enumerator",
+        "command": "javatar_create", "args":
+        {
+            "type": "Enumerator"
+        }
     },
     {
         "caption": "Javatar: Build Project",

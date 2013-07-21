@@ -3,6 +3,9 @@
         "keys": ["super+shift+k","super+shift+j"],
         "command": "javatar_call"
     },{
+        "keys": ["super+shift+k","super+shift+l"],
+        "command": "javatar_create"
+    },{
         "keys": ["super+shift+k","super+shift+p"],
         "command": "javatar_call",
         "args": {
