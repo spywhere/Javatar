@@ -29,8 +29,8 @@ A Sublime Text 3 Plugin for Java Development
 * Call
 	* Call is used to insert any information about package and class
 	* Mostly accessed by shortcut keys (see below)
-* Package/SubPackage/Class Creation
-	* Package/SubPackage/Class can be create via command palette only
+* Packages/Classes Creation
+	* Packages/Classes can be create via command palette only
 
 #### Commands List
 
@@ -39,7 +39,6 @@ The following commands can be accessed via *Command Palette* (Control+Shift+P or
 * Call...
 * Create new...
 * Create Package
-* Create SubPackage
 * Create Class/Interface/Enumerator
 
 *All commands will be prefixed by "Javatar: " in order to prevent conflict with another plugins*<br />
@@ -51,21 +50,25 @@ Javatar Call is used to insert any information about packages and class like ful
 
 #### Advanced Creation
 
-In class creation mode (included interface, enum, etc.), all classes will be created relative to current package only. If you want to create from default package (root package), you must specify `~` sign before class name. It's also able to create class corresponded to package path as example below
+In creation mode, all packages/classes will be created relative to current package. If you want to create from default package (root package), you must specify `~` sign before package/class name. It's also able to create packages/classes corresponded to package path as example below
 
 Input: `Alpha`<br />
-Result: `Class "Alpha" is created in current package`
+Result as Class: `Class "Alpha" is created in current package`
+Result as Package: `Package "Alpha" is created in current package`
 
 Input: `~Beta`<br />
-Result: `Class "Beta" is created in default package`
+Result as Class: `Class "Beta" is created in default package`
+Result as Package: `Package "Beta" is created in default package`
 
 Input: `me.spywhere.Alpha`<br />
-Result: `Class "Alpha" is created in "(current package).me.spywhere" package`
+Result as Class: `Class "Alpha" is created in "(current package).me.spywhere" package`
+Result as Package: `Package "Alpha" is created in "(current package).me.spywhere" package`
 
 Input: `~me.spywhere.Beta`<br />
-Result: `Class "Beta" is created in "me.spywhere.Beta"`
+Result as Class: `Class "Beta" is created in "me.spywhere"`
+Result as Package: `Package "Beta" is created in "me.spywhere"`
 
-### Important Info
+### Default Package Detection
 
 Javatar will specify default package from project folder which contains current working file. If project folder is not found, it will specify current package as `(Unknown Package)`. Create packages/classes within unknown package will cause Javatar to create packages/classes within the same folder as current file.
 
@@ -78,7 +81,7 @@ You can install Javatar via [Sublime Package Control](http://wbond.net/sublime_p
 PACKAGES_PATH is related to folder which can be accessed via the *Preference > Browse Packages...*
 
 ### Settings
-Settings are accessed via the *Preferences > Package Settings > Javatar* or via command palette by type *"Javatar Preference"*
+Settings are accessed via the *Preferences > Package Settings > Javatar* or via command palette by type *"Preference Javatar"*
 
 Default settings should not be modified. However, you can copy the relevant settings into Javatar's user settings file
 
