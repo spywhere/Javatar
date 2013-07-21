@@ -1,8 +1,8 @@
 ## Javatar
 
-### Status: Alpha
+### Status: Beta
 
-A Sublime 3 Plugin for Java Development
+A Sublime Text 3 Plugin for Java Development
 
 ### Features
  * [+] Package, SubPackage creation
@@ -15,24 +15,34 @@ A Sublime 3 Plugin for Java Development
 [*] Work in progress<br />
 [-] Unavailable at this moment
 
+### Screenshots
+
+#### Creating packages in action
+![CreateClass](http://spywhere.github.io/images/CreatePackage.gif)
+#### Creating classes in action
+![CreateClass](http://spywhere.github.io/images/CreateClass.gif)
+#### Creating other classes in action
+![CreateClass](http://spywhere.github.io/images/CreateOther.gif)
+
 ### Commands
 * Call
 	* Call is used to insert any information about package and class
 	* Mostly accessed by shortcut keys (see below)
 * Package/SubPackage/Class Creation
 	* Package/SubPackage/Class can be create via command palette only
-	
+
 #### Commands List
 
 The following commands can be accessed via *Command Palette* (Control+Shift+P or Super+Shift+P)
 
-* Javatar Call
+* Call...
+* Create new...
 * Create Package
 * Create SubPackage
 * Create Class/Interface/Enumerator
 
-*All commands will be prefixed by "Javatar: " in order to prevent conflict with another plugins*
-
+*All commands will be prefixed by "Javatar: " in order to prevent conflict with another plugins*<br />
+*Did you know? You can type "Javatar:" in command palette to see all available commands*
 
 #### Javatar Call
 
@@ -78,7 +88,9 @@ You can access keymap via the preference menu or via command palette same as set
 
 *All commands start with `Key+Shift+K` then follows by their shortcut key*
 
-* Open Javatar Call : `Key+Shift+J`
+* Call... : `Key+Shift+J`
+	* This will open quick panel to select which data you want to insert
+* Create new... : `Key+Shift+L`
 	* This will open quick panel to select which data you want to insert
 * Insert full package path: `Key+Shift+P`
 	* **Example:**
@@ -93,16 +105,25 @@ You can access keymap via the preference menu or via command palette same as set
 	* **Example:**
 	* Package.SubPackage.Class
 
-
 `Key` can be related to Windows *`Control`* or OS X *`Command`*
 
-### Snippets Macros
+### Snippets
+
+Javatar snippets is a dynamic snippet which will change part of the file to correspond with package path and class name. By using macros, you can specify which part of the file you want to fill the data to.
+
+You can make your own snippet to use within Javatar by create a new file ends with `.javatar`
+
+Snippet file name will be used as a type of classes which show in input panel when create a new file (`%type% Name:`), on error dialog (`%type% %name% already exists`) and in status bar when file was created (`%type% %name% is created within package %package%`).
+
+Example of Javatar's snippets is inside Javatar's snippets folder (`PACKAGE_PATH/Javatar/snippets` or similar)
+
+#### Snippets Macros
 
 The following macros are used inside Javatar snippet file (*.javatar) which will be parsed by plugin and Sublime Text
 
 * %package_path% = Package path
-* %file% = File path
-* %file_name% = File name
 * %class% = Class name
-* %package% = Package code (`package java.utils;`)
+* %file% = File path
+* %file_name% = File name (equivalent to `%class%.java`)
+* %package% = Package code (for example `package java.utils;` or same as `package %package_path%;`)
 * All Sublime Text's snippet macros can be used within Javatar snippets. For example: ${1} or ${2://Comment}

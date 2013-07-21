@@ -17,6 +17,17 @@ def getSettings(key):
     return SETTINGS.get(key)
 
 
+def normalizePath(path):
+    name = getPath("name", path)
+    parent = getPath("parent", path)
+    if parent != "" and parent != "/" and parent != "\\":
+        parent = normalizePath(parent)
+    for dir in os.listdir(parent):
+        if dir.lower() == name:
+            return getPath("join", parent, dir)
+    return path
+
+
 def showStatus(text, delay=None):
     if delay is None:
         delay = getSettings("status_delay")

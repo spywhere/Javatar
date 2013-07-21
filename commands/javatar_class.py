@@ -21,7 +21,9 @@ def getInfo(text):
     package = normalizePackage(getCurrentPackage(not relative) + "." + getPackagePath(text))
     className = getClassName(text)
 
-    makePackage(getPackageRootDir(), packageAsDirectory(package), True)
+    target_dir = makePackage(getPackageRootDir(), packageAsDirectory(package), True)
+    target_dir = normalizePath(target_dir)
+    package = toPackage(target_dir)
     file = getPath("join", getPackageRootDir(), getPath("join", packageAsDirectory(package), className + ".java"))
     return {"file": file, "package": package, "class": className, "relative": relative}
 
@@ -35,6 +37,8 @@ def getFileContents(file, info):
     data = f.read()
     if info["package"] != "":
         data = re.sub("%package%", "package " + info["package"] + ";", data)
+    else:
+        data = re.sub("%package%", "", data)
     data = re.sub("%class%", info["class"], data)
     data = re.sub("%file%", info["file"], data)
     data = re.sub("%file_name%", getPath("name", info["file"]), data)
@@ -44,7 +48,12 @@ def getFileContents(file, info):
 
 def setSelection(view, focus):
     view.sel().clear()
-    view.sel().add(sublime.Region(focus.start(), focus.start()))
+    view.sel().add(sublime.Region(focus.start()))
+
+
+def insertAndSave(view, contents):
+    view.run_command("insert_snippet", {"contents": contents})
+    view.run_command("save")
 
 
 def createClassFile(file, contents, msg):
@@ -54,8 +63,7 @@ def createClassFile(file, contents, msg):
     open(file, "w")
     view = sublime.active_window().open_file(file)
     view.set_syntax_file("Packages/Java/Java.tmLanguage")
-    sublime.set_timeout(lambda: view.run_command("insert_snippet", {"contents": contents}), 100)
-    sublime.set_timeout(lambda: view.run_command("save"), 100)
+    sublime.set_timeout(lambda: insertAndSave(view, contents), 100)
 
 
 class JavatarCreateCommand(sublime_plugin.WindowCommand):
@@ -65,7 +73,7 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
             return
         if text != "":
             info = getInfo(text)
-            createClassFile(info["file"], getFileContents(self.type, info), self.type + " already exists")
+            createClassFile(info["file"], getFileContents(self.type, info), self.type + "\"" + info["class"] + "\" already exists")
             sublime.set_timeout(lambda: showStatus(self.type + " \"" + info["class"] + "\" is created within package \"" + toReadablePackage(info["package"], True) + "\""), 500)
         else:
             sublime.active_window().show_quick_panel(getSnippetList(), self.showInput)

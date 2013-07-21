@@ -4,16 +4,12 @@
         "command": "javatar_call"
     },
     {
-        "caption": "Javatar: Create...",
+        "caption": "Javatar: Create new...",
         "command": "javatar_create"
     },
     {
         "caption": "Javatar: Create Package",
         "command": "javatar_create_package"
-    },
-    {
-        "caption": "Javatar: Create Subpackage",
-        "command": "javatar_create_subpackage"
     },
     {
         "caption": "Javatar: Create Class",
@@ -35,18 +31,6 @@
         {
             "type": "Enumerator"
         }
-    },
-    {
-        "caption": "Javatar: Build Project",
-        "command": "javatar_build_project"
-    },
-    {
-        "caption": "Javatar: Create JAR File",
-        "command": "javatar_create_jar_file"
-    },
-    {
-        "caption": "Javatar: Create Executable JAR File",
-        "command": "javatar_create_exe_jar_file"
     },
     {
         "caption": "Preferences: Javatar Settings – Default",

@@ -9,7 +9,7 @@ class JavatarCallCommand(sublime_plugin.TextCommand):
         sels = self.view.sel()
         for sel in sels:
             if type == "package_name":
-                self.view.insert(edit, sel.a, "Package.Subpackage")
+                self.view.insert(edit, sel.a, "Package.SubPackage")
             elif type == "subpackage_name":
                 self.view.insert(edit, sel.a, "MyPackage")
             elif type == "full_class_name":
