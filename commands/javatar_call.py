@@ -9,13 +9,15 @@ class JavatarCallCommand(sublime_plugin.TextCommand):
         sels = self.view.sel()
         for sel in sels:
             if type == "package_name":
-                self.view.insert(edit, sel.a, "Package.SubPackage")
+                self.view.insert(edit, sel.a, getCurrentPackage())
             elif type == "subpackage_name":
-                self.view.insert(edit, sel.a, "MyPackage")
+                self.view.insert(edit, sel.a, getCurrentPackage().split(".")[-1])
             elif type == "full_class_name":
-                self.view.insert(edit, sel.a, "Package.Class")
+                if isJava():
+                    self.view.insert(edit, sel.a, normalizePackage(getCurrentPackage()+"."+getPath("name", getPath("current_file"))[:-5]))
             elif type == "class_name":
-                self.view.insert(edit, sel.a, "MyClass")
+                if isJava():
+                    self.view.insert(edit, sel.a, getPath("name", getPath("current_file"))[:-5])
             else:
                 self.view.window().show_quick_panel(self.call_list, self.call)
 
