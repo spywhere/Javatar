@@ -6,7 +6,13 @@
         "keys": ["super+shift+k","super+shift+p"],
         "command": "javatar_call",
         "args": {
-        	"type" : "package_name"
+            "type" : "package_name"
+        }
+    },{
+        "keys": ["super+shift+k","super+shift+s"],
+        "command": "javatar_call",
+        "args": {
+            "type" : "subpackage_name"
         }
     },{
         "keys": ["super+shift+k","super+shift+c"],

@@ -11,7 +11,7 @@ class JavatarCreatePackageCommand(sublime_plugin.WindowCommand):
         view.set_name("JavatarCreatePackage")
 
     def createPackage(self, text):
-        if not isProject() and not isFile():
+        if not isFile():
             sublime.error_message("Unknown package location")
             return
         if not isPackage(text):
@@ -32,6 +32,9 @@ class JavatarCreateSubpackageCommand(sublime_plugin.WindowCommand):
     def createSubpackage(self, text):
         if not isFile():
             sublime.error_message("Unknown package location")
+            return
+        if not isPackage(text):
+            sublime.error_message("Invalid package naming")
             return
         target_dir = makePackage(getPackageRootDir(True), text)
         showStatus("Subpackage \""+toPackage(target_dir)+"\" is created")

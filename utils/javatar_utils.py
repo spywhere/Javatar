@@ -8,10 +8,11 @@ SNIPPETS = []
 
 
 def getSnippetFiles():
-        for root, dirnames, filenames in os.walk(sublime.packages_path()):
-            for filename in filenames:
-                if filename.endswith(".javatar"):
-                    SNIPPETS.append({"file": filename, "path": os.path.join(root, filename)})
+    SNIPPETS = []
+    for root, dirnames, filenames in os.walk(sublime.packages_path()):
+        for filename in filenames:
+            if filename.endswith(".javatar"):
+                SNIPPETS.append({"file": filename, "path": os.path.join(root, filename)})
 
 
 def getSnippet(name):
@@ -98,10 +99,11 @@ def containsFile(directory, file):
 def getPath(type="", dir="", dir2=""):
     window = sublime.active_window()
     if type == "project_dir":
+        from .javatar_validator import isFile
         path = ""
         folders = window.folders()
         for folder in folders:
-            if containsFile(folder, getPath("current_file")):
+            if isFile() and containsFile(folder, getPath("current_file")):
                 path = folder
                 break
         return path
