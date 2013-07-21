@@ -1,5 +1,5 @@
 %package%
 
 public enum %class% {
-	%focus%	
+	${1}	
 }

@@ -54,10 +54,7 @@ def createClassFile(file, contents, msg):
     open(file, "w")
     view = sublime.active_window().open_file(file)
     view.set_syntax_file("Packages/Java/Java.tmLanguage")
-    focus = re.search("%focus%", contents, re.I | re.M)
-    contents = re.sub("%focus%", "", contents)
-    sublime.set_timeout(lambda: view.run_command("javatar_call", {"type": "javatar_insert", "contents": contents}), 100)
-    sublime.set_timeout(lambda: setSelection(view, focus), 100)
+    sublime.set_timeout(lambda: view.run_command("insert_snippet", {"contents": contents}), 100)
     sublime.set_timeout(lambda: view.run_command("save"), 100)
 
 

@@ -1,5 +1,5 @@
 %package%
 
 public class %class% {
-	%focus%
+	${1}
 }

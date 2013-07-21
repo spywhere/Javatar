@@ -1,5 +1,5 @@
 %package%
 
 public interface %class% {
-	%focus%
+	${1}
 }

@@ -16,9 +16,6 @@ class JavatarCallCommand(sublime_plugin.TextCommand):
                 self.view.insert(edit, sel.a, "Package.Class")
             elif type == "class_name":
                 self.view.insert(edit, sel.a, "MyClass")
-            elif type == "javatar_insert":  # Please do not use this in user level except for plugin requests
-                self.view.insert(edit, 0, contents)
-                callback
             else:
                 self.view.window().show_quick_panel(self.call_list, self.call)
 
