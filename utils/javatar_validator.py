@@ -4,8 +4,11 @@ import re
 
 def isJava(file=""):
     from .javatar_utils import getSettings
+    view = sublime.active_window().active_view()
+    if view is None:
+        return False
     if file is "" or file is None:
-        file = sublime.active_window().active_view().file_name()
+        file = view.file_name()
     if file is None:
         return False
     return re.match(getSettings("java_file_validation"), file, re.I | re.M) is not None
@@ -23,4 +26,4 @@ def isProject():
 
 def isFile():
     view = sublime.active_window().active_view()
-    return view.file_name() is not None
+    return view is not None and view.file_name() is not None

@@ -11,7 +11,7 @@ def getInfo(text):
         text = text[1:]
         relative = False
 
-    if not isFile():
+    if not isProject() and not isFile():
         sublime.error_message("Unknown package location")
         return
     if not isPackage(text):

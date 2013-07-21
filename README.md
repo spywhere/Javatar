@@ -9,6 +9,7 @@ A Sublime Text 3 Plugin for Java Development
  * [+] Class, Interface, Enumerator snippets with packge/class auto-complete
  * [*] Project Compile
  * [-] JAR file export (included executable)
+ * [-] Rename/Move packages/classes
  * [+] Package path in status bar
 
 [+] Fully working<br />

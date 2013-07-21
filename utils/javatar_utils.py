@@ -46,16 +46,19 @@ def hideStatus():
     if not isJava():
         return
     if getSettings("show_package_path"):
-        view.set_status(STATUS, "Package: " + toReadablePackage(getPath("current_dir")))
+        view.set_status(STATUS, "Package: " + toReadablePackage(getCurrentPackage(), True))
     else:
         view.erase_status(STATUS)
 
 
 def getCurrentPackage(relative=False):
-    if relative:
-        return ""
-    else:
+    from .javatar_validator import isProject, isFile
+    if not relative and isFile() and getPath("current_dir") is not None:
         return toPackage(getPath("current_dir"))
+    elif not relative and isProject() and getPath("project_dir") is not None:
+        return toPackage(getPath("project_dir"))
+    else:
+        return ""
 
 
 def toReadablePackage(package, asPackage=False):
@@ -80,9 +83,11 @@ def toPackage(dir):
 
 def getPackageRootDir(isSub=False):
     from .javatar_validator import isProject, isFile
-    if isProject() and not isSub:
+    if isFile() and isSub:
+        return getPath("current_dir")
+    elif isProject():
         return getPath("project_dir")
-    elif isFile():
+    elif getPath("current_dir") is not None:
         return getPath("current_dir")
     else:
         return ""
@@ -98,13 +103,18 @@ def getPath(type="", dir="", dir2=""):
         from .javatar_validator import isFile
         path = ""
         folders = window.folders()
+        if len(folders) == 1:
+            return folders[0]
         for folder in folders:
             if isFile() and containsFile(folder, getPath("current_file")):
                 path = folder
                 break
         return path
     elif type == "current_dir":
-        return getPath("parent", getPath("current_file"))
+        if getPath("current_file") is not None:
+            return getPath("parent", getPath("current_file"))
+        else:
+            return None
     elif type == "current_file":
         return window.active_view().file_name()
     elif type == "parent":
