@@ -1,20 +1,5 @@
-import os
 import sublime_plugin
 from Javatar.utils import *
-
-
-def MakePackage(current_dir, package):
-    package_dir = package.split(".")
-    package_dir.insert(0, current_dir)
-    target_dir = "/".join(package_dir)
-    if not os.path.exists(target_dir):
-        try:
-            os.makedirs(target_dir)
-        except BaseException as e:
-            sublime.error_message("Error while create a package: " + str(e))
-    else:
-        sublime.message_dialog("Package is already exists")
-    return target_dir
 
 
 class JavatarCreatePackageCommand(sublime_plugin.WindowCommand):
@@ -32,7 +17,7 @@ class JavatarCreatePackageCommand(sublime_plugin.WindowCommand):
         if not isPackage(text):
             sublime.error_message("Invalid package naming")
             return
-        target_dir = MakePackage(getPackageRootDir(), text)
+        target_dir = makePackage(getPackageRootDir(), text)
         showStatus("Package \""+toPackage(target_dir)+"\" is created")
 
 
@@ -48,5 +33,5 @@ class JavatarCreateSubpackageCommand(sublime_plugin.WindowCommand):
         if not isFile():
             sublime.error_message("Unknown package location")
             return
-        target_dir = MakePackage(getPackageRootDir(True), text)
+        target_dir = makePackage(getPackageRootDir(True), text)
         showStatus("Subpackage \""+toPackage(target_dir)+"\" is created")

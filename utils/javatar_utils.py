@@ -4,18 +4,36 @@ import os
 
 STATUS = "Javatar"
 SETTINGS = None
+SNIPPETS = []
+
+
+def getSnippetFiles():
+        for root, dirnames, filenames in os.walk(sublime.packages_path()):
+            for filename in filenames:
+                if filename.endswith(".javatar"):
+                    SNIPPETS.append({"file": filename, "path": os.path.join(root, filename)})
+
+
+def getSnippet(name):
+    for snippet in SNIPPETS:
+        if snippet["file"] == name:
+            return snippet["path"]
+    return ""
 
 
 def readSettings(config):
     global SETTINGS
     SETTINGS = config
+    getSnippetFiles()
 
 
 def getSettings(key):
     return SETTINGS.get(key)
 
 
-def showStatus(text, delay=5000):
+def showStatus(text, delay=None):
+    if delay is None:
+        delay = getSettings("status_delay")
     from .javatar_validator import isJava
     if not isJava():
         return
@@ -36,8 +54,16 @@ def hideStatus():
         view.erase_status(STATUS)
 
 
-def toReadablePackage(dir):
-    package = toPackage(dir)
+def getCurrentPackage(relative=False):
+    if relative:
+        return ""
+    else:
+        return toPackage(getPath("current_dir"))
+
+
+def toReadablePackage(package, asPackage=False):
+    if not asPackage:
+        package = toPackage(package)
     if package == "":
         from .javatar_validator import isProject
         if isProject():
@@ -50,7 +76,7 @@ def toReadablePackage(dir):
 def toPackage(dir):
     dir = os.path.relpath(dir, getPackageRootDir())
     package = ".".join(dir.split("/"))
-    if package.startswith("."):
+    while package.startswith("."):
         package = package[1:]
     return package
 
@@ -66,11 +92,10 @@ def getPackageRootDir(isSub=False):
 
 
 def containsFile(directory, file):
-    from .javatar_validator import isJava
-    return isJava(file) and os.path.normcase(os.path.normpath(file)).startswith(os.path.normcase(os.path.normpath(directory)))
+    return os.path.normcase(os.path.normpath(file)).startswith(os.path.normcase(os.path.normpath(directory)))
 
 
-def getPath(type="", dir=""):
+def getPath(type="", dir="", dir2=""):
     window = sublime.active_window()
     if type == "project_dir":
         path = ""
@@ -88,5 +113,7 @@ def getPath(type="", dir=""):
         return os.path.dirname(dir)
     elif type == "name":
         return os.path.basename(dir)
+    elif type == "join":
+        return os.path.join(dir, dir2)
     else:
         return ""

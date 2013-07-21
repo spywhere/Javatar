@@ -1,5 +1,5 @@
 %package%
 
-public enum %name% {
+public enum %class% {
 	%focus%	
 }
