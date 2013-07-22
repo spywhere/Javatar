@@ -35,6 +35,13 @@ def splitPath(path):
     return splitPath(rest) + (tail,)
 
 
+def mergePath(pathlist):
+    outpath = ""
+    for path in pathlist:
+        outpath = getPath("join", outpath, path)
+    return outpath
+
+
 def showStatus(text, delay=None):
     if delay is None:
         delay = getSettings("status_delay")

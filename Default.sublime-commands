@@ -33,6 +33,10 @@
         }
     },
     {
+        "caption": "Javatar: Operation...",
+        "command": "javatar_operation"
+    },
+    {
         "caption": "Preferences: Javatar Settings – Default",
         "command": "open_file", "args":
         {

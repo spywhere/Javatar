@@ -16,7 +16,7 @@ def isJava(file=""):
 
 def isPackage(package):
     from .javatar_utils import getSettings
-    return re.match(getSettings("package_validation"), package, re.I) is not None
+    return re.match(getSettings("package_name_scope"), package, re.I) is not None
 
 
 def isProject():
