@@ -20,7 +20,7 @@ def getSettings(key):
 def normalizePath(path):
     name = getPath("name", path)
     parent = getPath("parent", path)
-    if parent != "" and parent != "/" and parent != "\\":
+    if parent != getPath("parent", parent):
         parent = normalizePath(parent)
     for dir in os.listdir(parent):
         if dir.lower() == name:
