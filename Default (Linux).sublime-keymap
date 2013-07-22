@@ -6,6 +6,9 @@
         "keys": ["ctrl+shift+k","ctrl+shift+l"],
         "command": "javatar_create"
     },{
+        "keys": ["ctrl+shift+k","ctrl+shift+o"],
+        "command": "javatar_operation"
+    },{
         "keys": ["ctrl+shift+k","ctrl+shift+p"],
         "command": "javatar_call",
         "args": {

@@ -7,9 +7,9 @@ A Sublime Text 3 Plugin for Java Development
 ### Features
  * [+] Package, SubPackage creation
  * [+] Class, Interface, Enumerator snippets with packge/class auto-complete
- * [*] Project Compile
+ * [-] Project Compile
  * [-] JAR file export (included executable)
- * [-] Rename/Move packages/classes
+ * [*] Rename/Move packages/classes
  * [+] Package path in status bar
 
 [+] Fully working<br />
@@ -19,11 +19,13 @@ A Sublime Text 3 Plugin for Java Development
 ### Screenshots
 
 #### Creating packages in action
-![CreateClass](http://spywhere.github.io/images/CreatePackage.gif)
+![CreatePackage](http://spywhere.github.io/images/CreatePackage.gif)
 #### Creating classes in action
 ![CreateClass](http://spywhere.github.io/images/CreateClass.gif)
 #### Creating other classes in action
-![CreateClass](http://spywhere.github.io/images/CreateOther.gif)
+![CreateOther](http://spywhere.github.io/images/CreateOther.gif)
+#### Class operations in action
+![Operation](http://spywhere.github.io/images/Operations.gif)
 
 ### Commands
 * Call
@@ -38,6 +40,7 @@ The following commands can be accessed via *Command Palette* (Control+Shift+P or
 
 * Call...
 * Create new...
+* Operations...
 * Create Package
 * Create Class/Interface/Enumerator
 
@@ -47,6 +50,15 @@ The following commands can be accessed via *Command Palette* (Control+Shift+P or
 #### Javatar Call
 
 Javatar Call is used to insert any information about packages and class like full package path and class name at your cursor point. Javatar Call supports 4 type of data you can insert which are `Full Package Path`, `Current Package Name`, `Class Name` and `Full Class Name`
+
+#### Javatar Operations
+
+Javatar Operations is a command that helps you edit current java file. Javatar Operations supports only one operation at this moment (more to come soon!) which is `Correct Class`
+
+**Operations List**
+
+* Correct Class
+	* Change class name correspond to file name and change package to proper package location
 
 #### Advanced Creation
 
@@ -95,7 +107,9 @@ You can access keymap via the preference menu or via command palette same as set
 * Call... : `Key+Shift+J`
 	* This will open quick panel to select which data you want to insert
 * Create new... : `Key+Shift+L`
-	* This will open quick panel to select which data you want to insert
+	* This will open quick panel to select which class you want to create
+* Operations... : `Key+Shift+O`
+	* This will open quick panel to select which operation you want to perform
 * Insert full package path: `Key+Shift+P`
 	* **Example:**
 	* Package.SubPackage
