@@ -28,6 +28,13 @@ def normalizePath(path):
     return path
 
 
+def splitPath(path):
+    rest, tail = os.path.split(path)
+    if len(rest) <= 1:
+        return tail,
+    return splitPath(rest) + (tail,)
+
+
 def showStatus(text, delay=None):
     if delay is None:
         delay = getSettings("status_delay")
@@ -75,7 +82,7 @@ def toReadablePackage(package, asPackage=False):
 
 def toPackage(dir):
     dir = os.path.relpath(dir, getPackageRootDir())
-    package = ".".join(dir.split("/"))
+    package = ".".join(splitPath(dir))
     while package.startswith("."):
         package = package[1:]
     return package
