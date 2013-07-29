@@ -30,7 +30,7 @@
 	"package_name_suffix" : ";",
 
 	//Class name prefix using RegEx
-	"class_name_prefix" : "(class|interface|enumerator)\\s+",
+	"class_name_prefix" : "(class|interface|enum)\\s+",
 
 	//Class name using RegEx
 	"class_name_scope" : "(\\w+)",

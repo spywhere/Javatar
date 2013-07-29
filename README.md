@@ -68,7 +68,7 @@ Javatar Operations is a command that helps you edit current java file. Javatar O
 
 #### Advanced Creation
 
-In creation mode, all packages/classes will be created relative to current package. If you want to create from default package (root package), you must specify `~` sign before package/class name. It's also able to create packages/classes corresponded to package path as example below
+In creation mode, all packages/classes will be created relative to current package. If you want to create from default package (root package), you must specify `~` (tilde) before package/class name. It's also able to create packages/classes corresponded to package path as example below
 
 Input: `Alpha`<br />
 Result as Class: `Class "Alpha" is created in current package`<br />
@@ -88,7 +88,7 @@ Result as Package: `Package "Beta" is created in "me.spywhere"`
 
 ### Default Package Detection
 
-Javatar will specify default package from project folder which contains current working file. If project folder is not found, it will specify current package as `(Unknown Package)`. Create packages/classes within unknown package will cause Javatar to create packages/classes within the same folder as current file.
+Javatar will specify default package from project folder in your project file. If project file is not found, it will specify current folder which contains current working file as default package. If current folder is not found, it will specify current package as `(Unknown Package)`. Create packages/classes within unknown package will cause Javatar to refuse to create packages/classes. In that case, mostly because file is not on the disk yet.
 
 ### Installation
 You can install Javatar via [Sublime Package Control](http://wbond.net/sublime_packages/package_control) or by clone this repository into your *Sublime Text 3 / Packages* folder
