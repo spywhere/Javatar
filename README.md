@@ -7,7 +7,7 @@ A Sublime Text 3 Plugin for Java Development
 ### Features
  * [+] Package, SubPackage creation
  * [+] Class, Interface, Enumerator snippets with packge/class auto-complete
- * [-] Project Compile
+ * [+] Project Compile
  * [-] JAR file export (included executable)
  * [*] Rename/Move packages/classes
  * [+] Package path in status bar
@@ -28,16 +28,22 @@ A Sublime Text 3 Plugin for Java Development
 ![Operation](http://spywhere.github.io/images/Operations.gif)
 
 ### Commands
+* Build
+	* Build is mostly use for project or package build since class build can be accessed by default shortcut key (Control+B or Command+B)
+	* Build commands can be accessed via command palette only
 * Call
 	* Call is used to insert any information about package and class
 	* Mostly accessed by shortcut keys (see below)
 * Packages/Classes Creation
 	* Packages/Classes can be create via command palette only
+* Packages/Classes Operation
+	* Operation is used to edit current java file like correcting invalid class name or package path
 
 #### Commands List
 
 The following commands can be accessed via *Command Palette* (Control+Shift+P or Super+Shift+P)
 
+* Build...
 * Call...
 * Create new...
 * Operations...
@@ -65,19 +71,19 @@ Javatar Operations is a command that helps you edit current java file. Javatar O
 In creation mode, all packages/classes will be created relative to current package. If you want to create from default package (root package), you must specify `~` sign before package/class name. It's also able to create packages/classes corresponded to package path as example below
 
 Input: `Alpha`<br />
-Result as Class: `Class "Alpha" is created in current package`
+Result as Class: `Class "Alpha" is created in current package`<br />
 Result as Package: `Package "Alpha" is created in current package`
 
 Input: `~Beta`<br />
-Result as Class: `Class "Beta" is created in default package`
+Result as Class: `Class "Beta" is created in default package`<br />
 Result as Package: `Package "Beta" is created in default package`
 
 Input: `me.spywhere.Alpha`<br />
-Result as Class: `Class "Alpha" is created in "(current package).me.spywhere" package`
+Result as Class: `Class "Alpha" is created in "(current package).me.spywhere" package`<br />
 Result as Package: `Package "Alpha" is created in "(current package).me.spywhere" package`
 
 Input: `~me.spywhere.Beta`<br />
-Result as Class: `Class "Beta" is created in "me.spywhere"`
+Result as Class: `Class "Beta" is created in "me.spywhere"`<br />
 Result as Package: `Package "Beta" is created in "me.spywhere"`
 
 ### Default Package Detection
@@ -104,6 +110,8 @@ You can access keymap via the preference menu or via command palette same as set
 
 *All commands start with `Key+Shift+K` then follows by their shortcut key*
 
+* Build... : `Key+Shift+B`
+	* This will open quick panel to select which build you want to perform
 * Call... : `Key+Shift+J`
 	* This will open quick panel to select which data you want to insert
 * Create new... : `Key+Shift+L`
@@ -124,6 +132,12 @@ You can access keymap via the preference menu or via command palette same as set
 	* Package.SubPackage.Class
 
 `Key` can be related to Windows *`Control`* or OS X *`Command`*
+
+### Build System
+
+Javatar's build system use Sublime Text execute command to build your classes. Javatar build parameters are based on default Sublime Text's JavaC build settings. You can change the build command via Javatar settings file
+
+*Please note that Javatar project/package build cannot show any compilation errors (or may show only last built class) since it build all your classes in order*
 
 ### Snippets
 

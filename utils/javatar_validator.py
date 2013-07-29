@@ -19,8 +19,9 @@ def isPackage(package):
     return re.match(getSettings("package_name_scope"), package, re.I) is not None
 
 
-def isProject():
-    window = sublime.active_window()
+def isProject(window=None):
+    if window is None:
+        window = sublime.active_window()
     return window.project_data() is not None
 
 

@@ -3,6 +3,9 @@
         "keys": ["ctrl+shift+k","ctrl+shift+j"],
         "command": "javatar_call"
     },{
+        "keys": ["ctrl+shift+k","ctrl+shift+b"],
+        "command": "javatar_build"
+    },{
         "keys": ["ctrl+shift+k","ctrl+shift+l"],
         "command": "javatar_create"
     },{

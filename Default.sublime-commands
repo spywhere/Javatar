@@ -1,5 +1,9 @@
 [
     {
+        "caption": "Javatar: Build...",
+        "command": "javatar_build"
+    },
+    {
         "caption": "Javatar: Call...",
         "command": "javatar_call"
     },

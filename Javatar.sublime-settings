@@ -1,4 +1,10 @@
 {
+	//Java build system (based on default JavaC)
+	"build_system" : "javac \"$file\"",
+
+	//Build command prefix (make command to be "build_command": "build_system")
+	"build_command" : "shell_cmd",
+
 	//Default delay before hide a status text
 	"status_delay" : 5000,
 
@@ -17,7 +23,7 @@
 	//Package name prefix using RegEx
 	"package_name_prefix" : "package\\s+",
 
-	//Package validation using RegEx
+	//Package name using RegEx
 	"package_name_scope" : "([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*",
 
 	//Package name suffix using RegEx
