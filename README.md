@@ -145,13 +145,24 @@ Javatar snippets is a dynamic snippet which will change part of the file to corr
 
 You can make your own snippet to use within Javatar by create a new file ends with `.javatar`
 
-Snippet file name will be used as a type of classes which show in input panel when create a new file (`%type% Name:`), on error dialog (`%type% %name% already exists`) and in status bar when file was created (`%type% %name% is created within package %package%`).
+Snippet class tag (for more informations about snippet tags, see below) will be used as a type of classes which show in input panel when create a new file (`%type% Name:`), on error dialog (`%type% %name% already exists`) and in status bar when file was created (`%type% %name% is created within package %package%`).
 
 Example of Javatar's snippets is inside Javatar's snippets folder (`PACKAGE_PATH/Javatar/snippets` or similar)
 
-#### Snippets Macros
+#### Snippet Tags
 
-The following macros are used inside Javatar snippet file (*.javatar) which will be parsed by plugin and Sublime Text
+The following tags are used inside Javatar snippet files (*.javatar) which will be used by Javatar to display proper command to the user
+
+* %class:*TYPE OF CLASS*%
+* %description:*DESCRIPTION TO SHOW UNDER CREATION COMMAND*%
+
+##### Usage of snippet tags in action
+![CreateNewSS](http://spywhere.github.io/images/CreateNewSS.jpg)
+
+
+#### Snippet Macros
+
+The following macros are used inside Javatar snippet files (*.javatar) which will be parsed by Javatar and Sublime Text
 
 * %package_path% = Package path
 * %class% = Class name

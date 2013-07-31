@@ -1,3 +1,5 @@
+%class:Interface%
+%description:Create a new empty interface%
 %package%
 
 public interface %class% {

@@ -28,17 +28,16 @@ def getInfo(text):
     return {"file": file, "package": package, "class": className, "relative": relative}
 
 
-def getFileContents(file, info):
-    filename = getSnippet(file)
-    if filename == "":
-        sublime.error_message("Snippet \"" + file + "\" not found")
-        return ""
-    f = open(filename, "r")
-    data = f.read()
+def getFileContents(classType, info):
+    data = getSnippet(classType)
+    if data is None:
+        sublime.error_message("Snippet \"" + classType + "\" is not found")
+        return None
     if info["package"] != "":
         data = re.sub("%package%", "package " + info["package"] + ";", data)
     else:
         data = re.sub("%package%", "", data)
+
     data = re.sub("%class%", info["class"], data)
     data = re.sub("%file%", info["file"], data)
     data = re.sub("%file_name%", getPath("name", info["file"]), data)
@@ -57,6 +56,8 @@ def insertAndSave(view, contents):
 
 
 def createClassFile(file, contents, msg):
+    if contents is None:
+        return
     if os.path.exists(file):
         sublime.error_message(msg)
         return

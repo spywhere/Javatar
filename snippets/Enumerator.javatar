@@ -1,5 +1,7 @@
+%class:Enumerator%
+%description:Create a new empty enumerator%
 %package%
 
 public enum %class% {
-	${1}	
+	${1}
 }

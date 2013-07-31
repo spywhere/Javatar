@@ -1,3 +1,5 @@
+%class:Class%
+%description:Create a new empty class%
 %package%
 
 public class %class% {
