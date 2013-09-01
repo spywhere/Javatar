@@ -1,0 +1,299 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Javatar by spywhere</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Javatar</h1>
+        <p>Java Development Plugin for Sublime Text 3</p>
+        <p class="view"><a href="https://github.com/spywhere/Javatar">View the Project on GitHub <small>spywhere/Javatar</small></a></p>
+        <ul>
+          <li><a href="https://github.com/spywhere/Javatar/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/spywhere/Javatar/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/spywhere/Javatar">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h2>
+<a name="javatar" class="anchor" href="#javatar"><span class="octicon octicon-link"></span></a>Javatar</h2>
+
+<h3>
+<a name="status-beta" class="anchor" href="#status-beta"><span class="octicon octicon-link"></span></a>Status: Beta</h3>
+
+<p>A Sublime Text 3 Plugin for Java Development</p>
+
+<h3>
+<a name="features" class="anchor" href="#features"><span class="octicon octicon-link"></span></a>Features</h3>
+
+<ul>
+<li>[+] Package, SubPackage creation</li>
+<li>[+] Class, Interface, Enumerator snippets with packge/class auto-complete</li>
+<li>[+] Project Compile</li>
+<li>[-] JAR file export (included executable)</li>
+<li>[*] Rename/Move packages/classes</li>
+<li>[+] Package path in status bar</li>
+</ul><p>[+] Fully working<br>
+[*] Work in progress<br>
+[-] Unavailable at this moment</p>
+
+<h3>
+<a name="screenshots" class="anchor" href="#screenshots"><span class="octicon octicon-link"></span></a>Screenshots</h3>
+
+<h4>
+<a name="creating-packages-in-action" class="anchor" href="#creating-packages-in-action"><span class="octicon octicon-link"></span></a>Creating packages in action</h4>
+
+<p><img src="http://spywhere.github.io/images/CreatePackage.gif" alt="CreatePackage"></p>
+
+<h4>
+<a name="creating-classes-in-action" class="anchor" href="#creating-classes-in-action"><span class="octicon octicon-link"></span></a>Creating classes in action</h4>
+
+<p><img src="http://spywhere.github.io/images/CreateClass.gif" alt="CreateClass"></p>
+
+<h4>
+<a name="creating-other-classes-in-action" class="anchor" href="#creating-other-classes-in-action"><span class="octicon octicon-link"></span></a>Creating other classes in action</h4>
+
+<p><img src="http://spywhere.github.io/images/CreateOther.gif" alt="CreateOther"></p>
+
+<h4>
+<a name="class-operations-in-action" class="anchor" href="#class-operations-in-action"><span class="octicon octicon-link"></span></a>Class operations in action</h4>
+
+<p><img src="http://spywhere.github.io/images/Operations.gif" alt="Operation"></p>
+
+<h3>
+<a name="commands" class="anchor" href="#commands"><span class="octicon octicon-link"></span></a>Commands</h3>
+
+<ul>
+<li>Build
+
+<ul>
+<li>Build is mostly use for project or package build since class build can be accessed by default shortcut key (Control+B or Command+B)</li>
+<li>Build commands can be accessed via command palette only</li>
+</ul>
+</li>
+<li>Call
+
+<ul>
+<li>Call is used to insert any information about package and class</li>
+<li>Mostly accessed by shortcut keys (see below)</li>
+</ul>
+</li>
+<li>Packages/Classes Creation
+
+<ul>
+<li>Packages/Classes can be create via command palette only</li>
+</ul>
+</li>
+<li>Packages/Classes Operation
+
+<ul>
+<li>Operation is used to edit current java file like correcting invalid class name or package path</li>
+</ul>
+</li>
+</ul><h4>
+<a name="commands-list" class="anchor" href="#commands-list"><span class="octicon octicon-link"></span></a>Commands List</h4>
+
+<p>The following commands can be accessed via <em>Command Palette</em> (Control+Shift+P or Super+Shift+P)</p>
+
+<ul>
+<li>Build...</li>
+<li>Call...</li>
+<li>Create new...</li>
+<li>Operations...</li>
+<li>Create Package</li>
+<li>Create Class/Interface/Enumerator</li>
+</ul><p><em>All commands will be prefixed by "Javatar: " in order to prevent conflict with another plugins</em><br><em>Did you know? You can type "Javatar:" in command palette to see all available commands</em></p>
+
+<h4>
+<a name="javatar-call" class="anchor" href="#javatar-call"><span class="octicon octicon-link"></span></a>Javatar Call</h4>
+
+<p>Javatar Call is used to insert any information about packages and class like full package path and class name at your cursor point. Javatar Call supports 4 type of data you can insert which are <code>Full Package Path</code>, <code>Current Package Name</code>, <code>Class Name</code> and <code>Full Class Name</code></p>
+
+<h4>
+<a name="javatar-operations" class="anchor" href="#javatar-operations"><span class="octicon octicon-link"></span></a>Javatar Operations</h4>
+
+<p>Javatar Operations is a command that helps you edit current java file. Javatar Operations supports only one operation at this moment (more to come soon!) which is <code>Correct Class</code></p>
+
+<p><strong>Operations List</strong></p>
+
+<ul>
+<li>Correct Class
+
+<ul>
+<li>Change class name correspond to file name and change package to proper package location</li>
+</ul>
+</li>
+</ul><h4>
+<a name="advanced-creation" class="anchor" href="#advanced-creation"><span class="octicon octicon-link"></span></a>Advanced Creation</h4>
+
+<p>In creation mode, all packages/classes will be created relative to current package. If you want to create from default package (root package), you must specify <code>~</code> (tilde) before package/class name. It's also able to create packages/classes corresponded to package path as example below</p>
+
+<p>Input: <code>Alpha</code><br>
+Result as Class: <code>Class "Alpha" is created in current package</code><br>
+Result as Package: <code>Package "Alpha" is created in current package</code></p>
+
+<p>Input: <code>~Beta</code><br>
+Result as Class: <code>Class "Beta" is created in default package</code><br>
+Result as Package: <code>Package "Beta" is created in default package</code></p>
+
+<p>Input: <code>me.spywhere.Alpha</code><br>
+Result as Class: <code>Class "Alpha" is created in "(current package).me.spywhere" package</code><br>
+Result as Package: <code>Package "Alpha" is created in "(current package).me.spywhere" package</code></p>
+
+<p>Input: <code>~me.spywhere.Beta</code><br>
+Result as Class: <code>Class "Beta" is created in "me.spywhere"</code><br>
+Result as Package: <code>Package "Beta" is created in "me.spywhere"</code></p>
+
+<h3>
+<a name="default-package-detection" class="anchor" href="#default-package-detection"><span class="octicon octicon-link"></span></a>Default Package Detection</h3>
+
+<p>Javatar will specify default package from project folder in your project file. If project file is not found, it will specify current folder which contains current working file as default package. If current folder is not found, it will specify current package as <code>(Unknown Package)</code>. Create packages/classes within unknown package will cause Javatar to refuse to create packages/classes. In that case, mostly because file is not on the disk yet.</p>
+
+<h3>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h3>
+
+<p>You can install Javatar via <a href="http://wbond.net/sublime_packages/package_control">Sublime Package Control</a> or by clone this repository into your <em>Sublime Text 3 / Packages</em> folder</p>
+
+<pre><code>cd PACKAGES_PATH
+git clone git://github.com/spywhere/Javatar.git
+</code></pre>
+
+<p>PACKAGES_PATH is related to folder which can be accessed via the <em>Preference &gt; Browse Packages...</em></p>
+
+<h3>
+<a name="settings" class="anchor" href="#settings"><span class="octicon octicon-link"></span></a>Settings</h3>
+
+<p>Settings are accessed via the <em>Preferences &gt; Package Settings &gt; Javatar</em> or via command palette by type <em>"Preference Javatar"</em></p>
+
+<p>Default settings should not be modified. However, you can copy the relevant settings into Javatar's user settings file</p>
+
+<h4>
+<a name="key-bindings" class="anchor" href="#key-bindings"><span class="octicon octicon-link"></span></a>Key Bindings</h4>
+
+<p>You can access keymap via the preference menu or via command palette same as settings</p>
+
+<p><strong>Default Key Binding</strong></p>
+
+<p><em>All commands start with <code>Key+Shift+K</code> then follows by their shortcut key</em></p>
+
+<ul>
+<li>Build... : <code>Key+Shift+B</code>
+
+<ul>
+<li>This will open quick panel to select which build you want to perform</li>
+</ul>
+</li>
+<li>Call... : <code>Key+Shift+J</code>
+
+<ul>
+<li>This will open quick panel to select which data you want to insert</li>
+</ul>
+</li>
+<li>Create new... : <code>Key+Shift+L</code>
+
+<ul>
+<li>This will open quick panel to select which class you want to create</li>
+</ul>
+</li>
+<li>Operations... : <code>Key+Shift+O</code>
+
+<ul>
+<li>This will open quick panel to select which operation you want to perform</li>
+</ul>
+</li>
+<li>Insert full package path: <code>Key+Shift+P</code>
+
+<ul>
+<li><strong>Example:</strong></li>
+<li>Package.SubPackage</li>
+</ul>
+</li>
+<li>Insert current package name: <code>Key+Shift+S</code>
+
+<ul>
+<li><strong>Example:</strong></li>
+<li>SubPackage</li>
+</ul>
+</li>
+<li>Insert current class name: <code>Key+Shift+C</code>
+
+<ul>
+<li><strong>Example:</strong></li>
+<li>Class</li>
+</ul>
+</li>
+<li>Insert full class path: <code>Key+Shift+F</code>
+
+<ul>
+<li><strong>Example:</strong></li>
+<li>Package.SubPackage.Class</li>
+</ul>
+</li>
+</ul><p><code>Key</code> can be related to Windows <em><code>Control</code>* or OS X *<code>Command</code></em></p>
+
+<h3>
+<a name="build-system" class="anchor" href="#build-system"><span class="octicon octicon-link"></span></a>Build System</h3>
+
+<p>Javatar's build system use Sublime Text execute command to build your classes. Javatar build parameters are based on default Sublime Text's JavaC build settings. You can change the build command via Javatar settings file</p>
+
+<p><em>Please note that Javatar project/package build cannot show any compilation errors (or may show only last built class) since it build all your classes in order</em></p>
+
+<h3>
+<a name="snippets" class="anchor" href="#snippets"><span class="octicon octicon-link"></span></a>Snippets</h3>
+
+<p>Javatar snippets is a dynamic snippet which will change part of the file to correspond with package path and class name. By using macros, you can specify which part of the file you want to fill the data to.</p>
+
+<p>You can make your own snippet to use within Javatar by create a new file ends with <code>.javatar</code></p>
+
+<p>Snippet class tag (for more informations about snippet tags, see below) will be used as a type of classes which show in input panel when create a new file (<code>%type% Name:</code>), on error dialog (<code>%type% %name% already exists</code>) and in status bar when file was created (<code>%type% %name% is created within package %package%</code>).</p>
+
+<p>Example of Javatar's snippets is inside Javatar's snippets folder (<code>PACKAGE_PATH/Javatar/snippets</code> or similar)</p>
+
+<h4>
+<a name="snippet-tags" class="anchor" href="#snippet-tags"><span class="octicon octicon-link"></span></a>Snippet Tags</h4>
+
+<p>The following tags are used inside Javatar snippet files (*.javatar) which will be used by Javatar to display proper command to the user</p>
+
+<ul>
+<li>%class:*TYPE OF CLASS*%</li>
+<li>%description:*DESCRIPTION TO SHOW UNDER CREATION COMMAND*%</li>
+</ul><h5>
+<a name="usage-of-snippet-tags-in-action" class="anchor" href="#usage-of-snippet-tags-in-action"><span class="octicon octicon-link"></span></a>Usage of snippet tags in action</h5>
+
+<p><img src="http://spywhere.github.io/images/CreateNewSS.jpg" alt="CreateNewSS"></p>
+
+<h4>
+<a name="snippet-macros" class="anchor" href="#snippet-macros"><span class="octicon octicon-link"></span></a>Snippet Macros</h4>
+
+<p>The following macros are used inside Javatar snippet files (*.javatar) which will be parsed by Javatar and Sublime Text</p>
+
+<ul>
+<li>%package_path% = Package path</li>
+<li>%class% = Class name</li>
+<li>%file% = File path</li>
+<li>%file_name% = File name (equivalent to <code>%class%.java</code>)</li>
+<li>%package% = Package code (for example <code>package java.utils;</code> or same as <code>package %package_path%;</code>)</li>
+<li>All Sublime Text's snippet macros can be used within Javatar snippets. For example: ${1} or ${2://Comment}</li>
+</ul>
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by <a href="https://github.com/spywhere">spywhere</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
