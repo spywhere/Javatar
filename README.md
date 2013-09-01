@@ -6,7 +6,7 @@ A Sublime Text 3 Plugin for Java Development
 
 ### Features
  * [+] Package, SubPackage creation
- * [+] Class, Interface, Enumerator snippets with packge/class auto-complete
+ * [+] Class (also Abstract), Interface, Enumerator snippets with packge/class auto-complete
  * [+] Project Compile
  * [-] JAR file export (included executable)
  * [*] Rename/Move packages/classes
@@ -48,7 +48,7 @@ The following commands can be accessed via *Command Palette* (Control+Shift+P or
 * Create new...
 * Operations...
 * Create Package
-* Create Class/Interface/Enumerator
+* Create (Abstract) Class/Interface/Enumerator
 
 *All commands will be prefixed by "Javatar: " in order to prevent conflict with another plugins*<br />
 *Did you know? You can type "Javatar:" in command palette to see all available commands*
@@ -91,7 +91,7 @@ Result as Package: `Package "Beta" is created in "me.spywhere"`
 Javatar will specify default package from project folder in your project file. If project file is not found, it will specify current folder which contains current working file as default package. If current folder is not found, it will specify current package as `(Unknown Package)`. Create packages/classes within unknown package will cause Javatar to refuse to create packages/classes. In that case, mostly because file is not on the disk yet.
 
 ### Installation
-You can install Javatar via [Sublime Package Control](http://wbond.net/sublime_packages/package_control) or by clone this repository into your *Sublime Text 3 / Packages* folder
+You can install Javatar via [Sublime Package Control](https://sublime.wbond.net/installation) or by clone this repository into your *Sublime Text 3 / Packages* folder
 
 	cd PACKAGES_PATH
 	git clone git://github.com/spywhere/Javatar.git
