@@ -1,0 +1,53 @@
+[
+    {
+        "caption": "QuickMenu: Demo...",
+        "command": "quick_menu"
+    },
+    {
+        "caption": "QuickMenu: Submenu > Dialogs",
+        "command": "quick_menu",
+        "args": {
+        	"select": {
+        		"name": "dialogs",
+        	}
+        }
+    },
+    {
+        "caption": "QuickMenu: Submenu > Items",
+        "command": "quick_menu",
+        "args": {
+        	"select": {
+        		"name": "items",
+        	}
+        }
+    },
+    {
+        "caption": "QuickMenu: Submenu > Commands",
+        "command": "quick_menu",
+        "args": {
+        	"select": {
+        		"name": "commands",
+        	}
+        }
+    },
+    {
+        "caption": "QuickMenu: Select > Item 2 on Commands Menu",
+        "command": "quick_menu",
+        "args": {
+        	"select": {
+        		"name": "commands",
+        		"item": 2
+        	}
+        }
+    },
+    {
+        "caption": "QuickMenu: Command > Hello, World!",
+        "command": "quick_menu",
+        "args": {
+        	"select": {
+        		"command": "message_dialog",
+        		"args": "Hello, World!"
+        	}
+        }
+    }
+]
