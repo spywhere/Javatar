@@ -6,11 +6,16 @@ import sublime
 SNIPPETS = []
 
 
+def resetSnippets():
+    global SNIPPETS
+    SNIPPETS = []
+
+
 def analyseSnippet(file):
     f = open(file, "r")
     data = f.read()
     classScope = None
-    classRe = re.search("%class:(.*)%(\\s*)", data, re.I | re.M)
+    classRe = re.search("%class:(.*)%(\\s*)", data, re.M)
     if classRe is not None:
         classScope = classRe.group(0)
         data = re.sub("%class:(.*)%(\\s*)", "", data)
@@ -22,7 +27,7 @@ def analyseSnippet(file):
         classScope = getPath("name", file)[:-8]
 
     descriptionScope = ""
-    descriptionRe = re.search("%description:(.*)%(\\s*)", data, re.I | re.M)
+    descriptionRe = re.search("%description:(.*)%(\\s*)", data, re.M)
     if descriptionRe is not None:
         descriptionScope = descriptionRe.group(0)
         data = re.sub("%description:(.*)%(\\s*)", "", data)

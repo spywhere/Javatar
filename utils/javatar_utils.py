@@ -3,18 +3,37 @@ import os
 
 
 STATUS = "Javatar"
+SETTINGSBASE = None
 SETTINGS = None
 
 
+def reset():
+    global SETTINGS, SETTINGSBASE
+    SETTINGS = None
+    SETTINGSBASE = None
+    from .javatar_collections import resetSnippets
+    resetSnippets()
+
+
 def readSettings(config):
-    global SETTINGS
-    SETTINGS = config
+    global SETTINGS, SETTINGSBASE
+    SETTINGSBASE = config
+    SETTINGS = sublime.load_settings(config)
     from .javatar_collections import getSnippetFiles
     getSnippetFiles()
 
 
 def getSettings(key):
     return SETTINGS.get(key)
+
+
+def setSettings(key, val):
+    SETTINGS.set(key, val)
+    sublime.save_settings(SETTINGSBASE)
+
+
+def isStable():
+    return str.lower(getSettings("package_channel")) == "stable"
 
 
 def normalizePath(path):
@@ -137,5 +156,7 @@ def getPath(type="", dir="", dir2=""):
         return os.path.basename(dir)
     elif type == "join":
         return os.path.join(dir, dir2)
+    elif type == "exist":
+        return os.path.exists(dir)
     else:
         return ""

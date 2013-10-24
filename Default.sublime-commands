@@ -1,15 +1,34 @@
 [
     {
-        "caption": "Javatar: Build...",
-        "command": "javatar_build"
+        "caption": "Javatar: Browse Commands...",
+        "command": "javatar"
     },
     {
-        "caption": "Javatar: Call...",
-        "command": "javatar_call"
+        "caption": "Javatar: Builds...",
+        "command": "javatar",
+        "args": {
+            "action": {
+                "name": "builds"
+            }
+        }
+    },
+    {
+        "caption": "Javatar: Calls...",
+        "command": "javatar",
+        "args": {
+            "action": {
+                "name": "calls"
+            }
+        }
     },
     {
         "caption": "Javatar: Create new...",
-        "command": "javatar_create"
+        "command": "javatar",
+        "args": {
+            "action": {
+                "name": "creates"
+            }
+        }
     },
     {
         "caption": "Javatar: Create Abstract Class",
@@ -41,7 +60,12 @@
     },
     {
         "caption": "Javatar: Operations...",
-        "command": "javatar_operation"
+        "command": "javatar",
+        "args": {
+            "action": {
+                "name": "operations"
+            }
+        }
     },
     {
         "caption": "Preferences: Javatar Settings – Default",

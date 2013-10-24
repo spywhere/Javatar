@@ -11,12 +11,12 @@ def isJava(file=""):
         file = view.file_name()
     if file is None:
         return False
-    return re.match(getSettings("java_file_validation"), file, re.I | re.M) is not None
+    return re.match(getSettings("java_file_validation"), file, re.M) is not None
 
 
 def isPackage(package):
     from .javatar_utils import getSettings
-    return re.match(getSettings("package_name_scope"), package, re.I) is not None
+    return re.match(getSettings("package_name_scope"), package) is not None
 
 
 def isProject(window=None):

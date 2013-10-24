@@ -11,8 +11,8 @@ def normalizePackage(package):
 
 def analyseJavaContents(contents):
     from .javatar_utils import getSettings
-    packageScope = re.search(getSettings("package_name_prefix")+getSettings("package_name_scope")+getSettings("package_name_suffix"), contents, re.I | re.M).group(0)
-    classScope = re.search(getSettings("class_name_prefix")+getSettings("class_name_scope")+getSettings("class_name_suffix"), contents, re.I | re.M).group(0)
+    packageScope = re.search(getSettings("package_name_prefix")+getSettings("package_name_scope")+getSettings("package_name_suffix"), contents, re.M).group(0)
+    classScope = re.search(getSettings("class_name_prefix")+getSettings("class_name_scope")+getSettings("class_name_suffix"), contents, re.M).group(0)
     packageScope = re.sub(getSettings("package_name_prefix"), "", packageScope)
     packageScope = re.sub(getSettings("package_name_suffix"), "", packageScope)
     classScope = re.sub(getSettings("class_name_prefix"), "", classScope)
@@ -22,12 +22,12 @@ def analyseJavaContents(contents):
 
 def getPackagePath(text):
     from .javatar_utils import getSettings
-    return normalizePackage(re.search(getSettings("package_match"), text, re.I | re.M).group(0))
+    return normalizePackage(re.search(getSettings("package_match"), text, re.M).group(0))
 
 
 def getClassName(text):
     from .javatar_utils import getSettings
-    return re.search(getSettings("class_match"), text, re.I | re.M).group(0)
+    return re.search(getSettings("package_class_match"), text, re.M).group(0)
 
 
 def packageAsDirectory(package):

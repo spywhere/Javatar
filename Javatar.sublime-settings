@@ -1,4 +1,14 @@
 {
+	//Package Subscription:
+	//   dev = Developer release (contains new features, bugs and also debugging messages enabled)
+	//   stable = Stable release (safe to use, only stable feature enabled)
+	"package_channel" : "stable",
+
+	//Update message id
+	//   -1 = Unsubscribe to important package updates notification (you should check out the README file for any updates information)
+	//   any other number = Assigned by package to show you proper updates message
+	"message_id" : 0,
+
 	//Java build system (based on default JavaC)
 	"build_system" : "javac \"$file\"",
 
@@ -14,11 +24,29 @@
 	//Java file validation using RegEx
 	"java_file_validation" : ".*.java$",
 
+	//Class matching using RegEx
+	"class_match" : "([a-zA-Z_$][a-zA-Z\\d_$]*)(?=\\s+([a-zA-Z_$][a-zA-Z\\d_$]*)(\\s+=[^=]|\\s*,|\\s*;|\\)))",
+
+	//Static class matching using RegEx (roughly)
+	"static_class_match" : "\\b(?<![\\.])([a-zA-Z\\d_$]*)(?=\\.[^\\(\\s]+\\(.*;)",
+
+	//Base type matching
+	"base_type_match" : "([a-zA-Z_$][a-zA-Z\\d_$]*)(?=(\\s*,.*)?>(\\s*\\(|\\s+[^=;]*[=;]))",
+
+	//Variable matching using RegEx
+	"variable_match" : "\\b(?<!=[\\s]|\\()([a-zA-Z_$][a-zA-Z\\d_$]*)(?=\\s*,[^;];|\\s*;|(,.*)?\\)[\\s\\n]*{|\\s*=\\s*.*[;\\)])",
+
+	//Package element matching using RegEx
+	"package_element_match" : "[a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*(?=\\.[^\\(,]*\\s)",
+
+	//Import package matching using RegEx
+	"import_match" : "(?<=import\\s).*(?=;)",
+
 	//Package matching using RegEx
 	"package_match" : "([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*",
 
-	//Class matching using RegEx
-	"class_match" : "([a-zA-Z_$][a-zA-Z\\d_$]*)$",
+	//Class in package matching using RegEx
+	"package_class_match" : "([a-zA-Z_$][a-zA-Z\\d_$]*)$",
 
 	//Package name prefix using RegEx
 	"package_name_prefix" : "package\\s+",

@@ -4,3 +4,4 @@ from Javatar.commands.javatar_class import *
 from Javatar.commands.javatar_jar import *
 from Javatar.commands.javatar_operation import *
 from Javatar.commands.javatar_package import *
+from Javatar.commands.javatar_menu import *

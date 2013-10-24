@@ -76,8 +76,6 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
             info = getInfo(text)
             createClassFile(info["file"], getFileContents(self.type, info), self.type + "\"" + info["class"] + "\" already exists")
             sublime.set_timeout(lambda: showStatus(self.type + " \"" + info["class"] + "\" is created within package \"" + toReadablePackage(info["package"], True) + "\""), 500)
-        else:
-            sublime.active_window().show_quick_panel(getSnippetList(), self.showInput)
 
     def showInput(self, index, type=""):
         if type != "" or index >= 0:

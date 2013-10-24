@@ -10,11 +10,22 @@ A Sublime Text 3 Plugin for Java Development
  * [+] Project Compile
  * [-] JAR file export (included executable)
  * [*] Rename/Move packages/classes
+ * [*] Organize Imports
  * [+] Package path in status bar
 
-[+] Fully working<br />
-[*] Work in progress<br />
-[-] Unavailable at this moment
+[+] Available on Stable channel<br />
+[*] Partly available on Development channel<br />
+[-] Planned
+
+### Updates in latest build
+ * Now using [QuickMenu](https://github.com/spywhere/QuickMenu) for easier command browsing
+ * Working on Java AST as suggested by someone
+ * Package update status: Showing you the latest important news about a new build
+ * Package channel: Dev or Stable (so there will be more updates but not affect any part of stable channel)
+ * Due to working with Java AST, current RegEx system may be changed/removed.
+ * Due to working with Organize Imports feature, please check your RegEx settings since it has been added/changed to support upcoming feature.
+ 
+
 
 ### Screenshots
 
@@ -43,19 +54,19 @@ A Sublime Text 3 Plugin for Java Development
 
 The following commands can be accessed via *Command Palette* (Control+Shift+P or Super+Shift+P)
 
-* Build...
-* Call...
+* Builds...
+* Calls...
 * Create new...
 * Operations...
 * Create Package
 * Create (Abstract) Class/Interface/Enumerator
 
 *All commands will be prefixed by "Javatar: " in order to prevent conflict with another plugins*<br />
-*Did you know? You can type "Javatar:" in command palette to see all available commands*
+*Did you know? You can type "Javatar: Browse Commands" in command palette to see all available commands separated by category*
 
-#### Javatar Call
+#### Javatar Calls
 
-Javatar Call is used to insert any information about packages and class like full package path and class name at your cursor point. Javatar Call supports 4 type of data you can insert which are `Full Package Path`, `Current Package Name`, `Class Name` and `Full Class Name`
+Javatar Calls is used to insert any information about packages and class like full package path and class name at your cursor point. Javatar Call supports 4 type of data you can insert which are `Full Package Path`, `Current Package Name`, `Class Name` and `Full Class Name`
 
 #### Javatar Operations
 
@@ -131,7 +142,7 @@ You can access keymap via the preference menu or via command palette same as set
 	* **Example:**
 	* Package.SubPackage.Class
 
-`Key` can be related to Windows *`Control`* or OS X *`Command`*
+`Key` can be related to Windows `Control` or OS X `Command`
 
 ### Build System
 
@@ -145,7 +156,7 @@ Javatar snippets is a dynamic snippet which will change part of the file to corr
 
 You can make your own snippet to use within Javatar by create a new file ends with `.javatar`
 
-Snippet class tag (for more informations about snippet tags, see below) will be used as a type of classes which show in input panel when create a new file (`%type% Name:`), on error dialog (`%type% %name% already exists`) and in status bar when file was created (`%type% %name% is created within package %package%`).
+Snippet class tags (for more informations about snippet tags, see below) will be used as a type of classes which show in input panel when create a new file (`%type% Name:`), on error dialog (`%type% %name% already exists`) and in status bar when file was created (`%type% %name% is created within package %package%`).
 
 Example of Javatar's snippets is inside Javatar's snippets folder (`PACKAGE_PATH/Javatar/snippets` or similar)
 
@@ -170,3 +181,12 @@ The following macros are used inside Javatar snippet files (*.javatar) which wil
 * %file_name% = File name (equivalent to `%class%.java`)
 * %package% = Package code (for example `package java.utils;` or same as `package %package_path%;`)
 * All Sublime Text's snippet macros can be used within Javatar snippets. For example: ${1} or ${2://Comment}
+
+### Package Channels
+#### Stable Channel
+Stable channel is a default channel for every user who installed Javatar. This channel will release only fully working features.
+### Development Channel
+Development channel is a optional channel for user who want to try upcoming features which may not fully working or need improvements. All upcoming features will appear in `Javatar: Browse Commands > Development Section` only.
+
+### Package Updates Notifications
+In order to notice important notes to all users, in stable channel or development channel or both, Javatar use custom notification system which will notice you *only once* when Javatar is ready to use. You can opt out this notification by settings `message_id` to `-1` in Javatar's user settings file, note that you can see update notes in README file or you will miss further important update notes.

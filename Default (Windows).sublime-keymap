@@ -1,16 +1,36 @@
 [
     {
         "keys": ["ctrl+shift+k","ctrl+shift+j"],
-        "command": "javatar_call"
+        "command": "javatar",
+        "args": {
+            "action": {
+                "name": "calls"
+            }
+        }
     },{
         "keys": ["ctrl+shift+k","ctrl+shift+b"],
-        "command": "javatar_build"
+        "command": "javatar",
+        "args": {
+            "action": {
+                "name": "builds"
+            }
+        }
     },{
         "keys": ["ctrl+shift+k","ctrl+shift+l"],
-        "command": "javatar_create"
+        "command": "javatar",
+        "args": {
+            "action": {
+                "name": "creates"
+            }
+        }
     },{
         "keys": ["ctrl+shift+k","ctrl+shift+o"],
-        "command": "javatar_operation"
+        "command": "javatar",
+        "args": {
+            "action": {
+                "name": "operations"
+            }
+        }
     },{
         "keys": ["ctrl+shift+k","ctrl+shift+p"],
         "command": "javatar_call",

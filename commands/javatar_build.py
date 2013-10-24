@@ -5,8 +5,6 @@ from Javatar.utils import *
 
 
 class JavatarBuildCommand(sublime_plugin.WindowCommand):
-    build_list = [["Project", "Build all classes in project"], ["Package", "Build all classes in current package"], ["Current Class", "Build current class"]]
-
     def buildFile(self, file):
         if isJava(file):
             print(file)
@@ -52,13 +50,9 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
                     sublime.error_message("Current file is not Java")
             else:
                 sublime.error_message("Unknown class location")
-        else:
-            view.window().show_quick_panel(self.build_list, self.build)
-
-    def build(self, index=-1):
-        if index == 0:
-            self.run("project")
-        elif index == 1:
-            self.run("package")
-        elif index == 2:
-            self.run("class")
+        elif type == "test":
+            window = sublime.active_window()
+            panel = window.create_output_panel("Javatar")
+            window.run_command("show_panel", {"panel": "output.Javatar"})
+            panel.run_command("insert_snippet", {"contents": "Hello, World?"})
+            panel.set_read_only(True)
