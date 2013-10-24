@@ -19,7 +19,7 @@ A Sublime Text 3 Plugin for Java Development
 
 ### Updates in latest build
  * Now using [QuickMenu](https://github.com/spywhere/QuickMenu) for easier command browsing
- * Working on Java AST as suggested by someone
+ * Working on Java AST as [suggested](https://github.com/spywhere/Javatar/issues/1) by [gsingh93](https://github.com/gsingh93)
  * Package update status: Showing you the latest important news about a new build
  * Package channel: Dev or Stable (so there will be more updates but not affect any part of stable channel)
  * Due to working with Java AST, current RegEx system may be changed/removed.
