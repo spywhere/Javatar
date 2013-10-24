@@ -1,3 +1,6 @@
+# QuickMenu by: spywhere
+# Please give credit to me!
+
 import copy
 import sublime
 
@@ -22,8 +25,8 @@ class QuickMenu:
 		self.settings["max_level"] = max_level
 		self.settings["silent"] = silent
 
-	def set(self, item, value):
-		self.settings[item] = value
+	def set(self, key, value):
+		self.settings[key] = value
 
 	def setMenu(self, name, menu):
 		self.settings["menu"][name] = copy.deepcopy(menu)
@@ -38,7 +41,7 @@ class QuickMenu:
 			self.settings["menu"][menu]["items"] += copy.deepcopy(items)
 			self.settings["menu"][menu]["actions"] += copy.deepcopy(actions)
 
-	def show(self, window=None, on_done=None, menu=None, select=None, flags=0, on_highlight=None, level=0):
+	def show(self, window=None, on_done=None, menu=None, action=None, flags=0, on_highlight=None, level=0):
 		selected_index = -1
 		if window is None and self.tmp["window"] is not None:
 			window = self.tmp["window"]
@@ -57,38 +60,38 @@ class QuickMenu:
 			self.tmp["menu"] = None
 		if menu is None or "items" not in menu:
 			menu = self.settings["menu"]["main"]
-		if select is None and self.tmp["select"] is not None:
-			select = self.tmp["select"]
+		if action is None and self.tmp["select"] is not None:
+			action = self.tmp["select"]
 			self.tmp["select"] = None
-		if select is not None:
-			if "name" in select:
-				if select["name"] not in self.settings["menu"]:
+		if action is not None:
+			if "name" in action:
+				if action["name"] not in self.settings["menu"]:
 					if not self.settings["silent"]:
 							sublime.message_dialog("No menu found")
 					return
-				menu = self.settings["menu"][select["name"]]
-				if "item" in select and "actions" in menu:
+				menu = self.settings["menu"][action["name"]]
+				if "item" in action and "actions" in menu:
 					if level >= self.settings["max_level"]:
 						if not self.settings["silent"]:
 							sublime.message_dialog("Seem like menu go into too many levels now...")
 						return
-					if len(menu["actions"]) < select["item"]:
+					if len(menu["actions"]) < action["item"]:
 						if not self.settings["silent"]:
 							sublime.message_dialog("Invalid menu selection")
 						return
 					self.tmp["sublime"] = False
-					self.show(window, on_done, menu, menu["actions"][select["item"]-1], flags, on_highlight, level+1)
+					self.show(window, on_done, menu, menu["actions"][action["item"]-1], flags, on_highlight, level+1)
 					return
-			elif "command" in select:
-				if "args" in select:
-					if select["command"] == "message_dialog":
-						sublime.message_dialog(select["args"])
-					elif select["command"] == "error_dialog":
-						sublime.error_message(select["args"])
+			elif "command" in action:
+				if "args" in action:
+					if action["command"] == "message_dialog":
+						sublime.message_dialog(action["args"])
+					elif action["command"] == "error_dialog":
+						sublime.error_message(action["args"])
 					else:
-						sublime.active_window().run_command(select["command"], select["args"])
+						sublime.active_window().run_command(action["command"], action["args"])
 				else:
-					sublime.active_window().run_command(select["command"])
+					sublime.active_window().run_command(action["command"])
 				return
 			elif not self.settings["silent"]:
 				sublime.message_dialog("No action assigned")
