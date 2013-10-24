@@ -1,9 +1,10 @@
+import copy
 import sublime
 
 
 class QuickMenu:
 	settings = {
-		"menu": None,
+		"menu": [],
 		"max_level": 50,
 		"silent": False
 	}
@@ -16,13 +17,26 @@ class QuickMenu:
 		"level": 0
 	}
 
-	def __init__(self, menu=None, max_level=50, silent=False):
-		self.settings["menu"] = menu
+	def __init__(self, menu=[], silent=False, max_level=50):
+		self.settings["menu"] = copy.deepcopy(menu)
 		self.settings["max_level"] = max_level
 		self.settings["silent"] = silent
 
 	def set(self, item, value):
 		self.settings[item] = value
+
+	def setMenu(self, name, menu):
+		self.settings["menu"][name] = copy.deepcopy(menu)
+
+	def setItems(self, menu, items, actions):
+		if menu in self.settings["menu"] and "items" in self.settings["menu"][menu] and "actions" in self.settings["menu"][menu]:
+			self.settings["menu"][menu]["items"] = copy.deepcopy(items)
+			self.settings["menu"][menu]["actions"] = copy.deepcopy(actions)
+
+	def addItems(self, menu, items, actions):
+		if menu in self.settings["menu"] and "items" in self.settings["menu"][menu] and "actions" in self.settings["menu"][menu]:
+			self.settings["menu"][menu]["items"] += copy.deepcopy(items)
+			self.settings["menu"][menu]["actions"] += copy.deepcopy(actions)
 
 	def show(self, window=None, on_done=None, menu=None, select=None, flags=0, on_highlight=None, level=0):
 		selected_index = -1
@@ -74,7 +88,7 @@ class QuickMenu:
 					else:
 						sublime.active_window().run_command(select["command"], select["args"])
 				else:
-					sublime.message_dialog("Command require arguments")
+					sublime.active_window().run_command(select["command"])
 				return
 			elif not self.settings["silent"]:
 				sublime.message_dialog("No action assigned")
