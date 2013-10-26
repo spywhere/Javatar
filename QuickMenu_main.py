@@ -132,7 +132,8 @@ class QuickMenuCommand(sublime_plugin.WindowCommand):
 			# Open console to see these messages (View > Show Console)
 			print("Exit menu level " + str(info["level"]) + " and is from sublime: " + str(info["from_sublime"]))
 		else:
+			# items = menu's items <list>
 			# index = item's index <int>
 			# level = menu level (this is used to prevent self recursion menu) <int>
 			# from_sublime = is selected item comes from menu opened by sublime? <bool>
-			print("Select item " + str(info["index"]) + " at menu level " + str(info["level"]) + " and is from sublime: " + str(info["from_sublime"]))
+			print("Select item \"" + str(info["items"][info["index"]]) + "\" at menu level " + str(info["level"]) + " and is from sublime: " + str(info["from_sublime"]))
