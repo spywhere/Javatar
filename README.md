@@ -221,9 +221,40 @@ Development channel is a optional channel for user who want to try upcoming feat
 In order to notice important notes to all users, in stable channel or development channel or both, Javatar use custom notification system which will notice you *only once* when Javatar is ready to use. You can opt out this notification by settings `message_id` to `-1` in Javatar's user settings file, note that you can see update notes in README file or you will miss further important update notes.
 
 ### Actions History
-Actions History tracks how you use Javatar and helps solve the problem. By provides useful informations as request by developer (only when you submit an issue). A Javatar Action History Report will look like this when using it properly...
+Actions History tracks how you use Javatar and helps solve the problem. By provides useful informations as request by developer (only when you submit an issue). A Javatar Action History Report will looks like this when using it properly...
 
-*Image not available at this moment*
+	## Javatar Report
+	### System Informations
+	* Javatar Version: `13.10.27.0.59b`
+	* Sublime Version: `3047`
+	* Package Path: `/Users/spywhere/Library/Application Support/Sublime Text 3/Packages`
+	* Javatar Channel: `dev`
+	* Sublime Channel: `stable`
+	* Platform: `osx`
+	* As Packages: `True`
+	* Package Control: `True`
+	* Architecture: `x64`
+	* Javatar's Parent Folder: `Javatar`
+	* Is Project: `True`
+	* Is File: `True`
+	* Is Java: `False`
+
+	### Action List
+	1. Startup
+	2. Reset all settings
+	3. Reset all snippets
+	4. Read settings
+	5. Load snippets
+	6. Javatar Snippet AbstractClass.javatar loaded
+	7. Analyse snippet [file=/Users/spywhere/Library/Application Support/Sublime Text 3/Packages/	Javatar/snippets/AbstractClass.javatar]
+	8. Javatar Snippet Class.javatar loaded
+	9. Analyse snippet [file=/Users/spywhere/Library/Application Support/Sublime Text 3/Packages/	Javatar/snippets/Class.javatar]
+	10. Javatar Snippet Enumerator.javatar loaded
+	11. Analyse snippet [file=/Users/spywhere/Library/Application Support/Sublime Text 3/Packages/	Javatar/snippets/Enumerator.javatar]
+	12. Javatar Snippet Interface.javatar loaded
+	13. Analyse snippet [file=/Users/spywhere/Library/Application Support/Sublime Text 3/Packages/	Javatar/snippets/Interface.javatar]
+	14. Check news
+	15. Ready
 
 Javatar **do not** automatically send these informations. You have to reply an issue with these informations yourself.
 

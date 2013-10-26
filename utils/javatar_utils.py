@@ -3,7 +3,7 @@ import os
 from .javatar_actions import *
 
 
-VERSION = "13.10.27.0.59b"
+VERSION = "13.10.27.1.11b"
 STATUS = "Javatar"
 SETTINGSBASE = None
 SETTINGS = None
