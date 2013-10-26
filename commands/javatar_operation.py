@@ -52,7 +52,7 @@ class JavatarOrganizeImportsCommand(sublime_plugin.WindowCommand):
             regions = self.window.active_view().find_by_selector(text)
             for region in regions:
                 items += [[self.window.active_view().substr(region), str(region.a)+":"+str(region.b)]]
-            self.window.show_quick_panel(items, self.run)
+            self.window.show_quick_panel(items, self.organizeClass)
 
     def organizeClass(self, index=-1):
         pass
