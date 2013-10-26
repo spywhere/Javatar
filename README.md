@@ -103,11 +103,13 @@ You can see and try an example of QuickMenu within file named "QuickMenu_main.py
 
 ### API
 #### Constructor
-	QuickMenu(defaultMenu=[], silentMode=False, maxRecursionLevel=50)
+	QuickMenu(defaultMenu=[], silentMode=False, saveSelected=True, maxRecursionLevel=50)
 * defaultMenu
 	* Default menu Dict to display (starts with menu named "main")
 * silentMode
 	* Set to 'False' to show all messages if invalid item or invalid menu is selected
+* saveSelected
+	* Set to 'True' to remember selected item
 * maxRecursionLevel
 	* Stop the self recursion menu if it goes deep to this number.
 
@@ -148,7 +150,7 @@ You can see and try an example of QuickMenu within file named "QuickMenu_main.py
 * window
 	* A window to show quick panel
 * on_done
-	* A callback when item is selected
+	* A callback when item is selected (must received one argument as a Dict)
 * menu
 	* A passing menu
 * action
