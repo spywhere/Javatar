@@ -2,7 +2,7 @@ import os
 import re
 import sublime
 import sublime_plugin
-from Javatar.utils import *
+from ..utils import *
 
 
 def getInfo(text):
@@ -45,11 +45,6 @@ def getFileContents(classType, info):
     return data
 
 
-def setSelection(view, focus):
-    view.sel().clear()
-    view.sel().add(sublime.Region(focus.start()))
-
-
 def insertAndSave(view, contents):
     view.run_command("insert_snippet", {"contents": contents})
     view.run_command("save")
@@ -69,11 +64,13 @@ def createClassFile(file, contents, msg):
 
 class JavatarCreateCommand(sublime_plugin.WindowCommand):
     def run(self, text="", type=""):
+        getAction().addAction("javatar.command.create.run", "Create [type=" + type + "]")
         if type != "":
             self.showInput(-1, type)
             return
         if text != "":
             info = getInfo(text)
+            getAction().addAction("javatar.command.create.run", "Create [info=" + str(info) + "]")
             createClassFile(info["file"], getFileContents(self.type, info), self.type + "\"" + info["class"] + "\" already exists")
             sublime.set_timeout(lambda: showStatus(self.type + " \"" + info["class"] + "\" is created within package \"" + toReadablePackage(info["package"], True) + "\""), 500)
 

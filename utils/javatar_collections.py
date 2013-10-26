@@ -1,17 +1,19 @@
 import os
 import re
 import sublime
-
+from .javatar_actions import *
 
 SNIPPETS = []
 
 
 def resetSnippets():
+    getAction().addAction("javatar.util.collection.reset", "Reset all snippets")
     global SNIPPETS
     SNIPPETS = []
 
 
 def analyseSnippet(file):
+    getAction().addAction("javatar.util.collection.analyse_snippet", "Analyse snippet [file="+file+"]")
     f = open(file, "r")
     data = f.read()
     classScope = None
@@ -37,9 +39,11 @@ def analyseSnippet(file):
 
 
 def getSnippetFiles():
+    getAction().addAction("javatar.util.collection.get_snippet_files", "Load snippets")
     for root, dirnames, filenames in os.walk(sublime.packages_path()):
         for filename in filenames:
             if filename.endswith(".javatar"):
+                getAction().addAction("javatar.util.collection", "Javatar Snippet " + filename + " loaded")
                 print("Javatar Snippet " + filename + " loaded")
                 SNIPPETS.append(analyseSnippet(os.path.join(root, filename)))
 

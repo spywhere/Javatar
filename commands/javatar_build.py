@@ -1,13 +1,12 @@
 import sublime
 import sublime_plugin
 import re
-from Javatar.utils import *
-
+from ..utils import *
 
 class JavatarBuildCommand(sublime_plugin.WindowCommand):
     def buildFile(self, file):
+        getAction().addAction("javatar.command.build.build_file", "Build file")
         if isJava(file):
-            print(file)
             window = sublime.active_window()
             buildScript = getSettings("build_system")
             buildScript = re.sub("\\$file_path", getPath("parent", file), buildScript)
@@ -22,6 +21,7 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
         return isJava(file)
 
     def buildAll(self, dir):
+        getAction().addAction("javatar.command.build.build_all", "Build all")
         build = False
         for path, subdirs, files in os.walk(dir):
             for filename in files:
@@ -31,6 +31,7 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
         return build
 
     def run(self, type=""):
+        getAction().addAction("javatar.command.build.run", "Build [type=" + type + "]")
         view = sublime.active_window().active_view()
         if type == "project":
             if isProject() or isFile():

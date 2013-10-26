@@ -1,5 +1,21 @@
 [
     {
+        "keys": ["ctrl+shift+k","ctrl+shift+k"],
+        "command": "javatar",
+        "args": {
+            "action": {
+                "name": "main"
+            }
+        }
+    },{
+        "keys": ["ctrl+shift+k","ctrl+shift+h"],
+        "command": "javatar",
+        "args": {
+            "action": {
+                "name": "help"
+            }
+        }
+    },{
         "keys": ["ctrl+shift+k","ctrl+shift+j"],
         "command": "javatar",
         "args": {

@@ -8,16 +8,38 @@ A Sublime Text 3 Plugin for Java Development
  * [+] Package, SubPackage creation
  * [+] Class (also Abstract), Interface, Enumerator snippets with packge/class auto-complete
  * [+] Project Compile
- * [-] JAR file export (included executable)
+ * [+] Package path in status bar
  * [*] Rename/Move packages/classes
  * [*] Organize Imports
- * [+] Package path in status bar
+ * [-] JAR file export (included executable)
 
 [+] Available on Stable channel<br />
 [*] Partly available on Development channel<br />
 [-] Planned
 
-### Updates in latest build
+### Important Updates in latest development build
+Upcoming:
+
+ * Most RegEx will be removed when Organize Imports feature is completed
+
+Current:
+
+ * Added Help and Support section for issue support
+ * Organize Imports: Now use Sublime system instead of reinventing the wheel
+ * Action History: Tracking of your Javatar actions
+ * Tweaking Javatar Call to validate file even inserting package path
+ * Javatar now use relative imports to be able to run if package folder is not "Javatar"
+ * QuickMenu updated
+ * Fix notification system appear to show development channel's message on stable channel
+ * Unused code removed
+
+### Important Updates in latest stable build
+Upcoming:
+
+ * Most RegEx will be removed when Organize Imports feature is completed
+ 
+Current:
+
  * Now using [QuickMenu](https://github.com/spywhere/QuickMenu) for easier command browsing
  * Working on Java AST as [suggested](https://github.com/spywhere/Javatar/issues/1) by [gsingh93](https://github.com/gsingh93)
  * Package update status: Showing you the latest important news about a new build
@@ -121,6 +143,10 @@ You can access keymap via the preference menu or via command palette same as set
 
 *All commands start with `Key+Shift+K` then follows by their shortcut key*
 
+* Browse Commands... : `Key+Shift+K`
+	* This will open quick panel showing you all commands available to use
+* Help and Support... : `Key+Shift+H`
+	* This will open quick panel showing you all utility that help solve the issue (mostly request by developer)
 * Build... : `Key+Shift+B`
 	* This will open quick panel to select which build you want to perform
 * Call... : `Key+Shift+J`
@@ -143,6 +169,8 @@ You can access keymap via the preference menu or via command palette same as set
 	* Package.SubPackage.Class
 
 `Key` can be related to Windows `Control` or OS X `Command`
+
+**Tips!** If you can't remember these commands, press `Key+Shift+K` **twice**
 
 ### Build System
 
@@ -185,8 +213,18 @@ The following macros are used inside Javatar snippet files (*.javatar) which wil
 ### Package Channels
 #### Stable Channel
 Stable channel is a default channel for every user who installed Javatar. This channel will release only fully working features.
-### Development Channel
+
+#### Development Channel
 Development channel is a optional channel for user who want to try upcoming features which may not fully working or need improvements. All upcoming features will appear in `Javatar: Browse Commands > Development Section` only.
 
 ### Package Updates Notifications
 In order to notice important notes to all users, in stable channel or development channel or both, Javatar use custom notification system which will notice you *only once* when Javatar is ready to use. You can opt out this notification by settings `message_id` to `-1` in Javatar's user settings file, note that you can see update notes in README file or you will miss further important update notes.
+
+### Actions History
+Actions History tracks how you use Javatar and helps solve the problem. By provides useful informations as request by developer (only when you submit an issue). A Javatar Action History Report will look like this when using it properly...
+
+*Image not available at this moment*
+
+Javatar **do not** automatically send these informations. You have to reply an issue with these informations yourself.
+
+Actions History can be disabled by settings `enable_actions_history` to `false`

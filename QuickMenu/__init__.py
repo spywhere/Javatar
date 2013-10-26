@@ -1,1 +1,1 @@
-from Javatar.QuickMenu.QuickMenu import *
+from .QuickMenu import *

@@ -1,13 +1,20 @@
 import sublime
 import os
+from .javatar_actions import *
 
 
+VERSION = "13.10.27.0.3b"
 STATUS = "Javatar"
 SETTINGSBASE = None
 SETTINGS = None
 
 
+def getVersion():
+    return VERSION
+
+
 def reset():
+    getAction().addAction("javatar.util.util.reset", "Reset all settings")
     global SETTINGS, SETTINGSBASE
     SETTINGS = None
     SETTINGSBASE = None
@@ -15,7 +22,11 @@ def reset():
     resetSnippets()
 
 
+def isReady():
+    return SETTINGS is not None
+
 def readSettings(config):
+    getAction().addAction("javatar.util.util.read_settings", "Read settings")
     global SETTINGS, SETTINGSBASE
     SETTINGSBASE = config
     SETTINGS = sublime.load_settings(config)
@@ -158,5 +169,8 @@ def getPath(type="", dir="", dir2=""):
         return os.path.join(dir, dir2)
     elif type == "exist":
         return os.path.exists(dir)
+    elif type == "javatar_parent":
+        name = __name__.split('.')
+        return name[0]
     else:
         return ""

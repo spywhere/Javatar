@@ -9,7 +9,8 @@ class QuickMenu:
 	settings = {
 		"menu": [],
 		"max_level": 50,
-		"silent": False
+		"silent": True,
+		"save_selected": True
 	}
 	tmp = {
 		"menu": None,
@@ -20,10 +21,11 @@ class QuickMenu:
 		"level": 0
 	}
 
-	def __init__(self, menu=[], silent=False, max_level=50):
+	def __init__(self, menu=[], silent=True, save_selected=True, max_level=50):
 		self.settings["menu"] = copy.deepcopy(menu)
 		self.settings["max_level"] = max_level
 		self.settings["silent"] = silent
+		self.settings["save_selected"] = save_selected
 
 	def set(self, key, value):
 		self.settings[key] = value
@@ -98,8 +100,10 @@ class QuickMenu:
 				return
 			else:
 				return
-		if "selected_index" in menu:
+		if "selected_index" in menu and menu["selected_index"] > 0:
 			selected_index = menu["selected_index"]-1
+		if self.settings["save_selected"] and "previous_selected_index" in menu and menu["previous_selected_index"] >= 0:
+			selected_index = menu["previous_selected_index"]
 		self.tmp["menu"] = menu
 		self.tmp["window"] = window
 		self.tmp["callback"] = on_done
@@ -108,7 +112,7 @@ class QuickMenu:
 
 	def select(self, index=-1):
 		if self.tmp["callback"] is not None:
-			self.tmp["callback"]({"index": index, "level": self.tmp["level"], "from_sublime": self.tmp["sublime"]})
+			self.tmp["callback"]({"index": index, "level": self.tmp["level"], "from_sublime": self.tmp["sublime"], "items": self.tmp["menu"]["items"]})
 		if index < 0:
 			self.tmp["menu"] = None
 			self.tmp["select"] = None
@@ -118,6 +122,7 @@ class QuickMenu:
 			self.tmp["level"] = 0
 			return
 		if "actions" in self.tmp["menu"] and len(self.tmp["menu"]["actions"]) > index:
+			self.tmp["menu"]["previous_selected_index"] = index
 			self.tmp["select"] = self.tmp["menu"]["actions"][index]
 			self.tmp["sublime"] = False
 			sublime.set_timeout(self.show, 50)

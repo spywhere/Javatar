@@ -1,5 +1,5 @@
 import sublime_plugin
-from Javatar.utils import *
+from ..utils import *
 
 
 class JavatarCreatePackageCommand(sublime_plugin.WindowCommand):
@@ -11,6 +11,7 @@ class JavatarCreatePackageCommand(sublime_plugin.WindowCommand):
         view.set_name("JavatarCreatePackage")
 
     def createPackage(self, text):
+        getAction().addAction("javatar.command.package.create_package", "Create package [package="+text+"]")
         relative = True
         if text.startswith("~"):
             text = text[1:]

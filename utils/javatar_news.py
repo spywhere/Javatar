@@ -1,16 +1,19 @@
 import sublime
+from .javatar_actions import *
 
 
-UPDATEFOR = "all"
-NEWSID = 1
-NEWS = " - Now using QuickMenu for easier command browsing\n - Package update status: Showing you the latest important news about a new build\n - Package channel: Dev or Stable (so there will be more updates but not affect any part of stable channel)\n - Due to working with Organize Imports feature, please check your RegEx settings since it has been added/changed to support upcoming feature\n\nPlease check out new settings in settings file"
+UPDATEFOR = "dev"
+NEWSID = 2
+NEWS = " - Fix a notification system (this message may appear on stable channel)\n - Added Help and Support section for issue support\n - Organize Imports: Now use Sublime system instead of reinventing the wheel\n - Actions History: Tracking of your Javatar actions\n - Due to working with a new Organize Imports system, most RegEx in settings file will be removed after this feature is completed\n\nPlease check out new menu in Javatar: Browse Commands"
 
 
 def checkNews():
-	from .javatar_utils import getSettings, setSettings, isStable
-	if getSettings("message_id") != 1 and getSettings("message_id") != -1:
-		if isStable() and (UPDATEFOR == "stable" or UPDATEFOR == "all"):
-			sublime.message_dialog("Javatar: Package has been updated!\n" + NEWS)
-		elif UPDATEFOR == "dev" or UPDATEFOR == "all":
-			sublime.message_dialog("Javatar [Dev]: Package has been updated!\n" + NEWS)
-		setSettings("message_id", NEWSID)
+    getAction().addAction("javatar.util.news", "Check news")
+    from .javatar_utils import getSettings, setSettings, isStable
+    if getSettings("message_id") != NEWSID and getSettings("message_id") != -1:
+        if isStable() and (UPDATEFOR == "stable" or UPDATEFOR == "all"):
+            sublime.message_dialog("Javatar: Package has been updated!\n" + NEWS)
+            setSettings("message_id", NEWSID)
+        elif not isStable() and (UPDATEFOR == "dev" or UPDATEFOR == "all"):
+            sublime.message_dialog("Javatar [Dev]: Package has been updated!\n" + NEWS)
+            setSettings("message_id", NEWSID)

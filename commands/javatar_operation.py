@@ -1,11 +1,12 @@
 import sublime
 import sublime_plugin
 import re
-from Javatar.utils import *
+from ..utils import *
 
 
 class JavatarCorrectClassCommand(sublime_plugin.TextCommand):
-    def run(self, edit, type="", text=""):
+    def run(self, edit):
+        getAction().addAction("javatar.command.operation.correct_class", "Correct class")
         if isFile() and isJava():
             classRegion = self.view.find(getSettings("class_name_prefix")+getSettings("class_name_scope")+getSettings("class_name_suffix"), 0)
             classCode = self.view.substr(classRegion)
@@ -26,71 +27,43 @@ class JavatarCorrectClassCommand(sublime_plugin.TextCommand):
             elif not isJava():
                 sublime.error_message("Current file is not Java")
 
-
-class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
-    def run(self, edit):
-        classList = set()
-        # From variables
-        variableClassRegions = self.view.find_all(getSettings("class_match"))
-        for reg in variableClassRegions:
-            classList.add(self.view.substr(reg))
-
-        # From static class
-        staticClassRegion = self.view.find_all(getSettings("static_class_match"))
-        for reg in staticClassRegion:
-            classList.add(self.view.substr(reg))
-
-        # From base type
-        baseTypeRegion = self.view.find_all(getSettings("base_type_match"))
-        for reg in baseTypeRegion:
-            classList.add(self.view.substr(reg))
-
-        # From import
-        importPackageRegion = self.view.find_all(getSettings("import_match"))
-        for imreg in importPackageRegion:
-            packageClass = re.search(getSettings("package_class_match"), self.view.substr(imreg), re.M).group(0)
-            classList.discard(packageClass)
-
-        # Package element
-        packageElementRegion = self.view.find_all(getSettings("package_element_match"))
-        for reg in packageElementRegion:
-            classList.discard(self.view.substr(reg))
-
-        # Variables name
-        variableRegion = self.view.find_all(getSettings("variable_match"))
-        for reg in variableRegion:
-            classList.discard(self.view.substr(reg))
-
-        # Classes in current package
-        samePackageClass = list(classList)
-        for sClass in samePackageClass:
-            if getPath("exist", getPath("join", getPath("current_dir"), sClass+".java")):
-                classList.discard(sClass)
+    def description(self):
+        return "Correct Class"
 
 
-        classList = list(classList)
+class JavatarUtilCommand(sublime_plugin.TextCommand):
+    def run(self, edit, type="", text="", dest=None):
+        if type == "insert":
+            self.view.insert(edit, self.view.size(), text)
+        elif type == "set_read_only":
+            self.view.set_read_only(True)
+
+    def description(self, type="", text="", dest=None):
+        return dest
 
 
-        self.view.window().show_quick_panel(classList, self.organizeClass)
-
-        # A = Class list from variable
-        # B = Class list from static class
-        # C = Base type
-        # D = Class list from import (find import then find class)
-        # E = Package element
-        # F = All classes with package
-        # X = (A+B+C)-(D+E+F) = Class need to import
-
-        # If import conflict
-        # conflictClass = ["me.spywhere.package.Class", "Class.java"], ["me.spywhere.Class", "Class.java"]
-        # self.view.window().show_quick_panel(conflictClass, self.organizeClass)
+class JavatarOrganizeImportsCommand(sublime_plugin.WindowCommand):
+    def run(self, text=""):
+        getAction().addAction("javatar.command.operation.organize_imports", "Organize imports [selector="+text+"]")
+        if text == "":
+            self.window.show_input_panel("Selector: ", "meta.import", self.run, "", "")
+        else:
+            items = []
+            regions = self.window.active_view().find_by_selector(text)
+            for region in regions:
+                items += [[self.window.active_view().substr(region), str(region.a)+":"+str(region.b)]]
+            self.window.show_quick_panel(items, self.run)
 
     def organizeClass(self, index=-1):
         pass
 
+    def description(self, type="", text=""):
+        return "Organize Imports"
+
 
 class JavatarRenameOperationCommand(sublime_plugin.WindowCommand):
     def run(self, text="", type=""):
+        getAction().addAction("javatar.command.operation.rename", "Rename [type="+str(type)+"]")
         if type == "class":
             if isFile() and isJava():
                 classRegion = sublime.active_window().active_view().find(getSettings("class_name_prefix")+getSettings("class_name_scope")+getSettings("class_name_suffix"), 0)

@@ -1,12 +1,14 @@
-from Javatar.utils import *
-from Javatar.commands import *
+from .utils import *
+from .commands import *
 
 
 def plugin_loaded():
+    getAction().addAction("javatar", "Startup")
     reset() # clear data when restart
     readSettings("Javatar.sublime-settings")
     checkNews()
     hideStatus()
+    getAction().addAction("javatar", "Ready")
 
 
 class EventListener(sublime_plugin.EventListener):

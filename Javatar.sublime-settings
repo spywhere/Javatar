@@ -9,6 +9,9 @@
 	//   any other number = Assigned by package to show you proper updates message
 	"message_id" : 0,
 
+	//Enable Actions History to help developer solve the issue
+	"enable_actions_history" : true,
+
 	//Java build system (based on default JavaC)
 	"build_system" : "javac \"$file\"",
 
