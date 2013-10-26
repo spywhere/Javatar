@@ -152,7 +152,7 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 
             # Always add Help and Support at the end
             self.qm.addItems("main", [["Help and Support...", "Utilities for Help and Support on Javatar"]], [{"name":"help"}])
-        self.qm.show(self.window, None, menu, action)
+        self.qm.show(self.window, self.select, menu, action)
 
     def select(self, info):
         if info["index"] < 0:

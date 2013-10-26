@@ -14,8 +14,7 @@ def resetSnippets():
 
 def analyseSnippet(file):
     getAction().addAction("javatar.util.collection.analyse_snippet", "Analyse snippet [file="+file+"]")
-    f = open(file, "r")
-    data = f.read()
+    data = sublime.load_resource(file)
     classScope = None
     classRe = re.search("%class:(.*)%(\\s*)", data, re.M)
     if classRe is not None:
@@ -40,12 +39,12 @@ def analyseSnippet(file):
 
 def getSnippetFiles():
     getAction().addAction("javatar.util.collection.get_snippet_files", "Load snippets")
-    for root, dirnames, filenames in os.walk(sublime.packages_path()):
-        for filename in filenames:
-            if filename.endswith(".javatar"):
-                getAction().addAction("javatar.util.collection", "Javatar Snippet " + filename + " loaded")
-                print("Javatar Snippet " + filename + " loaded")
-                SNIPPETS.append(analyseSnippet(os.path.join(root, filename)))
+    from .javatar_utils import getPath
+    for filepath in sublime.find_resources("*.javatar"):
+        filename = getPath("name", filepath)
+        getAction().addAction("javatar.util.collection", "Javatar Snippet " + filename + " loaded")
+        print("Javatar Snippet " + filename + " loaded")
+        SNIPPETS.append(analyseSnippet(filepath))
 
 
 def getSnippet(name):

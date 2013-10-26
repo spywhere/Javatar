@@ -6,3 +6,5 @@
 *.ear
 
 .DS_Store
+
+*.pyc

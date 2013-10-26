@@ -23,7 +23,7 @@ class JavatarHelpCommand(sublime_plugin.WindowCommand):
 
                 report = report.replace("%sublime_version%", str(sublime.version()))
                 report = report.replace("%sublime_channel%", sublime.channel())
-                report = report.replace("%package_control%", str(getPath("exist", getPath("join", sublime.packages_path(), "Package Control")) or getPath("exists", getPath("join", sublime.installed_packages_path(), "Package Control.sublime-package"))))
+                report = report.replace("%package_control%", str(getPath("exist", getPath("join", sublime.packages_path(), "Package Control")) or getPath("exist", getPath("join", sublime.installed_packages_path(), "Package Control.sublime-package"))))
                 report = report.replace("%is_project%", str(isProject()))
                 report = report.replace("%is_file%", str(isFile()))
                 report = report.replace("%is_java%", str(isJava()))
