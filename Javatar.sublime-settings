@@ -24,48 +24,52 @@
 	//Show package path in status bar
 	"show_package_path" : true,
 
+	//Import these package automatically when organize imports
+	//   type = List of types that required the package
+	//   package = Package that contains types (empty is not need to import)
+	//   always_import = Import even no type found (can be omitted)
+	//This will remove type from "needImport" list
+	//
+	//Java packages are located in Java/Java.javatar-imports
+	"default_import" : [
+		// Example:
+		//    This will import "java.util.logging.Logger" automatically if type "Logger" is found
+		// and also "java.util.logging.Level" if type "Level" is found
+		//
+		// {
+		// 	"type": ["Level", "Logger"],
+		// 	"package": "java.util.logging",
+		// 	"always_import": false
+		// }
+	],
+
 	//Java file validation using RegEx
-	"java_file_validation" : ".*.java$",
+	"java_file_validation" : ".*\\.java$",
 
-	//Class matching using RegEx
-	"class_match" : "([a-zA-Z_$][a-zA-Z\\d_$]*)(?=\\s+([a-zA-Z_$][a-zA-Z\\d_$]*)(\\s+=[^=]|\\s*,|\\s*;|\\)))",
-
-	//Static class matching using RegEx (roughly)
-	"static_class_match" : "\\b(?<![\\.])([a-zA-Z\\d_$]*)(?=\\.[^\\(\\s]+\\(.*;)",
-
-	//Base type matching
-	"base_type_match" : "([a-zA-Z_$][a-zA-Z\\d_$]*)(?=(\\s*,.*)?>(\\s*\\(|\\s+[^=;]*[=;]))",
-
-	//Variable matching using RegEx
-	"variable_match" : "\\b(?<!=[\\s]|\\()([a-zA-Z_$][a-zA-Z\\d_$]*)(?=\\s*,[^;];|\\s*;|(,.*)?\\)[\\s\\n]*{|\\s*=\\s*.*[;\\)])",
-
-	//Package element matching using RegEx
-	"package_element_match" : "[a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*(?=\\.[^\\(,]*\\s)",
-
-	//Import package matching using RegEx
-	"import_match" : "(?<=import\\s).*(?=;)",
+	//Package name pattern
+	"package_name_match" : "^([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*$",
 
 	//Package matching using RegEx
-	"package_match" : "([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*",
+	"package_match" : "^([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*",
 
 	//Class in package matching using RegEx
 	"package_class_match" : "([a-zA-Z_$][a-zA-Z\\d_$]*)$",
 
-	//Package name prefix using RegEx
-	"package_name_prefix" : "package\\s+",
+	//Package scope selector
+	"package_meta_selector" : "meta.package.java",
 
-	//Package name using RegEx
-	"package_name_scope" : "([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*",
+	//Import scope selector
+	"import_meta_selector" : "meta.import.java",
 
-	//Package name suffix using RegEx
-	"package_name_suffix" : ";",
+	//Package in package keyword scope selector
+	"package_name_selector" : "storage.modifier.package.java",
 
-	//Class name prefix using RegEx
-	"class_name_prefix" : "(class|interface|enum)\\s+",
+	//Class name scope selector
+	"class_name_selector" : "entity.name.type.class.java",
 
-	//Class name using RegEx
-	"class_name_scope" : "(\\w+)",
+	//Package in import keyword scope selector
+	"package_import_selector" : "storage.modifier.import.java",
 
-	//Class name suffix using RegEx
-	"class_name_suffix" : "(\\s+(extends\\s+\\w+)|\\s+(implements\\s+\\w+( ,\\w+)*))?\\s*\\{"
+	//Types and classes scope selector
+	"type_selector" : "storage.type.java|entity.other.inherited-class"
 }

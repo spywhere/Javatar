@@ -2,10 +2,14 @@ import sublime
 from .javatar_actions import *
 
 
+VERSION = "13.10.27.8.25b"
 UPDATEFOR = "dev"
-NEWSID = 2
-NEWS = " - Fix a notification system (this message may appear on stable channel)\n - Added Help and Support section for issue support\n - Organize Imports: Now use Sublime system instead of reinventing the wheel\n - Actions History: Tracking of your Javatar actions\n - Due to working with a new Organize Imports system, most RegEx in settings file will be removed after this feature is completed\n\nPlease check out new menu in Javatar: Browse Commands"
+NEWSID = 3
+NEWS = " - Organize Imports: Now available to test!\n - Improved Class Correction\n - Many RegEx has been removed, please check it out if you are using it\n\nPlease try it out in Development Section"
 
+
+def getVersion():
+    return VERSION
 
 def checkNews():
     getAction().addAction("javatar.util.news", "Check news")

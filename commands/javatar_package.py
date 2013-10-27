@@ -18,7 +18,7 @@ class JavatarCreatePackageCommand(sublime_plugin.WindowCommand):
             relative = False
 
         if not isProject() and not isFile():
-            sublime.error_message("Unknown package location")
+            sublime.error_message("Cannot specify package location")
             return
         if not isPackage(text):
             sublime.error_message("Invalid package naming")

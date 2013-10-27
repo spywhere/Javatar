@@ -1,9 +1,9 @@
-import os
 import re
 import sublime
 from .javatar_actions import *
 
 SNIPPETS = []
+DEFAULTIMPORTS = []
 
 
 def resetSnippets():
@@ -46,6 +46,31 @@ def getSnippetFiles():
         print("Javatar Snippet " + filename + " loaded")
         SNIPPETS.append(analyseSnippet(filepath))
 
+def analyseImport(file):
+    getAction().addAction("javatar.util.collection.analyse_snippet", "Analyse snippet [file="+file+"]")
+    try:
+        return sublime.decode_value(sublime.load_resource(file))
+    except ValueError:
+        sublime.error_message("Invalid JSON format")
+    return None
+
+def getImportFiles():
+    global DEFAULTIMPORTS
+    getAction().addAction("javatar.util.collection.get_import_files", "Load Java default imports")
+    from .javatar_utils import getPath
+    for filepath in sublime.find_resources("*.javatar-imports"):
+        filename = getPath("name", filepath)
+        getAction().addAction("javatar.util.collection", "Javatar Default Imports " + filename + " loaded")
+        print("Javatar Default Imports " + filename + " loaded")
+        imports = analyseImport(filepath)
+        if imports is not None:
+            DEFAULTIMPORTS += imports
+
+def getImports():
+    imports = []
+    for imp in DEFAULTIMPORTS:
+        imports.append(imp)
+    return imports
 
 def getSnippet(name):
     for snippet in SNIPPETS:

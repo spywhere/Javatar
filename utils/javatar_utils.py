@@ -3,14 +3,9 @@ import os
 from .javatar_actions import *
 
 
-VERSION = "13.10.27.1.11b"
 STATUS = "Javatar"
 SETTINGSBASE = None
 SETTINGS = None
-
-
-def getVersion():
-    return VERSION
 
 
 def reset():
@@ -30,7 +25,8 @@ def readSettings(config):
     global SETTINGS, SETTINGSBASE
     SETTINGSBASE = config
     SETTINGS = sublime.load_settings(config)
-    from .javatar_collections import getSnippetFiles
+    from .javatar_collections import getSnippetFiles, getImportFiles
+    getImportFiles()
     getSnippetFiles()
 
 
@@ -118,11 +114,10 @@ def toReadablePackage(package, asPackage=False):
 
 
 def toPackage(dir):
-    dir = os.path.relpath(dir, getPackageRootDir())
+    dir = getPath("relative", dir, getPackageRootDir())
     package = ".".join(splitPath(dir))
-    while package.startswith("."):
-        package = package[1:]
-    return package
+    from .javatar_java import normalizePackage
+    return normalizePackage(package)
 
 
 def getPackageRootDir(isSub=False):
@@ -163,6 +158,8 @@ def getPath(type="", dir="", dir2=""):
         return window.active_view().file_name()
     elif type == "parent":
         return os.path.dirname(dir)
+    elif type == "relative":
+        return os.path.relpath(dir, dir2)
     elif type == "name":
         return os.path.basename(dir)
     elif type == "join":

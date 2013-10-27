@@ -20,33 +20,26 @@ A Sublime Text 3 Plugin for Java Development
 ### Important Updates in latest development build
 Upcoming:
 
- * Most RegEx will be removed when Organize Imports feature is completed
+ * Rename/Move packages/classes
 
 Current:
 
- * Added Help and Support section for issue support
- * Organize Imports: Now use Sublime system instead of reinventing the wheel
- * Action History: Tracking of your Javatar actions
- * Tweaking Javatar Call to validate file even inserting package path
- * Javatar now use relative imports to be able to run if package folder is not "Javatar"
- * QuickMenu updated
- * Fix notification system appear to show development channel's message on stable channel
- * Unused code removed
+ * Organize Imports: Now available to test!
+ * Improved Class Correction
+ * Many RegEx has been removed, please check it out if you are using it
+ * Some code tweaks
 
 ### Important Updates in latest stable build
 Upcoming:
 
- * Most RegEx will be removed when Organize Imports feature is completed
+ * Organize Imports
  
 Current:
 
- * Now using [QuickMenu](https://github.com/spywhere/QuickMenu) for easier command browsing
- * Working on Java AST as [suggested](https://github.com/spywhere/Javatar/issues/1) by [gsingh93](https://github.com/gsingh93)
- * Package update status: Showing you the latest important news about a new build
- * Package channel: Dev or Stable (so there will be more updates but not affect any part of stable channel)
- * Due to working with Java AST, current RegEx system may be changed/removed.
- * Due to working with Organize Imports feature, please check your RegEx settings since it has been added/changed to support upcoming feature.
- 
+ * Working on Organize Imports as [suggested](https://github.com/spywhere/Javatar/issues/1) by [gsingh93](https://github.com/gsingh93)
+ * Improved Class Correction
+ * Many RegEx has been removed, please check it out if you are using it
+ * Some code tweaks
 
 
 ### Screenshots

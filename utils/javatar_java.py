@@ -9,15 +9,27 @@ def normalizePackage(package):
     return re.sub("\\.*$", "", package)
 
 
-def analyseJavaContents(contents):
-    from .javatar_utils import getSettings
-    packageScope = re.search(getSettings("package_name_prefix")+getSettings("package_name_scope")+getSettings("package_name_suffix"), contents, re.M).group(0)
-    classScope = re.search(getSettings("class_name_prefix")+getSettings("class_name_scope")+getSettings("class_name_suffix"), contents, re.M).group(0)
-    packageScope = re.sub(getSettings("package_name_prefix"), "", packageScope)
-    packageScope = re.sub(getSettings("package_name_suffix"), "", packageScope)
-    classScope = re.sub(getSettings("class_name_prefix"), "", classScope)
-    classScope = re.sub(getSettings("class_name_suffix"), "", classScope)
-    return {"package": packageScope, "class": classScope}
+def findClass(path, classname):
+    from .javatar_utils import toPackage, getPath, getSettings
+    from .javatar_collections import getImports
+    classes = []
+    for root, dirnames, filenames in os.walk(path):
+        for filename in filenames:
+            if filename == classname + ".java":
+                classpath = toPackage(os.path.join(root, filename)[:-5])
+                classes.append(classpath)
+    for packageImport in getSettings("default_import"):
+        if "type" in packageImport and "package" in packageImport:
+            if classname in packageImport["type"]:
+                if packageImport["package"] != "" and packageImport["package"] not in classes:
+                    classes.append(packageImport["package"]+"."+classname)
+    for packageImport in getImports():
+        if "type" in packageImport and "package" in packageImport:
+            if classname in packageImport["type"]:
+                if packageImport["package"] != "" and packageImport["package"] not in classes:
+                    classes.append(packageImport["package"]+"."+classname)
+    classes.sort()
+    return classes
 
 
 def getPackagePath(text):

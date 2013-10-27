@@ -1,0 +1,20 @@
+//Based on JRE7 (unfinished)
+[
+	{
+		//java.lang (default included)
+		"type": ["Boolean", "Byte", "Character", "Class", "ClassLoader", "Compiler", "Double", "Enum", "Float", "InheritableThreadLocal", "Integer", "Long", "Math", "Number", "Object", "Package", "Process", "ProcessBuilder", "Runtime", "RuntimePermission", "SecurityManager", "Short", "StackTraceElement", "StrictMath", "String", "StringBuffer", "StringBuilder", "System", "Thread", "ThreadGroup", "ThreadLocal", "Throwable", "Void"],
+		"package": "",
+	}, {
+		"type": ["BufferedReader", "ByteArrayInputStream", "ByteArrayOutputStream", "DataInputStream", "DataOutputStream", "File", "FileNotFoundException", "InputStream", "InputStreamReader", "OutputStream", "IOException"],
+		"package": "java.io",
+	}, {
+		"type": ["URL"],
+		"package": "java.net",
+	}, {
+		"type": ["Arrays", "ArrayList", "Collections", "Comparator", "EnumSet", "HashMap", "Iterator", "LinkedList", "List", "Map", "Properties", "Random", "Scanner", "Set", "Stack", "TreeSet", "UUID", "Vector"],
+		"package": "java.util",
+	}, {
+		"type": ["Level", "Logger"],
+		"package": "java.util.logging",
+	}
+]

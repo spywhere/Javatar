@@ -18,7 +18,7 @@ class JavatarHelpCommand(sublime_plugin.WindowCommand):
                 report = "## Javatar Report\n### System Informations\n* Javatar Version: `%javatar_version%`\n* Sublime Version: `%sublime_version%`\n* Package Path: `%packages_path%`\n* Javatar Channel: `%javatar_channel%`\n* Sublime Channel: `%sublime_channel%`\n* Platform: `%platform%`\n* As Packages: `%is_package%`\n* Package Control: `%package_control%`\n* Architecture: `%arch%`\n* Javatar's Parent Folder: `%parent_folder%`\n* Is Project: `%is_project%`\n* Is File: `%is_file%`\n* Is Java: `%is_java%`\n\n### Action List\n%actions%"
                 report = report.replace("%javatar_version%", getVersion())
                 report = report.replace("%javatar_channel%", str.lower(getSettings("package_channel")))
-                report = report.replace("%is_package%", str(getPath("exist", getPath("join", sublime.packages_path(), "Javatar"))))
+                report = report.replace("%is_package%", str(getPath("exist", getPath("join", sublime.installed_packages_path(), "Javatar.sublime-package"))))
                 report = report.replace("%parent_folder%", getPath("javatar_parent"))
 
                 report = report.replace("%sublime_version%", str(sublime.version()))
@@ -53,7 +53,7 @@ class JavatarHelpCommand(sublime_plugin.WindowCommand):
                 view = self.window.new_file()
                 view.set_name("Javatar Actions History Report")
                 view.set_scratch(True)
-                view.run_command("javatar_util", {"type": "insert", "text": report, "dest": "Actions History"})
+                view.run_command("javatar_util", {"type": "add", "text": report, "dest": "Actions History"})
                 view.run_command("javatar_util", {"type": "set_read_only"})
             else:
                 self.window.show_input_panel("Selector: ", "", self.run, "", "")
