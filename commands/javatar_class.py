@@ -6,79 +6,79 @@ from ..utils import *
 
 
 def getInfo(text):
-    relative = True
-    if text.startswith("~"):
-        text = text[1:]
-        relative = False
+	relative = True
+	if text.startswith("~"):
+		text = text[1:]
+		relative = False
 
-    if not isProject() and not isFile():
-        sublime.error_message("Unknown package location")
-        return
-    if not isPackage(text):
-        sublime.error_message("Invalid package naming")
-        return
+	if not isProject() and not isFile():
+		sublime.error_message("Unknown package location")
+		return
+	if not isPackage(text):
+		sublime.error_message("Invalid package naming")
+		return
 
-    package = normalizePackage(getCurrentPackage(not relative) + "." + getPackagePath(text))
-    className = getClassName(text)
+	package = normalizePackage(getCurrentPackage(not relative) + "." + getPackagePath(text))
+	className = getClassName(text)
 
-    target_dir = makePackage(getPackageRootDir(), packageAsDirectory(package), True)
-    target_dir = normalizePath(target_dir)
-    package = toPackage(target_dir)
-    file = getPath("join", getPackageRootDir(), getPath("join", packageAsDirectory(package), className + ".java"))
-    return {"file": file, "package": package, "class": className, "relative": relative}
+	target_dir = makePackage(getPackageRootDir(), packageAsDirectory(package), True)
+	target_dir = normalizePath(target_dir)
+	package = toPackage(target_dir)
+	file = getPath("join", getPackageRootDir(), getPath("join", packageAsDirectory(package), className + ".java"))
+	return {"file": file, "package": package, "class": className, "relative": relative}
 
 
 def getFileContents(classType, info):
-    data = getSnippet(classType)
-    if data is None:
-        sublime.error_message("Snippet \"" + classType + "\" is not found")
-        return None
-    if info["package"] != "":
-        data = re.sub("%package%", "package " + info["package"] + ";", data)
-    else:
-        data = re.sub("%package%", "", data)
+	data = getSnippet(classType)
+	if data is None:
+		sublime.error_message("Snippet \"" + classType + "\" is not found")
+		return None
+	if info["package"] != "":
+		data = re.sub("%package%", "package " + info["package"] + ";", data)
+	else:
+		data = re.sub("%package%", "", data)
 
-    data = re.sub("%class%", info["class"], data)
-    data = re.sub("%file%", info["file"], data)
-    data = re.sub("%file_name%", getPath("name", info["file"]), data)
-    data = re.sub("%package_path%", getCurrentPackage(), data)
-    return data
+	data = re.sub("%class%", info["class"], data)
+	data = re.sub("%file%", info["file"], data)
+	data = re.sub("%file_name%", getPath("name", info["file"]), data)
+	data = re.sub("%package_path%", getCurrentPackage(), data)
+	return data
 
 
 def insertAndSave(view, contents):
-    view.run_command("insert_snippet", {"contents": contents})
-    view.run_command("save")
+	view.run_command("insert_snippet", {"contents": contents})
+	view.run_command("save")
 
 
 def createClassFile(file, contents, msg):
-    if contents is None:
-        return
-    if os.path.exists(file):
-        sublime.error_message(msg)
-        return
-    open(file, "w")
-    view = sublime.active_window().open_file(file)
-    view.set_syntax_file("Packages/Java/Java.tmLanguage")
-    sublime.set_timeout(lambda: insertAndSave(view, contents), 100)
+	if contents is None:
+		return
+	if os.path.exists(file):
+		sublime.error_message(msg)
+		return
+	open(file, "w")
+	view = sublime.active_window().open_file(file)
+	view.set_syntax_file("Packages/Java/Java.tmLanguage")
+	sublime.set_timeout(lambda: insertAndSave(view, contents), 100)
 
 
 class JavatarCreateCommand(sublime_plugin.WindowCommand):
-    def run(self, text="", type=""):
-        getAction().addAction("javatar.command.create.run", "Create [type=" + type + "]")
-        if type != "":
-            self.showInput(-1, type)
-            return
-        if text != "":
-            info = getInfo(text)
-            getAction().addAction("javatar.command.create.run", "Create [info=" + str(info) + "]")
-            createClassFile(info["file"], getFileContents(self.type, info), self.type + "\"" + info["class"] + "\" already exists")
-            sublime.set_timeout(lambda: showStatus(self.type + " \"" + info["class"] + "\" is created within package \"" + toReadablePackage(info["package"], True) + "\""), 500)
+	def run(self, text="", type=""):
+		getAction().addAction("javatar.command.create.run", "Create [type=" + type + "]")
+		if type != "":
+			self.showInput(-1, type)
+			return
+		if text != "":
+			info = getInfo(text)
+			getAction().addAction("javatar.command.create.run", "Create [info=" + str(info) + "]")
+			createClassFile(info["file"], getFileContents(self.type, info), self.type + "\"" + info["class"] + "\" already exists")
+			sublime.set_timeout(lambda: showStatus(self.type + " \"" + info["class"] + "\" is created within package \"" + toReadablePackage(info["package"], True) + "\""), 500)
 
-    def showInput(self, index, type=""):
-        if type != "" or index >= 0:
-            if type != "":
-                self.type = type
-            else:
-                self.type = getSnippetName(index)
-            view = sublime.active_window().show_input_panel(self.type + " Name:", "", self.run, "", "")
-            view.set_name("JavatarCreate")
+	def showInput(self, index, type=""):
+		if type != "" or index >= 0:
+			if type != "":
+				self.type = type
+			else:
+				self.type = getSnippetName(index)
+			view = sublime.active_window().show_input_panel(self.type + " Name:", "", self.run, "", "")
+			view.set_name("JavatarCreate")

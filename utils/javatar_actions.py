@@ -24,7 +24,9 @@ class ActionList:
 	def clearAction(self):
 		self.actions = {}
 
+
 ACTION = None
+
 
 def getAction():
 	global ACTION
