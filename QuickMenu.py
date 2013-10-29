@@ -43,6 +43,17 @@ class QuickMenu:
 			self.settings["menu"][menu]["items"] += copy.deepcopy(items)
 			self.settings["menu"][menu]["actions"] += copy.deepcopy(actions)
 
+	def insertItem(self, menu, index, item, action):
+		if menu in self.settings["menu"] and "items" in self.settings["menu"][menu] and "actions" in self.settings["menu"][menu]:
+			self.settings["menu"][menu]["items"].insert(index, copy.deepcopy(item))
+			self.settings["menu"][menu]["actions"].insert(index, copy.deepcopy(action))
+			if "selected_index" in self.settings["menu"][menu] and self.settings["menu"][menu]["selected_index"] > index:
+				self.settings["menu"][menu]["selected_index"] += 1
+
+	def setSelectedIndex(self, menu, index):
+		if menu in self.settings["menu"] and "selected_index" in self.settings["menu"][menu]:
+				self.settings["menu"][menu]["selected_index"] = index
+
 	def show(self, window=None, on_done=None, menu=None, action=None, flags=0, on_highlight=None, level=0):
 		selected_index = -1
 		if window is None and self.tmp["window"] is not None:
