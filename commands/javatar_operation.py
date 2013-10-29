@@ -29,26 +29,6 @@ class JavatarCorrectClassCommand(sublime_plugin.TextCommand):
 		return "Correct Class"
 
 
-class JavatarUtilCommand(sublime_plugin.TextCommand):
-	def run(self, edit, type="", text="", region=None, dest=None):
-		if type == "insert":
-			self.view.insert(edit, 0, text)
-		elif type == "add":
-			self.view.insert(edit, self.view.size(), text)
-		elif type == "replace":
-			self.view.insert(edit, region, text)
-		elif type == "set_read_only":
-			self.view.set_read_only(True)
-		elif type == "test":
-			self.view.show_popup_menu(["A", "B"], self.nothing)
-
-	def nothing(self, index=-1):
-		pass
-
-	def description(self, type="", text="", dest=None):
-		return dest
-
-
 class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 	classes = []
 	ctype = None
@@ -142,39 +122,39 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 			#add default imports
 			getAction().addAction("javatar.command.operation.organize_imports.step3", "Organize Imports [step=3] Add default imports")
 			for packageImport in getSettings("default_import"):
-				if "type" in packageImport:
-					importOnce = False
-					for importType in packageImport["type"]:
-						if importType in self.askTypes:
-							importOnce = True
-							self.askTypes.remove(importType)
-							if "package" in packageImport:
-								package = normalizePackage(packageImport["package"]+"."+importType)
-								if  package not in self.importedPackages:
-									self.importedPackages.append(package)
-									if package in self.importedPackagesStat:
-										self.importedPackagesStat[package]+=1
-									else:
-										self.importedPackagesStat[package]=1
-					if not importOnce and "always_import" in packageImport and packageImport["always_import"] and "package" in packageImport and packageImport["package"] != "":
-						self.alwaysImportedPackages.append(packageImport["package"])
+				importOnce = False
+				for importType in getAllTypes(packageImport):
+					if importType in self.askTypes:
+						importOnce = True
+						self.askTypes.remove(importType)
+						if "default" in packageImport and packageImport["default"]:
+							continue
+						package = normalizePackage(packageImport["package"]+"."+importType)
+						if package not in self.importedPackages:
+							self.importedPackages.append(package)
+							if package in self.importedPackagesStat:
+								self.importedPackagesStat[package]+=1
+							else:
+								self.importedPackagesStat[package]=1
+				if not importOnce and "always_import" in packageImport and packageImport["always_import"] and "package" in packageImport and packageImport["package"] != "":
+					self.alwaysImportedPackages.append(packageImport["package"])
 			for packageImport in getImports():
-				if "type" in packageImport:
-					importOnce = False
-					for importType in packageImport["type"]:
-						if importType in self.askTypes:
-							importOnce = True
-							self.askTypes.remove(importType)
-							if "package" in packageImport:
-								package = normalizePackage(packageImport["package"]+"."+importType)
-								if  package not in self.importedPackages:
-									self.importedPackages.append(package)
-									if package in self.importedPackagesStat:
-										self.importedPackagesStat[package]+=1
-									else:
-										self.importedPackagesStat[package]=1
-					if not importOnce and "always_import" in packageImport and packageImport["always_import"] and "package" in packageImport and packageImport["package"] != "":
-						self.alwaysImportedPackages.append(packageImport["package"])
+				importOnce = False
+				for importType in getAllTypes(packageImport):
+					if importType in self.askTypes:
+						importOnce = True
+						self.askTypes.remove(importType)
+						if "default" in packageImport and packageImport["default"]:
+							continue
+						package = normalizePackage(packageImport["package"]+"."+importType)
+						if package not in self.importedPackages:
+							self.importedPackages.append(package)
+							if package in self.importedPackagesStat:
+								self.importedPackagesStat[package]+=1
+							else:
+								self.importedPackagesStat[package]=1
+				if not importOnce and "always_import" in packageImport and packageImport["always_import"] and "package" in packageImport and packageImport["package"] != "":
+					self.alwaysImportedPackages.append(packageImport["package"])
 			self.run(edit, 4)
 		elif step == 4:
 			#ask package

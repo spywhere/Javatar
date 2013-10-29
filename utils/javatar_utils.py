@@ -13,8 +13,8 @@ def reset():
 	global SETTINGS, SETTINGSBASE
 	SETTINGS = None
 	SETTINGSBASE = None
-	from .javatar_collections import resetSnippets
-	resetSnippets()
+	from .javatar_collections import resetSnippetsAndImports
+	resetSnippetsAndImports()
 
 
 def isReady():

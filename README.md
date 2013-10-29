@@ -32,8 +32,8 @@ A Sublime Text 3 Plugin for Java Development
 * [+] Package path in status bar
 * [*] Organize Imports
 * [*] Rename/Move packages/classes
-* [-] Dynamic method call auto-complete
 * [-] JAR file export (included executable)
+* [-] Dynamic method call auto-complete
  
 [+] Available on Stable Channel<br />
 [*] Partial available on Development Channel<br />
@@ -43,7 +43,11 @@ A Sublime Text 3 Plugin for Java Development
 
 ### Important Updates
 ##### Development Build
-* Organize Imports: Now available to test
+* Full Java SE7 Imports added (Java SE8 should coming soon...)
+* Javatar Imports improvements, now types separated and also backward compatible
+* QuickMenu updated
+* Debug command added (Javatar Util)
+* Typo fixed
 
 ##### Stable Build
 * Improved Class Correction
@@ -258,6 +262,8 @@ Stable channel is a default channel for every user who installed Javatar. This c
 
 #### Development Channel
 Development channel is a optional channel for user who want to try upcoming features which may not fully working or need improvements. All upcoming features will appear in `Javatar: Browse Commands > Development Section` only.
+
+Please note that stable channel update notes also apply on development channel too.
 
 #### Package Updates Notifications
 In order to notice important notes to all users, in stable channel or development channel or both, Javatar use custom notification system which will notice you *only once* when Javatar is ready to use. You can opt out this notification by settings `message_id` to `-1` in Javatar's user settings file, note that you can see update notes in README file or you will miss further important update notes.

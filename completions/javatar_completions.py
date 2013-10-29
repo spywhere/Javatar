@@ -3,6 +3,20 @@ import sublime
 import re
 from ..utils import *
 
+'''
+Method Call Completion Process
+ 1. Get call statement
+ 2. Find class contains that call from type and imports
+ 3. If 2 is not found, find in default imports
+ 4. If 3 is not found, return nothing
+ 5. If 2 or 3 is found, return all methods that start with call, with arguments-ready. If class inherited from another class, find them too!
+
+Work to do!
+List "all" methods and "all" unprivate fields within "all" Java's classes in "all" packages
+
+'''
+
+
 
 class JavatarCompletions(sublime_plugin.EventListener):
 	def getCallPosition(self, view, pos):

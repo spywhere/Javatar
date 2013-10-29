@@ -1,0 +1,167 @@
+//Java SE7
+// - java.* = 1471 classes
+// - javax.* = not started yet
+
+// Sample of java.lang.System implemented in a new Javatar's format, Javatar Packages
+
+// Packages Prototype Implementations
+//   - Organize Imports
+//   - Method Call Completions
+{
+	"name": "Java SE7",
+	"packages": {
+		// Package name
+		"java.lang": {
+			// Is default package
+			"default": true,
+			// Type of classes
+			// "interface/class/etc.": [
+			"class": [
+				{
+					// Class name
+					"name": "System",
+					// Inheritances
+					"extends": "java.lang.Object",
+					// "implements": ["Runnable", "KeyListener"],
+					// "deprecated": true,
+					// Class's fields
+					"fields":[
+						{
+							// Field name
+							"name": "err",
+							// Field type
+							"type": "java.io.PrintStream",
+							// Field special tags (for faster searching)
+							"special_tags": ["default_java"]
+						}, {
+							"name": "in",
+							"type": "java.io.InputStream",
+							"special_tags": ["default_java"]
+						}, {
+							"name": "out",
+							"type": "java.io.PrintStream",
+							"special_tags": ["default_java"]
+						}
+					],
+					// Class's methods
+					"methods": [
+						{
+							// Method usage
+							"method": "arraycopy(src, srcPos, dest, destPos, length)",
+							// Method return type
+							"return": "void",
+							// Other tags
+							// "deprecated": true,
+							"special_tags": ["primitive_type"]
+						}, {
+							"method": "clearProperty(key)",
+							"return": "java.lang.String",
+							"special_tags": ["default_java"]
+						}, {
+							"method": "console()",
+							"return": "java.lang.Console",
+							"special_tags": ["default_java"]
+						}, {
+							"method": "currentTimeMillis()",
+							"return": "long",
+							"special_tags": ["primitive_type"]
+						}, {
+							"method": "exit(status)",
+							"return": "void",
+							"special_tags": ["primitive_type"]
+						}, {
+							"method": "gc()",
+							"return": "void",
+							"special_tags": ["primitive_type"]
+						}, {
+							"method": "getenv()",
+							"return": "java.util.Map",
+							"special_tags": ["default_java"]
+						}, {
+							"method": "getenv(name)",
+							"return": "java.lang.String",
+							"special_tags": ["default_java"]
+						}, {
+							"method": "getProperties()",
+							"return": "java.util.Properties",
+							"special_tags": ["default_java"]
+						}, {
+							"method": "getProperty(key)",
+							"return": "java.lang.String",
+							"special_tags": ["default_java"]
+						}, {
+							"method": "getProperty(key, def)",
+							"return": "java.lang.String",
+							"special_tags": ["default_java"]
+						}, {
+							"method": "getSecurityManager()",
+							"return": "java.lang.SecurityManager",
+							"special_tags": ["default_java"]
+						}, {
+							"method": "identityHashCode(x)",
+							"return": "int",
+							"special_tags": ["primitive_type"]
+						}, {
+							"method": "inheritedChannel()",
+							"return": "java.nio.Channel",
+							"special_tags": ["default_java"]
+						}, {
+							"method": "lineSeparator()",
+							"return": "java.lang.String",
+							"special_tags": ["default_java"]
+						}, {
+							"method": "load(filename)",
+							"return": "void",
+							"special_tags": ["primitive_type"]
+						}, {
+							"method": "loadLibrary(libname)",
+							"return": "void",
+							"special_tags": ["primitive_type"]
+						}, {
+							"method": "mapLibraryName(libname)",
+							"return": "java.lang.String",
+							"special_tags": ["default_java"]
+						}, {
+							"method": "nanoTime()",
+							"return": "long",
+							"special_tags": ["primitive_type"]
+						}, {
+							"method": "runFinalization()",
+							"return": "void",
+							"special_tags": ["primitive_type"]
+						}, {
+							"method": "runFinalizersOnExit(value)",
+							"return": "void",
+							"special_tags": ["primitive_type"],
+							"deprecated": true
+						}, {
+							"method": "setErr(err)",
+							"return": "void",
+							"special_tags": ["primitive_type"]
+						}, {
+							"method": "setIn(in)",
+							"return": "void",
+							"special_tags": ["primitive_type"]
+						}, {
+							"method": "setOut(out)",
+							"return": "void",
+							"special_tags": ["primitive_type"]
+						}, {
+							"method": "setProperties(props)",
+							"return": "void",
+							"special_tags": ["primitive_type"]
+						}, {
+							"method": "setProperty(key, value)",
+							"return": "java.lang.String",
+							"special_tags": ["default_java"]
+						}, {
+							"method": "setSecurityManager(s)",
+							"return": "void",
+							"special_tags": ["primitive_type"]
+						}
+					]
+				}
+			]
+		}
+	}
+}

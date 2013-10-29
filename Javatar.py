@@ -1,15 +1,21 @@
-from .utils import *
+import sublime
+import sublime_plugin
 from .commands import *
 from .completions import *
+from .utils import *
 
 
-def plugin_loaded():
+def startup():
 	getAction().addAction("javatar", "Startup")
 	reset() # clear data when restart
 	readSettings("Javatar.sublime-settings")
 	checkNews()
 	hideStatus()
 	getAction().addAction("javatar", "Ready")
+
+
+def plugin_loaded():
+	sublime.set_timeout(startup, 50)
 
 
 class EventListener(sublime_plugin.EventListener):

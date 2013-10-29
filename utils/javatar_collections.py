@@ -7,7 +7,7 @@ SNIPPETS = []
 DEFAULTIMPORTS = []
 
 
-def resetSnippets():
+def resetSnippetsAndImports():
 	getAction().addAction("javatar.util.collection.reset", "Reset all snippets and default imports")
 	global SNIPPETS, DEFAULTIMPORTS
 	SNIPPETS = []
@@ -48,10 +48,39 @@ def getSnippetFiles():
 		print("Javatar Snippet " + filename + " loaded")
 		SNIPPETS.append(analyseSnippet(filepath))
 
+
+def countImports(imports):
+	packages = 0
+	classes = 0
+	for imp in imports:
+		if "package" in imp:
+			packages += 1
+			if "interface" in imp:
+				classes += len(imp["interface"])
+			if "class" in imp:
+				classes += len(imp["class"])
+			if "enum" in imp:
+				classes += len(imp["enum"])
+			if "exception" in imp:
+				classes += len(imp["exception"])
+			if "error" in imp:
+				classes += len(imp["error"])
+			if "annotation" in imp:
+				classes += len(imp["annotation"])
+			if "type" in imp:
+				classes += len(imp["type"])
+	return [packages, classes]
+
+
 def analyseImport(file):
-	getAction().addAction("javatar.util.collection.analyse_snippet", "Analyse snippet [file="+file+"]")
+	getAction().addAction("javatar.util.collection.analyse_import", "Analyse import [file="+file+"]")
 	try:
-		return sublime.decode_value(sublime.load_resource(file))
+		from .javatar_utils import getPath
+		imports = sublime.decode_value(sublime.load_resource(file))
+		filename = getPath("name", file)
+		count = countImports(imports)
+		print("Javatar Imports " + filename + " loaded with " + str(count[1]) + " classes in " + str(count[0]) + " packages")
+		return imports
 	except ValueError:
 		sublime.error_message("Invalid JSON format")
 	return None
@@ -63,7 +92,6 @@ def getImportFiles():
 	for filepath in sublime.find_resources("*.javatar-imports"):
 		filename = getPath("name", filepath)
 		getAction().addAction("javatar.util.collection", "Javatar Default Imports " + filename + " loaded")
-		print("Javatar Default Imports " + filename + " loaded")
 		imports = analyseImport(filepath)
 		if imports is not None:
 			DEFAULTIMPORTS += imports
