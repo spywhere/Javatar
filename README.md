@@ -179,20 +179,20 @@ Key bindings can be accessed via the preference menu or via command palette same
 	* This will open quick panel to select which build you want to perform.
 * Calls... : `Key+Shift+J`
 	* This will open quick panel to select which information you want to insert.
-* Create new... : `Key+Shift+L`
+* Create new... : `Key+Shift+L` (@deprecated)
 	* This will open quick panel to select which class you want to create.
 * Operations... : `Key+Shift+O`
 	* This will open quick panel to select which operation you want to perform.
-* Insert full package path : `Key+Shift+P`
+* Insert full package path : `Key+Shift+P` (@deprecated)
 	* **Example**
 	* Package.Subpackage
-* Insert current package name : `Key+Shift+S`
+* Insert current package name : `Key+Shift+S` (@deprecated)
 	* **Example:**
 	* SubPackage
-* Insert current class name : `Key+Shift+C`
+* Insert current class name : `Key+Shift+C` (@deprecated)
 	* **Example:**
 	* Class
-* Insert full class path : `Key+Shift+F`
+* Insert full class path : `Key+Shift+F` (@deprecated)
 	* **Example:**
 	* Package.SubPackage.Class
 	

@@ -23,7 +23,7 @@ class EventListener(sublime_plugin.EventListener):
 		hideStatus()
 
 	def on_activated(self, view):
-		hideStatus()
+		sublime.set_timeout(hideStatus, 50)
 
 	def on_load(self, view):
 		hideStatus()

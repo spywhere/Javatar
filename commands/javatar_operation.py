@@ -121,24 +121,8 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 		elif step == 3:
 			#add default imports
 			getAction().addAction("javatar.command.operation.organize_imports.step3", "Organize Imports [step=3] Add default imports")
-			for packageImport in getSettings("default_import"):
-				importOnce = False
-				for importType in getAllTypes(packageImport):
-					if importType in self.askTypes:
-						importOnce = True
-						self.askTypes.remove(importType)
-						if "default" in packageImport and packageImport["default"]:
-							continue
-						package = normalizePackage(packageImport["package"]+"."+importType)
-						if package not in self.importedPackages:
-							self.importedPackages.append(package)
-							if package in self.importedPackagesStat:
-								self.importedPackagesStat[package]+=1
-							else:
-								self.importedPackagesStat[package]=1
-				if not importOnce and "always_import" in packageImport and packageImport["always_import"] and "package" in packageImport and packageImport["package"] != "":
-					self.alwaysImportedPackages.append(packageImport["package"])
-			for packageImport in getImports():
+			packageImports = getSettings("default_import")+getImports()
+			for packageImport in packageImports:
 				importOnce = False
 				for importType in getAllTypes(packageImport):
 					if importType in self.askTypes:
