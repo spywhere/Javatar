@@ -18,8 +18,6 @@ Keywords:
 this,super
 '''
 
-
-
 class JavatarCompletions(sublime_plugin.EventListener):
 	def getCallPosition(self, view, pos):
 		if pos <=0:

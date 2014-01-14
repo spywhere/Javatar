@@ -129,10 +129,15 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 		},
 		"help": {
 			"selected_index": 2,
-			"items": [["Back", "Back to previous menu"], ["Actions History", "Generate a report on Javatar actions history"], ["Actions History (Custom)", "Generate a report on Javatar actions history using custom selector"]],
+			"items": [["Back", "Back to previous menu"], ["Download Packages", "Download additional Java packages..."], ["Actions History", "Generate a report on Javatar actions history"], ["Actions History (Custom)", "Generate a report on Javatar actions history using custom selector"]],
 			"actions": [
 				{
 					"name": "main"
+				}, {
+					"command": "javatar_help",
+					"args": {
+						"action": "additional_packages"
+					}
 				}, {
 					"command": "javatar_help",
 					"args": {

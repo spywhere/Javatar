@@ -2,6 +2,9 @@
 	//Debugging purpose:
 	"debug_mode" : false,
 
+	//Javatar general purpose value
+	"javatar_gp": 0,
+
 	//Package Subscription:
 	//   dev = Developer release (contains new features, bugs and also debugging messages enabled)
 	//   stable = Stable release (safe to use, only stable feature enabled)

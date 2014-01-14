@@ -22,6 +22,7 @@ A Sublime Text 3 Plugin for Java Development
 * Build System
 * Javatar Snippets
 * Javatar Imports
+* Additional Packages
 * Package Channels
 * Actions History
 
@@ -42,6 +43,9 @@ A Sublime Text 3 Plugin for Java Development
 ====
 
 ### Important Updates
+
+From 15 Jan 2014, Javatar will include full Java SE7 class list inside its package. This will take a little longer to install/update Javatar. For other Java version, please check out Additional Packages section.
+
 ##### Development Build
 * Full Java SE7 Imports added (Java SE8 should coming soon...)
 * Javatar Imports improvements, now types separated and also backward compatible
@@ -119,17 +123,17 @@ Javatar Operations help you do class or package operations, such as organize imp
 Javatar will search for current package and your class name based on file name and location of current file and correct it on first class.
 
 ##### Organize Imports
-Javatar will automatically imports all necessary packages and remove unused packages for you. This has been done in 7 sub-steps.
+Javatar will automatically imports all necessary packages and remove unused packages for you. This is done within 7 sub-steps.
 
-1. Javatar will gathering imports informations from current file
+1. Javatar gathering imports informations from current file
 2. Javatar let's you select a package that has the same class
 3. Javatar imports "default imports" and Java's packages
 4. Javatar asks you to enter package name for missing classes
 5. Javatar asks for package name that you want to enter manually
 6. Javatar clear all imports in current file
-7. Javatar imports all packages that has been proceed with step 1-4
+7. Javatar imports all packages that has been processed within step 1-4
  
- ====
+====
  
 ###  Default Package Detection
 Javatar will specify default package with these steps...
@@ -255,6 +259,9 @@ Imports file is a JSON file and has a very simple format. It is a list of a map 
 	* Always import this package even no class is used (this will import as `package.*`). This key is optional.
 	
 Example of Javatar Imports is inside Javatar's Java folder (`PACKAGES_PATH/Javatar/Java`)
+
+### Additional Packages
+In upcoming feature, Javatar will use a new imports format which support both organize imports and (upcoming) method completion feature. By default, Javatar package will include Java SE7 class list inside its package. This will make Javatar take a little longer to install/update from Package Control. For other Java version, you can check out a link to additional package inside `Help and Support -> Additional Packages` menu.
 
 ### Package Channels
 #### Stable Channel

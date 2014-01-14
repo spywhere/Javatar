@@ -1,7 +1,6 @@
 import sublime
 from .javatar_actions import *
 
-
 VERSION = "13.10.30.4.4b"
 UPDATEFOR = "dev"
 NEWSID = 5

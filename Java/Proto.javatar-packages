@@ -3,6 +3,8 @@
 // - javax.* = not started yet
 
 // Sample of java.lang.System implemented in a new Javatar's format, Javatar Packages
+//
+// * Actual format may be different from current version
 
 // Packages Prototype Implementations
 //   - Organize Imports
