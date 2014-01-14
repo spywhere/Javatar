@@ -96,7 +96,7 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 			]
 		},
 		"dev": {
-			"items": [["Back", "Back to previous menu"], ["Operations: Organize Imports", "Correct class imports in current file"], ["Operations: Rename Class", "Rename current class"], ["Operations: Rename Package", "Rename current package"], ["Convert Imports", "Convert Javatar Imports to Javatar Packages"], ["Testing", "For testing and experimenting new feature"]],
+			"items": [["Back", "Back to previous menu"], ["Operations: Organize Imports", "Correct class imports in current file"], ["Operations: Rename Class", "Rename current class"], ["Operations: Rename Package", "Rename current package"], ["Prettify JSON", "Reformat current document as pretty JSON"], ["Convert Imports", "Convert Javatar Imports to Javatar Packages"], ["Testing", "For testing and experimenting new feature"]],
 			"actions": [
 				{
 					"name": "main"
@@ -111,6 +111,11 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 					"command": "javatar_rename_operation",
 					"args": {
 						"type": "package"
+					}
+				}, {
+					"command": "javatar_util",
+					"args": {
+						"type": "tojson"
 					}
 				}, {
 					"command": "javatar_convert"

@@ -30,6 +30,12 @@ class JavatarCorrectClassCommand(sublime_plugin.TextCommand):
 
 
 class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
+	# import annotation
+	# import classes
+	# import interfaces, superclasses
+	#
+	# if test on Bukkit Plugin passed then it should work perfectly
+
 	classes = []
 	ctype = None
 	selectedPackage = None

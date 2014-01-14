@@ -15,6 +15,10 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
 		elif type == "test":
 			if not isStable():
 				self.view.show_popup_menu(["A", "B"], self.nothing)
+		elif type == "tojson":
+			if not isStable():
+				jsonObj = sublime.decode_value(self.view.substr(sublime.Region(0,self.view.size())))
+				self.view.replace(edit, sublime.Region(0,self.view.size()), sublime.encode_value(jsonObj, True));
 		elif type == "reload":
 			if isDebug():
 				getAction().addAction("javatar.command.utils.reload", "Reload Javatar")
