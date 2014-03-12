@@ -61,11 +61,11 @@ From 15 Jan 2014, Javatar will include full Java SE7 class list inside its packa
 
 ### Screenshots
 ##### Creating packages in action
-![CreatePackage](http://spywhere.github.io/images/CreatePackage.gif)
+![CreatePackage](http://spywhere.github.io/images/PackageCreate.gif)
 ##### Creating classes in action
-![CreateClass](http://spywhere.github.io/images/CreateClass.gif)
+![CreateClass](http://spywhere.github.io/images/ClassCreate.gif)
 ##### Creating other classes in action
-![CreateOther](http://spywhere.github.io/images/CreateOther.gif)
+![CreateOther](http://spywhere.github.io/images/OtherClassCreate.gif)
 ##### Class operations in action
 ![Operation](http://spywhere.github.io/images/Operations.gif)
 
@@ -213,7 +213,7 @@ The following tags are used inside Javatar snippet files (*.javatar) which will 
 * %description:*DESCRIPTION TO SHOW UNDER CREATION COMMAND*%
 
 ##### Usage of snippet tags in action
-![CreateNewSS](http://spywhere.github.io/images/CreateNewSS.jpg)
+![CreateNewSS](http://spywhere.github.io/images/CreateNewSS.png)
 
 
 #### Snippet Macros
