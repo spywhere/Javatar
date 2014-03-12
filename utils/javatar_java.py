@@ -26,10 +26,33 @@ def getAllTypes(packageImports):
 			imports += packageImports["type"]
 		if "annotation" in packageImports:
 			imports += packageImports["annotation"]
+	else:
+		if "interface" in packageImports:
+			for interface in packageImports["interface"]:
+				imports.append(interface["name"])
+		if "class" in packageImports:
+			for clazz in packageImports["class"]:
+				imports.append(clazz["name"])
+		if "enum" in packageImports:
+			for enum in packageImports["enum"]:
+				imports.append(enum["name"])
+		if "exception" in packageImports:
+			for exception in packageImports["exception"]:
+				imports.append(exception["name"])
+		if "error" in packageImports:
+			for error in packageImports["error"]:
+				imports.append(error["name"])
+		if "type" in packageImports:
+			for types in packageImports["type"]:
+				imports.append(types["name"])
+		if "annotation" in packageImports:
+			for annotation in packageImports["annotation"]:
+				imports.append(annotation["name"])
 	return imports
 
 
 def findClass(path, classname):
+	# If it is a default class, should import manually
 	from .javatar_utils import toPackage, getSettings
 	from .javatar_collections import getImports
 	classes = []
@@ -40,18 +63,14 @@ def findClass(path, classname):
 				classpath = toPackage(os.path.join(root, filename)[:-5])
 				classes.append(classpath)
 				foundClass = True
-	for packageImport in getSettings("default_import"):
-		if foundClass and "default" in packageImport and packageImport["default"]:
-			continue
-		if classname in getAllTypes(packageImport):
-			if packageImport["package"] != "" and packageImport["package"] not in classes and ("default" not in packageImport or not packageImport["default"]):
-				classes.append(packageImport["package"]+"."+classname)
 	for packageImport in getImports():
-		if foundClass and "default" in packageImport and packageImport["default"]:
-			continue
-		if classname in getAllTypes(packageImport):
-			if packageImport["package"] != "" and packageImport["package"] not in classes and ("default" not in packageImport or not packageImport["default"]):
-				classes.append(packageImport["package"]+"."+classname)
+		if "packages" in packageImport:
+			for packageName in packageImport["packages"]:
+				package = packageImport["packages"][packageName]
+				if not foundClass and "default" in package and package["default"]:
+					continue
+				if classname in getAllTypes(package):
+					classes.append(packageName+"."+classname)
 	classes.sort()
 	return classes
 

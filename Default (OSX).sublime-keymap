@@ -16,14 +16,6 @@
             }
         }
     },{
-        "keys": ["super+shift+k","super+shift+j"],
-        "command": "javatar",
-        "args": {
-            "action": {
-                "name": "calls"
-            }
-        }
-    },{
         "keys": ["super+shift+k","super+shift+b"],
         "command": "javatar",
         "args": {
@@ -32,11 +24,11 @@
             }
         }
     },{
-        "keys": ["super+shift+k","super+shift+l"],
+        "keys": ["super+shift+k","super+shift+j"],
         "command": "javatar",
         "args": {
             "action": {
-                "name": "creates"
+                "name": "calls"
             }
         }
     },{
@@ -48,28 +40,18 @@
             }
         }
     },{
+        "keys": ["super+shift+k","super+shift+n"],
+        "command": "javatar",
+        "args": {
+            "action": {
+                "name": "creates"
+            }
+        }
+    },{
         "keys": ["super+shift+k","super+shift+p"],
-        "command": "javatar_call",
-        "args": {
-            "type" : "package_name"
-        }
+        "command": "javatar_create_package"
     },{
-        "keys": ["super+shift+k","super+shift+s"],
-        "command": "javatar_call",
-        "args": {
-            "type" : "subpackage_name"
-        }
-    },{
-        "keys": ["super+shift+k","super+shift+c"],
-        "command": "javatar_call",
-        "args": {
-        	"type" : "class_name"
-        }
-    },{
-        "keys": ["super+shift+k","super+shift+f"],
-        "command": "javatar_call",
-        "args": {
-        	"type" : "full_class_name"
-        }
+        "keys": ["super+shift+k","super+shift+i"],
+        "command": "javatar_organize_imports"
     }
 ]

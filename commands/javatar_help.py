@@ -21,14 +21,14 @@ class JavatarHelpCommand(sublime_plugin.WindowCommand):
 				return
 			self.action = action
 			if selector is not None:
-				report = "## Javatar Report\n### System Informations\n* Javatar Version: `%javatar_version%`\n* Sublime Version: `%sublime_version%`\n* Package Path: `%packages_path%`\n* Javatar Channel: `%javatar_channel%`\n* Sublime Channel: `%sublime_channel%`\n* Platform: `%platform%`\n* As Packages: `%is_package%`\n* Package Control: `%package_control%`\n* Architecture: `%arch%`\n* Javatar's Parent Folder: `%parent_folder%`\n* Is Project: `%is_project%`\n* Is File: `%is_file%`\n* Is Java: `%is_java%`\n\n### Action List\n%actions%"
+				report = "## Javatar Report\n### System Informations\n* Javatar Version: `%javatar_version%`\n* Sublime Version: `%sublime_version%`\n* Package Path: `%packages_path%`\n* Javatar Channel: `%javatar_channel%`\n* Sublime Channel: `%sublime_channel%`\n* Is Debug Mode: `%is_debug%`\n* Platform: `%platform%`\n* As Packages: `%is_package%`\n* Package Control: `%package_control%`\n* Architecture: `%arch%`\n* Javatar's Parent Folder: `%parent_folder%`\n* Is Project: `%is_project%`\n* Is File: `%is_file%`\n* Is Java: `%is_java%`\n\n### Action List\n%actions%"
 				report = report.replace("%javatar_version%", getVersion())
 				report = report.replace("%javatar_channel%", str.lower(getSettings("package_channel")))
 				report = report.replace("%is_package%", str(getPath("exist", getPath("join", sublime.installed_packages_path(), "Javatar.sublime-package"))))
 				report = report.replace("%parent_folder%", getPath("javatar_parent"))
-
 				report = report.replace("%sublime_version%", str(sublime.version()))
 				report = report.replace("%sublime_channel%", sublime.channel())
+				report = report.replace("%is_debug%", str(getSettings("debug_mode")))
 				report = report.replace("%package_control%", str(getPath("exist", getPath("join", sublime.packages_path(), "Package Control")) or getPath("exist", getPath("join", sublime.installed_packages_path(), "Package Control.sublime-package"))))
 				report = report.replace("%is_project%", str(isProject()))
 				report = report.replace("%is_file%", str(isFile()))

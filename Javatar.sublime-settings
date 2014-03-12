@@ -30,25 +30,6 @@
 	//Show package path in status bar
 	"show_package_path" : true,
 
-	//Import these package automatically when organize imports
-	//   type = List of types that required the package
-	//   package = Package that contains types (empty is not need to import)
-	//   always_import = Import even no type found (can be omitted)
-	//This will remove type from "needImport" list
-	//
-	//Java packages are located in Java/Java.javatar-imports
-	"default_import" : [
-		// Example:
-		//    This will import "java.util.logging.Logger" automatically if type "Logger" is found
-		// and also "java.util.logging.Level" if type "Level" is found
-		//
-		// {
-		// 	"type": ["Level", "Logger"],
-		// 	"package": "java.util.logging",
-		// 	"always_import": false
-		// }
-	],
-
 	//Java file validation using RegEx
 	"java_file_validation" : ".*\\.java$",
 
@@ -80,5 +61,5 @@
 	"package_import_selector" : "storage.modifier.import.java",
 
 	//Types and classes scope selector (Use in Organize Imports)
-	"type_selector" : "storage.type.java|entity.other.inherited-class"
+	"type_selector" : "storage.type.java|storage.type.generic.java|entity.other.inherited-class"
 }

@@ -21,7 +21,7 @@ A Sublime Text 3 Plugin for Java Development
 * Key Bindings
 * Build System
 * Javatar Snippets
-* Javatar Imports
+* Javatar Packages
 * Additional Packages
 * Package Channels
 * Actions History
@@ -35,7 +35,7 @@ A Sublime Text 3 Plugin for Java Development
 * [*] Rename/Move packages/classes
 * [-] JAR file export (included executable)
 * [-] Dynamic method call auto-complete
- 
+
 [+] Available on Stable Channel<br />
 [*] Partial available on Development Channel<br />
 [-] Planned
@@ -44,20 +44,18 @@ A Sublime Text 3 Plugin for Java Development
 
 ### Important Updates
 
-From 15 Jan 2014, Javatar will include full Java SE7 class list inside its package. This will take a little longer to install/update Javatar. For other Java version, please check out Additional Packages section.
+From 15 Jan 2014, Javatar will include full Java SE7 class list inside its package. This will take a little longer to install/update Javatar. For another Java version, please check out Additional Packages section.
 
 ##### Development Build
-* Full Java SE7 Imports added (Java SE8 should coming soon...)
-* Javatar Imports improvements, now types separated and also backward compatible
-* QuickMenu updated
-* Debug command added (Javatar Util)
-* Typo fixed
+* Organize Imports now use all references from Javatar Packages
+* Organize Imports improvements
+* Javatar Imports has been removed from Javatar. If you are using it, please convert all imports file using *Development Section... > Convert Imports*
+* Manual package input box will append class name automatically when imported
 
 ##### Stable Build
-* Improved Class Correction
-* Many RegEx has been removed, please check it out if you are using it
-* Some code tweaks
-* Please check out an upcoming key bindings in Key Bindings section below
+* New key bindings, please check out Key Bindings section for more info
+* Startup time improvement for Stable channel
+* Default imports has been removed from settings. If you want to import your own package, use Javatar Packages instead (Check out Javatar Packages section)
 
 ====
 
@@ -77,20 +75,20 @@ From 15 Jan 2014, Javatar will include full Java SE7 class list inside its packa
 * Build: Accessed via command palette only
 	* Build classes within package or project
 	* More details on Javatar Builds
-* Call: 
+* Call:
 	* Insert class and package informations such as current class path, class name or package name
 	* More details on Javatar Calls
 * Creation: Accessed via command palette only
 	*  Packages and classes creation
 	* More details on Advanced Creations
-* Operation: 
+* Operation:
 	* Do class or package operation such as organize imports, rename class or package
 	* More details on Javatar Operations
 
 ====
 
 ### Javatar Builds
-Javatar use its own build system which based on default Sublime Text's JavaC build settings. 
+Javatar use its own build system which based on default Sublime Text's JavaC build settings.
 
 **Important!** When build on a project or package, Javatar cannot show any compilation error (or may show only last run built) since it builds all your classes in order. More details about build system is on Build System.
 
@@ -132,16 +130,16 @@ Javatar will automatically imports all necessary packages and remove unused pack
 5. Javatar asks for package name that you want to enter manually
 6. Javatar clear all imports in current file
 7. Javatar imports all packages that has been processed within step 1-4
- 
+
 ====
- 
+
 ###  Default Package Detection
 Javatar will specify default package with these steps...
 
 1. Project folder in your project file (when open project or folder)
 2. Folder contains current file (when open file)
 3. Specify current package as `(Unknown Package)`
- 
+
 Javatar will refuse to create packages or classes within unknown package. In this case, mostly because current file is not on the disk yet.
 
 ====
@@ -183,32 +181,14 @@ Key bindings can be accessed via the preference menu or via command palette same
 	* This will open quick panel to select which build you want to perform.
 * Calls... : `Key+Shift+J`
 	* This will open quick panel to select which information you want to insert.
-* Create new... : `Key+Shift+L` (@deprecated)
-	* This will open quick panel to select which class you want to create.
 * Operations... : `Key+Shift+O`
 	* This will open quick panel to select which operation you want to perform.
-* Insert full package path : `Key+Shift+P` (@deprecated)
-	* **Example**
-	* Package.Subpackage
-* Insert current package name : `Key+Shift+S` (@deprecated)
-	* **Example:**
-	* SubPackage
-* Insert current class name : `Key+Shift+C` (@deprecated)
-	* **Example:**
-	* Class
-* Insert full class path : `Key+Shift+F` (@deprecated)
-	* **Example:**
-	* Package.SubPackage.Class
-	
-##### Key Bindings in upcoming build
-To reduce unnecessary key bindings and give more key bindings to new commands, the following key bindings will be changed soon...
-
 * Create new... : `Key+Shift+N`
+    * This will open quick panel, showing you all possible types to create.
 * Create new package : `Key+Shift+P`
-	* This will open input panel, just like when you create a new package
-* Organize Imports : `Key+Shift+I`
-	* This will organize imports on current file
-* All Javatar Calls key bindings will be removed and access by default `Calls...` instead
+	* This will open input panel, just like when you create a new package.
+* Organize Imports : `Key+Shift+I` (Only on development channel)
+	* This will organize imports on current file.
 
 ====
 
@@ -246,35 +226,37 @@ The following macros are used inside Javatar snippet files (*.javatar) which wil
 * %package% = Package code (for example `package java.utils;` or same as `package %packages_path%;`)
 * All Sublime Text's snippet macros can be used within Javatar snippets. For example: ${1} or ${2://Comment}
 
-### Javatar Imports
-Javatar required imports file (*.javatar-imports) to correctly import necessary Java's packages. These files contain all classes and their packages to use with Javatar.
+### Javatar Packages
+Javatar required packages file (*.javatar-packages) to correctly import necessary Java's packages. These files contain all classes, fields, methods and packages to use with Javatar.
 
-Imports file is a JSON file and has a very simple format. It is a list of a map which each key and value has following meaning...
+Javatar Packages file is a JSON file. You can read more details about each key and value in Proto.javatar-packages located within Javatar's Java folder.
 
-* type
-	* Must be a list of classes inside a package
-* package
-	* Package that contains all above classes. Leave this key empty to bypass type checking. (Such as default import that do not have to included)
+However, their are 2 special keys that is not normally used within Javatar Packages which are...
+
+* experiment
+	* Set this to `true` to exclude this package from Javatar's packages list.
 * always_import
-	* Always import this package even no class is used (this will import as `package.*`). This key is optional.
-	
-Example of Javatar Imports is inside Javatar's Java folder (`PACKAGES_PATH/Javatar/Java`)
+	* Set this to `true` to always import this package even no class is used (this will import as `package.*`).
+
+Both keys are boolean type and also optional to use.
+
+Example of Javatar Packages is located inside Javatar's Java folder (`PACKAGES_PATH/Javatar/Java`)
 
 ### Additional Packages
-In upcoming feature, Javatar will use a new imports format which support both organize imports and (upcoming) method completion feature. By default, Javatar package will include Java SE7 class list inside its package. This will make Javatar take a little longer to install/update from Package Control. For other Java version, you can check out a link to additional package inside `Help and Support -> Additional Packages` menu.
+By default, Javatar package will include Java SE7 class list inside its package. This will make Javatar take a little longer to install/update from Package Control. For other Java version, you can check out a link to additional package inside *Help and Support > Additional Packages* menu.
 
 ### Package Channels
 #### Stable Channel
 Stable channel is a default channel for every user who installed Javatar. This channel will release only fully working features and hide all incomplete features.
 
 #### Development Channel
-Development channel is a optional channel for user who want to try upcoming features which may not fully working or need improvements. All upcoming features will appear in `Javatar: Browse Commands > Development Section` only.
+Development channel is a optional channel for user who want to try upcoming features which may not fully working or need improvements. All upcoming features will appear in *Javatar: Browse Commands > Development Section* only.
 
 Please note that stable channel update notes also apply on development channel too.
 
 #### Package Updates Notifications
 In order to notice important notes to all users, in stable channel or development channel or both, Javatar use custom notification system which will notice you *only once* when Javatar is ready to use. You can opt out this notification by settings `message_id` to `-1` in Javatar's user settings file, note that you can see update notes in README file or you will miss further important update notes.
-
+ 
 ### Actions History
 Actions History tracks how you use Javatar and helps solve the problem. By provides useful informations as request by developer (only when you submit an issue). A Javatar Action History Report will looks like this when using it properly...
 

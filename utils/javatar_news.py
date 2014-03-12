@@ -1,10 +1,10 @@
 import sublime
 from .javatar_actions import *
 
-VERSION = "13.10.30.4.4b"
-UPDATEFOR = "dev"
-NEWSID = 5
-NEWS = "- Full Java SE7 Imports added (Java SE8 should coming soon...)\n- Javatar Imports improvements, now types separated and also backward compatible\n- QuickMenu updated\n- Debug command added (Javatar Util)\n- Typo fixed\n\nTry it out in Development Section"
+VERSION = "14.03.12.21.10b"
+UPDATEFOR = "all"
+NEWSID = 6
+NEWS = "Stable Channel\n - New key bindings has been added. Please check README file for more infomations.\n - Startup time improvement for Stable channel\n - Default imports has been removed from settings. If you want to import your own pacakge, use Javatar Package instead.\n\nDevelopment Channel\n - Organize Imports now use all references from Javatar Packages.\n - Organize Imports improvements\n - Javatar Imports has been removed from Javatar. If you are using it, please convert using Convert Imports in Development Section menu.\n - Manual package input box will append class name automatically when imported."
 
 def getVersion():
 	return VERSION

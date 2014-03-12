@@ -1,22 +1,20 @@
-//Java SE7
-// - java.* = 1471 classes
-// - javax.* = not started yet
-
-// Sample of java.lang.System implemented in a new Javatar's format, Javatar Packages
+// Sample of java.lang.System implemented in a Javatar Packages format
 //
-// * Actual format may be different from current version
+// * Actual format may be slightly different from current version
 
-// Packages Prototype Implementations
-//   - Organize Imports
-//   - Method Call Completions
+// Packages
 {
+	// Exclude this package from Javatar's packages list
+	"experiment": true,
+	// Name of this package
 	"name": "Java SE7",
+	// List of packages
 	"packages": {
 		// Package name
 		"java.lang": {
-			// Is default package
+			// Is default package?
 			"default": true,
-			// Type of classes
+			// Type of classes (See JavaSE7 for examples)
 			// "interface/class/etc.": [
 			"class": [
 				{

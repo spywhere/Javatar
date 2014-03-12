@@ -31,7 +31,7 @@ class JavatarCorrectClassCommand(sublime_plugin.TextCommand):
 
 class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 	# import annotation
-	# import classes
+	# import classes, generic classes
 	# import interfaces, superclasses
 	#
 	# if test on Bukkit Plugin passed then it should work perfectly
@@ -72,7 +72,15 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 			useTypesRegions = self.view.find_by_selector(getSettings("type_selector"))
 
 			for region in useTypesRegions:
-				self.useTypes.append(self.view.substr(region))
+				genericClass = re.search(".*(?=<.*>)", self.view.substr(region))
+				if genericClass is not None:
+					self.useTypes.append(genericClass.group(0))
+					insideClasses = re.search("(?<=<).*(?=>)", self.view.substr(region))
+					if insideClasses is not None:
+						for clazz in re.sub("\\s+", "", insideClasses.group(0)).split(","):
+							self.useTypes.append(clazz)
+				else:
+					self.useTypes.append(self.view.substr(region))
 
 			for region in importedPackagesRegions:
 				package = self.view.substr(region)
@@ -127,24 +135,26 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 		elif step == 3:
 			#add default imports
 			getAction().addAction("javatar.command.operation.organize_imports.step3", "Organize Imports [step=3] Add default imports")
-			packageImports = getSettings("default_import")+getImports()
-			for packageImport in packageImports:
+			for packageImport in getImports():
 				importOnce = False
-				for importType in getAllTypes(packageImport):
-					if importType in self.askTypes:
-						importOnce = True
-						self.askTypes.remove(importType)
-						if "default" in packageImport and packageImport["default"]:
-							continue
-						package = normalizePackage(packageImport["package"]+"."+importType)
-						if package not in self.importedPackages:
-							self.importedPackages.append(package)
-							if package in self.importedPackagesStat:
-								self.importedPackagesStat[package]+=1
-							else:
-								self.importedPackagesStat[package]=1
-				if not importOnce and "always_import" in packageImport and packageImport["always_import"] and "package" in packageImport and packageImport["package"] != "":
-					self.alwaysImportedPackages.append(packageImport["package"])
+				if "packages" in packageImport:
+					for packageName in packageImport["packages"]:
+						package = packageImport["packages"][packageName]
+						for importType in getAllTypes(package):
+							if importType in self.askTypes:
+								importOnce = True
+								self.askTypes.remove(importType)
+								if "default" in package and package["default"]:
+									continue
+								packageCode = packageName+"."+importType
+								if packageCode not in self.importedPackages:
+									self.importedPackages.append(packageCode)
+								if packageCode in self.importedPackagesStat:
+									self.importedPackagesStat[packageCode]+=1
+								else:
+									self.importedPackagesStat[packageCode]=1
+						if not importOnce and "always_import" in packageImport and packageImport["always_import"]:
+							self.alwaysImportedPackages.append(packageName)
 			self.run(edit, 4)
 		elif step == 4:
 			#ask package
@@ -248,7 +258,7 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 			sublime.set_timeout(lambda: self.view.window().show_input_panel("Package for type \""+ctype+"\":", "", self.askPackage, "", self.askPackage), 10)
 		else:
 			if isPackage(package):
-				self.selectedPackage = package
+				self.selectedPackage = package+"."+self.ctype
 				self.view.run_command("javatar_organize_imports", {"step": 5})
 			elif package == "":
 				self.selectedPackage = None
