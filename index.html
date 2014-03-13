@@ -1,36 +1,32 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Javatar : Java Development Plugin for Sublime Text 3" />
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Javatar by spywhere</title>
 
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-    <title>Javatar</title>
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
   </head>
-
   <body>
-
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/spywhere/Javatar">View on GitHub</a>
-
-          <h1 id="project_title">Javatar</h1>
-          <h2 id="project_tagline">Java Development Plugin for Sublime Text 3</h2>
-
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/spywhere/Javatar/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/spywhere/Javatar/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
-
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
+    <div class="wrapper">
+      <header>
+        <h1>Javatar</h1>
+        <p>Java Development Plugin for Sublime Text 3</p>
+        <p class="view"><a href="https://github.com/spywhere/Javatar">View the Project on GitHub <small>spywhere/Javatar</small></a></p>
+        <ul>
+          <li><a href="https://github.com/spywhere/Javatar/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/spywhere/Javatar/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/spywhere/Javatar">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
         <h2>
 <a name="javatar" class="anchor" href="#javatar"><span class="octicon octicon-link"></span></a>Javatar</h2>
 
@@ -59,7 +55,8 @@
 <li>Key Bindings</li>
 <li>Build System</li>
 <li>Javatar Snippets</li>
-<li>Javatar Imports</li>
+<li>Javatar Packages</li>
+<li>Additional Packages</li>
 <li>Package Channels</li>
 <li>Actions History</li>
 </ul><h3>
@@ -83,23 +80,24 @@
 <h3>
 <a name="important-updates" class="anchor" href="#important-updates"><span class="octicon octicon-link"></span></a>Important Updates</h3>
 
+<p>From 15 Jan 2014, Javatar will include full Java SE7 class list inside its package. This will take a little longer to install/update Javatar. For another Java version, please check out Additional Packages section.</p>
+
 <h5>
 <a name="development-build" class="anchor" href="#development-build"><span class="octicon octicon-link"></span></a>Development Build</h5>
 
 <ul>
-<li>Full Java SE7 Imports added (Java SE8 should coming soon...)</li>
-<li>Javatar Imports improvements, now types separated and also backward compatible</li>
-<li>QuickMenu updated</li>
-<li>Debug command added (Javatar Util)</li>
-<li>Typo fixed</li>
+<li>Organize Imports now use all references from Javatar Packages</li>
+<li>Organize Imports improvements</li>
+<li>Javatar Imports has been removed from Javatar. If you are using it, please convert all imports file using <em>Development Section... &gt; Convert Imports</em>
+</li>
+<li>Manual package input box will append class name automatically when imported</li>
 </ul><h5>
 <a name="stable-build" class="anchor" href="#stable-build"><span class="octicon octicon-link"></span></a>Stable Build</h5>
 
 <ul>
-<li>Improved Class Correction</li>
-<li>Many RegEx has been removed, please check it out if you are using it</li>
-<li>Some code tweaks</li>
-<li>Please check out an upcoming key bindings in Key Bindings section below</li>
+<li>New key bindings, please check out Key Bindings section for more info</li>
+<li>Startup time improvement for Stable channel</li>
+<li>Default imports has been removed from settings. If you want to import your own package, use Javatar Packages instead (Check out Javatar Packages section)</li>
 </ul><h1></h1>
 
 <h3>
@@ -108,17 +106,17 @@
 <h5>
 <a name="creating-packages-in-action" class="anchor" href="#creating-packages-in-action"><span class="octicon octicon-link"></span></a>Creating packages in action</h5>
 
-<p><img src="http://spywhere.github.io/images/CreatePackage.gif" alt="CreatePackage"></p>
+<p><img src="http://spywhere.github.io/images/PackageCreate.gif" alt="CreatePackage"></p>
 
 <h5>
 <a name="creating-classes-in-action" class="anchor" href="#creating-classes-in-action"><span class="octicon octicon-link"></span></a>Creating classes in action</h5>
 
-<p><img src="http://spywhere.github.io/images/CreateClass.gif" alt="CreateClass"></p>
+<p><img src="http://spywhere.github.io/images/ClassCreate.gif" alt="CreateClass"></p>
 
 <h5>
 <a name="creating-other-classes-in-action" class="anchor" href="#creating-other-classes-in-action"><span class="octicon octicon-link"></span></a>Creating other classes in action</h5>
 
-<p><img src="http://spywhere.github.io/images/CreateOther.gif" alt="CreateOther"></p>
+<p><img src="http://spywhere.github.io/images/OtherClassCreate.gif" alt="CreateOther"></p>
 
 <h5>
 <a name="class-operations-in-action" class="anchor" href="#class-operations-in-action"><span class="octicon octicon-link"></span></a>Class operations in action</h5>
@@ -138,7 +136,7 @@
 <li>More details on Javatar Builds</li>
 </ul>
 </li>
-<li>Call: 
+<li>Call:
 
 <ul>
 <li>Insert class and package informations such as current class path, class name or package name</li>
@@ -152,7 +150,7 @@
 <li>More details on Advanced Creations</li>
 </ul>
 </li>
-<li>Operation: 
+<li>Operation:
 
 <ul>
 <li>Do class or package operation such as organize imports, rename class or package</li>
@@ -164,7 +162,7 @@
 <h3>
 <a name="javatar-builds" class="anchor" href="#javatar-builds"><span class="octicon octicon-link"></span></a>Javatar Builds</h3>
 
-<p>Javatar use its own build system which based on default Sublime Text's JavaC build settings. </p>
+<p>Javatar use its own build system which based on default Sublime Text's JavaC build settings.</p>
 
 <p><strong>Important!</strong> When build on a project or package, Javatar cannot show any compilation error (or may show only last run built) since it builds all your classes in order. More details about build system is on Build System.</p>
 
@@ -207,21 +205,19 @@ Result as Package: <code>Package "Beta" is created in "me.spywhere"</code></p>
 <h5>
 <a name="organize-imports" class="anchor" href="#organize-imports"><span class="octicon octicon-link"></span></a>Organize Imports</h5>
 
-<p>Javatar will automatically imports all necessary packages and remove unused packages for you. This has been done in 7 sub-steps.</p>
+<p>Javatar will automatically imports all necessary packages and remove unused packages for you. This is done within 7 sub-steps.</p>
 
 <ol>
-<li>Javatar will gathering imports informations from current file</li>
+<li>Javatar gathering imports informations from current file</li>
 <li>Javatar let's you select a package that has the same class</li>
 <li>Javatar imports "default imports" and Java's packages</li>
 <li>Javatar asks you to enter package name for missing classes</li>
 <li>Javatar asks for package name that you want to enter manually</li>
 <li>Javatar clear all imports in current file</li>
-<li>
-<p>Javatar imports all packages that has been proceed with step 1-4</p>
+<li>Javatar imports all packages that has been processed within step 1-4</li>
+</ol><h1></h1>
 
-<h1></h1>
-</li>
-</ol><h3>
+<h3>
 <a name="default-package-detection" class="anchor" href="#default-package-detection"><span class="octicon octicon-link"></span></a>Default Package Detection</h3>
 
 <p>Javatar will specify default package with these steps...</p>
@@ -304,67 +300,30 @@ Result as Package: <code>Package "Beta" is created in "me.spywhere"</code></p>
 <li>This will open quick panel to select which information you want to insert.</li>
 </ul>
 </li>
-<li>Create new... : <code>Key+Shift+L</code>
-
-<ul>
-<li>This will open quick panel to select which class you want to create.</li>
-</ul>
-</li>
 <li>Operations... : <code>Key+Shift+O</code>
 
 <ul>
 <li>This will open quick panel to select which operation you want to perform.</li>
 </ul>
 </li>
-<li>Insert full package path : <code>Key+Shift+P</code>
-
-<ul>
-<li><strong>Example</strong></li>
-<li>Package.Subpackage</li>
-</ul>
-</li>
-<li>Insert current package name : <code>Key+Shift+S</code>
-
-<ul>
-<li><strong>Example:</strong></li>
-<li>SubPackage</li>
-</ul>
-</li>
-<li>Insert current class name : <code>Key+Shift+C</code>
-
-<ul>
-<li><strong>Example:</strong></li>
-<li>Class</li>
-</ul>
-</li>
-<li>Insert full class path : <code>Key+Shift+F</code>
-
-<ul>
-<li><strong>Example:</strong></li>
-<li>Package.SubPackage.Class</li>
-</ul>
-</li>
-</ul><h5>
-<a name="key-bindings-in-upcoming-build" class="anchor" href="#key-bindings-in-upcoming-build"><span class="octicon octicon-link"></span></a>Key Bindings in upcoming build</h5>
-
-<p>To reduce unnecessary key bindings and give more key bindings to new commands, the following key bindings will be changed soon...</p>
-
-<ul>
 <li>Create new... : <code>Key+Shift+N</code>
+
+<ul>
+<li>This will open quick panel, showing you all possible types to create.</li>
+</ul>
 </li>
 <li>Create new package : <code>Key+Shift+P</code>
 
 <ul>
-<li>This will open input panel, just like when you create a new package</li>
+<li>This will open input panel, just like when you create a new package.</li>
 </ul>
 </li>
-<li>Organize Imports : <code>Key+Shift+I</code>
+<li>Organize Imports : <code>Key+Shift+I</code> (Only on development channel)
 
 <ul>
-<li>This will organize imports on current file</li>
+<li>This will organize imports on current file.</li>
 </ul>
 </li>
-<li>All Javatar Calls key bindings will be removed and access by default <code>Calls...</code> instead</li>
 </ul><h1></h1>
 
 <h3>
@@ -394,7 +353,7 @@ Result as Package: <code>Package "Beta" is created in "me.spywhere"</code></p>
 </ul><h5>
 <a name="usage-of-snippet-tags-in-action" class="anchor" href="#usage-of-snippet-tags-in-action"><span class="octicon octicon-link"></span></a>Usage of snippet tags in action</h5>
 
-<p><img src="http://spywhere.github.io/images/CreateNewSS.jpg" alt="CreateNewSS"></p>
+<p><img src="http://spywhere.github.io/images/CreateNewSS.png" alt="CreateNewSS"></p>
 
 <h4>
 <a name="snippet-macros" class="anchor" href="#snippet-macros"><span class="octicon octicon-link"></span></a>Snippet Macros</h4>
@@ -409,32 +368,35 @@ Result as Package: <code>Package "Beta" is created in "me.spywhere"</code></p>
 <li>%package% = Package code (for example <code>package java.utils;</code> or same as <code>package %packages_path%;</code>)</li>
 <li>All Sublime Text's snippet macros can be used within Javatar snippets. For example: ${1} or ${2://Comment}</li>
 </ul><h3>
-<a name="javatar-imports" class="anchor" href="#javatar-imports"><span class="octicon octicon-link"></span></a>Javatar Imports</h3>
+<a name="javatar-packages" class="anchor" href="#javatar-packages"><span class="octicon octicon-link"></span></a>Javatar Packages</h3>
 
-<p>Javatar required imports file (*.javatar-imports) to correctly import necessary Java's packages. These files contain all classes and their packages to use with Javatar.</p>
+<p>Javatar required packages file (*.javatar-packages) to correctly import necessary Java's packages. These files contain all classes, fields, methods and packages to use with Javatar.</p>
 
-<p>Imports file is a JSON file and has a very simple format. It is a list of a map which each key and value has following meaning...</p>
+<p>Javatar Packages file is a JSON file. You can read more details about each key and value in Proto.javatar-packages located within Javatar's Java folder.</p>
 
-<ul>
-<li>type
-
-<ul>
-<li>Must be a list of classes inside a package</li>
-</ul>
-</li>
-<li>package
+<p>However, their are 2 special keys that is not normally used within Javatar Packages which are...</p>
 
 <ul>
-<li>Package that contains all above classes. Leave this key empty to bypass type checking. (Such as default import that do not have to included)</li>
+<li>experiment
+
+<ul>
+<li>Set this to <code>true</code> to exclude this package from Javatar's packages list.</li>
 </ul>
 </li>
 <li>always_import
 
 <ul>
-<li>Always import this package even no class is used (this will import as <code>package.*</code>). This key is optional.</li>
+<li>Set this to <code>true</code> to always import this package even no class is used (this will import as <code>package.*</code>).</li>
 </ul>
 </li>
-</ul><p>Example of Javatar Imports is inside Javatar's Java folder (<code>PACKAGES_PATH/Javatar/Java</code>)</p>
+</ul><p>Both keys are boolean type and also optional to use.</p>
+
+<p>Example of Javatar Packages is located inside Javatar's Java folder (<code>PACKAGES_PATH/Javatar/Java</code>)</p>
+
+<h3>
+<a name="additional-packages" class="anchor" href="#additional-packages"><span class="octicon octicon-link"></span></a>Additional Packages</h3>
+
+<p>By default, Javatar package will include Java SE7 class list inside its package. This will make Javatar take a little longer to install/update from Package Control. For other Java version, you can check out a link to additional package inside <em>Help and Support &gt; Additional Packages</em> menu.</p>
 
 <h3>
 <a name="package-channels" class="anchor" href="#package-channels"><span class="octicon octicon-link"></span></a>Package Channels</h3>
@@ -447,7 +409,7 @@ Result as Package: <code>Package "Beta" is created in "me.spywhere"</code></p>
 <h4>
 <a name="development-channel" class="anchor" href="#development-channel"><span class="octicon octicon-link"></span></a>Development Channel</h4>
 
-<p>Development channel is a optional channel for user who want to try upcoming features which may not fully working or need improvements. All upcoming features will appear in <code>Javatar: Browse Commands &gt; Development Section</code> only.</p>
+<p>Development channel is a optional channel for user who want to try upcoming features which may not fully working or need improvements. All upcoming features will appear in <em>Javatar: Browse Commands &gt; Development Section</em> only.</p>
 
 <p>Please note that stable channel update notes also apply on development channel too.</p>
 
@@ -500,16 +462,11 @@ Result as Package: <code>Package "Beta" is created in "me.spywhere"</code></p>
 <p>Actions History can be disabled by settings <code>enable_actions_history</code> to <code>false</code></p>
       </section>
     </div>
-
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Javatar maintained by <a href="https://github.com/spywhere">spywhere</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
-
+    <footer>
+      <p>Project maintained by <a href="https://github.com/spywhere">spywhere</a></p>
+      <p>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
     
-
   </body>
 </html>
