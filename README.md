@@ -53,6 +53,8 @@ From 15 Jan 2014, Javatar will include full Java SE7 class list inside its packa
 * Manual package input box will append class name automatically when imported
 
 ##### Stable Build
+* Package path should work properly in a new, unsave file
+* Java file, project validation improvements
 * New key bindings, please check out Key Bindings section for more info
 * Startup time improvement for Stable channel
 * Default imports has been removed from settings. If you want to import your own package, use Javatar Packages instead (Check out Javatar Packages section)

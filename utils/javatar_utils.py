@@ -164,7 +164,10 @@ def getPath(type="", dir="", dir2=""):
 	elif type == "parent":
 		return os.path.dirname(dir)
 	elif type == "relative":
-		return os.path.relpath(dir, dir2)
+		if dir != "" and dir2 != "":
+			return os.path.relpath(dir, dir2)
+		else:
+			return ""
 	elif type == "name":
 		return os.path.basename(dir)
 	elif type == "join":

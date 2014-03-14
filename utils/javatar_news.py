@@ -1,10 +1,11 @@
 import sublime
 from .javatar_actions import *
 
-VERSION = "14.03.12.21.10b"
-UPDATEFOR = "all"
-NEWSID = 6
-NEWS = "Stable Channel\n - New key bindings has been added. Please check README file for more infomations.\n - Startup time improvement for Stable channel\n - Default imports has been removed from settings. If you want to import your own pacakge, use Javatar Package instead.\n\nDevelopment Channel\n - Organize Imports now use all references from Javatar Packages.\n - Organize Imports improvements\n - Javatar Imports has been removed from Javatar. If you are using it, please convert using Convert Imports in Development Section menu.\n - Manual package input box will append class name automatically when imported."
+# YY.MM.DD.HH.MM
+VERSION = "14.03.14.19.52b"
+UPDATEFOR = "dev"
+NEWSID = 7
+NEWS = " - Organize Imports now worked on new, unsave file\n - Organize Imports should leave a blank space properly\n - Class detection in Organize Imports improvements"
 
 def getVersion():
 	return VERSION

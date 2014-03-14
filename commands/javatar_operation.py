@@ -63,6 +63,24 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 		self.postAskTypes = []
 		self.index = 0
 
+	def getClasses(self, textScope):
+		classes = []
+		genericClass = re.search(".*(?=<.*>)", textScope)
+		if genericClass is not None:
+			classes.append(genericClass.group(0))
+			insideClasses = re.search("(?<=<).*(?=>)", textScope)
+			if insideClasses is not None:
+				for clazz in re.sub("\\s+", "", insideClasses.group(0)).split(","):
+					classes += self.getClasses(clazz)
+		else:
+			arrayClass = re.search(".*(?=\\[.*\\])", textScope)
+			if arrayClass is not None:
+				classes.append(arrayClass.group(0))
+			else:
+				classes.append(textScope)
+		return classes
+
+
 	def run(self, edit, step=0):
 		if step == 0:
 			#gathering info
@@ -72,15 +90,7 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 			useTypesRegions = self.view.find_by_selector(getSettings("type_selector"))
 
 			for region in useTypesRegions:
-				genericClass = re.search(".*(?=<.*>)", self.view.substr(region))
-				if genericClass is not None:
-					self.useTypes.append(genericClass.group(0))
-					insideClasses = re.search("(?<=<).*(?=>)", self.view.substr(region))
-					if insideClasses is not None:
-						for clazz in re.sub("\\s+", "", insideClasses.group(0)).split(","):
-							self.useTypes.append(clazz)
-				else:
-					self.useTypes.append(self.view.substr(region))
+				self.useTypes += self.getClasses(self.view.substr(region))
 
 			for region in importedPackagesRegions:
 				package = self.view.substr(region)
@@ -92,7 +102,7 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 					self.importedPackagesStat[getPackagePath(package)]=1
 
 			for useType in self.useTypes:
-				if useType not in self.importedTypes and useType not in self.needImportTypes and not getPath("exist", getPath("join", getPath("current_dir"), useType+".java")):
+				if useType not in self.importedTypes and useType not in self.needImportTypes and (not isFile() or (isFile() and not getPath("exist", getPath("join", getPath("current_dir"), useType+".java")))):
 					self.needImportTypes.append(useType)
 
 			self.index = 0
@@ -194,7 +204,11 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 
 			importsRegions = self.view.find_by_selector(getSettings("import_meta_selector"))
 			while len(importsRegions) > 0:
-				self.view.replace(edit, importsRegions[0], "")
+				regionWithNewLine = sublime.Region(importsRegions[0].begin(), importsRegions[0].end()+1)
+				while self.view.substr(regionWithNewLine)[-1] == "\n":
+					regionWithNewLine = sublime.Region(regionWithNewLine.begin(), regionWithNewLine.end()+1)
+				regionWithNewLine = sublime.Region(regionWithNewLine.begin(), regionWithNewLine.end()-1)
+				self.view.replace(edit, regionWithNewLine, "")
 				importsRegions = self.view.find_by_selector(getSettings("import_meta_selector"))
 
 			importedPackages = []
@@ -210,7 +224,8 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 			for importPackage in self.alwaysImportedPackages:
 				importedPackages.append(importPackage+".*")
 
-			print(str(self.importedPackagesStat))
+			if isDebug():
+				print(str(self.importedPackagesStat))
 			importedPackages.sort()
 
 			for importPackage in importedPackages:
@@ -223,7 +238,14 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 				while re.search("\\s+$", self.view.substr(sublime.Region(0, 1))) is not None:
 					self.view.replace(edit, sublime.Region(0, 1), "")
 				self.view.run_command("javatar_util", {"type": "insert", "text": importCode, "dest": "Organize Imports"})
-				className = getPath("name", getPath("current_file"))[:-5]
+				if isFile():
+					className = getPath("name", getPath("current_file"))[:-5]
+				else:
+					classRegions = self.view.find_by_selector(getSettings("class_name_selector"))
+					if len(classRegions) > 0:
+						className = self.view.substr(classRegions[0])
+					else:
+						className = "<Unknown>"
 				sublime.set_timeout(lambda: showStatus("Imports organized in class \""+className+"\""), 500)
 
 	def selectClasses(self, index=None, classes=[]):

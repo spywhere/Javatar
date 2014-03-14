@@ -33,6 +33,9 @@
 	//Java file validation using RegEx
 	"java_file_validation" : ".*\\.java$",
 
+	//Java source code validation using scope selector
+	"java_source_selector" : "source.java",
+
 	//Method call replacement pattern using RegEx (Use in completions)
 	"method_replacement" : "\\(.*?\\)(?![,\\)])",
 

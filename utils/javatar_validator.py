@@ -9,9 +9,7 @@ def isJava(file=""):
 		return False
 	if file is "" or file is None:
 		file = view.file_name()
-	if file is None:
-		return False
-	return re.match(getSettings("java_file_validation"), file, re.M) is not None
+	return (len(view.find_by_selector(getSettings("java_source_selector"))) > 0) or (file is not None and re.match(getSettings("java_file_validation"), file, re.M) is not None)
 
 
 def isPackage(package):
@@ -22,7 +20,7 @@ def isPackage(package):
 def isProject(window=None):
 	if window is None:
 		window = sublime.active_window()
-	return window.project_data() is not None
+	return len(window.folders()) > 0
 
 
 def isFile():
