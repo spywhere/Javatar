@@ -10,11 +10,6 @@ class JavatarHelpCommand(sublime_plugin.WindowCommand):
 		if self.action != "":
 			action = self.action
 			self.action = ""
-		if action == "additional_packages":
-			view = self.window.new_file()
-			view.set_name("Javatar - Additional Packages")
-			view.set_scratch(True)
-			view.run_command("javatar_util", {"type": "insert", "text": "==== This section is under development ====\n\nAdditional packages\n========\n   To reduce plugin size, Javatar provides additional packages for different version of Java you are working.\n\nHere are all available packages:\n\nJavaSE7: http://\nJavaSE8: http://\nJavaFX8: http://\n\n==== This section is under development ===="})
 		if action == "actions_history":
 			if not getSettings("enable_actions_history"):
 				sublime.message_dialog("Actions History is disabled. Please enable them first.")

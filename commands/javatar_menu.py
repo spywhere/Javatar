@@ -96,7 +96,7 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 			]
 		},
 		"dev": {
-			"items": [["Back", "Back to previous menu"], ["Operations: Organize Imports", "Correct class imports in current file"], ["Operations: Rename Class", "Rename current class"], ["Operations: Rename Package", "Rename current package"], ["Prettify JSON", "Reformat current document as pretty JSON"], ["Convert Imports", "Convert Javatar Imports to Javatar Packages"], ["Testing", "For testing and experimenting new feature"]],
+			"items": [["Back", "Back to previous menu"], ["Operations: Organize Imports", "Correct class imports in current file"], ["Operations: Rename Class", "Rename current class"], ["Operations: Rename Package", "Rename current package"], ["Prettify JSON", "Reformat current document as pretty JSON"], ["Generate SHA-256 Hash from URL", "Calculate checksum from url"], ["Generate SHA-256 Hash", "Calculate checksum for current document"], ["Convert Imports", "Convert Javatar Imports to Javatar Packages"], ["Testing", "For testing and experimenting new feature"]],
 			"actions": [
 				{
 					"name": "main"
@@ -118,6 +118,16 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 						"type": "tojson"
 					}
 				}, {
+					"command": "javatar_util",
+					"args": {
+						"type": "remote_hash"
+					}
+				}, {
+					"command": "javatar_util",
+					"args": {
+						"type": "hash"
+					}
+				}, {
 					"command": "javatar_convert"
 				}, {
 					"command": "javatar_util",
@@ -134,10 +144,7 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 				{
 					"name": "main"
 				}, {
-					"command": "javatar_help",
-					"args": {
-						"action": "additional_packages"
-					}
+					"name": "additional_packages"
 				}, {
 					"command": "javatar_help",
 					"args": {
@@ -151,10 +158,21 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 					}
 				}
 			]
+		},
+		"additional_packages": {
+			"selected_index": 1,
+			"items": [["Back", "Back to previous menu"], ["No package available", "Please check back later"]],
+			"actions": [
+				{
+					"name": "help"
+				}, {
+
+				}
+			]
 		}
 	}
 
-	def run(self, menu=None, action=None):
+	def run(self, menu=None, action=None, replaceMenu=None):
 		if self.qm is None:
 			from ..utils import getSnippetList, isStable, isDebug
 			self.qm = QuickMenu(self.menuStable)
@@ -174,6 +192,9 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 			# Quick reload menu
 			if isDebug():
 				self.qm.insertItem("main", 0, ["Reload Javatar", "Reload Javatar modules (debug only)"], {"command":"javatar_util", "args": {"type": "reload"}})
+		if replaceMenu is not None:
+			self.qm.setMenu(replaceMenu["name"], replaceMenu["menu"])
+			return
 		self.qm.show(self.window, self.select, menu, action)
 
 	def select(self, info):

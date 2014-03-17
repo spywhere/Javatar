@@ -54,7 +54,7 @@ def getAllTypes(packageImports):
 def findClass(path, classname):
 	# If it is a default class, should import manually
 	from .javatar_utils import toPackage, getSettings
-	from .javatar_collections import getImports
+	from .javatar_collections import getPackages
 	classes = []
 	foundClass = False
 	for root, dirnames, filenames in os.walk(path):
@@ -63,7 +63,7 @@ def findClass(path, classname):
 				classpath = toPackage(os.path.join(root, filename)[:-5])
 				classes.append(classpath)
 				foundClass = True
-	for packageImport in getImports():
+	for packageImport in getPackages():
 		if "packages" in packageImport:
 			for packageName in packageImport["packages"]:
 				package = packageImport["packages"][packageName]

@@ -145,7 +145,7 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 		elif step == 3:
 			#add default imports
 			getAction().addAction("javatar.command.operation.organize_imports.step3", "Organize Imports [step=3] Add default imports")
-			for packageImport in getImports():
+			for packageImport in getPackages():
 				importOnce = False
 				if "packages" in packageImport:
 					for packageName in packageImport["packages"]:

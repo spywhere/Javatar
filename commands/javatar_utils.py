@@ -1,5 +1,7 @@
 import sublime
 import sublime_plugin
+import hashlib
+import urllib.request
 from ..utils import *
 
 class JavatarUtilCommand(sublime_plugin.TextCommand):
@@ -15,6 +17,12 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
 		elif type == "test":
 			if not isStable():
 				self.view.show_popup_menu(["A", "B"], self.nothing)
+		elif type == "remote_hash":
+			if not isStable():
+				sublime.active_window().show_input_panel("URL:", "", self.remote_hash, None, None)
+		elif type == "hash":
+			if not isStable():
+				print(hashlib.sha256(self.view.substr(sublime.Region(0,self.view.size())).encode("utf-8")).hexdigest())
 		elif type == "tojson":
 			if not isStable():
 				jsonObj = sublime.decode_value(self.view.substr(sublime.Region(0,self.view.size())))
@@ -31,6 +39,15 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
 						reload(sys.modules[mod])
 				from ..Javatar import plugin_loaded
 				plugin_loaded()
+
+	def remote_hash(self, url):
+		try:
+			urllib.request.install_opener(urllib.request.build_opener(urllib.request.ProxyHandler()))
+			data = urllib.request.urlopen(url).read()
+			datahash = hashlib.sha256(data).hexdigest()
+			print("Hash: " + datahash)
+		except Exception:
+			print("Error occurred while remote_hash")
 
 	def nothing(self, index=-1):
 		pass

@@ -47,16 +47,17 @@ A Sublime Text 3 Plugin for Java Development
 From 15 Jan 2014, Javatar will include full Java SE7 class list inside its package. This will take a little longer to install/update Javatar. For another Java version, please check out Additional Packages section.
 
 ##### Development Build
+* Java SE 7, Java SE 8, JavaFX 8, Bukkit 1.6.4 R2.0 and Bukkit 1.7.2 R0.3 packages now available through *Help and Support... > Download Packages*
 * Organize Imports now use all references from Javatar Packages
 * Organize Imports improvements
 * Javatar Imports has been removed from Javatar. If you are using it, please convert all imports file using *Development Section... > Convert Imports*
 * Manual package input box will append class name automatically when imported
 
 ##### Stable Build
+* HUGE startup time improvements for both Stable and Development channel
 * Package path should work properly in a new, unsave file
 * Java file, project validation improvements
 * New key bindings, please check out Key Bindings section for more info
-* Startup time improvement for Stable channel
 * Default imports has been removed from settings. If you want to import your own package, use Javatar Packages instead (Check out Javatar Packages section)
 
 ====

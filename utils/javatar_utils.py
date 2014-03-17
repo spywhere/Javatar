@@ -13,8 +13,8 @@ def reset():
 	global SETTINGS, SETTINGSBASE
 	SETTINGS = None
 	SETTINGSBASE = None
-	from .javatar_collections import resetSnippetsAndImports
-	resetSnippetsAndImports()
+	from .javatar_collections import resetSnippetsAndPackages
+	resetSnippetsAndPackages()
 
 
 def isReady():
@@ -26,9 +26,8 @@ def readSettings(config):
 	global SETTINGS, SETTINGSBASE
 	SETTINGSBASE = config
 	SETTINGS = sublime.load_settings(config)
-	from .javatar_collections import getSnippetFiles, getImportFiles
-	getImportFiles()
-	getSnippetFiles()
+	from .javatar_collections import loadSnippetsAndPackages
+	loadSnippetsAndPackages()
 
 
 def getSettings(key):
@@ -87,13 +86,12 @@ def showStatus(text, delay=None):
 
 def hideStatus():
 	view = sublime.active_window().active_view()
-	from .javatar_validator import isJava
-	if not isJava():
-		return
-	if getSettings("show_package_path"):
-		view.set_status(STATUS, "Package: " + toReadablePackage(getCurrentPackage(), True))
-	else:
-		view.erase_status(STATUS)
+	if view is not None:
+		from .javatar_validator import isJava
+		if isJava() and getSettings("show_package_path"):
+			view.set_status(STATUS, "Package: " + toReadablePackage(getCurrentPackage(), True))
+		else:
+			view.erase_status(STATUS)
 
 
 def getCurrentPackage(relative=False):
