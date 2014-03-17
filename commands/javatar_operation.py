@@ -77,7 +77,10 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 			if arrayClass is not None:
 				classes.append(arrayClass.group(0))
 			else:
-				classes.append(textScope)
+				if textScope.startswith("@"):
+					classes.append(textScope[1:])
+				else:
+					classes.append(textScope)
 		return classes
 
 
