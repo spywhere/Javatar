@@ -31,6 +31,7 @@ A Sublime Text 3 Plugin for Java Development
 * [+] Class (also Abstract), Interface, Enumerator snippets with package/class auto-complete
 * [+] Project Compile
 * [+] Package path in status bar
+* [*] External libraries packages
 * [*] Organize Imports
 * [*] Rename/Move packages/classes
 * [-] JAR file export (included executable)
@@ -246,7 +247,7 @@ Both keys are boolean type and also optional to use.
 Example of Javatar Packages is located inside Javatar's Java folder (`PACKAGES_PATH/Javatar/Java`)
 
 ### Additional Packages
-By default, Javatar package will include Java SE7 class list inside its package. This will make Javatar take a little longer to install/update from Package Control. For other Java version, you can check out a link to additional package inside *Help and Support > Additional Packages* menu.
+By default, Javatar package will include Java SE7 class list inside its package. This will make Javatar take a little longer to install/update from Package Control. For other Java version, you can check out a link to additional package inside *Help and Support > Download Packages* menu.
 
 ### Package Channels
 #### Stable Channel
