@@ -161,10 +161,12 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 		},
 		"additional_packages": {
 			"selected_index": 1,
-			"items": [["Back", "Back to previous menu"], ["No package available", "Please check back later"]],
+			"items": [["Back", "Back to previous menu"], ["Reload and Update packages", "Reload all pacakges and update packages list"], ["No package available", "Please check back later"]],
 			"actions": [
 				{
 					"name": "help"
+				}, {
+					"command": "javatar_reload_packages"
 				}, {
 
 				}

@@ -35,6 +35,9 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 	# import interfaces, superclasses
 	#
 	# if test on Bukkit Plugin passed then it should work perfectly
+	#
+	# TODO:
+	#     Performance!
 
 	classes = []
 	ctype = None

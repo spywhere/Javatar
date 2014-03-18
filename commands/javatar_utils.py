@@ -55,6 +55,11 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
 	def description(self, type="", text="", dest=None):
 		return dest
 
+class JavatarReloadPackagesCommand(sublime_plugin.WindowCommand):
+	def run(self):
+		resetPackages()
+		loadPackages()
+
 class JavatarConvertCommand(sublime_plugin.WindowCommand):
 	def run(self):
 		for filepath in sublime.find_resources("*.javatar-imports"):

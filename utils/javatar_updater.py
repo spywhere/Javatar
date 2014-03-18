@@ -1,3 +1,6 @@
+
+
+
 import sublime
 import threading
 import urllib.request
@@ -6,7 +9,7 @@ from .javatar_collections import *
 from .javatar_thread import *
 from .javatar_utils import *
 
-PACKAGES_VERSION = "0.1"
+PACKAGES_VERSION = "0.2"
 PACKAGES_REPO = "https://raw.github.com/spywhere/JavatarPackages/master/javatar_packages.json"
 
 
@@ -33,10 +36,12 @@ class JavatarPackageUpdaterThread(threading.Thread):
 			PACKAGES_LIST = []
 			menu = {
 				"selected_index": 1,
-				"items": [["Back", "Back to previous menu"]],
+				"items": [["Back", "Back to previous menu"], ["Reload and Update packages", "Reload all pacakges and update packages list"]],
 				"actions": [
 					{
-						"name": "main"
+						"name": "help"
+					}, {
+						"command": "javatar_reload_packages"
 					}
 				]
 			}
@@ -47,11 +52,14 @@ class JavatarPackageUpdaterThread(threading.Thread):
 					getAction().addAction("javatar.util.updater", self.result_message)
 					self.result = False
 					return
+				packageURL = ""
+				if "url" in packages:
+					packageURL = packages["url"]
 				for package in packages["packages"]:
-					if "propername" in package and "name" in package and "details" in package and "url" in package and "hash" in package and package["propername"] not in getInstalledPackages():
-						menu["selected_index"] = 2
-						menu["items"].append([package["propername"], package["details"]])
-						menu["actions"].append({"command": "javatar_install", "args": {"installtype": "remote_package", "name": package["name"], "propername": package["propername"], "url": package["url"], "checksum": package["hash"]}})
+					if "name" in package and "filename" in package and "details" in package and "hash" in package and package["name"] not in getInstalledPackages():
+						menu["selected_index"] = 3
+						menu["items"].append([package["name"], package["details"]])
+						menu["actions"].append({"command": "javatar_install", "args": {"installtype": "remote_package", "name": package["name"], "filename": package["filename"], "url": packageURL, "checksum": package["hash"]}})
 
 				sublime.active_window().run_command("javatar", {"replaceMenu": {
 					"name": "additional_packages",
