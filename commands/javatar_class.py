@@ -1,5 +1,4 @@
 import os
-import re
 import sublime
 import sublime_plugin
 from ..utils import *
@@ -34,14 +33,14 @@ def getFileContents(classType, info):
 		sublime.error_message("Snippet \"" + classType + "\" is not found")
 		return None
 	if info["package"] != "":
-		data = re.sub("%package%", "package " + info["package"] + ";", data)
+		data = string.replace("%package%", "package " + info["package"] + ";", data)
 	else:
-		data = re.sub("%package%", "", data)
+		data = string.replace("%package%", "", data)
 
-	data = re.sub("%class%", info["class"], data)
-	data = re.sub("%file%", info["file"], data)
-	data = re.sub("%file_name%", getPath("name", info["file"]), data)
-	data = re.sub("%package_path%", getCurrentPackage(), data)
+	data = string.replace("%class%", info["class"], data)
+	data = string.replace("%file%", info["file"], data)
+	data = string.replace("%file_name%", getPath("name", info["file"]), data)
+	data = string.replace("%package_path%", getCurrentPackage(), data)
 	return data
 
 

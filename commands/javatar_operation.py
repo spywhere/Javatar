@@ -38,6 +38,7 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 	#
 	# TODO:
 	#     Performance!
+	#     Option to create a new class or enter it manually when no class is found
 
 	classes = []
 	ctype = None
