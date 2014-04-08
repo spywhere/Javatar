@@ -9,14 +9,14 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 		if isJava(file):
 			window = sublime.active_window()
 			buildScript = getSettings("build_system")
-			buildScript = string.replace("$file_path", getPath("parent", file), buildScript)
-			buildScript = string.replace("$file_name", getPath("name", file), buildScript)
-			buildScript = string.replace("$file", file, buildScript)
-			buildScript = string.replace("$packages", sublime.packages_path(), buildScript)
+			buildScript = buildScript.replace("$file_path", getPath("parent", file))
+			buildScript = buildScript.replace("$file_name", getPath("name", file))
+			buildScript = buildScript.replace("$file", file)
+			buildScript = buildScript.replace("$packages", sublime.packages_path())
 			if window.project_file_name() is not None:
-				buildScript = string.replace("$project_path", getPath("parent", window.project_file_name()), buildScript)
-				buildScript = string.replace("$project_name", getPath("name", window.project_file_name()), buildScript)
-				buildScript = string.replace("$project", window.project_file_name(), buildScript)
+				buildScript = buildScript.replace("$project_path", getPath("parent", window.project_file_name()))
+				buildScript = buildScript.replace("$project_name", getPath("name", window.project_file_name()))
+				buildScript = buildScript.replace("$project", window.project_file_name())
 			sublime.active_window().run_command("exec", {getSettings("build_command"): buildScript})
 		return isJava(file)
 
