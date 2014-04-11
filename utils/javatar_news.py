@@ -2,10 +2,10 @@ import sublime
 from .javatar_actions import *
 
 # YY.MM.DD.HH.MM
-VERSION = "14.03.17.07.47b"
-UPDATEFOR = "dev"
-NEWSID = 8
-NEWS = " - Many additional packages now available through Help and Support... > Download Packages\n - HUGE startup time improvements"
+VERSION = "14.04.12.00.13b"
+UPDATEFOR = "all"
+NEWSID = 9
+NEWS = " - Most of Javatar commands now available through Command Palette\n - Javatar now contains no Javatar packages as default (but it will install necessary packages on startup). See more details in README file\n - Additional packages now moved to a new menu, Packages Manager\n - 3 additional packages now available through Packages Manager... > Install Packages...\n - Most of this update is focus on Javatar packages."
 
 def getVersion():
 	return VERSION

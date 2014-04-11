@@ -45,17 +45,20 @@ A Sublime Text 3 Plugin for Java Development
 
 ### Important Updates
 
-From 15 Jan 2014, Javatar will include full Java SE7 class list inside its package. This will take a little longer to install/update Javatar. For another Java version, please check out Additional Packages section.
+From 11 Apr 2014, Javatar will "NOT" include any packages inside its package. This helps install and update Javatar faster but still maintaining default features. Javatar will automatically download and install necessary packages (Java SE) at startup since users install Javatar usually already connected to the internet.
 
 ##### Development Build
-* Java SE 7, Java SE 8, JavaFX 8, Bukkit 1.6.4 R2.0 and Bukkit 1.7.2 R0.3 packages now available through *Help and Support... > Download Packages*
 * Organize Imports now use all references from Javatar Packages
 * Organize Imports improvements
-* Javatar Imports has been removed from Javatar. If you are using it, please convert all imports file using *Development Section... > Convert Imports*
+* Javatar Imports has been removed from Javatar. If you are using it, please convert all imports file using *Packages Manager... > Package Tools... > Convert Imports*
 * Manual package input box will append class name automatically when imported
 
 ##### Stable Build
+* HUGE improvements on Javatar packages
 * HUGE startup time improvements for both Stable and Development channel
+* Most of Javatar commands now available through Command Palette
+* Ability to uninstall installed packages
+* Java SE 7, Java SE 8, JavaFX 8, Bukkit 1.6.4 R2.0, Bukkit 1.7.2 R0.3, JBox2D 2.3.1, LWJGL 2.9.1 and Slick 2.9.0 packages now available through *Packages Manager... > Install Packages...*
 * Package path should work properly in a new, unsave file
 * Java file, project validation improvements
 * New key bindings, please check out Key Bindings section for more info
@@ -88,6 +91,9 @@ From 15 Jan 2014, Javatar will include full Java SE7 class list inside its packa
 * Operation:
 	* Do class or package operation such as organize imports, rename class or package
 	* More details on Javatar Operations
+* Packages Manager:
+	* Download, install or uninstall Javatar packages and Tools for package creators.
+	* More details on Additional Packages
 
 ====
 
@@ -203,7 +209,7 @@ Javatar's build system use Sublime Text execute command to build your classes. J
 
 Javatar snippets is a dynamic snippet which will change part of the file to correspond with package path and class name. By using macros, you can specify which part of the file you want to fill the data to.
 
-You can make your own snippet to use within Javatar by create a new file ends with `.javatar`
+You can make your own snippets to use within Javatar by create a new file ends with `.javatar`
 
 Snippet class tags (for more informations about snippet tags, see below) will be used as a type of classes which show in input panel when create a new file (`%type% Name:`), on error dialog (`%type% %name% already exists`) and in status bar when file was created (`%type% %name% is created within package %package%`).
 
@@ -233,9 +239,9 @@ The following macros are used inside Javatar snippet files (*.javatar) which wil
 ### Javatar Packages
 Javatar required packages file (*.javatar-packages) to correctly import necessary Java's packages. These files contain all classes, fields, methods and packages to use with Javatar.
 
-Javatar Packages file is a JSON file. You can read more details about each key and value in Proto.javatar-packages located within Javatar's Java folder.
+Javatar Packages file is a JSON file. You can read more details about each key and value in Proto.javatar-packages located within Javatar's Java folder (can be accessed via *Preferences > Package Settings > Proto.javatar-packages* or via command palette by type *"Javatar Proto"*).
 
-However, their are 2 special keys that is not normally used within Javatar Packages which are...
+However, their are 2 special keys that are not normally used within Javatar Packages which are...
 
 * experiment
 	* Set this to `true` to exclude this package from Javatar's packages list.
@@ -247,7 +253,7 @@ Both keys are boolean type and also optional to use.
 Example of Javatar Packages is located inside Javatar's Java folder (`PACKAGES_PATH/Javatar/Java`)
 
 ### Additional Packages
-By default, Javatar package will include Java SE7 class list inside its package. This will make Javatar take a little longer to install/update from Package Control. For other Java version, you can check out a link to additional package inside *Help and Support > Download Packages* menu.
+By default, Javatar is not include any additional packages inside its package. This helps Javatar faster to install/update from Package Control but that not provides any support for some features (for example, Organize Imports). To solve this problem, Javatar will automatically download and install necessary packages when startup. For other packages, you can download and install using *Packages Manager... > Install Packages...* menu.
 
 ### Package Channels
 #### Stable Channel

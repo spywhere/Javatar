@@ -23,6 +23,12 @@
                             { "caption": "-" },
                             {
                                 "command": "open_file",
+                                "args": {"file": "${packages}/Javatar/Java/Proto.javatar-packages"},
+                                "caption": "Proto.javatar-packages"
+                            },
+                            { "caption": "-" },
+                            {
+                                "command": "open_file",
                                 "args": {"file": "${packages}/Javatar/Javatar.sublime-settings"},
                                 "caption": "Settings – Default"
                             },

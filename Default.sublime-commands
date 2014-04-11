@@ -68,6 +68,36 @@
         }
     },
     {
+        "caption": "Javatar: Correct Class",
+        "command": "javatar_correct_class"
+    },
+    {
+        "caption": "Javatar: Actions History",
+        "command": "javatar_help",
+        "args": {
+            "action": {
+                "action": "actions_history",
+                "selector": ""
+            }
+        }
+    },
+    {
+        "caption": "Javatar: Actions History (Custom)",
+        "command": "javatar_help",
+        "args": {
+            "action": {
+                "action": "actions_history"
+            }
+        }
+    },
+    {
+        "caption": "Preferences: Javatar's Proto.javatar-packages'",
+        "command": "open_file", "args":
+        {
+            "file": "${packages}/Javatar/Java/Proto.javatar-packages"
+        }
+    },
+    {
         "caption": "Preferences: Javatar Settings – Default",
         "command": "open_file", "args":
         {

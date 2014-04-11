@@ -32,6 +32,13 @@ def getInstalledPackages():
 	return INSTALLED_PACKAGES
 
 
+def getInstalledPackage(name):
+	for package in INSTALLED_PACKAGES:
+		if package["name"].startswith(name):
+			return package
+	return None
+
+
 def loadSnippetsAndPackages():
 	getAction().addAction("javatar.util.collection.get_snippet_files", "Load snippets")
 	thread = JavatarSnippetsLoaderThread(snippetsComplete)
@@ -58,6 +65,29 @@ def packagesComplete(data):
 	global INSTALLED_PACKAGES, DEFAULT_PACKAGES
 	INSTALLED_PACKAGES = data["installed_packages"]
 	DEFAULT_PACKAGES = data["default_packages"]
+
+	installed_menu = {
+		"selected_index": 1,
+		"items": [["Back", "Back to previous menu"]],
+		"actions": [
+			{
+				"name": "package_manager"
+			}
+		]
+	}
+	# Installed packages
+	install_update = False
+	for package in getInstalledPackages():
+		install_update = True
+		installed_menu["actions"].append({"command": "javatar_install", "args": {"installtype": "uninstall_package", "name": package["name"], "filename": package["path"]}})
+		installed_menu["items"].append([package["name"], "Installed. [" + package["path"] + "]"])
+	if install_update:
+		installed_menu["selected_index"] = 2
+		sublime.active_window().run_command("javatar", {"replaceMenu": {
+		"name": "uninstall_packages",
+		"menu": installed_menu
+		}})
+
 	from .javatar_updater import updatePackages
 	updatePackages()
 
@@ -160,18 +190,18 @@ class JavatarPackagesLoaderThread(threading.Thread):
 					classes += len(package["type"])
 		return [packages, classes]
 
-	def analysePackage(self, file):
-		getAction().addAction("javatar.util.collection.analyse_import", "Analyse package [file="+file+"]")
+	def analysePackage(self, filepath):
+		getAction().addAction("javatar.util.collection.analyse_import", "Analyse package [file="+filepath+"]")
 		try:
 			from .javatar_utils import getPath
-			imports = sublime.decode_value(sublime.load_resource(file))
+			imports = sublime.decode_value(sublime.load_resource(filepath))
 			if "experiment" in imports and imports["experiment"]:
 				return None
-			filename = getPath("name", file)
+			filename = getPath("name", filepath)
 			if "name" in imports:
 				filename = imports["name"]
 			count = self.countClasses(imports)
-			self.installed_packages.append(filename)
+			self.installed_packages.append({"name": filename, "path": filepath})
 			print("Javatar package \"" + filename + "\" loaded with " + str(count[1]) + " classes in " + str(count[0]) + " packages")
 			return imports
 		except ValueError:

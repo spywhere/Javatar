@@ -7,7 +7,7 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 	qm = None
 	menuStable = {
 		"main": {
-			"items": [["Builds...", "Build system"], ["Calls...", "Insert class informations"], ["Create...", "Create a new class"], ["Operations...", "Do a Java operations"]],
+			"items": [["Builds...", "Build system"], ["Calls...", "Insert class informations"], ["Create...", "Create a new class"], ["Operations...", "Do a Java operations"], ["Packages Manager...", "Javatar packages manager"]],
 			"actions": [
 				{
 					"name": "builds"
@@ -17,6 +17,8 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 					"name": "creates"
 				}, {
 					"name": "operations"
+				}, {
+					"name": "package_manager"
 				}
 			]
 		},
@@ -95,8 +97,66 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 				}
 			]
 		},
+		"package_manager": {
+			"selected_index": 1,
+			"items": [["Back", "Back to previous menu"], ["Install Packages...", "Download and install new packages"], ["Uninstall Packages...", "Uninstall installed packages"], ["Reload and Update packages", "Reload all packages and update packages list"], ["Package Tools...", "Tools for package creator"]],
+			"actions": [
+				{
+					"name": "main"
+				}, {
+					"name": "install_packages"
+				}, {
+					"name": "uninstall_packages"
+				}, {
+					"command": "javatar_reload_packages"
+				}, {
+					"name": "package_tools"
+				}
+			]
+		},
+		"package_tools": {
+			"selected_index": 1,
+			"items": [["Back", "Back to previous menu"], ["Generate SHA-256 Hash", "Calculate checksum for current document"], ["Generate SHA-256 Hash from URL", "Calculate checksum from url"], ["Convert Imports", "Convert Javatar Imports to Javatar Packages"]],
+			"actions": [
+				{
+					"name": "package_manager"
+				}, {
+					"command": "javatar_util",
+					"args": {
+						"type": "hash"
+					}
+				}, {
+					"command": "javatar_util",
+					"args": {
+						"type": "remote_hash"
+					}
+				}, {
+					"command": "javatar_convert"
+				}
+			]
+		},
+		"install_packages": {
+			"selected_index": 1,
+			"items": [["Back", "Back to previous menu"], ["No package available", "Please check back later"]],
+			"actions": [
+				{
+					"name": "package_manager"
+				}, {
+				}
+			]
+		},
+		"uninstall_packages": {
+			"selected_index": 1,
+			"items": [["Back", "Back to previous menu"], ["No package available", "Please check back later"]],
+			"actions": [
+				{
+					"name": "package_manager"
+				}, {
+				}
+			]
+		},
 		"dev": {
-			"items": [["Back", "Back to previous menu"], ["Operations: Organize Imports", "Correct class imports in current file"], ["Operations: Rename Class", "Rename current class"], ["Operations: Rename Package", "Rename current package"], ["Prettify JSON", "Reformat current document as pretty JSON"], ["Generate SHA-256 Hash from URL", "Calculate checksum from url"], ["Generate SHA-256 Hash", "Calculate checksum for current document"], ["Convert Imports", "Convert Javatar Imports to Javatar Packages"], ["Testing", "For testing and experimenting new feature"]],
+			"items": [["Back", "Back to previous menu"], ["Operations: Organize Imports", "Correct class imports in current file"], ["Operations: Rename Class", "Rename current class"], ["Operations: Rename Package", "Rename current package"], ["Prettify JSON", "Reformat current document as pretty JSON"], ["Testing", "For testing and experimenting new feature"]],
 			"actions": [
 				{
 					"name": "main"
@@ -120,18 +180,6 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 				}, {
 					"command": "javatar_util",
 					"args": {
-						"type": "remote_hash"
-					}
-				}, {
-					"command": "javatar_util",
-					"args": {
-						"type": "hash"
-					}
-				}, {
-					"command": "javatar_convert"
-				}, {
-					"command": "javatar_util",
-					"args": {
 						"type": "test"
 					}
 				}
@@ -139,12 +187,10 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 		},
 		"help": {
 			"selected_index": 2,
-			"items": [["Back", "Back to previous menu"], ["Download Packages", "Download additional Java packages..."], ["Actions History", "Generate a report on Javatar actions history"], ["Actions History (Custom)", "Generate a report on Javatar actions history using custom selector"]],
+			"items": [["Back", "Back to previous menu"], ["Actions History", "Generate a report on Javatar actions history"], ["Actions History (Custom)", "Generate a report on Javatar actions history using custom selector"]],
 			"actions": [
 				{
 					"name": "main"
-				}, {
-					"name": "additional_packages"
 				}, {
 					"command": "javatar_help",
 					"args": {
@@ -156,19 +202,6 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 					"args": {
 						"action": "actions_history"
 					}
-				}
-			]
-		},
-		"additional_packages": {
-			"selected_index": 1,
-			"items": [["Back", "Back to previous menu"], ["Reload and Update packages", "Reload all packages and update packages list"], ["No package available", "Please check back later"]],
-			"actions": [
-				{
-					"name": "help"
-				}, {
-					"command": "javatar_reload_packages"
-				}, {
-
 				}
 			]
 		}
