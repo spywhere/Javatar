@@ -6,8 +6,6 @@ from .javatar_collections import *
 from .javatar_thread import *
 from .javatar_utils import *
 
-# Alert if packages repo is out of date (new key for channel)
-
 # If you are going to visit the site, sorry for the crap design...
 PACKAGES_STATS = "http://digitalparticle.in.th/javatar/"
 PACKAGES_VERSION = "0.3"
@@ -49,8 +47,7 @@ def updateComplete(packageURL, require_package):
 		package_conflict = require_package["conflict"]
 	for conflict in package_conflict:
 		if getInstalledPackage(conflict) is not None:
-			# Conflict package was already installed
-			getAction().addAction("javatar.util.updater", "Conflict package was installed")
+			getAction().addAction("javatar.util.updater", "Conflict package was already installed")
 			return
 	getAction().addAction("javatar.util.updater", "Install default package")
 	sublime.active_window().run_command("javatar_install", {"installtype": "remote_package", "name": require_package["name"], "filename": require_package["filename"], "url": packageURL, "checksum": require_package["hash"], "conflict": package_conflict})
@@ -112,6 +109,8 @@ class JavatarPackageUpdaterThread(threading.Thread):
 					getAction().addAction("javatar.util.updater", self.result_message)
 					self.result = False
 					return
+				if "deprecated" in packages[PACKAGES_VERSION] and packages[PACKAGES_VERSION]["deprecated"]:
+					sublime.message_dialog("Javatar is out of date. You must update Javatar to get latest packages updates.")
 				require_package = None
 				require_package_name = None
 				if "packages" in packages[PACKAGES_VERSION]:

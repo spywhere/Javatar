@@ -3,7 +3,7 @@ from .javatar_actions import *
 from .javatar_updater import *
 
 # YY.MM.DD.HH.MM
-VERSION = "14.04.13.23.28b"
+VERSION = "14.04.13.23.38b"
 UPDATEFOR = "dev"
 NEWSID = 10
 # Support set source folder
