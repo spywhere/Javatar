@@ -2,14 +2,16 @@ import sublime
 import re
 
 
-def isJava(file=""):
+def isJava(filepath=""):
 	from .javatar_utils import getSettings
 	view = sublime.active_window().active_view()
 	if view is None:
 		return False
-	if file is "" or file is None:
-		file = view.file_name()
-	return (len(view.find_by_selector(getSettings("java_source_selector"))) > 0) or (file is not None and re.match(getSettings("java_file_validation"), file, re.M) is not None)
+	if filepath is "" or filepath is None:
+		filepath = view.file_name()
+	else:
+		view = None
+	return (view is not None and len(view.find_by_selector(getSettings("java_source_selector"))) > 0) or (filepath is not None and re.match(getSettings("java_file_validation"), filepath, re.M) is not None)
 
 
 def isPackage(package):

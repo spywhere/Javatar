@@ -1,6 +1,6 @@
 import sublime
 import threading
-import urllib.request
+import urllib
 import hashlib
 from .javatar_collections import *
 from .javatar_thread import *
@@ -8,8 +8,30 @@ from .javatar_utils import *
 
 # Alert if packages repo is out of date (new key for channel)
 
+# If you are going to visit the site, sorry for the crap design...
+PACKAGES_STATS = "http://digitalparticle.in.th/javatar/"
 PACKAGES_VERSION = "0.3"
 PACKAGES_REPO = "https://raw.github.com/spywhere/JavatarPackages/master/javatar_packages.json"
+
+
+def sendUsages(params={}, lasttime=False):
+	if getSettings("send_stats_and_usages"):
+		params["internal"] = "true"
+		thread = JavatarPackageUsageThread(params, lasttime)
+		thread.start()
+		SilentThreadProgress(thread, sendUsageComplete)
+
+
+def sendUsageComplete(thread):
+	if thread.result:
+		if thread.lasttime:
+			if isDebug():
+				print("Javatar usage data sent as last time: " + thread.data)
+			setSettings("javatar_gp", getSettings("javatar_gp")|0x1)
+		else:
+			if isDebug():
+				print("Javatar usage data sent: " + thread.data)
+			setSettings("javatar_gp", getSettings("javatar_gp")&(~0x1))
 
 
 def updatePackages():
@@ -32,6 +54,27 @@ def updateComplete(packageURL, require_package):
 			return
 	getAction().addAction("javatar.util.updater", "Install default package")
 	sublime.active_window().run_command("javatar_install", {"installtype": "remote_package", "name": require_package["name"], "filename": require_package["filename"], "url": packageURL, "checksum": require_package["hash"], "conflict": package_conflict})
+
+
+class JavatarPackageUsageThread(threading.Thread):
+	def __init__(self, params={}, lasttime=False):
+		self.lasttime = lasttime
+		self.params = params
+		threading.Thread.__init__(self)
+
+	def run(self):
+		try:
+			urllib.request.install_opener(urllib.request.build_opener(urllib.request.ProxyHandler()))
+			url = PACKAGES_STATS+"?"+urllib.parse.urlencode(self.params)
+			data = urllib.request.urlopen(url).read()
+			self.data = str(data)
+			self.datahash = hashlib.sha256(self.data.encode("utf-8")).hexdigest()
+			self.result = True
+		except Exception as e:
+			if isDebug():
+				print("Javatar Usage: " + str(e))
+			self.result = False
+
 
 
 class JavatarPackageUpdaterThread(threading.Thread):

@@ -1,68 +1,84 @@
 {
-	//Debugging purpose:
+	// Settings per project can be set in .sublime-project file
+
+	// Debugging purpose:
 	"debug_mode" : false,
 
-	//Javatar general purpose value
+	// Javatar general purpose value
 	"javatar_gp": 0,
 
-	//Package Subscription:
-	//   dev = Developer release (contains new features, bugs and also debugging messages enabled)
-	//   stable = Stable release (safe to use, only stable feature enabled)
+	// Package Subscription:
+	//    dev = Developer release (contains new features, bugs and also debugging messages enabled)
+	//    stable = Stable release (safe to use, only stable feature enabled)
 	"package_channel" : "stable",
 
-	//Update message id
-	//   -1 = Unsubscribe to important package updates notification (you should check out the README file for any updates information)
-	//   any other number = Assigned by package to show you proper updates message
+	// Automatically send statistics and usages informations
+	"send_stats_and_usages" : true,
+
+	// Update message id
+	//    -1 = Unsubscribe to important package updates notification (you should check out the README file for any updates information)
+	//    any other number = Assigned by package to show you proper updates message
 	"message_id" : 0,
 
-	//Enable Actions History to help developer solve the issue
+	// Enable Actions History to help developer solve the issue
 	"enable_actions_history" : true,
 
-	//Java build system (based on default JavaC)
+	// Maximum waiting time for Javatar packages creation
+	"maximum_waiting_time": 15,
+
+	// Source folder (used as default package)
+	// Default is...
+	//    - Project-based source folder
+	//    - Top most directory/folder
+	//    - Current directory/folder
+	"source_folder" : "",
+
+	// Java build system (based on default JavaC)
 	"build_system" : "javac \"$file\"",
 
-	//Build command prefix (make command to be "build_command": "build_system")
+	// Build command prefix (make command to be "build_command": "build_system")
+	// In this example: "shell_cmd": "javac \"$file\""
 	"build_command" : "shell_cmd",
 
-	//Default delay before hide a status text
+	// Default delay before hide a status text
 	"status_delay" : 5000,
 
-	//Show package path in status bar
+	// Show package path in status bar
 	"show_package_path" : true,
 
-	//Java file validation using RegEx
+	// Java file validation using RegEx
 	"java_file_validation" : ".*\\.java$",
 
-	//Java source code validation using scope selector
+	// Java source code validation using scope selector
 	"java_source_selector" : "source.java",
 
-	//Method call replacement pattern using RegEx (Use in completions)
+	// Method call replacement pattern using RegEx (Use in completions)
 	"method_replacement" : "\\(.*?\\)(?![,\\)])",
 
-	//Package validation using RegEx
+	// Package validation using RegEx
 	"package_name_match" : "^([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*$",
 
-	//Package matching using RegEx
+	// Package matching using RegEx
 	"package_match" : "^([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*",
 
-	//Class in package matching using RegEx
+	// Class in package matching using RegEx
 	"package_class_match" : "([a-zA-Z_$][a-zA-Z\\d_$]*)$",
 
-	//Package scope selector (Use in Organize Imports)
+	// Package scope selector (Use in Organize Imports)
 	"package_meta_selector" : "meta.package.java",
 
-	//Import scope selector (Use in Organize Imports)
+	// Import scope selector (Use in Organize Imports)
 	"import_meta_selector" : "meta.import.java",
 
-	//Package in package keyword scope selector (Use in Organize Imports)
+	// Package in package keyword scope selector (Use in Organize Imports)
 	"package_name_selector" : "storage.modifier.package.java",
 
-	//Class name scope selector (Use in Organize Imports)
+	// Class name scope selector (Use in Organize Imports)
 	"class_name_selector" : "entity.name.type.class.java",
 
-	//Package in import keyword scope selector (Use in Organize Imports)
+	// Package in import keyword scope selector (Use in Organize Imports)
 	"package_import_selector" : "storage.modifier.import.java",
 
-	//Types and classes scope selector (Use in Organize Imports)
+	// Types and classes scope selector (Use in Organize Imports)
 	"type_selector" : "storage.type.java|storage.type.generic.java|storage.type.annotation.java|entity.other.inherited-class"
 }

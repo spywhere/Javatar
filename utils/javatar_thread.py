@@ -25,3 +25,20 @@ class ThreadProgress():
 		info = self.anim_fx(i, self.message, self.thread)
 		sublime.status_message(info["message"])
 		sublime.set_timeout(lambda: self.run(info["i"]), info["delay"])
+
+class SilentThreadProgress():
+	def __init__(self, thread, on_complete):
+		self.thread = thread
+		self.on_complete = on_complete
+		sublime.set_timeout(lambda: self.run(), 100)
+
+	def run(self):
+		if not self.thread.is_alive():
+			self.on_complete(self.thread)
+			if hasattr(self.thread, "result") and not self.thread.result:
+				if hasattr(self.thread, "result_message"):
+					sublime.status_message(self.thread.result_message)
+				else:
+					sublime.status_message("")
+			return
+		sublime.set_timeout(lambda: self.run(), 100)

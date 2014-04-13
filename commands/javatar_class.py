@@ -79,5 +79,4 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
 				self.type = type
 			else:
 				self.type = getSnippetName(index)
-			view = sublime.active_window().show_input_panel(self.type + " Name:", "", self.run, "", "")
-			view.set_name("JavatarCreate")
+			sublime.active_window().show_input_panel(self.type + " Name:", "", self.run, "", "")

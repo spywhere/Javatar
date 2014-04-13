@@ -24,7 +24,7 @@ class JavatarPackageUninstallerThread(threading.Thread):
 	def __init__(self, name, filename, on_complete=None):
 		self.pkgname = name
 		if filename[0:8] == "Packages":
-			self.filename = filename[8:]
+			self.filename = sublime.packages_path()+filename[8:]
 		else:
 			self.filename = filename
 		self.on_complete = on_complete
@@ -32,7 +32,7 @@ class JavatarPackageUninstallerThread(threading.Thread):
 
 	def run(self):
 		try:
-			os.remove(sublime.packages_path()+self.filename)
+			os.remove(self.filename)
 			self.result = True
 			if self.on_complete is not None:
 				sublime.set_timeout(self.on_complete, 3000)

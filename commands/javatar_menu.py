@@ -116,10 +116,12 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 		},
 		"package_tools": {
 			"selected_index": 1,
-			"items": [["Back", "Back to previous menu"], ["Generate SHA-256 Hash", "Calculate checksum for current document"], ["Generate SHA-256 Hash from URL", "Calculate checksum from url"], ["Convert Imports", "Convert Javatar Imports to Javatar Packages"]],
+			"items": [["Back", "Back to previous menu"], ["Create new Javatar Packages", "Create a new .javatar-packages"], ["Generate SHA-256 Hash", "Calculate checksum for current document"], ["Generate SHA-256 Hash from URL", "Calculate checksum from url"], ["Convert Imports", "Convert Javatar Imports to Javatar Packages"]],
 			"actions": [
 				{
 					"name": "package_manager"
+				}, {
+					"command": "javatar_create_javatar_package"
 				}, {
 					"command": "javatar_util",
 					"args": {

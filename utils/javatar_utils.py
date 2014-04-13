@@ -31,6 +31,9 @@ def readSettings(config):
 
 
 def getSettings(key):
+	project_data = sublime.active_window().project_data()
+	if key in project_data:
+		return project_data[key]
 	return SETTINGS.get(key)
 
 
@@ -72,11 +75,11 @@ def mergePath(pathlist):
 	return outpath
 
 
-def showStatus(text, delay=None):
+def showStatus(text, delay=None, require_java=True):
 	if delay is None:
 		delay = getSettings("status_delay")
 	from .javatar_validator import isJava
-	if not isJava():
+	if not isJava() and require_java:
 		return
 	view = sublime.active_window().active_view()
 	view.set_status(STATUS, text)
@@ -92,6 +95,24 @@ def hideStatus():
 			view.set_status(STATUS, "Package: " + toReadablePackage(getCurrentPackage(), True))
 		else:
 			view.erase_status(STATUS)
+
+
+def toReadableSize(filepath):
+	if filepath[0:8] == "Packages":
+		filepath = sublime.packages_path()+filepath[8:]
+	scales = [
+		[1000**5, "PB"],
+		[1000**4, "TB"],
+		[1000**3, "GB"],
+		[1000**2, "MB"],
+		[1000**1, "KB"],
+		[1000**0, "B"]
+	]
+	filesize = os.path.getsize(filepath)
+	for scale in scales:
+		if filesize >= scale[0]:
+			break
+	return str(int(filesize/scale[0]*100)/100)+scale[1]
 
 
 def getCurrentPackage(relative=False):
@@ -116,9 +137,10 @@ def toReadablePackage(package, asPackage=False):
 	return package
 
 
-def toPackage(dir):
-	dir = getPath("relative", dir, getPackageRootDir())
-	package = ".".join(splitPath(dir))
+def toPackage(path, relative=True):
+	if relative:
+		path = getPath("relative", path, getPackageRootDir())
+	package = ".".join(splitPath(path))
 	from .javatar_java import normalizePackage
 	return normalizePackage(package)
 
@@ -143,7 +165,11 @@ def getPath(type="", dir="", dir2=""):
 	window = sublime.active_window()
 	if type == "project_dir":
 		from .javatar_validator import isFile
-		path = ""
+		path = getSettings("source_folder")
+		if path != "":
+			return path
+		if path is None:
+			path = ""
 		folders = window.folders()
 		if len(folders) == 1:
 			return folders[0]

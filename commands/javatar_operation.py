@@ -310,8 +310,7 @@ class JavatarRenameOperationCommand(sublime_plugin.WindowCommand):
 				classCode = re.sub(getSettings("class_name_prefix"), "", classCode)
 				classCode = re.sub(getSettings("class_name_suffix"), "", classCode)
 				if text is None or text == "":
-					view = sublime.active_window().show_input_panel("New Class Name:", classCode, self.run, "", "")
-					view.set_name("JavatarRename")
+					sublime.active_window().show_input_panel("New Class Name:", classCode, self.run, "", "")
 				sublime.message_dialog("Work in progress...\nPlease check back later...")
 			else:
 				if not isFile():
@@ -321,5 +320,4 @@ class JavatarRenameOperationCommand(sublime_plugin.WindowCommand):
 		elif type == "package":
 			currentPackage = toPackage(getPath("current_dir"))
 			if text is None or text == "":
-				view = sublime.active_window().show_input_panel("New Package Name:", currentPackage, self.run, "", "")
-				view.set_name("JavatarRename")
+				sublime.active_window().show_input_panel("New Package Name:", currentPackage, self.run, "", "")

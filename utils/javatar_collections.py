@@ -3,6 +3,7 @@ import sublime
 import threading
 from .javatar_actions import *
 from .javatar_thread import *
+from ..utils.javatar_utils import toReadableSize
 
 
 INSTALLED_PACKAGES = []
@@ -80,7 +81,7 @@ def packagesComplete(data):
 	for package in getInstalledPackages():
 		install_update = True
 		installed_menu["actions"].append({"command": "javatar_install", "args": {"installtype": "uninstall_package", "name": package["name"], "filename": package["path"]}})
-		installed_menu["items"].append([package["name"], "Installed. [" + package["path"] + "]"])
+		installed_menu["items"].append([package["name"], "Installed (" + toReadableSize(package["path"]) + ")."])
 	if install_update:
 		installed_menu["selected_index"] = 2
 		sublime.active_window().run_command("javatar", {"replaceMenu": {
