@@ -80,5 +80,8 @@
 	"package_import_selector" : "storage.modifier.import.java",
 
 	// Types and classes scope selector (Use in Organize Imports)
-	"type_selector" : "storage.type.java|storage.type.generic.java|storage.type.annotation.java|entity.other.inherited-class"
+	"type_selector" : "storage.type.java|storage.type.generic.java|storage.type.annotation.java|entity.other.inherited-class",
+
+	// Primitive types fallback (default Java syntax is not 100% syntax perfect)
+	"primitive_type" : ["void", "boolean", "byte", "char", "short", "int", "float", "long", "double"]
 }

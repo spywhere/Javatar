@@ -96,8 +96,13 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 			importedPackagesRegions = self.view.find_by_selector(getSettings("package_import_selector"))
 			useTypesRegions = self.view.find_by_selector(getSettings("type_selector"))
 
+			primitiveTypes = getSettings("primitive_type")
+
 			for region in useTypesRegions:
-				self.useTypes += self.getClasses(self.view.substr(region))
+				if self.view.substr(region) not in primitiveTypes:
+					self.useTypes += self.getClasses(self.view.substr(region))
+				elif isDebug():
+					print("useType: " + self.view.substr(region))
 
 			for region in importedPackagesRegions:
 				package = self.view.substr(region)

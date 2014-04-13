@@ -7,7 +7,7 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 	qm = None
 	menuStable = {
 		"main": {
-			"items": [["Builds...", "Build system"], ["Calls...", "Insert class informations"], ["Create...", "Create a new class"], ["Operations...", "Do a Java operations"], ["Packages Manager...", "Javatar packages manager"]],
+			"items": [["Builds...", "Build system"], ["Calls...", "Insert class informations"], ["Create...", "Create a new class or package"], ["Operations...", "Do a Java operation"], ["Project Settings...", "Adjust project settings"], ["Packages Manager...", "Javatar packages manager"]],
 			"actions": [
 				{
 					"name": "builds"
@@ -17,6 +17,8 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 					"name": "creates"
 				}, {
 					"name": "operations"
+				}, {
+					"name": "project_settings"
 				}, {
 					"name": "package_manager"
 				}
@@ -94,6 +96,20 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 					"name": "main"
 				}, {
 					"command": "javatar_correct_class"
+				}
+			]
+		},
+		"project_settings": {
+			"selected_index": 2,
+			"items": [["Back", "Back to previous menu"], ["Set Source Folder", "Set source folder to specified as default package"]],
+			"actions": [
+				{
+					"name": "main"
+				}, {
+					"command": "javatar_project",
+					"args": {
+						"actiontype": "set_source_folder"
+					}
 				}
 			]
 		},

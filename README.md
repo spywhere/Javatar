@@ -15,6 +15,7 @@ A Sublime Text 3 Plugin for Java Development
 * Javatar Calls
 * Advanced Creations
 * Javatar Operations
+* Project Settings
 * Default Package Detection
 * Installation
 * Settings
@@ -58,6 +59,7 @@ From 11 Apr 2014, Javatar will "NOT" include any packages inside its package. Th
 * HUGE improvements on Javatar packages
 * HUGE startup time improvements for both Stable and Development channel
 * Most of Javatar commands now available through Command Palette
+* New section, Project Settings. Please check out Command Categories section for more info
 * Ability to uninstall installed packages
 * Java SE 7, Java SE 8, JavaFX 8, Bukkit 1.6.4 R2.0, Bukkit 1.7.2 R0.3, JBox2D 2.3.1, LWJGL 2.9.1 and Slick 2.9.0 packages now available through *Packages Manager... > Install Packages...*
 * Package path should work properly in a new, unsave file
@@ -92,6 +94,9 @@ From 11 Apr 2014, Javatar will "NOT" include any packages inside its package. Th
 * Operation:
 	* Do class or package operation such as organize imports, rename class or package
 	* More details on Javatar Operations
+* Project Settings:
+	* Adjust settings for current project
+	* More details on Project Settings
 * Packages Manager:
 	* Download, install or uninstall Javatar packages and Tools for package creators.
 	* More details on Additional Packages
@@ -144,12 +149,21 @@ Javatar will automatically imports all necessary packages and remove unused pack
 
 ====
 
+### Project Settings
+Project Settings section contains per-project settings. Currently, Javatar supported only 1 settings, `Set Source Folder`.
+
+##### Set Source Folder
+As default, Javatar will specified a default package (mostly) based-on current working folder or folder contains current working file (more details on next section). Many projects might use multiple folders and some of them are not source folder. Set source folder helps solve this issue by let you select which folder to specified as Source Folder (or default package as Javatar use).
+
+===
+
 ###  Default Package Detection
 Javatar will specify default package with these steps...
 
-1. Project folder in your project file (when open project or folder)
-2. Folder contains current file (when open file)
-3. Specify current package as `(Unknown Package)`
+1. Source Folder specified in current project file (when open project)
+2. Project folder in current project file (when open project or folder)
+3. Folder contains current file (when open file)
+4. Specify current package as `(Unknown Package)`
 
 Javatar will refuse to create packages or classes within unknown package. In this case, mostly because current file is not on the disk yet.
 

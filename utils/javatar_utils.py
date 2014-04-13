@@ -37,9 +37,14 @@ def getSettings(key):
 	return SETTINGS.get(key)
 
 
-def setSettings(key, val):
-	SETTINGS.set(key, val)
-	sublime.save_settings(SETTINGSBASE)
+def setSettings(key, val, project=False):
+	if project:
+		project_data = sublime.active_window().project_data()
+		project_data[key] = val
+		sublime.active_window().set_project_data(project_data)
+	else:
+		SETTINGS.set(key, val)
+		sublime.save_settings(SETTINGSBASE)
 
 
 def isDebug():

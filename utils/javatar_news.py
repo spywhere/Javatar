@@ -3,7 +3,7 @@ from .javatar_actions import *
 from .javatar_updater import *
 
 # YY.MM.DD.HH.MM
-VERSION = "14.04.13.17.03b"
+VERSION = "14.04.13.22.15b"
 UPDATEFOR = "dev"
 NEWSID = 10
 NEWS = " - Javatar now supported create your own packages via Packages Manager... > Package Tools...\n - Javatar will now collected some usage and send to the server to help improve the package. You can disable this settings by set \"send_stats_and_usages\" to \"false\""
