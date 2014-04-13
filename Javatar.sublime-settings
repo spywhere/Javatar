@@ -26,7 +26,7 @@
 	// Maximum waiting time for Javatar packages creation
 	"maximum_waiting_time": 15,
 
-	// Source folder (used as default package)
+	// Source folder (used as default package), must specified in full path
 	// Default is...
 	//    - Project-based source folder
 	//    - Top most directory/folder
