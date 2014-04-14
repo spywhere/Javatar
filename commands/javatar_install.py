@@ -5,18 +5,35 @@ import os
 from ..utils import *
 
 class JavatarInstallCommand(sublime_plugin.WindowCommand):
+	action = "invalid"
+
 	def run(self, installtype=None, name=None, filename=None, url=None, checksum=None):
 		if installtype is not None:
+			self.pname = name
 			if installtype == "remote_package":
+				self.action = "install"
 				thread = JavatarRemotePackageInstallerThread(name, filename, url, checksum, self.on_complete)
 				thread.start()
 				ThreadProgress(thread, "Installing Javatar package \"" + name + "\"", "Javatar package \"" + name + "\" has been successfully installed")
 			elif installtype == "uninstall_package":
+				self.action = "uninstall"
 				thread = JavatarPackageUninstallerThread(name, filename, self.on_complete)
 				thread.start()
 				ThreadProgress(thread, "Uninstalling Javatar package \"" + name + "\"", "Javatar package \"" + name + "\" has been successfully uninstalled")
 
+
+	def getPackageData(self):
+		data = {}
+		from .javatar_utils import getSettings, setSettings, getPath
+		data["SchemaVersion"] = getSchemaVersion()
+		data["PackageAction"] = self.action
+		data["PackageName"] = self.pname
+		data["SublimeVersion"] = str(sublime.version())
+		data["Platform"] = sublime.platform()
+		return data
+
 	def on_complete(self):
+		sendPackageAction(self.getPackageData())
 		resetPackages()
 		loadPackages()
 

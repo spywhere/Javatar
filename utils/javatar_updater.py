@@ -12,12 +12,28 @@ PACKAGES_VERSION = "0.3"
 PACKAGES_REPO = "https://raw.github.com/spywhere/JavatarPackages/master/javatar_packages.json"
 
 
+def getSchemaVersion():
+	return PACKAGES_VERSION
+
+
+def sendPackageAction(params={}):
+	params["package"] = "true"
+	thread = JavatarPackageUsageThread(params)
+	thread.start()
+	SilentThreadProgress(thread, sendPackageActionComplete)
+
+
 def sendUsages(params={}, lasttime=False):
 	if getSettings("send_stats_and_usages"):
-		params["internal"] = "true"
+		params["usage"] = "true"
 		thread = JavatarPackageUsageThread(params, lasttime)
 		thread.start()
 		SilentThreadProgress(thread, sendUsageComplete)
+
+
+def sendPackageActionComplete(thread):
+	if thread.result and isDebug():
+		print("Javatar package action sent: " + thread.data)
 
 
 def sendUsageComplete(thread):
