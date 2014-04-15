@@ -3,10 +3,11 @@ from .javatar_actions import *
 from .javatar_updater import *
 
 # YY.MM.DD.HH.MM
-VERSION = "14.04.15.00.29b"
+VERSION = "14.04.15.18.35b"
 UPDATEFOR = "dev"
 NEWSID = 10
 # Support set source folder
+# Remove command palette
 NEWS = " - Javatar now supported create your own packages via Packages Manager... > Package Tools...\n - Javatar will now collected some usage and send to the server to help improve the package. You can disable this settings by set \"send_stats_and_usages\" to \"false\""
 
 

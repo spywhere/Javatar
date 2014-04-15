@@ -66,7 +66,7 @@ def updateComplete(packageURL, require_package):
 			getAction().addAction("javatar.util.updater", "Conflict package was already installed")
 			return
 	getAction().addAction("javatar.util.updater", "Install default package")
-	sublime.active_window().run_command("javatar_install", {"installtype": "remote_package", "name": require_package["name"], "filename": require_package["filename"], "url": packageURL, "checksum": require_package["hash"], "conflict": package_conflict})
+	sublime.active_window().run_command("javatar_install", {"installtype": "remote_package", "name": require_package["name"], "filename": require_package["filename"], "url": packageURL, "checksum": require_package["hash"]})
 
 
 class JavatarPackageUsageThread(threading.Thread):

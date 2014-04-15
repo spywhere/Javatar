@@ -33,7 +33,7 @@ A Sublime Text 3 Plugin for Java Development
 * [+] Class (also Abstract), Interface, Enumerator snippets with package/class auto-complete
 * [+] Project Compile
 * [+] Package path in status bar
-* [*] External libraries packages
+* [+] External libraries packages
 * [*] Organize Imports
 * [*] Rename/Move packages/classes
 * [-] JAR file export (included executable)
@@ -45,9 +45,11 @@ A Sublime Text 3 Plugin for Java Development
 
 ====
 
-### Important Updates
+### Important Updates/Changelogs
 
 From 11 Apr 2014, Javatar will "NOT" include any packages inside its package. This helps install and update Javatar faster but still maintaining default features. Javatar will automatically download and install necessary packages (Java SE) at startup since users install Javatar usually already connected to the internet.
+
+Javatar will remove most commands from Command Palette in later version since most Javatar's commands can be accessed through QuickMenu and Shortcut Keys.
 
 ##### Development Build
 * Organize Imports now use all references from Javatar Packages
@@ -58,12 +60,11 @@ From 11 Apr 2014, Javatar will "NOT" include any packages inside its package. Th
 ##### Stable Build
 * HUGE improvements on Javatar packages
 * HUGE startup time improvements for both Stable and Development channel
-* Most of Javatar commands now available through Command Palette
 * New section, Project Settings. Please check out Command Categories section for more info
 * Ability to uninstall installed packages
 * Java SE 7, Java SE 8, JavaFX 8, Bukkit 1.6.4 R2.0, Bukkit 1.7.2 R0.3, JBox2D 2.3.1, LWJGL 2.9.1 and Slick 2.9.0 packages now available through *Packages Manager... > Install Packages...*
 * Package path should work properly in a new, unsave file
-* Java file, project validation improvements
+* Java file and project validation improvements
 * New key bindings, please check out Key Bindings section for more info
 * Default imports has been removed from settings. If you want to import your own package, use Javatar Packages instead (Check out Javatar Packages section)
 
@@ -82,22 +83,22 @@ From 11 Apr 2014, Javatar will "NOT" include any packages inside its package. Th
 ====
 
 ### Command Categories
-* Build: Accessed via command palette only
+* Build:
 	* Build classes within package or project
 	* More details on Javatar Builds
 * Call:
 	* Insert class and package informations such as current class path, class name or package name
 	* More details on Javatar Calls
-* Creation: Accessed via command palette only
+* Creation:
 	*  Packages and classes creation
 	* More details on Advanced Creations
 * Operation:
 	* Do class or package operation such as organize imports, rename class or package
 	* More details on Javatar Operations
-* Project Settings:
+* Project Settings: Accessed via quick menu only
 	* Adjust settings for current project
 	* More details on Project Settings
-* Packages Manager:
+* Packages Manager: Accessed via quick menu only
 	* Download, install or uninstall Javatar packages and Tools for package creators.
 	* More details on Additional Packages
 
@@ -283,18 +284,19 @@ Please note that stable channel update notes also apply on development channel t
 In order to notice important notes to all users, in stable channel or development channel or both, Javatar use custom notification system which will notice you *only once* when Javatar is ready to use. You can opt out this notification by settings `message_id` to `-1` in Javatar's user settings file, note that you can see update notes in README file or you will miss further important update notes.
  
 ### Statistics and Usages Policy
-From 13 Apr 2014, Javatar will collect statistics and usages of Javatar to help improve the package features. Data we have collected are your Javatar's settings and Sublime Text informations. To disable automatic sending statistics and usages, set `send_stats_and_usages` to `false` and Javatar will not send any statistics and usages anymore.
+From 13 Apr 2014, Javatar will collect statistics and usages of Javatar to help improve the package features. Data we have collected are your Javatar's settings and Sublime Text informations. To disable automatic sending statistics and usages, set `send_stats_and_usages` to `false` and Javatar will not send any statistics and usages anymore. However, additional packages statistics still collected for packages improvements and selections.
  
 ### Actions History
-Actions History tracks how you use Javatar and helps solve the problem. By provides useful informations as request by developer (only when you submit an issue). A Javatar Action History Report will looks like this when using it properly...
+Actions History tracks how you use Javatar and helps solve the problem. By provides useful informations as request by developer (only when you submit an issue). A Javatar Action History Report will looks similar to this when using it properly...
 
 	## Javatar Report
 	### System Informations
-	* Javatar Version: `13.10.27.0.59b`
-	* Sublime Version: `3047`
-	* Package Path: `/Users/spywhere/Library/Application Support/Sublime Text 3/Packages`
-	* Javatar Channel: `dev`
+	* Javatar Version: `14.04.15.00.29b`
+	* Sublime Version: `3059`
+	* Package Path: `/Users/USER_NAME/Library/Application Support/Sublime Text 3/Packages`
+	* Javatar Channel: `stable`
 	* Sublime Channel: `stable`
+	* Is Debug Mode: `False`
 	* Platform: `osx`
 	* As Packages: `True`
 	* Package Control: `True`
@@ -303,23 +305,30 @@ Actions History tracks how you use Javatar and helps solve the problem. By provi
 	* Is Project: `True`
 	* Is File: `True`
 	* Is Java: `True`
-
+	
 	### Action List
 	1. Startup
 	2. Reset all settings
 	3. Reset all snippets
-	4. Read settings
-	5. Load snippets
-	6. Javatar Snippet AbstractClass.javatar loaded
-	7. Analyse snippet [file=/Users/spywhere/Library/Application Support/Sublime Text 3/Packages/Javatar/snippets/AbstractClass.javatar]
-	8. Javatar Snippet Class.javatar loaded
-	9. Analyse snippet [file=/Users/spywhere/Library/Application Support/Sublime Text 3/Packages/Javatar/snippets/Class.javatar]
-	10. Javatar Snippet Enumerator.javatar loaded
-	11. Analyse snippet [file=/Users/spywhere/Library/Application Support/Sublime Text 3/Packages/Javatar/snippets/Enumerator.javatar]
-	12. Javatar Snippet Interface.javatar loaded
-	13. Analyse snippet [file=/Users/spywhere/Library/Application Support/Sublime Text 3/Packages/Javatar/snippets/Interface.javatar]
-	14. Check news
-	15. Ready
+	4. Reset all default packages
+	5. Read settings
+	6. Load snippets
+	7. Check news
+	8. Ready
+	9. Javatar snippet AbstractClass.javatar loaded
+	10. Analyse snippet [file=Packages/Javatar/snippets/AbstractClass.javatar]
+	11. Javatar snippet Class.javatar loaded
+	12. Analyse snippet [file=Packages/Javatar/snippets/Class.javatar]
+	13. Javatar snippet Enumerator.javatar loaded
+	14. Analyse snippet [file=Packages/Javatar/snippets/Enumerator.javatar]
+	15. Javatar snippet Interface.javatar loaded
+	16. Analyse snippet [file=Packages/Javatar/snippets/Interface.javatar]
+	17. Load Java default packages
+	18. Javatar default package Proto.javatar-packages loaded
+	19. Analyse package [file=Packages/Javatar/Java/Proto.javatar-packages]
+	20. Javatar default package JavaSE8.javatar-packages loaded
+	21. Analyse package [file=Packages/User/JavaSE8.javatar-packages]
+	22. Check packages update
 
 Javatar **do not** automatically send these informations. You have to reply an issue with these informations yourself.
 
