@@ -35,7 +35,10 @@ class JavatarInstallCommand(sublime_plugin.WindowCommand):
 	def on_complete(self):
 		sendPackageAction(self.getPackageData())
 		resetPackages()
-		loadPackages()
+		no_require = False
+		if self.action == "uninstall":
+			no_require = True
+		loadPackages(no_require)
 
 class JavatarPackageUninstallerThread(threading.Thread):
 	def __init__(self, name, filename, on_complete=None):

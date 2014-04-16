@@ -49,8 +49,6 @@ A Sublime Text 3 Plugin for Java Development
 
 From 11 Apr 2014, Javatar will "NOT" include any packages inside its package. This helps install and update Javatar faster but still maintaining default features. Javatar will automatically download and install necessary packages (Java SE) at startup since users install Javatar usually already connected to the internet.
 
-Javatar will remove most commands from Command Palette in later version since most Javatar's commands can be accessed through QuickMenu and Shortcut Keys.
-
 ##### Development Build
 * Organize Imports now use all references from Javatar Packages
 * Organize Imports improvements
@@ -60,13 +58,11 @@ Javatar will remove most commands from Command Palette in later version since mo
 ##### Stable Build
 * HUGE improvements on Javatar packages
 * HUGE startup time improvements for both Stable and Development channel
+* Most commands in Command Palette are removed since QuickMenu can be accessed easier
 * New section, Project Settings. Please check out Command Categories section for more info
 * Ability to uninstall installed packages
+* Javatar now support to set your own source folder via *Project Settings... > Set Source Folder*
 * Java SE 7, Java SE 8, JavaFX 8, Bukkit 1.6.4 R2.0, Bukkit 1.7.2 R0.3, JBox2D 2.3.1, LWJGL 2.9.1 and Slick 2.9.0 packages now available through *Packages Manager... > Install Packages...*
-* Package path should work properly in a new, unsave file
-* Java file and project validation improvements
-* New key bindings, please check out Key Bindings section for more info
-* Default imports has been removed from settings. If you want to import your own package, use Javatar Packages instead (Check out Javatar Packages section)
 
 ====
 

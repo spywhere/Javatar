@@ -3,12 +3,10 @@ from .javatar_actions import *
 from .javatar_updater import *
 
 # YY.MM.DD.HH.MM
-VERSION = "14.04.15.18.35b"
-UPDATEFOR = "dev"
-NEWSID = 10
-# Support set source folder
-# Remove command palette
-NEWS = " - Javatar now supported create your own packages via Packages Manager... > Package Tools...\n - Javatar will now collected some usage and send to the server to help improve the package. You can disable this settings by set \"send_stats_and_usages\" to \"false\""
+VERSION = "14.04.16.22.43b"
+UPDATEFOR = "all"
+NEWSID = 11
+NEWS = " - Javatar now support to set your own source folder via Project Settings... > Set Source Folder\n - Most commands in Command Palette are removed since QuickMenu can be accessed easier\n - Fix Javatar Packages automatic download won't work on Stable Channel\n - Fix message ID is updated incorrectly"
 
 
 def getVersion():
@@ -37,12 +35,11 @@ def checkNews():
 		if getSettings("message_id") != -1:
 			if isStable() and (UPDATEFOR == "stable" or UPDATEFOR == "all"):
 				sublime.message_dialog("Javatar: Package has been updated!\n" + NEWS)
-				setSettings("message_id", NEWSID)
 				getAction().addAction("javatar.util.news", "Show stable news")
 			elif not isStable() and (UPDATEFOR == "dev" or UPDATEFOR == "all"):
 				sublime.message_dialog("Javatar [Dev]: Package has been updated!\n" + NEWS)
 				getAction().addAction("javatar.util.news", "Show dev news")
-				setSettings("message_id", NEWSID)
+			setSettings("message_id", NEWSID)
 			sendUsages(getUsageData())
 		elif getSettings("javatar_gp") & 0x1 == 0:
 			sendUsages(getUsageData(), True)

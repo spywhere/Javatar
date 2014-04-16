@@ -48,9 +48,10 @@ def sendUsageComplete(thread):
 			setSettings("javatar_gp", getSettings("javatar_gp")&(~0x1))
 
 
-def updatePackages():
+def updatePackages(no_require=False):
 	getAction().addAction("javatar.util.updater", "Check packages update")
 	thread = JavatarPackageUpdaterThread(updateComplete)
+	thread.no_require = no_require
 	thread.start()
 	ThreadProgress(thread, "Checking Javatar packages", "Javatar packages has been successfully updated")
 
@@ -131,7 +132,8 @@ class JavatarPackageUpdaterThread(threading.Thread):
 				require_package_name = None
 				if "packages" in packages[PACKAGES_VERSION]:
 					remote_update = False
-					if "install" in packages[PACKAGES_VERSION]:
+					print("NoReq: " + str(self.no_require))
+					if not self.no_require and "install" in packages[PACKAGES_VERSION]:
 						require_package_name = packages[PACKAGES_VERSION]["install"]
 					for package in packages[PACKAGES_VERSION]["packages"]:
 						remote_update = True

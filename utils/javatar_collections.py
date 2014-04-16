@@ -50,19 +50,17 @@ def loadSnippetsAndPackages():
 def snippetsComplete(data):
 	global SNIPPETS
 	SNIPPETS = data
-	from .javatar_utils import isStable
-	if not isStable():
-		loadPackages()
+	loadPackages()
 
 
-def loadPackages():
+def loadPackages(no_require=False):
 	getAction().addAction("javatar.util.collection.get_package_files", "Load Java default packages")
-	thread = JavatarPackagesLoaderThread(packagesComplete)
+	thread = JavatarPackagesLoaderThread(packagesComplete, no_require)
 	thread.start()
 	ThreadProgress(thread, "Loading Javatar packages", "Javatar packages has been loaded")
 
 
-def packagesComplete(data):
+def packagesComplete(data, no_require=False):
 	global INSTALLED_PACKAGES, DEFAULT_PACKAGES
 	INSTALLED_PACKAGES = data["installed_packages"]
 	DEFAULT_PACKAGES = data["default_packages"]
@@ -90,7 +88,7 @@ def packagesComplete(data):
 		}})
 
 	from .javatar_updater import updatePackages
-	updatePackages()
+	updatePackages(no_require)
 
 
 def getPackages():
@@ -163,9 +161,10 @@ class JavatarSnippetsLoaderThread(threading.Thread):
 
 
 class JavatarPackagesLoaderThread(threading.Thread):
-	def __init__(self, on_complete=None):
+	def __init__(self, on_complete=None, no_require=False):
 		self.installed_packages = []
 		self.on_complete = on_complete
+		self.no_require = no_require
 		threading.Thread.__init__(self)
 
 	def countClasses(self, imports):
@@ -225,4 +224,4 @@ class JavatarPackagesLoaderThread(threading.Thread):
 		}
 		self.result = True
 		if self.on_complete is not None:
-			sublime.set_timeout(lambda: self.on_complete(data), 10)
+			sublime.set_timeout(lambda: self.on_complete(data, self.no_require), 10)
