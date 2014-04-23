@@ -26,7 +26,7 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 		},
 		"builds": {
 			"selected_index": 2,
-			"items": [["Back", "Back to previous menu"], ["Project", "Build all classes in project"], ["Package", "Build all classes in current package"], ["Current Class", "Build current class"]],
+			"items": [["Back", "Back to previous menu"], ["Project", "Build all classes in project"], ["Package", "Build all classes in current package"], ["Working", "Build all classes in opened tabs"], ["Current Class", "Build current class"]],
 			"actions": [
 				{
 					"name": "main"
@@ -39,6 +39,11 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 					"command": "javatar_build",
 					"args": {
 						"build_type": "package"
+					}
+				}, {
+					"command": "javatar_build",
+					"args": {
+						"build_type": "working"
 					}
 				}, {
 					"command": "javatar_build",

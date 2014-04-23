@@ -32,7 +32,7 @@ A Sublime Text 3 Plugin for Java Development
 ### Features
 * [+] Package, Subpackage creation
 * [+] Class (also Abstract), Interface, Enumerator snippets with package/class auto-complete
-* [+] Project/Project/Class Build
+* [+] Project/Package/Class Build
 * [+] Package path in status bar
 * [+] External libraries packages
 * [*] Internal Console with input supports
@@ -54,10 +54,14 @@ From 11 Apr 2014, Javatar will "NOT" include any packages inside its package. Th
 ##### Development Build
 * New feature, Run main class. Can be accessed via *Development Section... > Builds: Run Main Class* (more details on Javatar Shell)
 * To force quit your application when run, just close the console view.
+* Java's StackTrace highlighting
 
 ##### Stable Build
 * Project/Package/Class Build improvements (now support multiple files building and error logs) *Please report an issue if you found something broken (this feature using internal shell so it might not work same as Sublime Text's shell)*
+* New build type, Working Classes
+* Building output highlighting
 * Fixed Javatar Calls cannot find the right package name and class name
+* Package channel must be specified 'dev' in order to subscribe to development channel instead of anything else except 'stable'
 * Class name detection improvements
 * Java file validation improvements
 * Building system now completely changed to internal building system (more details on Build System section below)

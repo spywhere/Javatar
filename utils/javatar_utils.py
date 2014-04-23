@@ -52,7 +52,7 @@ def isDebug():
 
 
 def isStable():
-	return str.lower(getSettings("package_channel")) == "stable"
+	return str.lower(getSettings("package_channel")) != "dev"
 
 
 def normalizePath(path):
@@ -131,8 +131,8 @@ def getCurrentPackage(relative=False):
 	from .javatar_validator import isProject, isFile
 	if not relative and isFile() and getPath("current_dir") is not None:
 		return toPackage(getPath("current_dir"))
-	elif not relative and isProject() and getPath("project_dir") is not None:
-		return toPackage(getPath("project_dir"))
+	elif not relative and isProject() and getPath("source_folder") is not None:
+		return toPackage(getPath("source_folder"))
 	else:
 		return ""
 
@@ -160,7 +160,7 @@ def toPackage(path, relative=True):
 def getPackageRootDir(isSub=False):
 	from .javatar_validator import isProject, isFile
 	if isProject():
-		return getPath("project_dir")
+		return getPath("source_folder")
 	elif isFile() and isSub:
 		return getPath("current_dir")
 	elif getPath("current_dir") is not None:
@@ -198,7 +198,7 @@ def getClassName(file_path=None, view=None):
 
 def getPath(path_type="", dir_path="", dir_path2=""):
 	window = sublime.active_window()
-	if path_type == "project_dir":
+	if path_type == "source_folder":
 		from .javatar_validator import isFile
 		path = getSettings("source_folder")
 		if path != "":
@@ -213,6 +213,17 @@ def getPath(path_type="", dir_path="", dir_path2=""):
 				path = folder
 				break
 		return path
+	elif path_type == "project_dir":
+		folders = window.folders()
+		if len(folders) == 1:
+			return folders[0]
+		elif len(folders) > 1:
+			return getPath("parent", folders[0])
+		for folder in folders:
+			if isFile() and containsFile(folder, getPath("current_file")):
+				return folder
+				break
+		return ""
 	elif path_type == "current_dir":
 		if getPath("current_file") is not None:
 			return getPath("parent", getPath("current_file"))

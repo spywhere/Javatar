@@ -31,10 +31,11 @@ class JavatarRunMainCommand(sublime_plugin.WindowCommand):
 		del self.class_path[-1]
 		self.class_path = ".".join(self.class_path)
 		self.view = self.window.new_file()
+		self.view.set_syntax_file("Packages/Javatar/syntax/JavaStackTrace.tmLanguage")
 		self.view.set_name("Running " + self.class_path + " ...")
 		self.view.set_scratch(True)
 		shell = JavatarShell(["java", self.class_path], self.view, self.on_complete)
-		shell.set_cwd(getPath("project_dir"))
+		shell.set_cwd(getPath("source_folder"))
 		shell.start()
 		ThreadProgress(shell, "Running Javatar Shell", "Javatar Shell has been stopped")
 

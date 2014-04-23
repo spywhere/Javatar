@@ -3,7 +3,7 @@ from .javatar_actions import *
 from .javatar_updater import *
 
 # YY.MM.DD.HH.MM
-VERSION = "14.04.23.17.55b"
+VERSION = "14.04.24.00.47b"
 UPDATEFOR = "all"
 NEWSID = 12
 NEWS = " - New feature, Run Main Class (dev only)\n - Project/Package/Class Build improvements\n - Fix Javatar Calls cannot find the right package name or class name\n - Building system now completely changed to internal building system (please see README for more info)"
@@ -19,11 +19,11 @@ def getUsageData():
 	data["SchemaVersion"] = getSchemaVersion()
 	data["JavatarVersion"] = getVersion()
 	data["JavatarChannel"] = str.lower(getSettings("package_channel"))
-	data["JavatarDebugMode"] = str(getSettings("debug_mode"))
-	data["JavatarAsPackage"] = str(getPath("exist", getPath("join", sublime.installed_packages_path(), "Javatar.sublime-package")))
+	data["JavatarDebugMode"] = str.lower(str(getSettings("debug_mode")))
+	data["JavatarAsPackage"] = str.lower(str(getPath("exist", getPath("join", sublime.installed_packages_path(), "Javatar.sublime-package"))))
 	data["JavatarNews"] = str(getSettings("message_id"))
-	data["JavatarActionHistory"] = str(getSettings("enable_actions_history"))
-	data["JavatarSendUsage"] = str(getSettings("send_stats_and_usages"))
+	data["JavatarActionHistory"] = str.lower(str(getSettings("enable_actions_history")))
+	data["JavatarSendUsage"] = str.lower(str(getSettings("send_stats_and_usages")))
 	data["SublimeVersion"] = str(sublime.version())
 	data["Platform"] = sublime.platform()
 	return data

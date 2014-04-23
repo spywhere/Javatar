@@ -43,7 +43,7 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 			build_script.append(script)
 
 		shell = JavatarSilentShell(build_script, self.on_build_complete)
-		shell.set_cwd(getPath("project_dir"))
+		shell.set_cwd(getPath("source_folder"))
 		shell.start()
 		ThreadProgress(shell, "[" + str(self.build_size-len(self.build_list)) + "/" + str(self.build_size) + "] Building " + getPath("name", file_path))
 
@@ -51,6 +51,7 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 		if data is not None:
 			if self.view is None:
 				self.view = self.window.new_file()
+				self.view.set_syntax_file("Packages/Javatar/syntax/JavaCompilationError.tmLanguage")
 			self.view.set_scratch(True)
 			self.view.run_command("javatar_util", {"util_type": "add", "text": data})
 		self.build()
@@ -86,7 +87,7 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 			else:
 				sublime.error_message("Unknown package location")
 		elif build_type == "package":
-			if isProject() or isFile():
+			if isFile():
 				for view in self.window.views():
 					if isJava(view.file_name()):
 						if view.is_dirty():
@@ -96,6 +97,23 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 								sublime.error_message("Some Java files are not saved")
 								return
 				if not self.buildAll(getPath("current_dir")):
+					sublime.error_message("No class to build")
+			else:
+				sublime.error_message("Unknown package location")
+		elif build_type == "working":
+			if isFile():
+				for view in self.window.views():
+					if isJava(view.file_name()):
+						self.build_list.append(view.file_name())
+						if view.is_dirty():
+							if getSettings("automatic_save"):
+								self.window.run_command("save_all")
+							else:
+								sublime.error_message("Some Java files are not saved")
+								return
+				if len(self.build_list) > 0:
+					self.build()
+				else:
 					sublime.error_message("No class to build")
 			else:
 				sublime.error_message("Unknown package location")

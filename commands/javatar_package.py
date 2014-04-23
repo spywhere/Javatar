@@ -39,7 +39,7 @@ class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):
 		# make sure that run in correct directory
 		command = "cd " + shlex.quote(search_path) + ";"
 		command += "echo Generating...;"
-		command += "javadoc -sourcepath " + shlex.quote(os.path.join(getPath("project_dir"), self.package_info[3][1][1:])) + " -docletpath " + shlex.quote(doclet_path) + " -name " + shlex.quote(self.package_info[0]) + " -doclet me.spywhere.doclet.Javatar -quiet "
+		command += "javadoc -sourcepath " + shlex.quote(os.path.join(getPath("source_folder"), self.package_info[3][1][1:])) + " -docletpath " + shlex.quote(doclet_path) + " -name " + shlex.quote(self.package_info[0]) + " -doclet me.spywhere.doclet.Javatar -quiet "
 
 		rootlen = len(os.path.join(getPath("project_dir"), self.package_info[3][1][1:]))
 		package_dirs = self.get_source_folder(os.path.join(getPath("project_dir"), self.package_info[3][1][1:]))
