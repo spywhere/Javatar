@@ -3,29 +3,29 @@ from ..utils import *
 
 
 class JavatarCallCommand(sublime_plugin.TextCommand):
-	def run(self, edit, type=""):
-		getAction().addAction("javatar.command.call.run", "Call [type=" + type + "]")
+	def run(self, edit, call_type=""):
+		getAction().addAction("javatar.command.call.run", "Call [call_type=" + call_type + "]")
 		if not isJava():
 			sublime.error_message("Current file is not Java")
 			return
 		sels = self.view.sel()
 		for sel in sels:
-			if type == "package_name":
+			if call_type == "package_name":
 				self.view.insert(edit, sel.a, getCurrentPackage())
-			elif type == "subpackage_name":
+			elif call_type == "subpackage_name":
 				self.view.insert(edit, sel.a, getCurrentPackage().split(".")[-1])
-			elif type == "full_class_name":
-				self.view.insert(edit, sel.a, normalizePackage(getCurrentPackage()+"."+getPath("name", getPath("current_file"))[:-5]))
-			elif type == "class_name":
-				self.view.insert(edit, sel.a, getPath("name", getPath("current_file"))[:-5])
+			elif call_type == "full_class_name":
+				self.view.insert(edit, sel.a, normalizePackage(getCurrentPackage()+"."+getClassName()))
+			elif call_type == "class_name":
+				self.view.insert(edit, sel.a, getClassName())
 
-	def description(self, type=""):
-		if type == "package_name":
+	def description(self, call_type=""):
+		if call_type == "package_name":
 			return "Insert Package Name"
-		elif type == "subpackage_name":
+		elif call_type == "subpackage_name":
 			return "Insert Subpackage Name"
-		elif type == "full_class_name":
+		elif call_type == "full_class_name":
 			return "Insert Full Class Name"
-		elif type == "class_name":
+		elif call_type == "class_name":
 			return "Insert Class Name"
 		return None

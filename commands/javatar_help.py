@@ -54,7 +54,7 @@ class JavatarHelpCommand(sublime_plugin.WindowCommand):
 				view = self.window.new_file()
 				view.set_name("Javatar Actions History Report")
 				view.set_scratch(True)
-				view.run_command("javatar_util", {"type": "add", "text": report, "dest": "Actions History"})
-				view.run_command("javatar_util", {"type": "set_read_only"})
+				view.run_command("javatar_util", {"util_type": "add", "text": report, "dest": "Actions History"})
+				view.run_command("javatar_util", {"util_type": "set_read_only"})
 			else:
 				self.window.show_input_panel("Selector: ", "", self.run, "", "")

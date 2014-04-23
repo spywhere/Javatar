@@ -7,4 +7,5 @@ from .javatar_menu import *
 from .javatar_operation import *
 from .javatar_package import *
 from .javatar_project import *
+from .javatar_run import *
 from .javatar_utils import *

@@ -62,21 +62,21 @@ def createClassFile(file, contents, msg):
 
 
 class JavatarCreateCommand(sublime_plugin.WindowCommand):
-	def run(self, text="", type=""):
-		getAction().addAction("javatar.command.create.run", "Create [type=" + type + "]")
-		if type != "":
-			self.showInput(-1, type)
+	def run(self, text="", create_type=""):
+		getAction().addAction("javatar.command.create.run", "Create [create_type=" + create_type + "]")
+		if create_type != "":
+			self.showInput(-1, create_type)
 			return
 		if text != "":
 			info = getInfo(text)
 			getAction().addAction("javatar.command.create.run", "Create [info=" + str(info) + "]")
-			createClassFile(info["file"], getFileContents(self.type, info), self.type + "\"" + info["class"] + "\" already exists")
-			sublime.set_timeout(lambda: showStatus(self.type + " \"" + info["class"] + "\" is created within package \"" + toReadablePackage(info["package"], True) + "\""), 500)
+			createClassFile(info["file"], getFileContents(self.create_type, info), self.create_type + "\"" + info["class"] + "\" already exists")
+			sublime.set_timeout(lambda: showStatus(self.create_type + " \"" + info["class"] + "\" is created within package \"" + toReadablePackage(info["package"], True) + "\""), 500)
 
-	def showInput(self, index, type=""):
-		if type != "" or index >= 0:
-			if type != "":
-				self.type = type
+	def showInput(self, index, create_type=""):
+		if create_type != "" or index >= 0:
+			if create_type != "":
+				self.create_type = create_type
 			else:
-				self.type = getSnippetName(index)
-			sublime.active_window().show_input_panel(self.type + " Name:", "", self.run, "", "")
+				self.create_type = getSnippetName(index)
+			sublime.active_window().show_input_panel(self.create_type + " Name:", "", self.run, "", "")

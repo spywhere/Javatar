@@ -33,12 +33,12 @@
 	//    - Current directory/folder
 	"source_folder" : "",
 
-	// Java build system (based on default JavaC)
-	"build_system" : "javac \"$file\"",
+	// Enable automatic save before build
+	"automatic_save" : false,
 
-	// Build command prefix (make command to be "build_command": "build_system")
-	// In this example: "shell_cmd": "javac \"$file\""
-	"build_command" : "shell_cmd",
+	// Build command (based on default JavaC)
+	// Command will be escaped properly before run
+	"build_command" : ["javac", "$file"],
 
 	// Default delay before hide a status text
 	"status_delay" : 5000,
@@ -46,8 +46,8 @@
 	// Show package path in status bar
 	"show_package_path" : true,
 
-	// Java file validation using RegEx
-	"java_file_validation" : ".*\\.java$",
+	// Java file extensions
+	"java_extensions" : ["java"],
 
 	// Java source code validation using scope selector
 	"java_source_selector" : "source.java",

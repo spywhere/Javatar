@@ -60,9 +60,9 @@ def normalizePath(path):
 	parent = getPath("parent", path)
 	if parent != getPath("parent", parent):
 		parent = normalizePath(parent)
-	for dir in os.listdir(parent):
-		if dir.lower() == name:
-			return getPath("join", parent, dir)
+	for dir_path in os.listdir(parent):
+		if dir_path.lower() == name:
+			return getPath("join", parent, dir_path)
 	return path
 
 
@@ -71,6 +71,13 @@ def splitPath(path):
 	if len(rest) <= 1:
 		return tail,
 	return splitPath(rest) + (tail,)
+
+
+def joinPath(paths):
+	outpath = ""
+	for path in paths:
+		outpath = os.path.join(outpath, path)
+	return outpath
 
 
 def mergePath(pathlist):
@@ -152,23 +159,46 @@ def toPackage(path, relative=True):
 
 def getPackageRootDir(isSub=False):
 	from .javatar_validator import isProject, isFile
-	if isFile() and isSub:
-		return getPath("current_dir")
-	elif isProject():
+	if isProject():
 		return getPath("project_dir")
+	elif isFile() and isSub:
+		return getPath("current_dir")
 	elif getPath("current_dir") is not None:
 		return getPath("current_dir")
 	else:
 		return ""
 
 
-def containsFile(directory, file):
-	return os.path.normcase(os.path.normpath(file)).startswith(os.path.normcase(os.path.normpath(directory)))
+def containsFile(directory, file_path):
+	return os.path.normcase(os.path.normpath(file_path)).startswith(os.path.normcase(os.path.normpath(directory)))
 
 
-def getPath(type="", dir="", dir2=""):
+def withoutExtension(file_path):
+	for extension in getSettings("java_extensions"):
+		if file_path.endswith("."+extension):
+			return file_path[:-len(extension)-1]
+	return file_path
+
+
+def getClassName(file_path=None, view=None):
+	from .javatar_validator import isFile
+	if view is not None:
+		classRegions = view.find_by_selector(getSettings("class_name_selector"))
+		if len(classRegions) > 0:
+			return view.substr(classRegions[0])
+		else:
+			return withoutExtension(getPath("name", view.file_name()))
+	elif file_path is not None:
+		return withoutExtension(getPath("name", file_path))
+	else:
+		if isFile():
+			return getClassName(None, sublime.active_window().active_view())
+	return None
+
+
+def getPath(path_type="", dir_path="", dir_path2=""):
 	window = sublime.active_window()
-	if type == "project_dir":
+	if path_type == "project_dir":
 		from .javatar_validator import isFile
 		path = getSettings("source_folder")
 		if path != "":
@@ -183,27 +213,27 @@ def getPath(type="", dir="", dir2=""):
 				path = folder
 				break
 		return path
-	elif type == "current_dir":
+	elif path_type == "current_dir":
 		if getPath("current_file") is not None:
 			return getPath("parent", getPath("current_file"))
 		else:
 			return None
-	elif type == "current_file":
+	elif path_type == "current_file":
 		return window.active_view().file_name()
-	elif type == "parent":
-		return os.path.dirname(dir)
-	elif type == "relative":
-		if dir != "" and dir2 != "":
-			return os.path.relpath(dir, dir2)
+	elif path_type == "parent":
+		return os.path.dirname(dir_path)
+	elif path_type == "relative":
+		if dir_path != "" and dir_path2 != "":
+			return os.path.relpath(dir_path, dir_path2)
 		else:
 			return ""
-	elif type == "name":
-		return os.path.basename(dir)
-	elif type == "join":
-		return os.path.join(dir, dir2)
-	elif type == "exist":
-		return os.path.exists(dir)
-	elif type == "javatar_parent":
+	elif path_type == "name":
+		return os.path.basename(dir_path)
+	elif path_type == "join":
+		return os.path.join(dir_path, dir_path2)
+	elif path_type == "exist":
+		return os.path.exists(dir_path)
+	elif path_type == "javatar_parent":
 		name = __name__.split('.')
 		return name[0]
 	else:

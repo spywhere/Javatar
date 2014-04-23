@@ -33,17 +33,17 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 				}, {
 					"command": "javatar_build",
 					"args": {
-						"type": "project"
+						"build_type": "project"
 					}
 				}, {
 					"command": "javatar_build",
 					"args": {
-						"type": "package"
+						"build_type": "package"
 					}
 				}, {
 					"command": "javatar_build",
 					"args": {
-						"type": "class"
+						"build_type": "class"
 					}
 				}
 			]
@@ -57,22 +57,22 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 				}, {
 					"command": "javatar_call",
 					"args": {
-						"type": "package_name"
+						"call_type": "package_name"
 					}
 				}, {
 					"command": "javatar_call",
 					"args": {
-						"type": "subpackage_name"
+						"call_type": "subpackage_name"
 					}
 				}, {
 					"command": "javatar_call",
 					"args": {
-						"type": "full_class_name"
+						"call_type": "full_class_name"
 					}
 				}, {
 					"command": "javatar_call",
 					"args": {
-						"type": "class_name"
+						"call_type": "class_name"
 					}
 				}
 			]
@@ -141,12 +141,12 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 				}, {
 					"command": "javatar_util",
 					"args": {
-						"type": "hash"
+						"util_type": "hash"
 					}
 				}, {
 					"command": "javatar_util",
 					"args": {
-						"type": "remote_hash"
+						"util_type": "remote_hash"
 					}
 				}, {
 					"command": "javatar_convert"
@@ -174,31 +174,33 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 			]
 		},
 		"dev": {
-			"items": [["Back", "Back to previous menu"], ["Operations: Organize Imports", "Correct class imports in current file"], ["Operations: Rename Class", "Rename current class"], ["Operations: Rename Package", "Rename current package"], ["Prettify JSON", "Reformat current document as pretty JSON"], ["Testing", "For testing and experimenting new feature"]],
+			"items": [["Back", "Back to previous menu"], ["Operations: Organize Imports", "Correct class imports in current file"], ["Builds: Run main class", "Run class contains main method"], ["Operations: Rename Class", "Rename current class"], ["Operations: Rename Package", "Rename current package"], ["Prettify JSON", "Reformat current document as pretty JSON"], ["Testing", "For testing and experimenting new feature"]],
 			"actions": [
 				{
 					"name": "main"
 				}, {
 					"command": "javatar_organize_imports"
 				}, {
+					"command": "javatar_run_main"
+				}, {
 					"command": "javatar_rename_operation",
 					"args": {
-						"type": "class"
+						"rename_type": "class"
 					}
 				}, {
 					"command": "javatar_rename_operation",
 					"args": {
-						"type": "package"
+						"rename_type": "package"
 					}
 				}, {
 					"command": "javatar_util",
 					"args": {
-						"type": "tojson"
+						"util_type": "tojson"
 					}
 				}, {
 					"command": "javatar_util",
 					"args": {
-						"type": "test"
+						"util_type": "test"
 					}
 				}
 			]
@@ -236,7 +238,7 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 			# Generate action for Create menu
 			actions = []
 			for snippet in getSnippetList():
-				actions += [{"command":"javatar_create","args":{"type":snippet[0]}}]
+				actions += [{"command":"javatar_create","args":{"create_type":snippet[0]}}]
 			self.qm.addItems("creates", getSnippetList(), actions)
 
 			# Always add Help and Support at the end
@@ -244,7 +246,7 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 
 			# Quick reload menu
 			if isDebug():
-				self.qm.insertItem("main", 0, ["Reload Javatar", "Reload Javatar modules (debug only)"], {"command":"javatar_util", "args": {"type": "reload"}})
+				self.qm.insertItem("main", 0, ["Reload Javatar", "Reload Javatar modules (debug only)"], {"command":"javatar_util", "args": {"util_type": "reload"}})
 			from ..utils.javatar_news import getVersion
 			self.qm.addItems("help", [["Javatar", "v"+getVersion()]], [{}])
 		if replaceMenu is not None:

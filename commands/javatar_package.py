@@ -15,8 +15,8 @@ class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):
 		view = self.window.new_file()
 		view.set_name("Javatar Packages wizard report")
 		view.set_scratch(True)
-		view.run_command("javatar_util", {"type": "add", "text": text, "dest": "Javatar Packages wizard report"})
-		view.run_command("javatar_util", {"type": "set_read_only"})
+		view.run_command("javatar_util", {"util_type": "add", "text": text, "dest": "Javatar Packages wizard report"})
+		view.run_command("javatar_util", {"util_type": "set_read_only"})
 
 	def on_complete(self):
 		output = "## Javatar Packages report\n"

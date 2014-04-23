@@ -21,6 +21,7 @@ A Sublime Text 3 Plugin for Java Development
 * Settings
 * Key Bindings
 * Build System
+* Javatar Shell
 * Javatar Snippets
 * Javatar Packages
 * Additional Packages
@@ -31,9 +32,10 @@ A Sublime Text 3 Plugin for Java Development
 ### Features
 * [+] Package, Subpackage creation
 * [+] Class (also Abstract), Interface, Enumerator snippets with package/class auto-complete
-* [+] Project Compile
+* [+] Project/Project/Class Build
 * [+] Package path in status bar
 * [+] External libraries packages
+* [*] Internal Console with input supports
 * [*] Organize Imports
 * [*] Rename/Move packages/classes
 * [-] JAR file export (included executable)
@@ -50,19 +52,16 @@ A Sublime Text 3 Plugin for Java Development
 From 11 Apr 2014, Javatar will "NOT" include any packages inside its package. This helps install and update Javatar faster but still maintaining default features. Javatar will automatically download and install necessary packages (Java SE) at startup since users install Javatar usually already connected to the internet.
 
 ##### Development Build
-* Organize Imports now use all references from Javatar Packages
-* Organize Imports improvements
-* Javatar Imports has been removed from Javatar. If you are using it, please convert all imports file using *Packages Manager... > Package Tools... > Convert Imports*
-* Manual package input box will append class name automatically when imported
+* New feature, Run main class. Can be accessed via *Development Section... > Builds: Run Main Class* (more details on Javatar Shell)
+* To force quit your application when run, just close the console view.
 
 ##### Stable Build
-* HUGE improvements on Javatar packages
-* HUGE startup time improvements for both Stable and Development channel
-* Most commands in Command Palette are removed since QuickMenu can be accessed easier
-* New section, Project Settings. Please check out Command Categories section for more info
-* Ability to uninstall installed packages
-* Javatar now support to set your own source folder via *Project Settings... > Set Source Folder*
-* Java SE 7, Java SE 8, JavaFX 8, Bukkit 1.6.4 R2.0, Bukkit 1.7.2 R0.3, JBox2D 2.3.1, LWJGL 2.9.1 and Slick 2.9.0 packages now available through *Packages Manager... > Install Packages...*
+* Project/Package/Class Build improvements (now support multiple files building and error logs) *Please report an issue if you found something broken (this feature using internal shell so it might not work same as Sublime Text's shell)*
+* Fixed Javatar Calls cannot find the right package name and class name
+* Class name detection improvements
+* Java file validation improvements
+* Building system now completely changed to internal building system (more details on Build System section below)
+* Some code tweaks
 
 ====
 
@@ -102,8 +101,6 @@ From 11 Apr 2014, Javatar will "NOT" include any packages inside its package. Th
 
 ### Javatar Builds
 Javatar use its own build system which based on default Sublime Text's JavaC build settings.
-
-**Important!** When build on a project or package, Javatar cannot show any compilation error (or may show only last run built) since it builds all your classes in order. More details about build system is on Build System.
 
 ### Javatar Calls
 Javatar Calls are use to insert class or package informations at cursor point. Javatar supports 4 types of informations to insert which are `Full Package Path`, `Current Package Path`, `Full Class Name` and `Class Name`.
@@ -215,7 +212,21 @@ Key bindings can be accessed via the preference menu or via command palette same
 ====
 
 ### Build System
-Javatar's build system use Sublime Text execute command to build your classes. Javatar build parameters are based on default Sublime Text's JavaC build settings. You can change the build command via Javatar settings file.
+Javatar's build system use its internal shell to build your classes. Javatar build parameters are based on default Sublime Text's JavaC build settings. You can change the build command via Javatar settings file.
+
+While building, Javatar will show building progress in Sublime Text's status bar. If it found any error while building, Javatar will show you a new view contains all errors and will keep on printing until building is complete. To cancel building in progress, just close a error logs view and Javatar will stop building your classes immediately.
+
+**Please note that Javatar cannot be stopped if there is no error occurred**
+
+===
+
+### Javatar Shell
+
+Javatar shell is working like proper shell terminal. The difference between Javatar's shell and another shells is Javatar's shell will send your input by pressing Enter/Return (that give you ability to reedit your content on current line).
+
+**We cannot gurranteed that output or input is corrected when you are enter while terminal is printing an output from the shell. Since, Javatar's shell is not set the view to Read-Only while printing**
+
+===
 
 ### Javatar Snippets
 
@@ -248,6 +259,8 @@ The following macros are used inside Javatar snippet files (*.javatar) which wil
 * %package% = Package code (for example `package java.utils;` or same as `package %packages_path%;`)
 * All Sublime Text's snippet macros can be used within Javatar snippets. For example: ${1} or ${2://Comment}
 
+===
+
 ### Javatar Packages
 Javatar required packages file (*.javatar-packages) to correctly import necessary Java's packages. These files contain all classes, fields, methods and packages to use with Javatar.
 
@@ -264,8 +277,12 @@ Both keys are boolean type and also optional to use.
 
 Example of Javatar Packages is located inside Javatar's Java folder (`PACKAGES_PATH/Javatar/Java`)
 
+===
+
 ### Additional Packages
 By default, Javatar is not include any additional packages inside its package. This helps Javatar faster to install/update from Package Control but that not provides any support for some features (for example, Organize Imports). To solve this problem, Javatar will automatically download and install necessary packages when startup. For other packages, you can download and install using *Packages Manager... > Install Packages...* menu.
+
+===
 
 ### Package Channels
 #### Stable Channel
@@ -279,9 +296,13 @@ Please note that stable channel update notes also apply on development channel t
 #### Package Updates Notifications
 In order to notice important notes to all users, in stable channel or development channel or both, Javatar use custom notification system which will notice you *only once* when Javatar is ready to use. You can opt out this notification by settings `message_id` to `-1` in Javatar's user settings file, note that you can see update notes in README file or you will miss further important update notes.
  
+===
+ 
 ### Statistics and Usages Policy
 From 13 Apr 2014, Javatar will collect statistics and usages of Javatar to help improve the package features. Data we have collected are your Javatar's settings and Sublime Text informations. To disable automatic sending statistics and usages, set `send_stats_and_usages` to `false` and Javatar will not send any statistics and usages anymore. However, additional packages statistics still collected for packages improvements and selections.
- 
+
+===
+
 ### Actions History
 Actions History tracks how you use Javatar and helps solve the problem. By provides useful informations as request by developer (only when you submit an issue). A Javatar Action History Report will looks similar to this when using it properly...
 
@@ -329,3 +350,5 @@ Actions History tracks how you use Javatar and helps solve the problem. By provi
 Javatar **do not** automatically send these informations. You have to reply an issue with these informations yourself.
 
 Actions History can be disabled by settings `enable_actions_history` to `false`
+
+===

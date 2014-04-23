@@ -11,7 +11,12 @@ def isJava(filepath=""):
 		filepath = view.file_name()
 	else:
 		view = None
-	return (view is not None and len(view.find_by_selector(getSettings("java_source_selector"))) > 0) or (filepath is not None and re.match(getSettings("java_file_validation"), filepath, re.M) is not None)
+	isjava = False
+	if filepath is not None:
+		for extension in getSettings("java_extensions"):
+			if filepath.endswith("." + extension):
+				return True
+	return (view is not None and len(view.find_by_selector(getSettings("java_source_selector"))) > 0)
 
 
 def isPackage(package):

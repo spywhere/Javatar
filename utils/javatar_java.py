@@ -60,7 +60,7 @@ def findClass(path, classname):
 	for root, dirnames, filenames in os.walk(path):
 		for filename in filenames:
 			if filename == classname + ".java":
-				classpath = toPackage(os.path.join(root, filename)[:-5])
+				classpath = toPackage(withoutExtension(os.path.join(root, filename)))
 				classes.append(classpath)
 				foundClass = True
 	for packageImport in getPackages():

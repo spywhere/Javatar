@@ -8,12 +8,11 @@ class JavatarCorrectClassCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
 		getAction().addAction("javatar.command.operation.correct_class", "Correct class")
 		if isFile() and isJava():
-			className = getPath("name", getPath("current_file"))[:-5]
 			packageName = getCurrentPackage()
 			packageRegions = self.view.find_by_selector(getSettings("package_name_selector"))
 			classRegions = self.view.find_by_selector(getSettings("class_name_selector"))
 			if len(classRegions) > 0:
-				self.view.replace(edit, classRegions[0], className)
+				self.view.replace(edit, classRegions[0], getClassName())
 			if packageName != "":
 				if len(packageRegions) > 0:
 					self.view.replace(edit, packageRegions[0], packageName)
@@ -249,15 +248,11 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 				#Remove whitespace at start of file
 				while re.search("\\s+$", self.view.substr(sublime.Region(0, 1))) is not None:
 					self.view.replace(edit, sublime.Region(0, 1), "")
-				self.view.run_command("javatar_util", {"type": "insert", "text": importCode, "dest": "Organize Imports"})
-				if isFile():
-					className = getPath("name", getPath("current_file"))[:-5]
+				self.view.run_command("javatar_util", {"util_type": "insert", "text": importCode, "dest": "Organize Imports"})
+				if getClassName() is None:
+					className = "<Unknown>"
 				else:
-					classRegions = self.view.find_by_selector(getSettings("class_name_selector"))
-					if len(classRegions) > 0:
-						className = self.view.substr(classRegions[0])
-					else:
-						className = "<Unknown>"
+					className = getClassName()
 				sublime.set_timeout(lambda: showStatus("Imports organized in class \""+className+"\""), 500)
 
 	def selectClasses(self, index=None, classes=[]):
@@ -306,9 +301,9 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 
 
 class JavatarRenameOperationCommand(sublime_plugin.WindowCommand):
-	def run(self, text="", type=""):
-		getAction().addAction("javatar.command.operation.rename", "Rename [type="+str(type)+"]")
-		if type == "class":
+	def run(self, text="", rename_type=""):
+		getAction().addAction("javatar.command.operation.rename", "Rename [rename_type="+str(rename_type)+"]")
+		if rename_type == "class":
 			if isFile() and isJava():
 				classRegion = sublime.active_window().active_view().find(getSettings("class_name_prefix")+getSettings("class_name_scope")+getSettings("class_name_suffix"), 0)
 				classCode = sublime.active_window().active_view().substr(classRegion)
@@ -322,7 +317,7 @@ class JavatarRenameOperationCommand(sublime_plugin.WindowCommand):
 					sublime.error_message("Cannot specify package path because file is not store on the disk")
 				elif not isJava():
 					sublime.error_message("Current file is not Java")
-		elif type == "package":
+		elif rename_type == "package":
 			currentPackage = toPackage(getPath("current_dir"))
 			if text is None or text == "":
 				sublime.active_window().show_input_panel("New Package Name:", currentPackage, self.run, "", "")

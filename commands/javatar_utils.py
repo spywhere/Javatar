@@ -5,29 +5,33 @@ import urllib.request
 from ..utils import *
 
 class JavatarUtilCommand(sublime_plugin.TextCommand):
-	def run(self, edit, type="", text="", region=None, dest=None):
-		if type == "insert":
+	def run(self, edit, util_type="", text="", region=None, dest=None):
+		if util_type == "insert":
 			self.view.insert(edit, 0, text)
-		elif type == "add":
+		elif util_type == "add":
 			self.view.insert(edit, self.view.size(), text)
-		elif type == "replace":
+		elif util_type == "replace":
 			self.view.insert(edit, region, text)
-		elif type == "set_read_only":
+		elif util_type == "clear":
+			self.view.erase(edit, sublime.Region(0, self.view.size()))
+		elif util_type == "set_read_only":
 			self.view.set_read_only(True)
-		elif type == "test":
+		elif util_type == "clear_read_only":
+			self.view.set_read_only(False)
+		elif util_type == "test":
 			if not isStable():
 				self.view.show_popup_menu(["A", "B"], self.nothing)
-		elif type == "remote_hash":
+		elif util_type == "remote_hash":
 			if not isStable():
 				sublime.active_window().show_input_panel("URL:", "", self.remote_hash, None, None)
-		elif type == "hash":
+		elif util_type == "hash":
 			if not isStable():
 				print(hashlib.sha256(self.view.substr(sublime.Region(0,self.view.size())).encode("utf-8")).hexdigest())
-		elif type == "tojson":
+		elif util_type == "tojson":
 			if not isStable():
 				jsonObj = sublime.decode_value(self.view.substr(sublime.Region(0,self.view.size())))
 				self.view.replace(edit, sublime.Region(0,self.view.size()), sublime.encode_value(jsonObj, True));
-		elif type == "reload":
+		elif util_type == "reload":
 			if isDebug():
 				getAction().addAction("javatar.command.utils.reload", "Reload Javatar")
 				print("Reloading Javatar...")
@@ -52,7 +56,7 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
 	def nothing(self, index=-1):
 		pass
 
-	def description(self, type="", text="", dest=None):
+	def description(self, util_type="", text="", dest=None):
 		return dest
 
 class JavatarReloadPackagesCommand(sublime_plugin.WindowCommand):

@@ -3,10 +3,10 @@ from .javatar_actions import *
 from .javatar_updater import *
 
 # YY.MM.DD.HH.MM
-VERSION = "14.04.16.22.43b"
+VERSION = "14.04.23.17.55b"
 UPDATEFOR = "all"
-NEWSID = 11
-NEWS = " - Javatar now support to set your own source folder via Project Settings... > Set Source Folder\n - Most commands in Command Palette are removed since QuickMenu can be accessed easier\n - Fix Javatar Packages automatic download won't work on Stable Channel\n - Fix message ID is updated incorrectly"
+NEWSID = 12
+NEWS = " - New feature, Run Main Class (dev only)\n - Project/Package/Class Build improvements\n - Fix Javatar Calls cannot find the right package name or class name\n - Building system now completely changed to internal building system (please see README for more info)"
 
 
 def getVersion():
@@ -16,6 +16,7 @@ def getVersion():
 def getUsageData():
 	data = {}
 	from .javatar_utils import getSettings, setSettings, getPath
+	data["SchemaVersion"] = getSchemaVersion()
 	data["JavatarVersion"] = getVersion()
 	data["JavatarChannel"] = str.lower(getSettings("package_channel"))
 	data["JavatarDebugMode"] = str(getSettings("debug_mode"))
@@ -39,7 +40,7 @@ def checkNews():
 			elif not isStable() and (UPDATEFOR == "dev" or UPDATEFOR == "all"):
 				sublime.message_dialog("Javatar [Dev]: Package has been updated!\n" + NEWS)
 				getAction().addAction("javatar.util.news", "Show dev news")
-			setSettings("message_id", NEWSID)
 			sendUsages(getUsageData())
+			setSettings("message_id", NEWSID)
 		elif getSettings("javatar_gp") & 0x1 == 0:
 			sendUsages(getUsageData(), True)

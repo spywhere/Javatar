@@ -1,7 +1,7 @@
 import sublime
 
 class ThreadProgress():
-	def __init__(self, thread, message, success_message, anim_fx=None):
+	def __init__(self, thread, message, success_message=None, anim_fx=None):
 		self.thread = thread
 		self.message = message
 		self.success_message = success_message
@@ -20,10 +20,14 @@ class ThreadProgress():
 				else:
 					sublime.status_message("")
 				return
-			sublime.status_message(self.success_message)
+			if self.success_message is not None:
+				sublime.status_message(self.success_message)
 			return
 		info = self.anim_fx(i, self.message, self.thread)
-		sublime.status_message(info["message"])
+		tmsg = ""
+		if hasattr(self.thread, "msg"):
+			tmsg = self.thread.msg
+		sublime.status_message(info["message"]+tmsg)
 		sublime.set_timeout(lambda: self.run(info["i"]), info["delay"])
 
 class SilentThreadProgress():

@@ -4,56 +4,114 @@ from ..utils import *
 
 
 class JavatarBuildCommand(sublime_plugin.WindowCommand):
-	def buildFile(self, file):
-		getAction().addAction("javatar.command.build.build_file", "Build file")
-		if isJava(file):
-			window = sublime.active_window()
-			buildScript = getSettings("build_system")
-			buildScript = buildScript.replace("$file_path", getPath("parent", file))
-			buildScript = buildScript.replace("$file_name", getPath("name", file))
-			buildScript = buildScript.replace("$file", file)
-			buildScript = buildScript.replace("$packages", sublime.packages_path())
-			if window.project_file_name() is not None:
-				buildScript = buildScript.replace("$project_path", getPath("parent", window.project_file_name()))
-				buildScript = buildScript.replace("$project_name", getPath("name", window.project_file_name()))
-				buildScript = buildScript.replace("$project", window.project_file_name())
-			sublime.active_window().run_command("exec", {getSettings("build_command"): buildScript})
-		return isJava(file)
+	build_list = []
+	build_size = -1
+	view = None
 
-	def buildAll(self, dir):
-		getAction().addAction("javatar.command.build.build_all", "Build all")
-		build = False
-		for path, subdirs, files in os.walk(dir):
+	def build(self):
+		if self.build_size > 0 and self.view is not None and self.view.window() is None:
+			self.build_size = -1
+			sublime.status_message("Building Cancelled")
+			return
+		if self.build_size < 0:
+			self.view = None
+			self.build_size = len(self.build_list)
+		if len(self.build_list) > 0:
+			file_path = self.build_list[0]
+			del self.build_list[0]
+			if self.view is not None:
+				self.view.set_name("Building " + getPath("name", file_path))
+			self.run_build(file_path)
+		else:
+			self.build_size = -1
+			if self.view is not None:
+				self.view.set_name("Building Finished")
+				sublime.status_message("Building Finished")
+
+	def run_build(self, file_path):
+		build_script = []
+		for cmd in getSettings("build_command"):
+			script = cmd
+			script = script.replace("$file_path", getPath("parent", file_path))
+			script = script.replace("$file_name", getPath("name", file_path))
+			script = script.replace("$file", file_path)
+			script = script.replace("$packages", sublime.packages_path())
+			if self.window.project_file_name() is not None:
+				script = script.replace("$project_path", getPath("parent", self.window.project_file_name()))
+				script = script.replace("$project_name", getPath("name", self.window.project_file_name()))
+				script = script.replace("$project", self.window.project_file_name())
+			build_script.append(script)
+
+		shell = JavatarSilentShell(build_script, self.on_build_complete)
+		shell.set_cwd(getPath("project_dir"))
+		shell.start()
+		ThreadProgress(shell, "[" + str(self.build_size-len(self.build_list)) + "/" + str(self.build_size) + "] Building " + getPath("name", file_path))
+
+	def on_build_complete(self, elapse_time, data):
+		if data is not None:
+			if self.view is None:
+				self.view = self.window.new_file()
+			self.view.set_scratch(True)
+			self.view.run_command("javatar_util", {"util_type": "add", "text": data})
+		self.build()
+
+	def buildAll(self, dir_path):
+		for path, subdirs, files in os.walk(dir_path):
 			for filename in files:
 				if isJava(getPath("join", path, filename)):
-					build = True
-					self.buildFile(getPath("join", path, filename))
-		return build
+					self.build_list.append(getPath("join", path, filename))
+		if len(self.build_list) > 0:
+			getAction().addAction("javatar.command.build.build_all", "Build all")
+			self.build()
+			return True
+		else:
+			return False
 
-	def run(self, type=""):
-		getAction().addAction("javatar.command.build.run", "Build [type=" + type + "]")
+	def run(self, build_type=""):
+		self.build_list = []
+		getAction().addAction("javatar.command.build.run", "Build [build_type=" + build_type + "]")
 		view = sublime.active_window().active_view()
-		if type == "project":
+		if build_type == "project":
 			if isProject() or isFile():
+				for view in self.window.views():
+					if isJava(view.file_name()):
+						if view.is_dirty():
+							if getSettings("automatic_save"):
+								self.window.run_command("save_all")
+							else:
+								sublime.error_message("Some Java files are not saved")
+								return
 				if not self.buildAll(getPackageRootDir()):
 					sublime.error_message("No class to build")
 			else:
 				sublime.error_message("Unknown package location")
-		elif type == "package":
+		elif build_type == "package":
 			if isProject() or isFile():
+				for view in self.window.views():
+					if isJava(view.file_name()):
+						if view.is_dirty():
+							if getSettings("automatic_save"):
+								self.window.run_command("save_all")
+							else:
+								sublime.error_message("Some Java files are not saved")
+								return
 				if not self.buildAll(getPath("current_dir")):
 					sublime.error_message("No class to build")
 			else:
 				sublime.error_message("Unknown package location")
-		elif type == "class":
+		elif build_type == "class":
 			if isFile():
-				if not self.buildFile(view.file_name()):
+				if isJava(view.file_name()):
+					if self.window.active_view().is_dirty():
+						if getSettings("automatic_save"):
+							self.window.run_command("save")
+						else:
+							sublime.error_message("Current file is not saved")
+							return
+					getAction().addAction("javatar.command.build.build_file", "Build file")
+					self.build_list.append(view.file_name())
+					self.build()
+				else:
 					sublime.error_message("Current file is not Java")
 			else:
 				sublime.error_message("Unknown class location")
-		elif type == "test":
-			window = sublime.active_window()
-			panel = window.create_output_panel("Javatar")
-			window.run_command("show_panel", {"panel": "output.Javatar"})
-			panel.run_command("insert_snippet", {"contents": "Hello, World?"})
-			panel.set_read_only(True)
