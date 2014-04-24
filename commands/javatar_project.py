@@ -25,7 +25,7 @@ class JavatarProjectCommand(sublime_plugin.WindowCommand):
 		return folder_list
 
 	def get_folders(self):
-		source_folders = [[getPath("name", getPath("project_dir")), getPath("project_dir")+"/"]]
+		source_folders = [[getPath("name", getPath("project_dir")), getPath("project_dir")+os.sep]]
 		source_folders += self.get_source_folder(getPath("project_dir"))
 		folders = []
 		rootlen = len(getPath("project_dir"))
