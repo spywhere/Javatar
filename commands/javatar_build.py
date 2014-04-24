@@ -35,18 +35,28 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 				getAction().addAction("javatar.command.build.build", "Building Finished")
 
 	def run_build(self, file_path):
-		build_script = []
-		for cmd in getSettings("build_command"):
-			script = cmd
-			script = script.replace("$file_path", getPath("parent", file_path))
-			script = script.replace("$file_name", getPath("name", file_path))
-			script = script.replace("$file", file_path)
-			script = script.replace("$packages", sublime.packages_path())
-			if self.window.project_file_name() is not None:
-				script = script.replace("$project_path", getPath("parent", self.window.project_file_name()))
-				script = script.replace("$project_name", getPath("name", self.window.project_file_name()))
-				script = script.replace("$project", self.window.project_file_name())
-			build_script.append(script)
+		# build_script = []
+		# for cmd in getSettings("build_command"):
+		# 	script = cmd
+		# 	script = script.replace("$file_path", getPath("parent", file_path))
+		# 	script = script.replace("$file_name", getPath("name", file_path))
+		# 	script = script.replace("$file", file_path)
+		# 	script = script.replace("$packages", sublime.packages_path())
+		# 	if self.window.project_file_name() is not None:
+		# 		script = script.replace("$project_path", getPath("parent", self.window.project_file_name()))
+		# 		script = script.replace("$project_name", getPath("name", self.window.project_file_name()))
+		# 		script = script.replace("$project", self.window.project_file_name())
+		# 	build_script.append(script)
+
+		build_script = getSettings("build_command")
+		build_script = build_script.replace("$file_path", getPath("parent", file_path))
+		build_script = build_script.replace("$file_name", getPath("name", file_path))
+		build_script = build_script.replace("$file", file_path)
+		build_script = build_script.replace("$packages", sublime.packages_path())
+		if self.window.project_file_name() is not None:
+			build_script = build_script.replace("$project_path", getPath("parent", self.window.project_file_name()))
+			build_script = build_script.replace("$project_name", getPath("name", self.window.project_file_name()))
+			build_script = build_script.replace("$project", self.window.project_file_name())
 
 		shell = JavatarSilentShell(build_script, self.on_build_complete)
 		shell.set_cwd(self.source_folder)

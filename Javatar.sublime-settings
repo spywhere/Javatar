@@ -37,8 +37,7 @@
 	"automatic_save" : false,
 
 	// Build command (based on default JavaC)
-	// Command will be escaped properly before run
-	"build_command" : ["javac", "$file"],
+	"build_command" : "javac \"$file\"",
 
 	// Default delay before hide a status text
 	"status_delay" : 5000,

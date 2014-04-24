@@ -18,9 +18,27 @@ class JavatarShell(threading.Thread):
 	def set_cwd(self, path=""):
 		self.cwd = path
 
+	def popen(self, cmd, cwd):
+		if sys.platform == "win32":
+			return subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=self.cwd, shell=True)
+		elif sys.platform == "darwin":
+			return subprocess.Popen(["/bin/bash", "-l", "-c", cmd], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=self.cwd, shell=False)
+		elif sys.platform == "linux":
+			return subprocess.Popen(["/bin/bash", "-c", cmd], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=self.cwd, shell=False)
+		else:
+			return subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=self.cwd, shell=False)
+
+	def kill(self, proc):
+		if sys.platform == "win32":
+			startupinfo = subprocess.STARTUPINFO()
+			startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+			subprocess.Popen("taskkill /PID " + str(proc.pid), startupinfo=startupinfo)
+		else:
+			proc.terminate()
+
 	def run(self):
 		start_time = clock()
-		proc = subprocess.Popen(self.cmds, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=True, cwd=self.cwd)
+		proc = self.popen(self.cmds, self.cwd)
 		self.old_data = self.view.substr(sublime.Region(0, self.view.size()))
 		self.data_in = ""
 		self.return_code = None
@@ -53,7 +71,7 @@ class JavatarShell(threading.Thread):
 				proc.stdin.close()
 				break
 		if self.return_code is None:
-			proc.kill()
+			self.kill(proc)
 		self.result = True
 		if self.on_complete is not None:
 			self.on_complete(clock()-start_time, self.return_code)
@@ -70,9 +88,27 @@ class JavatarSilentShell(threading.Thread):
 	def set_cwd(self, path=""):
 		self.cwd = path
 
+	def popen(self, cmd, cwd):
+		if sys.platform == "win32":
+			return subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True)
+		elif sys.platform == "darwin":
+			return subprocess.Popen(["/bin/bash", "-l", "-c", cmd], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False)
+		elif sys.platform == "linux":
+			return subprocess.Popen(["/bin/bash", "-c", cmd], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False)
+		else:
+			return subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, startupinfo=startupinfo, env=proc_env, shell=False)
+
+	def kill(self, proc):
+		if sys.platform == "win32":
+			startupinfo = subprocess.STARTUPINFO()
+			startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+			subprocess.Popen("taskkill /PID " + str(proc.pid), startupinfo=startupinfo)
+		else:
+			proc.terminate()
+
 	def run(self):
 		start_time = clock()
-		proc = subprocess.Popen(self.cmds, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=True, cwd=self.cwd)
+		proc = self.popen(self.cmds, self.cwd)
 		self.return_code = None
 
 		while True:
@@ -93,7 +129,7 @@ class JavatarSilentShell(threading.Thread):
 				proc.stdout.close()
 				break
 		if self.return_code is None:
-			proc.kill()
+			self.kill(proc)
 		self.result = True
 		if self.on_complete is not None:
 			self.on_complete(clock()-start_time, self.data_out, self.return_code)

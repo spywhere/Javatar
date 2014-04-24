@@ -1,9 +1,5 @@
 import sublime
 import sublime_plugin
-import os
-import pty
-import select
-from subprocess import Popen, STDOUT
 from ..utils import *
 
 class JavatarRunMainCommand(sublime_plugin.WindowCommand):
@@ -16,7 +12,6 @@ class JavatarRunMainCommand(sublime_plugin.WindowCommand):
 				found_main = True
 				break
 		if found_main:
-			master, slave = pty.openpty()
 			file_path = view.file_name()[:-4]+"class"
 			if not getPath("exist", file_path):
 				sublime.error_message("File is not compiled")
@@ -33,7 +28,7 @@ class JavatarRunMainCommand(sublime_plugin.WindowCommand):
 		self.view.set_syntax_file("Packages/Javatar/syntax/JavaStackTrace.tmLanguage")
 		self.view.set_name("Running " + self.class_name + " ...")
 		self.view.set_scratch(True)
-		shell = JavatarShell(["java", class_path], self.view, self.on_complete)
+		shell = JavatarShell("java "+class_path, self.view, self.on_complete)
 		shell.set_cwd(getPath("source_folder"))
 		shell.start()
 		ThreadProgress(shell, "Running Javatar Shell", "Javatar Shell has been stopped")

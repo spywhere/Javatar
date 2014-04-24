@@ -3,7 +3,7 @@ from .javatar_actions import *
 from .javatar_updater import *
 
 # YY.MM.DD.HH.MM
-VERSION = "14.04.24.21.41b"
+VERSION = "14.04.24.22.09b"
 UPDATEFOR = "all"
 NEWSID = 12
 NEWS = " - New feature, Run Main Class (dev only)\n - Project/Package/Class Build improvements\n - Fix Javatar Calls cannot find the right package name or class name\n - Building system now completely changed to internal building system (please see README for more info)"
