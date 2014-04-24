@@ -29,6 +29,8 @@ A Sublime Text 3 Plugin for Java Development
 * Statistics and Usages Policy
 * Actions History
 
+===
+
 ### Features
 * [+] Package, Subpackage creation
 * [+] Class (also Abstract), Interface, Enumerator snippets with package/class auto-complete
@@ -106,8 +108,12 @@ From 11 Apr 2014, Javatar will "NOT" include any packages inside its package. Th
 ### Javatar Builds
 Javatar use its own build system which based on default Sublime Text's JavaC build settings.
 
+===
+
 ### Javatar Calls
 Javatar Calls are use to insert class or package informations at cursor point. Javatar supports 4 types of informations to insert which are `Full Package Path`, `Current Package Path`, `Full Class Name` and `Class Name`.
+
+===
 
 ### Advanced Creations
 In create menu, all packages and classes will be created relative to current package unless specified by `~` (tilde) before package or class path. See examples below...
@@ -128,8 +134,10 @@ Input: `~me.spywhere.Beta`<br />
 Result as Class: `Class "Beta" is created in "me.spywhere"`<br />
 Result as Package: `Package "Beta" is created in "me.spywhere"`
 
+===
+
 ### Javatar Operations
-Javatar Operations help you do class or package operations, such as organize imports or rename class, easier. Currently, Javatar has 2 operations, `Correct Class` and `Organize Imports`.
+Javatar Operations help you do class or package operations, such as organize imports or rename class easier. Currently, Javatar has 2 operations, `Correct Class` and `Organize Imports`.
 
 ##### Correct Class
 Javatar will search for current package and your class name based on file name and location of current file and correct it on first class.
@@ -212,6 +220,8 @@ Key bindings can be accessed via the preference menu or via command palette same
 	* This will open input panel, just like when you create a new package.
 * Organize Imports : `Key+Shift+I` (Only on development channel)
 	* This will organize imports on current file.
+
+`Key` is `Control` on Windows, `Super` on Linux and `Command` on OS X
 
 ====
 

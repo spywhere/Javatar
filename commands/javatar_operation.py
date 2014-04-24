@@ -6,7 +6,7 @@ from ..utils import *
 
 class JavatarCorrectClassCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
-		getAction().addAction("javatar.command.operation.correct_class", "Correct class")
+		getAction().addAction("javatar.command.operation.correct_class.run", "Correct class")
 		if isFile() and isJava():
 			packageName = getCurrentPackage()
 			packageRegions = self.view.find_by_selector(getSettings("package_name_selector"))
@@ -302,7 +302,7 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 
 class JavatarRenameOperationCommand(sublime_plugin.WindowCommand):
 	def run(self, text="", rename_type=""):
-		getAction().addAction("javatar.command.operation.rename", "Rename [rename_type="+str(rename_type)+"]")
+		getAction().addAction("javatar.command.operation.rename.run", "Rename [rename_type="+rename_type+"]")
 		if rename_type == "class":
 			if isFile() and isJava():
 				classRegion = sublime.active_window().active_view().find(getSettings("class_name_prefix")+getSettings("class_name_scope")+getSettings("class_name_suffix"), 0)

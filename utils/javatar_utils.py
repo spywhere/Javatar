@@ -103,7 +103,7 @@ def hideStatus():
 	view = sublime.active_window().active_view()
 	if view is not None:
 		from .javatar_validator import isJava
-		if isJava() and getSettings("show_package_path"):
+		if isReady() and isJava() and getSettings("show_package_path"):
 			view.set_status(STATUS, "Package: " + toReadablePackage(getCurrentPackage(), True))
 		else:
 			view.erase_status(STATUS)

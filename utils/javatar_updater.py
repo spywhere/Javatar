@@ -132,7 +132,8 @@ class JavatarPackageUpdaterThread(threading.Thread):
 				require_package_name = None
 				if "packages" in packages[PACKAGES_VERSION]:
 					remote_update = False
-					print("NoReq: " + str(self.no_require))
+					if isDebug():
+						print("No Require Package: " + str(self.no_require))
 					if not self.no_require and "install" in packages[PACKAGES_VERSION]:
 						require_package_name = packages[PACKAGES_VERSION]["install"]
 					for package in packages[PACKAGES_VERSION]["packages"]:

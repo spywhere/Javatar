@@ -35,6 +35,7 @@ class JavatarProjectCommand(sublime_plugin.WindowCommand):
 		return folders
 
 	def run(self, actiontype):
+		getAction().addAction("javatar.command.project.run", "Project Settings [type="+actiontype+"]")
 		self.actiontype = actiontype
 		if actiontype == "set_source_folder":
 			self.panel_list = self.get_folders()
@@ -58,7 +59,7 @@ class JavatarCreatePackageCommand(sublime_plugin.WindowCommand):
 		sublime.active_window().show_input_panel("Package Name:", "", self.createPackage, "", "")
 
 	def createPackage(self, text):
-		getAction().addAction("javatar.command.package.create_package", "Create package [package="+text+"]")
+		getAction().addAction("javatar.command.project.create_package", "Create package [package="+text+"]")
 		relative = True
 		if text.startswith("~"):
 			text = text[1:]

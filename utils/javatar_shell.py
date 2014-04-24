@@ -1,10 +1,10 @@
 import sublime
-import os
-import pty
+import os, sys
 import select
 import threading
+import subprocess
 from time import clock
-from subprocess import Popen, STDOUT
+
 
 class JavatarShell(threading.Thread):
 	def __init__(self, cmds, view, on_complete=None, to_console=False):
@@ -20,46 +20,43 @@ class JavatarShell(threading.Thread):
 
 	def run(self):
 		start_time = clock()
-		read_master, read_slave = pty.openpty()
-		write_master, write_slave = pty.openpty()
-		proc = Popen(self.cmds, bufsize=1, stdin=write_slave, stdout=read_slave, stderr=STDOUT, close_fds=True, cwd=self.cwd)
-		proper = False
+		proc = subprocess.Popen(self.cmds, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=True, cwd=self.cwd)
 		self.old_data = self.view.substr(sublime.Region(0, self.view.size()))
 		self.data_in = ""
-		self.skip = False
+		self.return_code = None
+		read_only = True
+
 		while self.view is not None and self.view.window() is not None:
-			read_ready, write_ready, _ = select.select([read_master], [write_master], [], 0.04)
+			read_ready, write_ready, _ = select.select([proc.stdout.fileno()], [proc.stdin.fileno()], [], 0.04)
 			if len(self.old_data) < self.view.size():
 				self.data_in = self.view.substr(sublime.Region(len(self.old_data), self.view.size()))
-			elif len(self.old_data) > self.view.size():
-				self.skip = True
+			if read_only or len(self.old_data) > self.view.size():
 				self.view.run_command("javatar_util", {"util_type": "clear"})
 				self.view.run_command("javatar_util", {"util_type": "add", "text": self.old_data})
-			else:
-				self.skip = False
-			if read_ready:
-				data = os.read(read_master, 512)
+
+			if read_ready and proc.stdout:
+				read_only = False
+				data = os.read(proc.stdout.fileno(), 512)
 				if not data:
 					break
-				self.last_line = data.decode("UTF-8").replace("\r\n","\n").strip()
 				self.view.run_command("javatar_util", {"util_type": "add", "text": data.decode("UTF-8").replace("\r\n","\n")})
 				self.old_data = self.view.substr(sublime.Region(0, self.view.size()))
 				if self.to_console:
 					print(data.decode("UTF-8").replace("\r\n","\n"))
-			if write_ready:
+			if write_ready and proc.stdin:
 				if self.data_in is not None and "\n" in self.data_in:
-					os.write(write_master, self.data_in.encode("UTF-8"))
+					os.write(proc.stdin.fileno(), self.data_in.encode("UTF-8"))
+					self.data_in = ""
 			if proc.poll() is not None:
-				proper = True
+				self.return_code = proc.poll()
+				proc.stdout.close()
+				proc.stdin.close()
 				break
-		os.close(write_master)
-		os.close(write_slave)
-		os.close(read_slave)
-		os.close(read_master)
-		proc.wait()
+		if self.return_code is None:
+			proc.kill()
 		self.result = True
 		if self.on_complete is not None:
-			self.on_complete(clock()-start_time, proper)
+			self.on_complete(clock()-start_time, self.return_code)
 
 class JavatarSilentShell(threading.Thread):
 	def __init__(self, cmds, on_complete=None, to_console=False):
@@ -75,12 +72,14 @@ class JavatarSilentShell(threading.Thread):
 
 	def run(self):
 		start_time = clock()
-		read_master, read_slave = pty.openpty()
-		proc = Popen(self.cmds, bufsize=1, stdout=read_slave, stderr=STDOUT, close_fds=True, cwd=self.cwd)
+		proc = subprocess.Popen(self.cmds, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, close_fds=True, cwd=self.cwd)
+		self.return_code = None
+
 		while True:
-			read_ready, _, _ = select.select([read_master], [], [], 0.04)
-			if read_ready:
-				data = os.read(read_master, 512)
+			read_ready, _, _ = select.select([proc.stdout.fileno()], [], [], 0.04)
+
+			if read_ready and proc.stdout:
+				data = os.read(proc.stdout.fileno(), 512)
 				if not data:
 					break
 				if self.data_out is None:
@@ -90,10 +89,11 @@ class JavatarSilentShell(threading.Thread):
 				if self.to_console:
 					print(data.decode("UTF-8").replace("\r\n","\n"))
 			if proc.poll() is not None:
+				self.return_code = proc.poll()
+				proc.stdout.close()
 				break
-		os.close(read_slave)
-		os.close(read_master)
-		proc.wait()
+		if self.return_code is None:
+			proc.kill()
 		self.result = True
 		if self.on_complete is not None:
-			self.on_complete(clock()-start_time, self.data_out)
+			self.on_complete(clock()-start_time, self.data_out, self.return_code)

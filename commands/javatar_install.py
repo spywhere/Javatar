@@ -9,6 +9,7 @@ class JavatarInstallCommand(sublime_plugin.WindowCommand):
 
 	def run(self, installtype=None, name=None, filename=None, url=None, checksum=None):
 		if installtype is not None:
+			getAction().addAction("javatar.command.install.run", "Install Package [type="+installtype+", name="+name+"]")
 			self.pname = name
 			if installtype == "remote_package":
 				self.action = "install"

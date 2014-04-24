@@ -1,20 +1,25 @@
 import sublime
 import sublime_plugin
+from time import clock
 from ..utils import *
 
 
 class JavatarBuildCommand(sublime_plugin.WindowCommand):
 	build_list = []
 	build_size = -1
+	source_folder = None
 	view = None
 
 	def build(self):
 		if self.build_size > 0 and self.view is not None and self.view.window() is None:
 			self.build_size = -1
 			sublime.status_message("Building Cancelled")
+			getAction().addAction("javatar.command.build.build", "Building Cancelled")
 			return
 		if self.build_size < 0:
+			self.start_time = clock()
 			self.view = None
+			self.source_folder = getPath("source_folder")
 			self.build_size = len(self.build_list)
 		if len(self.build_list) > 0:
 			file_path = self.build_list[0]
@@ -25,8 +30,9 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 		else:
 			self.build_size = -1
 			if self.view is not None:
-				self.view.set_name("Building Finished")
-				sublime.status_message("Building Finished")
+				self.view.set_name("Building Finished [{0:.2f}s]".format(clock()-self.start_time))
+				sublime.status_message("Building Finished [{0:.2f}s]".format(clock()-self.start_time))
+				getAction().addAction("javatar.command.build.build", "Building Finished")
 
 	def run_build(self, file_path):
 		build_script = []
@@ -43,11 +49,11 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 			build_script.append(script)
 
 		shell = JavatarSilentShell(build_script, self.on_build_complete)
-		shell.set_cwd(getPath("source_folder"))
+		shell.set_cwd(self.source_folder)
 		shell.start()
 		ThreadProgress(shell, "[" + str(self.build_size-len(self.build_list)) + "/" + str(self.build_size) + "] Building " + getPath("name", file_path))
 
-	def on_build_complete(self, elapse_time, data):
+	def on_build_complete(self, elapse_time, data, return_code):
 		if data is not None:
 			if self.view is None:
 				self.view = self.window.new_file()
