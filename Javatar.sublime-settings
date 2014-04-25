@@ -36,8 +36,19 @@
 	// Enable automatic save before build
 	"automatic_save" : false,
 
+	// Run command
+	"run_command" : "java $full_class_path",
+
 	// Build command (based on default JavaC)
 	"build_command" : "javac \"$file\"",
+
+	// Number of build thread
+	//    Increase this value can helps building done faster but also use more performances
+	"parallel_build" : 2,
+
+	// Build log view creation delay (in second)
+	//    Increase this value can helps prevent double view from showing but also freeze computer for a specified time
+	"build_log_delay" : 0.05,
 
 	// Default delay before hide a status text
 	"status_delay" : 5000,

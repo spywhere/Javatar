@@ -312,9 +312,9 @@ Please note that stable channel update notes also apply on development channel t
 
 #### Package Updates Notifications
 In order to notice important notes to all users, in stable channel or development channel or both, Javatar use custom notification system which will notice you *only once* when Javatar is ready to use. You can opt out this notification by settings `message_id` to `-1` in Javatar's user settings file, note that you can see update notes in README file or you will miss further important update notes.
- 
+
 ===
- 
+
 ### Statistics and Usages Policy
 From 13 Apr 2014, Javatar will collect statistics and usages of Javatar to help improve the package features. Data we have collected are your Javatar's settings and Sublime Text informations. To disable automatic sending statistics and usages, set `send_stats_and_usages` to `false` and Javatar will not send any statistics and usages anymore. However, additional packages statistics still collected for packages improvements and selections.
 
@@ -339,7 +339,7 @@ Actions History tracks how you use Javatar and helps solve the problem. By provi
 	* Is Project: `True`
 	* Is File: `True`
 	* Is Java: `True`
-	
+
 	### Action List
 	1. Startup
 	2. Reset all settings

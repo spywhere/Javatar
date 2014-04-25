@@ -3,10 +3,10 @@ from .javatar_actions import *
 from .javatar_updater import *
 
 # YY.MM.DD.HH.MM
-VERSION = "14.04.25.00.51b"
-UPDATEFOR = "dev"
-NEWSID = 13
-NEWS = " - Building Command now change to single line of string\n - Fix internal shell did not work on Windows\n - Fix building class files while switch windows cause to building failed\n - Run Main Class now show return code\n - A bit of technical typo on Source Folder selection"
+VERSION = "14.04.25.16.36b"
+UPDATEFOR = "all"
+NEWSID = 14
+NEWS = " - Run Main Class feature, now available on Stable Channel\n - Fix internal shell did not work on Windows, finally\n - Multi-thread build system now support\n - Fix Run Main Class error when run on an empty window\n\nSee README for more info and also a new screenshot"
 
 
 def getVersion():
