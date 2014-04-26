@@ -34,7 +34,7 @@ class JavatarProjectCommand(sublime_plugin.WindowCommand):
 				folders.append([name, folder[rootlen:]])
 		return folders
 
-	def run(self, actiontype):
+	def run(self, actiontype, arg1=None, arg2=None):
 		get_action().add_action("javatar.command.project.run", "Project Settings [type="+actiontype+"]")
 		self.actiontype = actiontype
 		if actiontype == "set_source_folder":
@@ -43,9 +43,38 @@ class JavatarProjectCommand(sublime_plugin.WindowCommand):
 				sublime.error_message("No source folder available")
 				return
 			sublime.active_window().show_quick_panel(self.panel_list, self.on_panel_complete)
+		elif actiontype == "add_external_jar":
+			fd = JavatarFileDialog(parse_macro(get_settings("dependencies_path"), get_macro_data()), "", ".jar", None, self.on_panel_complete, self.on_panel_cancel)
+			fd.browse()
+		elif actiontype == "remove_dependency":
+			if arg2:
+				dependencies = get_project_settings("dependencies")
+			else:
+				dependencies = get_global_settings("dependencies")
+			if arg1 in dependencies:
+				dependencies.remove(arg1)
+			set_settings("dependencies", dependencies, arg2)
+			refresh_dependencies()
+			sublime.set_timeout(lambda: sublime.active_window().run_command("javatar", {"action" :{"name": "dependencies"}}), 10)
+			sublime.set_timeout(lambda: show_status("Dependency \""+get_path("name", arg1)+"\" has been removed", None, False), 500)
+
+	def on_panel_cancel(self):
+		if self.actiontype == "add_external_jar":
+			sublime.set_timeout(lambda: sublime.active_window().run_command("javatar", {"action" :{"name": "dependencies"}}), 10)
 
 	def on_panel_complete(self, index):
 		if self.actiontype == "set_source_folder":
 			source_rel_path = get_path("join", get_path("name", get_path("project_dir")), self.panel_list[index][1][1:])
 			set_settings("source_folder", get_path("join", get_path("project_dir"), self.panel_list[index][1][1:]), True)
 			sublime.set_timeout(lambda: show_status("Source folder \""+source_rel_path+"\" is set", None, False), 500)
+		elif self.actiontype == "add_external_jar":
+			dependencies = get_project_settings("dependencies")
+			dependencies_path = get_settings("dependencies_path")
+			if dependencies is None:
+				dependencies = []
+			dependencies.append(index)
+			set_settings("dependencies", dependencies, True)
+			set_settings("dependencies_path", get_path("parent", index), True)
+			refresh_dependencies()
+			sublime.set_timeout(lambda: sublime.active_window().run_command("javatar", {"action" :{"name": "dependencies"}}), 10)
+			sublime.set_timeout(lambda: show_status("Dependency \""+get_path("name", index)+"\" has been added", None, False), 500)

@@ -4,6 +4,10 @@ from time import clock, sleep
 from ..utils import *
 
 
+# Create .jar using "jar" command
+# http://docs.oracle.com/javase/7/docs/technotes/tools/windows/jar.html
+
+
 class JavatarBuildCommand(sublime_plugin.WindowCommand):
 	build_list = []
 	build_size = -1
@@ -38,17 +42,26 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 		self.progress.set_message("[" + str(self.build_size-len(self.build_list)) + "/" + str(self.build_size) + "] Building ")
 
 	def create_build(self, file_path):
-		build_script = parse_macro(get_settings("build_command"), self.macro_data, file_path)
-		params = ""
-		params += " -sourcepath \"" + get_path("source_folder") + "\""
+		self.macro_data["sourcepath"] = "-sourcepath \"" + get_path("source_folder") + "\""
+		dependencies = get_dependencies()
+		dependencies_param = None
+		for dependency in dependencies:
+			from os import pathsep
+			if dependencies_param is None:
+				dependencies_param = "-classpath ."+pathsep+"\""+dependency[0]+"\""
+			else:
+				dependencies_param += pathsep+"\""+dependency[0]+"\""
+		self.macro_data["classpath"] = dependencies_param
+		self.macro_data["d"] = ""
 		if get_settings("build_output_location") != "":
 			output_dir = parse_macro(get_settings("build_output_location"), self.macro_data, file_path)
 			from os import makedirs
 			from os.path import isdir
 			if not isdir(output_dir):
 				makedirs(output_dir)
-			params += " -d \"" + output_dir + "\""
-		shell = JavatarSilentShell(build_script+params, self.on_build_done)
+			self.macro_data["d"] = "-d \"" + output_dir + "\""
+		build_script = parse_macro(get_settings("build_command"), self.macro_data, file_path)
+		shell = JavatarSilentShell(build_script, self.on_build_done)
 		shell.set_cwd(parse_macro(get_settings("build_location"), self.macro_data))
 		shell.start()
 		return shell

@@ -108,14 +108,30 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 		},
 		"project_settings": {
 			"selected_index": 2,
-			"items": [["Back", "Back to previous menu"], ["Set Source Folder", "Set source folder to specified as default package"]],
+			"items": [["Back", "Back to previous menu"], ["Dependencies...", "Manage project dependencies"], ["Set Source Folder", "Set source folder to specified as default package"]],
 			"actions": [
 				{
 					"name": "main"
 				}, {
+					"name": "dependencies"
+				}, {
 					"command": "javatar_project",
 					"args": {
 						"actiontype": "set_source_folder"
+					}
+				}
+			]
+		},
+		"dependencies": {
+			"selected_index": 2,
+			"items": [["Back", "Back to previous menu"], ["Add External .jar", "Add dependency .jar file"]],
+			"actions": [
+				{
+					"name": "project_settings"
+				}, {
+					"command": "javatar_project",
+					"args": {
+						"actiontype": "add_external_jar"
 					}
 				}
 			]

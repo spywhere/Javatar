@@ -3,7 +3,7 @@ import sublime
 import threading
 from .javatar_actions import *
 from .javatar_thread import *
-from ..utils.javatar_utils import to_readable_size
+from ..utils.javatar_utils import to_readable_size, get_project_settings, get_global_settings, get_path
 
 
 INSTALLED_PACKAGES = []
@@ -83,8 +83,8 @@ def packages_complete(data, no_require=False):
 	if install_update:
 		installed_menu["selected_index"] = 2
 		sublime.active_window().run_command("javatar", {"replaceMenu": {
-		"name": "uninstall_packages",
-		"menu": installed_menu
+			"name": "uninstall_packages",
+			"menu": installed_menu
 		}})
 
 	from .javatar_updater import update_packages
@@ -114,6 +114,46 @@ def get_snippet_list():
 	for snippet in SNIPPETS:
 		slist.append([snippet["class"], snippet["description"]])
 	return slist
+
+
+def get_dependencies():
+	dependencies = []
+	project_dependencies = get_project_settings("dependencies")
+	if project_dependencies is not None:
+		for dependency in project_dependencies:
+			dependencies.append([dependency, True])
+	for dependency in get_global_settings("dependencies"):
+		dependencies.append([dependency, False])
+	return dependencies
+
+
+def refresh_dependencies():
+	dependency_menu = {
+		"selected_index": 2,
+		"items": [["Back", "Back to previous menu"], ["Add External .jar", "Add dependency .jar file"]],
+		"actions": [
+			{
+				"name": "project_settings"
+			}, {
+				"command": "javatar_project",
+				"args": {
+					"actiontype": "add_external_jar"
+				}
+			}
+		]
+	}
+	dependencies = get_dependencies()
+	for dependency in dependencies:
+		if dependency[1]:
+			dependency_menu["actions"].append({"command": "javatar_project", "args": {"actiontype": "remove_dependency", "arg1": dependency[0], "arg2": True}})
+			dependency_menu["items"].append([ get_path("name", dependency[0]), "Project dependency. Select to remove from the list"])
+		else:
+			dependency_menu["actions"].append({"command": "javatar_project", "args": {"actiontype": "remove_dependency", "arg1": dependency[0], "arg2": False}})
+			dependency_menu["items"].append([get_path("name", dependency[0]), "Global dependency. Select to remove from the list"])
+	sublime.active_window().run_command("javatar", {"replaceMenu": {
+		"name": "dependencies",
+		"menu": dependency_menu
+	}})
 
 
 class JavatarSnippetsLoaderThread(threading.Thread):

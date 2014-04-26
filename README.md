@@ -34,18 +34,22 @@ A Sublime Text 3 Plugin for Java Development
 ### Features
 * [+] Package, Subpackage creation
 * [+] Class (also Abstract), Interface, Enumerator snippets with package/class auto-complete
-* [+] Project/Package/Class Build
+* [+] Project/Package/Class build and run with dependencies [1]
 * [+] Package path in status bar
 * [+] External libraries packages
-* [+] Internal Console with input supports
+* [+] Internal console with input supports
 * [*] Organize Imports
-* [*] Rename/Move packages/classes
-* [-] JAR file export (included executable)
+* [-] Rename/Move packages/classes [2]
+* [-] JAR file export (included executable) [3]
 * [-] Dynamic method call auto-complete
 
 [+] Available on Stable Channel<br />
 [*] Partial available on Development Channel<br />
 [-] Planned
+
+[1] Organize Imports will not support classes inside dependencies except provided by Javatar Packages<br />
+[2] Auto-refactor is not included<br />
+[3] Export as executable JAR may delay after normal JAR export feature is finished
 
 ===
 
@@ -61,7 +65,7 @@ From 11 Apr 2014, Javatar will "NOT" include any packages inside its package. Th
 	* To force quit your application when run, just close the console view.
 * Java's compilation errors and stack traces highlighting in console
 * Multi-thread build system
-* Build now put all .class files in "bin" directory
+* Build now put all .class files in "bin" directory and support dependencies (more informations about dependencies in Project Settings section below)
 * Project/Package/Class Build improvements (now support multiple files building and error logs)
 * New build type, Working Classes
 * Fix internal shell did not work on Windows
@@ -161,9 +165,12 @@ Javatar will automatically imports all necessary packages and remove unused pack
 ===
 
 ### Project Settings
-Project Settings section contains per-project settings. Currently, Javatar supported only 1 setting, `Set Source Folder`.
+Project Settings section contains per-project settings. Currently, Javatar supported only 2 setting, `Dependencies` and `Set Source Folder`.
 
 **Did you know?** All Javatar's settings can be set specifically for each project by setting it in project file instead of user preferences
+
+##### Dependencies
+Javatar support build and run project that have dependencies .jar files both global and per-project. To add a dependency to global projects (all projects), you need to add them manually by specified it in Javatar's user preferences since most projects have different dependencies. To add a dependency to current project, go to `Project Settings... > Dependencies...` and select `Add External .jar` and Javatar will show a dialog to select a file you want to add.
 
 ##### Set Source Folder
 As default, Javatar will specified a default package (mostly) based-on current working folder or folder contains current working file (more details on next section). Many projects might use multiple folders and some of them are not source folder. Set source folder helps solve this issue by let you select which folder to specified as Source Folder (or default package as Javatar use).
@@ -228,6 +235,14 @@ Some settings contain macro for special value such as Source Folder or Project D
        * Full path of parent directory. Such as "/Users/home/"
     * `$file_name`
        * File name. Such as "File.java"
+    * `$sourcepath`
+       * Source path flag for build command (-sourcepath)
+    * `$classpath`
+       * Class path flag for build and run command (-classpath)
+    * `$d`
+       * Output path flag for build command (-d)
+
+Make sure you are quoted all path specific value to escape spaces
 
 ===
 

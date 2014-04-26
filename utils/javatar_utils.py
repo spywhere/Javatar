@@ -30,11 +30,28 @@ def read_settings(config):
 	load_snippets_and_packages()
 
 
-def get_settings(key):
+def get_project_settings(key, asList=False):
 	project_data = sublime.active_window().project_data()
 	if key in project_data:
-		return project_data[key]
-	return SETTINGS.get(key)
+		if asList:
+			return [project_data[key], True]
+		else:
+			return project_data[key]
+	return None
+
+
+def get_global_settings(key, asList=False):
+	if asList:
+		return [SETTINGS.get(key, None), False]
+	else:
+		return SETTINGS.get(key, None)
+
+
+def get_settings(key, asList=False):
+	project_settings = get_project_settings(key, asList)
+	if project_settings is not None:
+		return project_settings
+	return get_global_settings(key, asList)
 
 
 def set_settings(key, val, project=False):

@@ -20,16 +20,21 @@ def plugin_loaded():
 
 class EventListener(sublime_plugin.EventListener):
 	def on_new(self, view):
+		refresh_dependencies()
 		hide_status()
 
 	def on_activated(self, view):
+		refresh_dependencies()
 		hide_status()
 
 	def on_load(self, view):
+		refresh_dependencies()
 		hide_status()
 
 	def on_post_save(self, view):
+		refresh_dependencies()
 		hide_status()
 
 	def on_clone(self, view):
+		refresh_dependencies()
 		hide_status()

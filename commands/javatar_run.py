@@ -31,7 +31,12 @@ class JavatarRunMainCommand(sublime_plugin.WindowCommand):
 		self.class_name = get_class_name()
 		file_path = sublime.active_window().active_view().file_name()
 		macro_data = get_macro_data()
-		macro_data["build_output_location"] = self.output_dir
+		dependencies = get_dependencies()
+		dependencies_param = "-classpath \""+self.output_dir+"\""
+		for dependency in dependencies:
+			from os import pathsep
+			dependencies_param += pathsep+"\""+dependency[0]+"\""
+		macro_data["classpath"] = dependencies_param
 		run_script = parse_macro(get_settings("run_command"), macro_data, file_path)
 		self.view = self.window.new_file()
 		self.view.set_syntax_file("Packages/Javatar/syntax/JavaStackTrace.tmLanguage")

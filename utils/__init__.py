@@ -1,4 +1,5 @@
 from .javatar_actions import *
+from .javatar_browse import *
 from .javatar_collections import *
 from .javatar_java import *
 from .javatar_news import *
