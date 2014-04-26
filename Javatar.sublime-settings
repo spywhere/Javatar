@@ -1,5 +1,5 @@
 {
-	// Settings per project can be set in .sublime-project file
+	// Per-project settings can be set in .sublime-project file
 
 	// Debugging purpose:
 	"debug_mode" : false,
@@ -36,8 +36,19 @@
 	// Enable automatic save before build
 	"automatic_save" : false,
 
+	// Location to run "run" command
+	"run_location" : "$project_dir",
+
 	// Run command
-	"run_command" : "java $full_class_path",
+	"run_command" : "java -cp \"$build_output_location\" $full_class_path",
+
+	// Location to run "build" command
+	"build_location" : "$project_dir",
+
+	// Build output (class files) location
+	//    Specified here and Javatar will create target path and add -d parameter to build_command
+	//    "javac" don't create target directory as default
+	"build_output_location" : "$project_dir$sepbin",
 
 	// Build command (based on default JavaC)
 	"build_command" : "javac \"$file\"",

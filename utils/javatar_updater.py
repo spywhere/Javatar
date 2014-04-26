@@ -12,61 +12,61 @@ PACKAGES_VERSION = "0.3"
 PACKAGES_REPO = "https://raw.github.com/spywhere/JavatarPackages/master/javatar_packages.json"
 
 
-def getSchemaVersion():
+def get_schema_version():
 	return PACKAGES_VERSION
 
 
-def sendPackageAction(params={}):
+def send_package_action(params={}):
 	params["package"] = "true"
 	thread = JavatarPackageUsageThread(params)
 	thread.start()
-	SilentThreadProgress(thread, sendPackageActionComplete)
+	SilentThreadProgress(thread, send_package_action_complete)
 
 
-def sendUsages(params={}, lasttime=False):
-	if getSettings("send_stats_and_usages"):
+def send_usages(params={}, lasttime=False):
+	if get_settings("send_stats_and_usages"):
 		params["usage"] = "true"
 		thread = JavatarPackageUsageThread(params, lasttime)
 		thread.start()
-		SilentThreadProgress(thread, sendUsageComplete)
+		SilentThreadProgress(thread, send_usage_complete)
 
 
-def sendPackageActionComplete(thread):
-	if thread.result and isDebug():
+def send_package_action_complete(thread):
+	if thread.result and is_debug():
 		print("Javatar package action sent: " + thread.data)
 
 
-def sendUsageComplete(thread):
+def send_usage_complete(thread):
 	if thread.result:
 		if thread.lasttime:
-			if isDebug():
+			if is_debug():
 				print("Javatar usage data sent as last time: " + thread.data)
-			setSettings("javatar_gp", getSettings("javatar_gp")|0x1)
+			set_settings("javatar_gp", get_settings("javatar_gp")|0x1)
 		else:
-			if isDebug():
+			if is_debug():
 				print("Javatar usage data sent: " + thread.data)
-			setSettings("javatar_gp", getSettings("javatar_gp")&(~0x1))
+			set_settings("javatar_gp", get_settings("javatar_gp")&(~0x1))
 
 
-def updatePackages(no_require=False):
-	getAction().addAction("javatar.util.updater", "Check packages update")
-	thread = JavatarPackageUpdaterThread(updateComplete)
+def update_packages(no_require=False):
+	get_action().add_action("javatar.util.updater", "Check packages update")
+	thread = JavatarPackageUpdaterThread(update_complete)
 	thread.no_require = no_require
 	thread.start()
 	ThreadProgress(thread, "Checking Javatar packages", "Javatar packages has been successfully updated")
 
 
-def updateComplete(packageURL, require_package):
+def update_complete(packageURL, require_package):
 	if require_package is None:
 		return
 	package_conflict = []
 	if "conflict" in require_package:
 		package_conflict = require_package["conflict"]
 	for conflict in package_conflict:
-		if getInstalledPackage(conflict) is not None:
-			getAction().addAction("javatar.util.updater", "Conflict package was already installed")
+		if get_installed_package(conflict) is not None:
+			get_action().add_action("javatar.util.updater", "Conflict package was already installed")
 			return
-	getAction().addAction("javatar.util.updater", "Install default package")
+	get_action().add_action("javatar.util.updater", "Install default package")
 	sublime.active_window().run_command("javatar_install", {"installtype": "remote_package", "name": require_package["name"], "filename": require_package["filename"], "url": packageURL, "checksum": require_package["hash"]})
 
 
@@ -85,7 +85,7 @@ class JavatarPackageUsageThread(threading.Thread):
 			self.datahash = hashlib.sha256(self.data.encode("utf-8")).hexdigest()
 			self.result = True
 		except Exception as e:
-			if isDebug():
+			if is_debug():
 				print("Javatar Usage: " + str(e))
 			self.result = False
 
@@ -123,7 +123,7 @@ class JavatarPackageUpdaterThread(threading.Thread):
 					packageURL = packages[PACKAGES_VERSION]["url"]
 				else:
 					self.result_message = "No URL to packages channel"
-					getAction().addAction("javatar.util.updater", self.result_message)
+					get_action().add_action("javatar.util.updater", self.result_message)
 					self.result = False
 					return
 				if "deprecated" in packages[PACKAGES_VERSION] and packages[PACKAGES_VERSION]["deprecated"]:
@@ -132,20 +132,20 @@ class JavatarPackageUpdaterThread(threading.Thread):
 				require_package_name = None
 				if "packages" in packages[PACKAGES_VERSION]:
 					remote_update = False
-					if isDebug():
+					if is_debug():
 						print("No Require Package: " + str(self.no_require))
 					if not self.no_require and "install" in packages[PACKAGES_VERSION]:
 						require_package_name = packages[PACKAGES_VERSION]["install"]
 					for package in packages[PACKAGES_VERSION]["packages"]:
 						remote_update = True
-						if "name" in package and "filesize" in package and "filename" in package and "hash" in package and getInstalledPackage(package["name"]) is None and ("available" not in package or package["available"]):
+						if "name" in package and "filesize" in package and "filename" in package and "hash" in package and get_installed_package(package["name"]) is None and ("available" not in package or package["available"]):
 							package_status = "Ready to download (~" + package["filesize"] + ")."
 							package_conflict = []
 							if "conflict" in package:
 								package_conflict = package["conflict"]
 							conflict_with = None
 							for conflict in package_conflict:
-								conflict_package = getInstalledPackage(conflict)
+								conflict_package = get_installed_package(conflict)
 								if conflict_package is not None:
 									# Conflict package was already installed
 									conflict_with = conflict_package["name"]
@@ -169,13 +169,13 @@ class JavatarPackageUpdaterThread(threading.Thread):
 						sublime.set_timeout(lambda: self.on_complete(packageURL, require_package), 3000)
 				else:
 					self.result_message = "No Javatar packages available"
-					getAction().addAction("javatar.util.updater", self.result_message)
+					get_action().add_action("javatar.util.updater", self.result_message)
 					self.result = False
 			else:
 				self.result_message = "Javatar packages are incompatible with current version"
-				getAction().addAction("javatar.util.updater", self.result_message)
+				get_action().add_action("javatar.util.updater", self.result_message)
 				self.result = False
 		except Exception as e:
 			self.result_message = "Javatar packages update has failed: "+ str(e)
-			getAction().addAction("javatar.util.updater", self.result_message)
+			get_action().add_action("javatar.util.updater", self.result_message)
 			self.result = False

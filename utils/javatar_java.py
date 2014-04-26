@@ -3,13 +3,13 @@ import re
 import sublime
 
 
-def normalizePackage(package):
+def normalize_package(package):
 	while package.startswith("."):
 		package = package[1:]
 	return re.sub("\\.*$", "", package)
 
 
-def getAllTypes(packageImports):
+def get_all_types(packageImports):
 	imports = []
 	if "package" in packageImports:
 		if "interface" in packageImports:
@@ -51,48 +51,48 @@ def getAllTypes(packageImports):
 	return imports
 
 
-def findClass(path, classname):
+def find_class(path, classname):
 	# If it is a default class, should import manually
-	from .javatar_utils import toPackage, getSettings
-	from .javatar_collections import getPackages
+	from .javatar_utils import to_package, get_settings, without_extension
+	from .javatar_collections import get_packages
 	classes = []
 	foundClass = False
 	for root, dirnames, filenames in os.walk(path):
 		for filename in filenames:
 			if filename == classname + ".java":
-				classpath = toPackage(withoutExtension(os.path.join(root, filename)))
+				classpath = to_package(without_extension(os.path.join(root, filename)))
 				classes.append(classpath)
 				foundClass = True
-	for packageImport in getPackages():
+	for packageImport in get_packages():
 		if "packages" in packageImport:
 			for packageName in packageImport["packages"]:
 				package = packageImport["packages"][packageName]
 				if not foundClass and "default" in package and package["default"]:
 					continue
-				if classname in getAllTypes(package):
+				if classname in get_all_types(package):
 					classes.append(packageName+"."+classname)
 	classes.sort()
 	return classes
 
 
-def getPackagePath(text):
-	from .javatar_utils import getSettings
-	return normalizePackage(re.search(getSettings("package_match"), text, re.M).group(0))
+def get_package_path(text):
+	from .javatar_utils import get_settings
+	return normalize_package(re.search(get_settings("package_match"), text, re.M).group(0))
 
 
-def getClassName(text):
-	from .javatar_utils import getSettings
-	return re.search(getSettings("package_class_match"), text, re.M).group(0)
+def get_class_name_by_regex(text):
+	from .javatar_utils import get_settings
+	return re.search(get_settings("package_class_match"), text, re.M).group(0)
 
 
-def packageAsDirectory(package):
-	from .javatar_utils import mergePath
-	return mergePath(package.split("."))
+def package_as_directory(package):
+	from .javatar_utils import merge_path
+	return merge_path(package.split("."))
 
 
-def makePackage(current_dir, package, silent=False):
-	from .javatar_utils import getPath
-	target_dir = getPath("join", current_dir, packageAsDirectory(package))
+def make_package(current_dir, package, silent=False):
+	from .javatar_utils import get_path
+	target_dir = get_path("join", current_dir, package_as_directory(package))
 	if not os.path.exists(target_dir):
 		try:
 			os.makedirs(target_dir)

@@ -19,21 +19,21 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
 		elif util_type == "clear_read_only":
 			self.view.set_read_only(False)
 		elif util_type == "test":
-			if not isStable():
+			if not is_stable():
 				self.view.show_popup_menu(["A", "B"], self.nothing)
 		elif util_type == "remote_hash":
-			if not isStable():
+			if not is_stable():
 				sublime.active_window().show_input_panel("URL:", "", self.remote_hash, None, None)
 		elif util_type == "hash":
-			if not isStable():
+			if not is_stable():
 				print(hashlib.sha256(self.view.substr(sublime.Region(0,self.view.size())).encode("utf-8")).hexdigest())
 		elif util_type == "tojson":
-			if not isStable():
+			if not is_stable():
 				jsonObj = sublime.decode_value(self.view.substr(sublime.Region(0,self.view.size())))
 				self.view.replace(edit, sublime.Region(0,self.view.size()), sublime.encode_value(jsonObj, True));
 		elif util_type == "reload":
-			if isDebug():
-				getAction().addAction("javatar.command.utils.reload.run", "Reload Javatar")
+			if is_debug():
+				get_action().add_action("javatar.command.utils.reload.run", "Reload Javatar")
 				print("Reloading Javatar...")
 				import sys
 				from imp import reload
@@ -59,17 +59,17 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
 	def description(self, util_type="", text="", dest=None):
 		return dest
 
-class JavatarReloadPackagesCommand(sublime_plugin.WindowCommand):
+class JavatarReload_packagesCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		getAction().addAction("javatar.command.utils.reload_packages.run", "Reload Packages")
-		resetPackages()
-		loadPackages()
+		get_action().add_action("javatar.command.utils.reload_packages.run", "Reload Packages")
+		reset_packages()
+		load_packages()
 
 class JavatarConvertCommand(sublime_plugin.WindowCommand):
 	def run(self):
 		for filepath in sublime.find_resources("*.javatar-imports"):
-			getAction().addAction("javatar.command.utils.convert.run", "Converting imports \""+getPath("name", filepath)+"\"")
-			packages_file = {"name":getPath("name", filepath), "packages":{}}
+			get_action().add_action("javatar.command.utils.convert.run", "Converting imports \""+get_path("name", filepath)+"\"")
+			packages_file = {"name":get_path("name", filepath), "packages":{}}
 			imports_file = sublime.decode_value(sublime.load_resource(filepath))
 			total_package = 0
 			total_class = 0
@@ -115,6 +115,6 @@ class JavatarConvertCommand(sublime_plugin.WindowCommand):
 						total_class += len(imports["type"])
 						for clss in imports["type"]:
 							packages_file["packages"][package]["type"].append({"name":clss,"fields":[],"methods:":[]})
-			with open(getPath("join", getPath("parent", sublime.packages_path()), filepath.replace(".javatar-imports", "-converted.javatar-packages")), "w") as filew:
+			with open(get_path("join", get_path("parent", sublime.packages_path()), filepath.replace(".javatar-imports", "-converted.javatar-packages")), "w") as filew:
 				print(sublime.encode_value(packages_file, True), file=filew)
 				sublime.message_dialog("Conversion Done\nTotal Packages: " + str(total_package) + "\nTotal Classes: " + str(total_class))

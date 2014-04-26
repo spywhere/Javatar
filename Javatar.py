@@ -6,12 +6,12 @@ from .utils import *
 
 
 def startup():
-	getAction().addAction("javatar", "Startup")
+	get_action().add_action("javatar", "Startup")
 	reset() # clear data when restart
-	readSettings("Javatar.sublime-settings")
-	checkNews()
-	hideStatus()
-	getAction().addAction("javatar", "Ready")
+	read_settings("Javatar.sublime-settings")
+	check_news()
+	hide_status()
+	get_action().add_action("javatar", "Ready")
 
 
 def plugin_loaded():
@@ -20,16 +20,16 @@ def plugin_loaded():
 
 class EventListener(sublime_plugin.EventListener):
 	def on_new(self, view):
-		hideStatus()
+		hide_status()
 
 	def on_activated(self, view):
-		hideStatus()
+		hide_status()
 
 	def on_load(self, view):
-		hideStatus()
+		hide_status()
 
 	def on_post_save(self, view):
-		hideStatus()
+		hide_status()
 
 	def on_clone(self, view):
-		hideStatus()
+		hide_status()

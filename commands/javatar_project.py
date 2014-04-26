@@ -11,7 +11,7 @@ class JavatarProjectCommand(sublime_plugin.WindowCommand):
 				if os.path.isdir(pathname):
 					if self.is_source_folder(pathname):
 						return True
-			if os.path.isfile(pathname) and isJava(pathname):
+			if os.path.isfile(pathname) and is_java(pathname):
 				return True
 		return False
 
@@ -25,17 +25,17 @@ class JavatarProjectCommand(sublime_plugin.WindowCommand):
 		return folder_list
 
 	def get_folders(self):
-		source_folders = [[getPath("name", getPath("project_dir")), getPath("project_dir")+os.sep]]
-		source_folders += self.get_source_folder(getPath("project_dir"))
+		source_folders = [[get_path("name", get_path("project_dir")), get_path("project_dir")+os.sep]]
+		source_folders += self.get_source_folder(get_path("project_dir"))
 		folders = []
-		rootlen = len(getPath("project_dir"))
+		rootlen = len(get_path("project_dir"))
 		for name, folder in source_folders:
 			if self.is_source_folder(folder):
 				folders.append([name, folder[rootlen:]])
 		return folders
 
 	def run(self, actiontype):
-		getAction().addAction("javatar.command.project.run", "Project Settings [type="+actiontype+"]")
+		get_action().add_action("javatar.command.project.run", "Project Settings [type="+actiontype+"]")
 		self.actiontype = actiontype
 		if actiontype == "set_source_folder":
 			self.panel_list = self.get_folders()
@@ -46,31 +46,6 @@ class JavatarProjectCommand(sublime_plugin.WindowCommand):
 
 	def on_panel_complete(self, index):
 		if self.actiontype == "set_source_folder":
-			source_rel_path = getPath("join", getPath("name", getPath("project_dir")), self.panel_list[index][1][1:])
-			setSettings("source_folder", getPath("join", getPath("project_dir"), self.panel_list[index][1][1:]), True)
-			sublime.set_timeout(lambda: showStatus("Source folder \""+source_rel_path+"\" is set", None, False), 500)
-
-
-class JavatarCreatePackageCommand(sublime_plugin.WindowCommand):
-	def run(self):
-		self.showInput()
-
-	def showInput(self):
-		sublime.active_window().show_input_panel("Package Name:", "", self.createPackage, "", "")
-
-	def createPackage(self, text):
-		getAction().addAction("javatar.command.project.create_package", "Create package [package="+text+"]")
-		relative = True
-		if text.startswith("~"):
-			text = text[1:]
-			relative = False
-
-		if not isProject() and not isFile():
-			sublime.error_message("Cannot specify package location")
-			return
-		if not isPackage(text):
-			sublime.error_message("Invalid package naming")
-			return
-
-		target_dir = makePackage(getPackageRootDir(relative), text)
-		showStatus("Package \""+toPackage(target_dir)+"\" is created", None, False)
+			source_rel_path = get_path("join", get_path("name", get_path("project_dir")), self.panel_list[index][1][1:])
+			set_settings("source_folder", get_path("join", get_path("project_dir"), self.panel_list[index][1][1:]), True)
+			sublime.set_timeout(lambda: show_status("Source folder \""+source_rel_path+"\" is set", None, False), 500)

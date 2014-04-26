@@ -4,7 +4,7 @@
 
 A Sublime Text 3 Plugin for Java Development
 
-====
+===
 
 ### Table of Contents
 * Features
@@ -37,7 +37,7 @@ A Sublime Text 3 Plugin for Java Development
 * [+] Project/Package/Class Build
 * [+] Package path in status bar
 * [+] External libraries packages
-* [*] Internal Console with input supports
+* [+] Internal Console with input supports
 * [*] Organize Imports
 * [*] Rename/Move packages/classes
 * [-] JAR file export (included executable)
@@ -47,44 +47,46 @@ A Sublime Text 3 Plugin for Java Development
 [*] Partial available on Development Channel<br />
 [-] Planned
 
-====
+===
 
 ### Important Updates/Changelogs
 
 From 11 Apr 2014, Javatar will "NOT" include any packages inside its package. This helps install and update Javatar faster but still maintaining default features. Javatar will automatically download and install necessary packages (Java SE) at startup since users install Javatar usually already connected to the internet.
 
 ##### Development Build
-* New feature, Run main class. Can be accessed via *Development Section... > Builds: Run Main Class* (more details on Javatar Shell)
-* Run Main Class now show return code
-* To force quit your application when run, just close the console view.
-* Java's StackTrace highlighting
+* No important updates specifically for Development Channel 
 
 ##### Stable Build
+* New feature, Run main class. Can be accessed via *Development Section... > Builds: Run Main Class* (more details on Javatar Shell)
+	* To force quit your application when run, just close the console view.
+* Java's compilation errors and stack traces highlighting in console
+* Multi-thread build system
+* Build now put all .class files in "bin" directory
 * Project/Package/Class Build improvements (now support multiple files building and error logs)
 * New build type, Working Classes
-* Building output highlighting
-* Fix Javatar Calls cannot find the right package name and class name
 * Fix internal shell did not work on Windows
-* Fix building class files while change windows cause building failed
 * Package channel must be specified 'dev' in order to subscribe to development channel instead of anything else except 'stable'
-* Class name detection improvements
-* Java file validation improvements
 * Building system now completely changed to internal building system (more details on Build System section below)
+* Macro improvements
 * Some code tweaks
 
-====
+===
 
 ### Screenshots
-##### Creating packages in action
-![CreatePackage](http://spywhere.github.io/images/PackageCreate.gif)
-##### Creating classes in action
-![CreateClass](http://spywhere.github.io/images/ClassCreate.gif)
-##### Creating other classes in action
-![CreateOther](http://spywhere.github.io/images/OtherClassCreate.gif)
-##### Class operations in action
-![Operation](http://spywhere.github.io/images/Operations.gif)
+##### Creating packages
+![CreatePackage](http://spywhere.github.io/images/javatar/CreatePackage.gif)
+##### Creating classes
+![CreateClass](http://spywhere.github.io/images/javatar/CreateClass.gif)
+##### Class operations
+![Operation](http://spywhere.github.io/images/javatar/Operations.gif)
+##### Setting project
+![CreateOther](http://spywhere.github.io/images/javatar/Project.gif)
 
-====
+**Notice!** The location of new packages before and after source folder has been set
+##### Building and Running Java code
+![Operation](http://spywhere.github.io/images/javatar/BuildRun.gif)
+
+===
 
 ### Command Categories
 * Build:
@@ -106,7 +108,7 @@ From 11 Apr 2014, Javatar will "NOT" include any packages inside its package. Th
 	* Download, install or uninstall Javatar packages and Tools for package creators.
 	* More details on Additional Packages
 
-====
+===
 
 ### Javatar Builds
 Javatar use its own build system which based on default Sublime Text's JavaC build settings.
@@ -156,10 +158,12 @@ Javatar will automatically imports all necessary packages and remove unused pack
 6. Javatar clear all imports in current file
 7. Javatar imports all packages that has been processed within step 1-4
 
-====
+===
 
 ### Project Settings
-Project Settings section contains per-project settings. Currently, Javatar supported only 1 settings, `Set Source Folder`.
+Project Settings section contains per-project settings. Currently, Javatar supported only 1 setting, `Set Source Folder`.
+
+**Did you know?** All Javatar's settings can be set specifically for each project by setting it in project file instead of user preferences
 
 ##### Set Source Folder
 As default, Javatar will specified a default package (mostly) based-on current working folder or folder contains current working file (more details on next section). Many projects might use multiple folders and some of them are not source folder. Set source folder helps solve this issue by let you select which folder to specified as Source Folder (or default package as Javatar use).
@@ -176,7 +180,7 @@ Javatar will specify default package with these steps...
 
 Javatar will refuse to create packages or classes within unknown package. In this case, mostly because current file is not on the disk yet.
 
-====
+===
 
 ### Installation
 ##### Package Control (Recommended)
@@ -192,14 +196,40 @@ Download .zip file from Javatar repository and browse to PACKAGES_PATH, extract 
 
 **Note!** PACKAGES_PATH is referred to folder which can be accessed via the *Preferences > Browse Packages...*
 
-====
+===
 
 ### Settings
 Settings can be accessed via the *Preferences > Package Settings > Javatar* or via command palette by type *"Preference Javatar"*.
 
 Default settings should not be modified. However, you can copy the relevant settings into Javatar's user settings file.
 
-====
+Some settings contain macro for special value such as Source Folder or Project Directory. The followings are all macro supported by Javatar
+
+ * Available anywhere
+    * `$project_dir`
+       * Project Directory
+    * `$source_folder`
+       * Source folder
+    * `$packages_path`
+       * Sublime Text's packages path
+    * `$sep`
+       * Path separator. Such as "/" on Unix and "\" on Windows
+ * Available when open a file
+    * `$full_class_path`
+       * Full class path. Such as "package.subpackage.classname"
+    * `$package`
+       * Current package. Such as "package.subpackage"
+    * `$class_name`
+       * Current class name. Such as "classname"
+ * Available when open a file on specific context (such as build or run)
+    * `$file`
+       * Full path to file. Such as "/Users/home/File.java"
+    * `$file_parent`
+       * Full path of parent directory. Such as "/Users/home/"
+    * `$file_name`
+       * File name. Such as "File.java"
+
+===
 
 ### Key Bindings
 Key bindings can be accessed via the preference menu or via command palette same as settings.
@@ -226,7 +256,7 @@ Key bindings can be accessed via the preference menu or via command palette same
 
 `Key` is `Control` on Windows, `Super` on Linux and `Command` on OS X
 
-====
+===
 
 ### Build System
 Javatar's build system use its internal shell to build your classes. Javatar build parameters are based on default Sublime Text's JavaC build settings. You can change the build command via Javatar settings file.

@@ -9,7 +9,7 @@ class JavatarInstallCommand(sublime_plugin.WindowCommand):
 
 	def run(self, installtype=None, name=None, filename=None, url=None, checksum=None):
 		if installtype is not None:
-			getAction().addAction("javatar.command.install.run", "Install Package [type="+installtype+", name="+name+"]")
+			get_action().add_action("javatar.command.install.run", "Install Package [type="+installtype+", name="+name+"]")
 			self.pname = name
 			if installtype == "remote_package":
 				self.action = "install"
@@ -25,8 +25,8 @@ class JavatarInstallCommand(sublime_plugin.WindowCommand):
 
 	def getPackageData(self):
 		data = {}
-		from .javatar_utils import getSettings, setSettings, getPath
-		data["SchemaVersion"] = getSchemaVersion()
+		from .javatar_utils import get_settings, set_settings, get_path
+		data["SchemaVersion"] = get_schema_version()
 		data["PackageAction"] = self.action
 		data["PackageName"] = self.pname
 		data["SublimeVersion"] = str(sublime.version())
@@ -34,12 +34,12 @@ class JavatarInstallCommand(sublime_plugin.WindowCommand):
 		return data
 
 	def on_complete(self):
-		sendPackageAction(self.getPackageData())
-		resetPackages()
+		send_package_action(self.getPackageData())
+		reset_packages()
 		no_require = False
 		if self.action == "uninstall":
 			no_require = True
-		loadPackages(no_require)
+		load_packages(no_require)
 
 class JavatarPackageUninstallerThread(threading.Thread):
 	def __init__(self, name, filename, on_complete=None):
@@ -79,7 +79,7 @@ class JavatarRemotePackageInstallerThread(threading.Thread):
 			if self.checksum != datahash:
 				self.result = False
 				return
-			open(getPath("join", getPath("join", sublime.packages_path(), "user"), self.filename+".javatar-packages"), "wb").write(data)
+			open(get_path("join", get_path("join", sublime.packages_path(), "user"), self.filename+".javatar-packages"), "wb").write(data)
 			self.result = True
 			if self.on_complete is not None:
 				sublime.set_timeout(self.on_complete, 3000)

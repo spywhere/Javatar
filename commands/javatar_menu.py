@@ -234,26 +234,26 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 
 	def run(self, menu=None, action=None, replaceMenu=None):
 		if self.qm is None:
-			from ..utils import getSnippetList, isStable, isDebug
+			from ..utils import get_snippet_list, is_stable, is_debug
 			self.qm = QuickMenu(self.menuStable)
 			# Create a menu for development channel
-			if not isStable():
+			if not is_stable():
 				self.qm.addItems("main", [["Development Section...", "All testing features"]], [{"name":"dev"}])
 
 			# Generate action for Create menu
 			actions = []
-			for snippet in getSnippetList():
+			for snippet in get_snippet_list():
 				actions += [{"command":"javatar_create","args":{"create_type":snippet[0]}}]
-			self.qm.addItems("creates", getSnippetList(), actions)
+			self.qm.addItems("creates", get_snippet_list(), actions)
 
 			# Always add Help and Support at the end
 			self.qm.addItems("main", [["Help and Support...", "Utilities for Help and Support on Javatar"]], [{"name":"help"}])
 
 			# Quick reload menu
-			if isDebug():
+			if is_debug():
 				self.qm.insertItem("main", 0, ["Reload Javatar", "Reload Javatar modules (debug only)"], {"command":"javatar_util", "args": {"util_type": "reload"}})
-			from ..utils.javatar_news import getVersion
-			self.qm.addItems("help", [["Javatar", "v"+getVersion()]], [{}])
+			from ..utils.javatar_news import get_version
+			self.qm.addItems("help", [["Javatar", "v"+get_version()]], [{}])
 		if replaceMenu is not None:
 			self.qm.setMenu(replaceMenu["name"], replaceMenu["menu"])
 			return
@@ -261,6 +261,6 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 
 	def select(self, info):
 		if info["index"] < 0:
-			getAction().addAction("javatar.command.menu.select", "Exit menu [from_sublime="+str(info["from_sublime"])+"]")
+			get_action().add_action("javatar.command.menu.select", "Exit menu [from_sublime="+str(info["from_sublime"])+"]")
 		else:
-			getAction().addAction("javatar.command.menu.select", "Select item "+ str(info["items"][info["index"]]) +" [from_sublime="+str(info["from_sublime"])+"]")
+			get_action().add_action("javatar.command.menu.select", "Select item "+ str(info["items"][info["index"]]) +" [from_sublime="+str(info["from_sublime"])+"]")

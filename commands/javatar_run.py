@@ -4,17 +4,20 @@ from ..utils import *
 
 class JavatarRunMainCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		if isFile():
+		if is_file():
 			found_main = False
 			view = sublime.active_window().active_view()
+			self.output_dir = get_path("source_folder")
+			if get_settings("build_output_location") != "":
+				self.output_dir = parse_macro(get_settings("build_output_location"), get_macro_data(), view.file_name())
 			method_regions = view.find_by_selector("entity.name.function.java")
 			for region in method_regions:
 				if view.substr(region) == "main":
 					found_main = True
 					break
 			if found_main:
-				file_path = view.file_name()[:-4]+"class"
-				if not getPath("exist", file_path):
+				file_path = without_extension(get_path("relative", view.file_name(), get_package_root_dir()))+".class"
+				if not get_path("exist", get_path("join", self.output_dir, file_path)):
 					sublime.error_message("File is not compiled")
 					return
 				self.on_run()
@@ -24,30 +27,18 @@ class JavatarRunMainCommand(sublime_plugin.WindowCommand):
 			sublime.error_message("Unknown class location")
 
 	def on_run(self):
-		getAction().addAction("javatar.command.run.on_run", "Run main class")
-		class_path = normalizePackage(getCurrentPackage()+"."+getClassName())
+		get_action().add_action("javatar.command.run.on_run", "Run main class")
+		self.class_name = get_class_name()
 		file_path = sublime.active_window().active_view().file_name()
-		self.class_name = getClassName()
+		macro_data = get_macro_data()
+		macro_data["build_output_location"] = self.output_dir
+		run_script = parse_macro(get_settings("run_command"), macro_data, file_path)
 		self.view = self.window.new_file()
 		self.view.set_syntax_file("Packages/Javatar/syntax/JavaStackTrace.tmLanguage")
 		self.view.set_name("Running " + self.class_name + " ...")
 		self.view.set_scratch(True)
-
-		run_script = getSettings("run_command")
-		run_script = run_script.replace("$file_path", getPath("parent", file_path))
-		run_script = run_script.replace("$file_name", getPath("name", file_path))
-		run_script = run_script.replace("$file", file_path)
-		run_script = run_script.replace("$full_class_path", class_path)
-		run_script = run_script.replace("$class_name", self.class_name)
-		run_script = run_script.replace("$package", getCurrentPackage())
-		run_script = run_script.replace("$packages_path", sublime.packages_path())
-		if self.window.project_file_name() is not None:
-			run_script = run_script.replace("$project_path", getPath("parent", self.window.project_file_name()))
-			run_script = run_script.replace("$project_name", getPath("name", self.window.project_file_name()))
-			run_script = run_script.replace("$project", self.window.project_file_name())
-
 		shell = JavatarShell(run_script, self.view, self.on_complete)
-		shell.set_cwd(getPath("source_folder"))
+		shell.set_cwd(parse_macro(get_settings("run_location"), macro_data))
 		shell.start()
 		ThreadProgress(shell, "Running Javatar Shell", "Javatar Shell has been stopped")
 

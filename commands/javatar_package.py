@@ -24,7 +24,7 @@ class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):
 		output += "* Package filename: " + self.package_info[1] + "\n"
 		if self.package_info[2] != "":
 			output += "* Package conflicts: " + self.package_info[2] + "\n"
-		search_path = getPath("parent", getPath("project_dir"))
+		search_path = get_path("parent", get_path("project_dir"))
 		doclet_path = None
 		for name in os.listdir(search_path):
 			pathname = os.path.join(search_path,name)
@@ -39,13 +39,13 @@ class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):
 		# make sure that run in correct directory
 		command = "cd " + shlex.quote(search_path) + ";"
 		command += "echo Generating...;"
-		command += "javadoc -sourcepath " + shlex.quote(os.path.join(getPath("source_folder"), self.package_info[3][1][1:])) + " -docletpath " + shlex.quote(doclet_path) + " -name " + shlex.quote(self.package_info[0]) + " -doclet me.spywhere.doclet.Javatar -quiet "
+		command += "javadoc -sourcepath " + shlex.quote(os.path.join(get_path("source_folder"), self.package_info[3][1][1:])) + " -docletpath " + shlex.quote(doclet_path) + " -name " + shlex.quote(self.package_info[0]) + " -doclet me.spywhere.doclet.Javatar -quiet "
 
-		rootlen = len(os.path.join(getPath("project_dir"), self.package_info[3][1][1:]))
-		package_dirs = self.get_source_folder(os.path.join(getPath("project_dir"), self.package_info[3][1][1:]))
+		rootlen = len(os.path.join(get_path("project_dir"), self.package_info[3][1][1:]))
+		package_dirs = self.get_source_folder(os.path.join(get_path("project_dir"), self.package_info[3][1][1:]))
 		for package_dir in package_dirs:
 			if self.is_source_folder(package_dir[1], False):
-				package = toPackage(package_dir[1][rootlen:], False)
+				package = to_package(package_dir[1][rootlen:], False)
 				output += "* " + package + "\n"
 				command += " " + package
 
@@ -61,7 +61,7 @@ class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):
 	def finalize_package(self, output, path, path2, time=0):
 		# should not exceed 10 seconds
 		if not os.path.exists(path+".json"):
-			if time < getSettings("maximum_waiting_time"):
+			if time < get_settings("maximum_waiting_time"):
 				sublime.set_timeout(lambda: self.finalize_package(output, path, path2, time+1), 1000)
 			else:
 				sublime.message_dialog("Package creation taking too long...")
@@ -73,7 +73,7 @@ class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):
 		datafile.close()
 		datahash = hashlib.sha256(data.encode("utf-8")).hexdigest()
 		output += "*Hash Checksum: " + datahash + "\n"
-		output += "*File Size: " + toReadableSize(path2+".javatar-packages") + "\n"
+		output += "*File Size: " + to_readable_size(path2+".javatar-packages") + "\n"
 
 		# Print sample code
 
@@ -139,7 +139,7 @@ class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):
 				if os.path.isdir(pathname):
 					if self.is_source_folder(pathname):
 						return True
-			if os.path.isfile(pathname) and isJava(pathname):
+			if os.path.isfile(pathname) and is_java(pathname):
 				return True
 		return False
 
@@ -153,10 +153,10 @@ class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):
 		return folder_list
 
 	def get_folders(self):
-		source_folders = [[getPath("name", getPath("project_dir")), getPath("project_dir")+"/"]]
-		source_folders += self.get_source_folder(getPath("project_dir"))
+		source_folders = [[get_path("name", get_path("project_dir")), get_path("project_dir")+"/"]]
+		source_folders += self.get_source_folder(get_path("project_dir"))
 		folders = []
-		rootlen = len(getPath("project_dir"))
+		rootlen = len(get_path("project_dir"))
 		for name, folder in source_folders:
 			if self.is_source_folder(folder):
 				folders.append([name, folder[rootlen:]])
@@ -165,10 +165,10 @@ class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):
 	def run(self, first=True, again=False):
 		if first:
 			self.package_info = []
-			getAction().addAction("javatar.command.package.create_javatar_package.run", "Create Javatar Package")
+			get_action().add_action("javatar.command.package.create_javatar_package.run", "Create Javatar Package")
 		if self.package_step is None:
 			self.package_step = [
-				{"input": "Package Name", "flags": "not empty", "message": "Welcome to Javatar Packages wizard\n   This wizard will helps you through package creation and automated some tasks for you.\n   First, you must ensure that you already place \"JavatarDoclet\" in " + getPath("parent", getPackageRootDir()) + "\n\nWizard will ask you for the following infomations...\n - Package name: This will be your package name which appear on installation\n - Preferred file name: This will be your package file name that will be created and uploaded to packages channel\n - Conflicted packages: This informations help users install your package without conflicting another package\n - Source folder: You will be asked for source folder to generate a proper .javatar-packages file\n\nTo cancel, dismiss this dialog and press \"Escape\" key"},
+				{"input": "Package Name", "flags": "not empty", "message": "Welcome to Javatar Packages wizard\n   This wizard will helps you through package creation and automated some tasks for you.\n   First, you must ensure that you already place \"JavatarDoclet\" in " + get_path("parent", get_package_root_dir()) + "\n\nWizard will ask you for the following infomations...\n - Package name: This will be your package name which appear on installation\n - Preferred file name: This will be your package file name that will be created and uploaded to packages channel\n - Conflicted packages: This informations help users install your package without conflicting another package\n - Source folder: You will be asked for source folder to generate a proper .javatar-packages file\n\nTo cancel, dismiss this dialog and press \"Escape\" key"},
 				{"input": "Preferred File Name", "from": self.get_filename},
 				{"input": "Conflict Packages starts with", "initial": "Package1,Package2,Package3"},
 				{"quick_panel": self.get_folders, "on_error": "No source folder can be use", "message": "Select source folder"}
@@ -216,18 +216,18 @@ class JavatarCreatePackageCommand(sublime_plugin.WindowCommand):
 		sublime.active_window().show_input_panel("Package Name:", "", self.createPackage, "", "")
 
 	def createPackage(self, text):
-		getAction().addAction("javatar.command.package.create_package", "Create package [package="+text+"]")
+		get_action().add_action("javatar.command.package.create_package", "Create package [package="+text+"]")
 		relative = True
 		if text.startswith("~"):
 			text = text[1:]
 			relative = False
 
-		if not isProject() and not isFile():
+		if not is_project() and not is_file():
 			sublime.error_message("Cannot specify package location")
 			return
-		if not isPackage(text):
+		if not is_package(text):
 			sublime.error_message("Invalid package naming")
 			return
 
-		target_dir = makePackage(getPackageRootDir(relative), text)
-		showStatus("Package \""+toPackage(target_dir)+"\" is created", None, False)
+		target_dir = make_package(get_package_root_dir(relative), text)
+		show_status("Package \""+to_package(target_dir)+"\" is created", None, False)

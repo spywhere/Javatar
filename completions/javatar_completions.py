@@ -31,13 +31,13 @@ class JavatarCompletions(sublime_plugin.EventListener):
 		return pos
 
 	def on_query_completions(self, view, prefix, locations):
-		if not isDebug() or isStable() or not view.match_selector(locations[0], "source.java"): return []
+		if not is_debug() or is_stable() or not view.match_selector(locations[0], "source.java"): return []
 
 		cursorPos = locations[0]
 		callPos = self.getCallPosition(view, cursorPos)
 		#Find call statement
 		callStatement = view.substr(sublime.Region(callPos, cursorPos))
 		#Minimized method call
-		minCall = re.sub(getSettings("method_replacement"), "()", callStatement)
+		minCall = re.sub(get_settings("method_replacement"), "()", callStatement)
 		view.window().show_quick_panel([[callStatement, "Method call"], [minCall, "Minimized method call"]], "")
 		return []
