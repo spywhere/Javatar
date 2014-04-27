@@ -7,7 +7,7 @@ def is_java(filepath=""):
 	view = sublime.active_window().active_view()
 	if view is None:
 		return False
-	if filepath is "" or filepath is None:
+	if filepath is None or filepath is "":
 		filepath = view.file_name()
 	else:
 		view = None

@@ -3,7 +3,6 @@ import os
 from .javatar_actions import *
 
 
-STATUS = "Javatar"
 SETTINGSBASE = None
 SETTINGS = None
 
@@ -17,7 +16,7 @@ def reset():
 	reset_snippets_and_packages()
 
 
-def isReady():
+def is_ready():
 	return SETTINGS is not None
 
 
@@ -105,25 +104,13 @@ def merge_path(pathlist):
 
 
 def show_status(text, delay=None, require_java=True):
-	if delay is None:
-		delay = get_settings("status_delay")
-	from .javatar_validator import is_java
-	if not is_java() and require_java:
-		return
-	view = sublime.active_window().active_view()
-	view.set_status(STATUS, text)
-	if delay >= 0:
-		sublime.set_timeout(hide_status, delay)
+	from .javatar_status import get_status
+	get_status().set_status(text, delay, require_java)
 
 
 def hide_status():
-	view = sublime.active_window().active_view()
-	if view is not None:
-		from .javatar_validator import is_java
-		if isReady() and is_java() and get_settings("show_package_path"):
-			view.set_status(STATUS, "Package: " + to_readable_package(get_current_package(), True))
-		else:
-			view.erase_status(STATUS)
+	from .javatar_status import get_status
+	get_status().hide_status()
 
 
 def to_readable_size(filepath):

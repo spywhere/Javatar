@@ -308,7 +308,7 @@ The following tags are used inside Javatar snippet files (*.javatar) which will 
 * %description:*DESCRIPTION TO SHOW UNDER CREATION COMMAND*%
 
 ##### Usage of snippet tags in action
-![CreateNewSS](http://spywhere.github.io/images/CreateNewSS.png)
+![CreateNewSS](http://spywhere.github.io/images/javatar/CreateNewSS.png)
 
 
 #### Snippet Macros

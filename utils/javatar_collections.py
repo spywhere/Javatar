@@ -119,18 +119,21 @@ def get_snippet_list():
 def get_dependencies():
 	dependencies = []
 	project_dependencies = get_project_settings("dependencies")
+	from os.path import exists
 	if project_dependencies is not None:
 		for dependency in project_dependencies:
-			dependencies.append([dependency, True])
+			if exists(dependency):
+				dependencies.append([dependency, True])
 	for dependency in get_global_settings("dependencies"):
-		dependencies.append([dependency, False])
+		if exists(dependency):
+			dependencies.append([dependency, False])
 	return dependencies
 
 
 def refresh_dependencies():
 	dependency_menu = {
 		"selected_index": 2,
-		"items": [["Back", "Back to previous menu"], ["Add External .jar", "Add dependency .jar file"]],
+		"items": [["Back", "Back to previous menu"], ["Add External .jar", "Add dependency .jar file"], ["Add Class Folder", "Add dependency class folder"]],
 		"actions": [
 			{
 				"name": "project_settings"
@@ -139,17 +142,31 @@ def refresh_dependencies():
 				"args": {
 					"actiontype": "add_external_jar"
 				}
+			}, {
+				"command": "javatar_project",
+				"args": {
+					"actiontype": "add_class_folder"
+				}
 			}
 		]
 	}
 	dependencies = get_dependencies()
 	for dependency in dependencies:
+		from os.path import isdir
 		if dependency[1]:
 			dependency_menu["actions"].append({"command": "javatar_project", "args": {"actiontype": "remove_dependency", "arg1": dependency[0], "arg2": True}})
-			dependency_menu["items"].append([ get_path("name", dependency[0]), "Project dependency. Select to remove from the list"])
+			name = get_path("name", dependency[0])
+			if isdir(dependency[0]):
+				dependency_menu["items"].append(["["+get_path("name", dependency[0])+"]", "Project dependency. Select to remove from the list"])
+			else:
+				dependency_menu["items"].append([get_path("name", dependency[0]), "Project dependency. Select to remove from the list"])
 		else:
 			dependency_menu["actions"].append({"command": "javatar_project", "args": {"actiontype": "remove_dependency", "arg1": dependency[0], "arg2": False}})
-			dependency_menu["items"].append([get_path("name", dependency[0]), "Global dependency. Select to remove from the list"])
+			name = get_path("name", dependency[0])
+			if isdir(dependency[0]):
+				dependency_menu["items"].append(["["+get_path("name", dependency[0])+"]", "Global dependency. Select to remove from the list"])
+			else:
+				dependency_menu["items"].append([get_path("name", dependency[0]), "Global dependency. Select to remove from the list"])
 	sublime.active_window().run_command("javatar", {"replaceMenu": {
 		"name": "dependencies",
 		"menu": dependency_menu

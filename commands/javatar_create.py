@@ -23,8 +23,6 @@ def getInfo(text):
 	target_dir = make_package(get_package_root_dir(), package_as_directory(package), True)
 	target_dir = normalize_path(target_dir)
 	package = to_package(target_dir)
-	print("Root: " + get_package_root_dir())
-	print("Package: " + package)
 	file_path = get_path("join", get_package_root_dir(), get_path("join", package_as_directory(package), className + ".java"))
 	return {"file": file_path, "package": package, "class": className, "relative": relative}
 
