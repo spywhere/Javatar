@@ -1,7 +1,6 @@
 import sublime
 import sublime_plugin
 from .commands import *
-from .completions import *
 from .utils import *
 
 

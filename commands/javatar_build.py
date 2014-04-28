@@ -44,7 +44,7 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 	def create_build(self, file_path):
 		self.macro_data["sourcepath"] = "-sourcepath \"" + get_path("source_folder") + "\""
 		dependencies = get_dependencies()
-		dependencies_param = None
+		dependencies_param = ""
 		for dependency in dependencies:
 			from os import pathsep
 			if dependencies_param is None:

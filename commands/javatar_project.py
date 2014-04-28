@@ -5,15 +5,17 @@ from ..utils import *
 
 class JavatarProjectCommand(sublime_plugin.WindowCommand):
 	def is_source_folder(self, path, can_empty=True):
+		empty = True
 		for name in os.listdir(path):
+			empty = False
 			pathname = os.path.join(path,name)
 			if can_empty:
 				if os.path.isdir(pathname):
-					if self.is_source_folder(pathname):
+					if self.is_source_folder(pathname, can_empty):
 						return True
 			if os.path.isfile(pathname) and is_java(pathname):
 				return True
-		return False
+		return can_empty and empty
 
 	def get_source_folder(self, path):
 		folder_list=[]
@@ -30,7 +32,7 @@ class JavatarProjectCommand(sublime_plugin.WindowCommand):
 		folders = []
 		rootlen = len(get_path("project_dir"))
 		for name, folder in source_folders:
-			if self.is_source_folder(folder):
+			if self.is_source_folder(folder, True):
 				folders.append([name, folder[rootlen:]])
 		return folders
 

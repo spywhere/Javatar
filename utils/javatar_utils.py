@@ -161,12 +161,12 @@ def to_package(path, relative=True):
 	return normalize_package(package)
 
 
-def get_package_root_dir(isSub=False):
+def get_package_root_dir(relative=False):
 	from .javatar_validator import is_project, is_file
-	if is_project() and not isSub:
-		return get_path("source_folder")
-	elif is_file() and isSub:
+	if is_file() and relative:
 		return get_path("current_dir")
+	elif is_project():
+		return get_path("source_folder")
 	elif get_path("current_dir") is not None:
 		return get_path("current_dir")
 	else:

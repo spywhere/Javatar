@@ -26,7 +26,7 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 		},
 		"builds": {
 			"selected_index": 2,
-			"items": [["Back", "Back to previous menu"], ["Project", "Build all classes in project"], ["Package", "Build all classes in current package"], ["Working", "Build all classes in opened tabs"], ["Current Class", "Build current class"], ["Run main class", "Run class contains main method"]],
+			"items": [["Back", "Back to previous menu"], ["Project", "Build all classes in project"], ["Package", "Build all classes in current package"], ["Working", "Build all classes in opened tabs"], ["Current Class", "Build current class"], ["Run Main Class", "Run class contains main method"]],
 			"actions": [
 				{
 					"name": "main"

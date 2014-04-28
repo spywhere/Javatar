@@ -1,6 +1,8 @@
 import sublime
 import re
 
+# Check if it is a Java or not, by checking current syntax (this help on new view calls)
+# Better unsave file detection (currently, create a untitled Java file within project is somehow save to wrong dir)
 
 def is_java(filepath=""):
 	from .javatar_utils import get_settings
@@ -33,3 +35,12 @@ def is_project(window=None):
 def is_file():
 	view = sublime.active_window().active_view()
 	return view is not None and view.file_name() is not None
+
+
+def get_java_level():
+	# Unsave = Package under project_dir if any
+
+	# 0 = Not allow to do anything
+	# 1 = Work under project_dir
+	# 2 = Work under current_dir
+	return 0
