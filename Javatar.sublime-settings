@@ -1,6 +1,10 @@
 {
 	// Per-project settings can be set in .sublime-project file
 
+	//////////////////////
+	// Javatar Settings //
+	//////////////////////
+
 	// Debugging purpose:
 	"debug_mode" : false,
 
@@ -26,6 +30,12 @@
 	// Maximum waiting time for Javatar packages creation
 	"maximum_waiting_time": 15,
 
+	// Default delay before hide a status text
+	"status_delay" : 5000,
+
+	// Show package path in status bar
+	"show_package_path" : true,
+
 	// Source folder (used as default package), must specified in full path
 	// Default is...
 	//    - Project-based source folder
@@ -39,6 +49,38 @@
 	// Initial directory for finding dependencies
 	"dependencies_path" : "$project_dir",
 
+	///////////////////
+	// Java Settings //
+	///////////////////
+
+	// JDK installation path, should contains "jdk1.<major>.0_<minor>" folder or similar
+	// Javatar will use this path to detect your JDK installations and let's you select version you want to use
+	// Name should be your os name that get from sublime.platform(), value is a list of path of JDK
+	// Javatar will use current JDK that you are using, otherwise it will use latest version you have
+	//
+	// References: http://docs.oracle.com/javase/8/docs/technotes/guides/install/index.html
+	"jdk_installation" : {
+		"osx" : ["/Library/Java/JavaVirtualMachines"],
+		"windows" : ["C:\\Program Files\\Java", "C:\\Program Files (x86)\\Java"],
+		"linux" : ["/usr/jdk"],
+		"all" : ["/usr/jdk"]
+	},
+
+	// List of JDK path that Javatar detected and currently use
+	// This should be READ-ONLY unless you know what you are doing
+	"jdk_version" : {},
+
+	// Executables that Javatar use to build and run
+	"java_executables" : {
+		"build" : "javac",
+		"run" : "java",
+		"version": "java"
+	},
+
+	////////////////////////////
+	// Run and Build Settings //
+	////////////////////////////
+
 	// Enable automatic save before build
 	"automatic_save" : false,
 
@@ -46,7 +88,7 @@
 	"run_location" : "$project_dir",
 
 	// Run command
-	"run_command" : "java $classpath $full_class_path",
+	"run_command" : "$classpath $full_class_path",
 
 	// Location to run "build" command
 	"build_location" : "$project_dir",
@@ -58,7 +100,7 @@
 	"build_output_location" : "$project_dir$sepbin",
 
 	// Build command
-	"build_command" : "javac $sourcepath $classpath $d \"$file\"",
+	"build_command" : "$sourcepath $classpath $d \"$file\"",
 
 	// Number of build thread
 	//    Increase this value can helps building done faster but also use more performances
@@ -68,17 +110,18 @@
 	//    Increase this value can helps prevent double view from showing but also freeze computer for a specified time
 	"build_log_delay" : 0.05,
 
-	// Default delay before hide a status text
-	"status_delay" : 5000,
-
-	// Show package path in status bar
-	"show_package_path" : true,
+	//////////////////////////////////
+	// Javatar Validations Settings //
+	//////////////////////////////////
 
 	// Java file extensions
-	"java_extensions" : ["java"],
+	"java_extensions" : [".java"],
 
 	// Java source code validation using scope selector
 	"java_source_selector" : "source.java",
+
+	// Java version matching using RegEx (get from java -version)
+	"java_version_match" : "(\\d+.\\d+.\\d+)_?([0-9a-zA-Z]+)?",
 
 	// Method call replacement pattern using RegEx (Use in completions)
 	"method_replacement" : "\\(.*?\\)(?![,\\)])",

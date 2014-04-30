@@ -1,11 +1,14 @@
 import sublime
 import re
 
+
 # Check if it is a Java or not, by checking current syntax (this help on new view calls)
 # Better unsave file detection (currently, create a untitled Java file within project is somehow save to wrong dir)
 
+
 def is_java(filepath=""):
 	from .javatar_utils import get_settings
+	import os.path
 	view = sublime.active_window().active_view()
 	if view is None:
 		return False
@@ -15,8 +18,9 @@ def is_java(filepath=""):
 		view = None
 	isjava = False
 	if filepath is not None:
+		filename, ext = os.path.splitext(os.path.basename(filepath))
 		for extension in get_settings("java_extensions"):
-			if filepath.endswith("." + extension):
+			if ext == extension:
 				return True
 	return (view is not None and len(view.find_by_selector(get_settings("java_source_selector"))) > 0)
 

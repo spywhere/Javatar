@@ -6,7 +6,8 @@ from time import clock
 
 
 class JavatarShell(threading.Thread):
-	def __init__(self, cmds, view, on_complete=None, to_console=False):
+	def __init__(self, cmds, view, on_complete=None, to_console=False, params=None):
+		self.params = params
 		self.cmds = cmds
 		self.on_complete = on_complete
 		self.view = view
@@ -78,10 +79,11 @@ class JavatarShell(threading.Thread):
 			self.kill(self.proc)
 		self.result = True
 		if self.on_complete is not None:
-			self.on_complete(clock()-start_time, self.return_code)
+			self.on_complete(clock()-start_time, self.return_code, self.params)
 
 class JavatarSilentShell(threading.Thread):
-	def __init__(self, cmds, on_complete=None, to_console=False):
+	def __init__(self, cmds, on_complete=None, to_console=False, params=None):
+		self.params = params
 		self.cmds = cmds
 		self.on_complete = on_complete
 		self.to_console = to_console
@@ -137,4 +139,49 @@ class JavatarSilentShell(threading.Thread):
 			self.kill(self.proc)
 		self.result = True
 		if self.on_complete is not None:
-			self.on_complete(clock()-start_time, self.data_out, self.return_code)
+			self.on_complete(clock()-start_time, self.data_out, self.return_code, self.params)
+
+class JavatarBlockShell():
+	def run(self, cmds, cwd=None):
+		start_time = clock()
+		self.proc = self.popen(cmds, cwd)
+		self.return_code = None
+		self.data_out = None
+
+		threading.Thread(target=self.read_stdout).start()
+
+		while True:
+			if self.proc.poll() is not None:
+				self.return_code = self.proc.poll()
+				self.proc.stdout.close()
+				break
+		if self.return_code is None:
+			self.kill(self.proc)
+		return {"elapse_time": clock()-start_time, "data": self.data_out, "return_code": self.return_code}
+
+	def popen(self, cmd, cwd):
+		if sys.platform == "win32":
+			return subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd, shell=True)
+		elif sys.platform == "darwin":
+			return subprocess.Popen(["/bin/bash", "-l", "-c", cmd], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd, shell=False)
+		elif sys.platform == "linux":
+			return subprocess.Popen(["/bin/bash", "-c", cmd], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd, shell=False)
+		else:
+			return subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=cwd, shell=False)
+
+	def kill(self, proc):
+		if sys.platform == "win32":
+			startupinfo = subprocess.STARTUPINFO()
+			startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+			subprocess.Popen("taskkill /PID " + str(proc.pid), startupinfo=startupinfo)
+		else:
+			proc.terminate()
+
+	def read_stdout(self):
+		while self.proc.poll() is None:
+			data = os.read(self.proc.stdout.fileno(), 512)
+			if len(data) > 0:
+				if self.data_out is None:
+					self.data_out = data.decode("UTF-8").replace("\r\n","\n")
+				else:
+					self.data_out += data.decode("UTF-8").replace("\r\n","\n")

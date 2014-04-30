@@ -3,6 +3,7 @@ import sublime
 import re
 from ..utils import *
 
+
 '''
 Method Call Completion Process
  1. Get call statement
@@ -12,11 +13,18 @@ Method Call Completion Process
  5. If 2 or 3 is found, return all methods that start with call, with arguments-ready. If class inherited from another class, find them too!
 
 Work to do!
+Invent a selector system
+
+get_regions(selector, file_scope)
+ - selector: class, number, etc.
+ - file_scope: project, package, subpackage, class
+
 List "all" methods and "all" unprivate fields within "all" Java's classes in "all" packages
 
 Keywords:
 this,super
 '''
+
 
 class JavatarCompletions(sublime_plugin.EventListener):
 	def getCallPosition(self, view, pos):

@@ -4,6 +4,7 @@ import hashlib
 import urllib.request
 from ..utils import *
 
+
 class JavatarUtilCommand(sublime_plugin.TextCommand):
 	def run(self, edit, util_type="", text="", region=None, dest=None):
 		if util_type == "insert":

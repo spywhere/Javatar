@@ -2,6 +2,7 @@ import sublime
 import sublime_plugin
 from ..utils import *
 
+
 class JavatarRunMainCommand(sublime_plugin.WindowCommand):
 	def run(self):
 		if is_file():
@@ -37,16 +38,19 @@ class JavatarRunMainCommand(sublime_plugin.WindowCommand):
 			from os import pathsep
 			dependencies_param += pathsep+"\""+dependency[0]+"\""
 		macro_data["classpath"] = dependencies_param
+		executable = get_executable("run")
+		if executable is None:
+			return None
 		run_script = parse_macro(get_settings("run_command"), macro_data, file_path)
 		self.view = self.window.new_file()
 		self.view.set_syntax_file("Packages/Javatar/syntax/JavaStackTrace.tmLanguage")
 		self.view.set_name("Running " + self.class_name + " ...")
 		self.view.set_scratch(True)
-		shell = JavatarShell(run_script, self.view, self.on_complete)
+		shell = JavatarShell(executable+" "+run_script, self.view, self.on_complete)
 		shell.set_cwd(parse_macro(get_settings("run_location"), macro_data))
 		shell.start()
 		ThreadProgress(shell, "Running Javatar Shell", "Javatar Shell has been stopped")
 
-	def on_complete(self, elapse_time, return_code):
+	def on_complete(self, elapse_time, return_code, params):
 		if return_code is not None:
 			self.view.set_name(self.class_name + " Ended (Return: " + str(return_code) + ") [{0:.2f}s]".format(elapse_time))

@@ -178,9 +178,10 @@ def contains_file(directory, file_path):
 
 
 def without_extension(file_path):
+	filename, ext = os.path.splitext(os.path.basename(file_path))
 	for extension in get_settings("java_extensions"):
-		if file_path.endswith("."+extension):
-			return file_path[:-len(extension)-1]
+		if ext == extension:
+			return file_path[:-len(ext)]
 	return file_path
 
 

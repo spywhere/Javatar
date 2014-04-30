@@ -2,8 +2,9 @@ import sublime
 from .javatar_actions import *
 from .javatar_updater import *
 
+
 # YY.MM.DD.HH.MM
-VERSION = "14.04.29.02.12b"
+VERSION = "14.05.01.00.05b"
 UPDATEFOR = "all"
 NEWSID = 14
 NEWS = " - Run Main Class feature, now available on Stable Channel\n - Fix internal shell did not work on Windows, finally\n - Multi-thread build system now support\n - Fix Run Main Class error when run on an empty window\n\nSee README for more info and also a new screenshot"

@@ -89,6 +89,8 @@ def packages_complete(data, no_require=False):
 
 	from .javatar_updater import update_packages
 	update_packages(no_require)
+	from .javatar_java import detect_jdk
+	detect_jdk()
 
 
 def get_packages():

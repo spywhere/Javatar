@@ -1,6 +1,7 @@
 import sublime
 import os
 
+
 class JavatarBrowseDialog():
 	def __init__(self, initial_dir, path_filter=None, selector=None, window=None, on_done=None, on_cancel=None):
 		if window is None:

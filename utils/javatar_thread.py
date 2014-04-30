@@ -1,5 +1,6 @@
 import sublime
 
+
 class MultiThreadProgress():
 	thread_list = []
 

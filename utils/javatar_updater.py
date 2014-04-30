@@ -6,6 +6,7 @@ from .javatar_collections import *
 from .javatar_thread import *
 from .javatar_utils import *
 
+
 # If you are going to visit the site, sorry for the crap design...
 PACKAGES_STATS = "http://digitalparticle.in.th/javatar/"
 PACKAGES_VERSION = "0.3"
@@ -127,7 +128,9 @@ class JavatarPackageUpdaterThread(threading.Thread):
 					self.result = False
 					return
 				if "deprecated" in packages[PACKAGES_VERSION] and packages[PACKAGES_VERSION]["deprecated"]:
-					sublime.message_dialog("Javatar is out of date. You must update Javatar to get latest packages updates.")
+					self.result_message = "Javatar is out of date. You must update Javatar to get latest packages updates."
+					self.result = False
+					return
 				require_package = None
 				require_package_name = None
 				if "packages" in packages[PACKAGES_VERSION]:

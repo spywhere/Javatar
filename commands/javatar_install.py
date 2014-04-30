@@ -4,6 +4,7 @@ import threading
 import os
 from ..utils import *
 
+
 class JavatarInstallCommand(sublime_plugin.WindowCommand):
 	action = "invalid"
 

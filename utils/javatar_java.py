@@ -1,6 +1,14 @@
-import os
-import re
 import sublime
+import re
+import os
+import threading
+from .javatar_shell import *
+from .javatar_utils import *
+
+
+def detect_jdk():
+	thread = JavatarJDKDetectionThread()
+	thread.start()
 
 
 def normalize_package(package):
@@ -53,7 +61,6 @@ def get_all_types(packageImports):
 
 def find_class(path, classname):
 	# If it is a default class, should import manually
-	from .javatar_utils import to_package, get_settings, without_extension
 	from .javatar_collections import get_packages
 	classes = []
 	foundClass = False
@@ -76,22 +83,18 @@ def find_class(path, classname):
 
 
 def get_package_path(text):
-	from .javatar_utils import get_settings
 	return normalize_package(re.search(get_settings("package_match"), text, re.M).group(0))
 
 
 def get_class_name_by_regex(text):
-	from .javatar_utils import get_settings
 	return re.search(get_settings("package_class_match"), text, re.M).group(0)
 
 
 def package_as_directory(package):
-	from .javatar_utils import merge_path
 	return merge_path(package.split("."))
 
 
 def make_package(current_dir, package, silent=False):
-	from .javatar_utils import get_path
 	target_dir = get_path("join", current_dir, package_as_directory(package))
 	if not os.path.exists(target_dir):
 		try:
@@ -102,3 +105,195 @@ def make_package(current_dir, package, silent=False):
 		if not silent:
 			sublime.message_dialog("Package is already exists")
 	return target_dir
+
+
+def get_latest_jdk(jdks=None):
+	jdk_version = []
+	for jdk in jdks:
+		if jdk == "use":
+			continue
+		jdk_version.append(jdk)
+	if len(jdk_version) > 0:
+		jdk_version.sort(reverse=True)
+		return jdk_version[0]
+	return None
+
+
+def get_read_version(version=None):
+	if version is None:
+		return version
+	v = "JDK"+version["version"]
+	if "update" in version:
+		v += "u"+version["update"]
+	return v
+
+
+def get_java_version(path="", check_all=False, executable=None):
+	if executable is None:
+		if check_all:
+			all_version = None
+			for exe in get_settings("java_executables"):
+				executable = get_executable(exe, path)
+				version = get_java_version(path, False, executable)
+				if version is None:
+					return None
+				elif all_version is None:
+					all_version = version
+			return all_version
+		else:
+			executable = get_executable("version", path)
+	if executable is None:
+		return None
+	output = JavatarBlockShell().run("\""+executable+"\" -version")
+	if output["data"] is not None:
+		match = re.search(get_settings("java_version_match"), output["data"])
+		if match is not None:
+			version = {}
+			if match.lastindex > 0:
+				version["version"] = match.group(1)
+				if match.lastindex > 1:
+					version["update"] = match.group(2)
+			return version
+	return None
+
+
+def dict_to_list(dicto):
+	olist = []
+	for key in dicto:
+		olist.append(dicto[key])
+	return olist
+
+
+def is_jdk_dir(path):
+	required_files = dict_to_list(get_settings("java_executables"))
+	for name in os.listdir(path):
+		pathname = os.path.join(path, name)
+		if os.path.isfile(pathname):
+			filename, ext = os.path.splitext(name)
+			while filename in required_files and (ext == "" or ext == ".exe"):
+				required_files.remove(filename)
+	return len(required_files) <= 0
+
+
+def get_jdk_dirs(path):
+	jdk_dirs = {}
+
+	for name in os.listdir(path):
+		pathname = os.path.join(path, name)
+		if os.path.isdir(pathname):
+			if is_jdk_dir(pathname):
+				version = get_java_version(pathname)
+				if version is not None:
+					jdk = {
+						"path": pathname,
+						"version": version["version"]
+					}
+					if "update" in version:
+						jdk["update"] = version["update"]
+					jdk_dirs[get_read_version(version)] = jdk
+			dirs = get_jdk_dirs(pathname)
+			for key in dirs:
+				jdk_dirs[key] = dirs[key]
+	return jdk_dirs
+
+
+def get_default_jdk(jdks=None):
+	if jdks is None:
+		jdks = get_settings("jdk_version")
+	if "use" not in jdks:
+		return None
+	if jdks["use"] == "":
+		return {"path":""}
+	elif jdks["use"] in jdks:
+		return jdks[jdks["use"]]
+	return None
+
+
+def verify_jdk(jdks=None, listener=None):
+	if jdks is None:
+		jdks = get_settings("jdk_version")
+	if "use" in jdks:
+		if jdks["use"] == "":
+			version = get_read_version(get_java_version(check_all=True))
+			if version is None:
+				del jdks["use"]
+				return verify_jdk(jdks)
+			else:
+				if listener is not None:
+					listener("default_checked", version)
+				return jdks
+		if jdks["use"] in jdks:
+			jdk = jdks[jdks["use"]]
+			if "path" in jdk and "version" in jdk:
+				if listener is not None:
+					listener("selected", get_read_version(jdk))
+				return jdks
+			else:
+				del jdks[jdks["use"]]
+				del jdks["use"]
+				return verify_jdk(jdks)
+	platform = sublime.platform()
+	installation_path = get_settings("jdk_installation")
+	default_java = get_read_version(get_java_version(check_all=True))
+	if default_java is None:
+		if listener is not None:
+			listener("no_default", None)
+	else:
+		jdks["use"] = ""
+		if listener is not None:
+			listener("default_detected", default_java)
+
+	if platform in installation_path:
+		for path in installation_path[platform]:
+			if os.path.exists(path) and os.path.isdir(path):
+				dirs = get_jdk_dirs(path)
+				for key in dirs:
+					jdks[key] = dirs[key]
+	if "use" not in jdks:
+		latest_jdk = get_latest_jdk(jdks)
+		if latest_jdk is None:
+			return None
+		if listener is not None:
+			listener("latest", latest_jdk)
+		jdks["use"] = latest_jdk
+	return jdks
+
+
+def get_executable(name, path=None):
+	if name not in get_settings("java_executables"):
+		return None
+	if path is None:
+		jdk = get_default_jdk()
+		if jdk is None:
+			return jdk
+		else:
+			path = jdk["path"]
+	return os.path.join(path, get_settings("java_executables")[name])
+
+
+class JavatarJDKDetectionThread(threading.Thread):
+	def __init__(self):
+		threading.Thread.__init__(self)
+
+	def listener(self, detection, version):
+		if detection == "default_checked" or detection == "default_detected":
+			print("[Javatar] Use default Java version [" + version + "]")
+		elif detection == "selected":
+			print("[Javatar] Use " + version)
+		elif detection == "latest":
+			print("[Javatar] Use latest installed version [" + version + "]")
+		elif is_debug():
+			print("JDK Detection: " + detection)
+
+	def run(self, renew=False):
+		try:
+			jdks = verify_jdk(None, self.listener)
+			if jdks is not None:
+				set_settings("jdk_version", jdks)
+			else:
+				print("[Javatar] No JDK found")
+				sublime.error_message("Javatar cannot find JDK installed in your computer.\n\nPlease install or settings the location of installed JDK.")
+			self.result = True
+		except Exception as e:
+			print("JDK Detection Error: " + str(e))
+			self.result = False

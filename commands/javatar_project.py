@@ -3,6 +3,9 @@ import sublime_plugin
 from ..utils import *
 
 
+# Multiple source folder
+
+
 class JavatarProjectCommand(sublime_plugin.WindowCommand):
 	def is_source_folder(self, path, can_empty=True):
 		empty = True

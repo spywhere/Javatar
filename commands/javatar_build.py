@@ -34,6 +34,8 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 			file_path = self.build_list[0]
 			del self.build_list[0]
 			build = self.create_build(file_path)
+			if build is None:
+				return
 			self.progress.add(build, get_path("name", file_path))
 			if not self.progress.running:
 				self.progress.run()
@@ -60,13 +62,16 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 			if not isdir(output_dir):
 				makedirs(output_dir)
 			self.macro_data["d"] = "-d \"" + output_dir + "\""
+		executable = get_executable("build")
+		if executable is None:
+			return None
 		build_script = parse_macro(get_settings("build_command"), self.macro_data, file_path)
-		shell = JavatarSilentShell(build_script, self.on_build_done)
+		shell = JavatarSilentShell(executable+" "+build_script, self.on_build_done)
 		shell.set_cwd(parse_macro(get_settings("build_location"), self.macro_data))
 		shell.start()
 		return shell
 
-	def on_build_done(self, elapse_time, data, return_code):
+	def on_build_done(self, elapse_time, data, return_code, params):
 		if self.build_size > 0 and self.view is not None and self.view.window() is None:
 			self.build_size = -1
 			return

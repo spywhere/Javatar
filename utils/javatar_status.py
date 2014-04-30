@@ -1,9 +1,11 @@
 import sublime
 from .javatar_utils import *
 
+
 STATUS_NAME = "Javatar"
 STATUS = None
 TAB_NOTIFICATION = None
+
 
 class JavatarTabNotification():
 	running = False
