@@ -5,10 +5,10 @@ from ..utils import *
 
 
 def getInfo(text):
-	relative = True
+	relative = False
 	if text.startswith("~"):
 		text = text[1:]
-		relative = False
+		relative = True
 
 	if not is_project() and not is_file():
 		sublime.error_message("Unknown package location")
@@ -17,7 +17,7 @@ def getInfo(text):
 		sublime.error_message("Invalid package naming")
 		return
 
-	package = normalize_package(get_current_package(not relative) + "." + get_package_path(text))
+	package = normalize_package(get_current_package(relative) + "." + get_package_path(text))
 	className = get_class_name_by_regex(text)
 
 	target_dir = make_package(get_package_root_dir(), package_as_directory(package), True)
@@ -40,7 +40,7 @@ def getFileContents(classType, info):
 	data = data.replace("%class%", info["class"])
 	data = data.replace("%file%", info["file"])
 	data = data.replace("%file_name%", get_path("name", info["file"]))
-	data = data.replace("%package_path%", get_current_package())
+	data = data.replace("%package_path%", get_current_package(True))
 	return data
 
 

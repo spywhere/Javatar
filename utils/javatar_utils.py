@@ -147,10 +147,10 @@ def to_readable_size(filepath):
 
 def get_current_package(relative=False):
 	from .javatar_validator import is_project, is_file
-	if not relative and is_file() and get_path("current_dir") is not None:
-		return to_package(get_path("current_dir"))
-	elif not relative and is_project() and get_path("source_folder") is not None:
-		return to_package(get_path("source_folder"))
+	if is_file() and get_path("current_dir") is not None:
+		return to_package(get_path("current_dir"), relative)
+	elif is_project() and get_path("source_folder") is not None:
+		return to_package(get_path("source_folder"), relative)
 	else:
 		return ""
 
@@ -235,9 +235,9 @@ def get_macro_data():
 	source_data["packages_path"] = sublime.packages_path()
 	source_data["sep"] = os.sep
 	if is_file():
-		source_data["full_class_path"] = normalize_package(get_current_package()+"."+get_class_name())
+		source_data["full_class_path"] = normalize_package(get_current_package(True)+"."+get_class_name())
 		source_data["class_name"] = get_class_name()
-		source_data["package"] = get_current_package()
+		source_data["package"] = get_current_package(True)
 	return source_data
 
 
@@ -302,18 +302,24 @@ class JavatarMergedDict():
 		self.local_dict = dict2
 
 	def get_dict(self, custom=None):
-		global_dict = deepcopy(self.global_dict)
+		if self.global_dict is None:
+			global_dict = {}
+		else:
+			global_dict = deepcopy(self.global_dict)
 		if self.local_dict is not None:
 			if custom is not None:
 				return custom(global_dict, self.local_dict)
 			for setting in self.local_dict:
 				global_dict[setting] = self.local_dict[setting]
-		return global_dict
+		if global_dict is not None and len(global_dict) > 0:
+			return global_dict
+		else:
+			return None
 
 	def get(self, key):
 		if self.local_dict is not None and key in self.local_dict:
 			return self.local_dict[key]
-		elif key in self.global_dict:
+		elif self.global_dict is not None and key in self.global_dict:
 			return self.global_dict[key]
 		return None
 
@@ -346,7 +352,10 @@ class JavatarMergedDict():
 			return None
 
 	def get_global_dict(self):
-		return self.global_dict
+		if self.global_dict is not None and len(self.global_dict) > 0:
+			return self.global_dict
+		else:
+			return None
 
 
 class JavatarDict():

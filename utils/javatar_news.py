@@ -4,10 +4,10 @@ from .javatar_updater import *
 
 
 # YY.MM.DD.HH.MM
-VERSION = "14.05.01.00.05b"
+VERSION = "14.05.02.01.02b"
 UPDATEFOR = "all"
-NEWSID = 14
-NEWS = " - Run Main Class feature, now available on Stable Channel\n - Fix internal shell did not work on Windows, finally\n - Multi-thread build system now support\n - Fix Run Main Class error when run on an empty window\n\nSee README for more info and also a new screenshot"
+NEWSID = 15
+NEWS = " - JDK Settings, now you can select which JDK you want to use. And also no more PATH settings now :D\n - Build and Run with dependencies\n\nJavatar has grow so much since the beginning, the manual is also bigger, so that Javatar has changed the README file to JavatarDoc that hosted on readthedocs.org instead. A link to JavatarDoc is located inside README file."
 
 
 def get_version():

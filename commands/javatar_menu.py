@@ -7,7 +7,7 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 	qm = None
 	menuStable = {
 		"main": {
-			"items": [["Builds...", "Build system"], ["Calls...", "Insert class informations"], ["Create...", "Create a new class or package"], ["Operations...", "Do a Java operation"], ["Project Settings...", "Adjust project settings"], ["Packages Manager...", "Javatar packages manager"]],
+			"items": [["Builds...", "Build system"], ["Calls...", "Insert class informations"], ["Create...", "Create a new class or package"], ["Operations...", "Do a Java operation"], ["Project Settings...", "Adjust per-project settings"], ["Javatar Settings...", "Adjust Javatar settings"], ["Packages Manager...", "Javatar packages manager"]],
 			"actions": [
 				{
 					"name": "builds"
@@ -19,6 +19,8 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 					"name": "operations"
 				}, {
 					"name": "project_settings"
+				}, {
+					"name": "global_settings"
 				}, {
 					"name": "package_manager"
 				}
@@ -108,35 +110,81 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 		},
 		"project_settings": {
 			"selected_index": 2,
-			"items": [["Back", "Back to previous menu"], ["Dependencies...", "Manage project dependencies"], ["Set Source Folder", "Set source folder to specified as default package"]],
+			"items": [["Back", "Back to previous menu"], ["Dependencies...", "Manage project dependencies"], ["Set Source Folder", "Set source folder to specified as default package"], ["Set Default JDK", "Set default JDK for builds and runs"]],
 			"actions": [
 				{
 					"name": "main"
 				}, {
-					"name": "dependencies"
+					"name": "local_dependencies"
 				}, {
-					"command": "javatar_project",
+					"command": "javatar_settings",
 					"args": {
 						"actiontype": "set_source_folder"
+					}
+				}, {
+					"command": "javatar_settings",
+					"args": {
+						"actiontype": "set_jdk",
+						"arg1": True
 					}
 				}
 			]
 		},
-		"dependencies": {
+		"global_settings": {
+			"selected_index": 2,
+			"items": [["Back", "Back to previous menu"], ["Dependencies...", "Manage default dependencies"], ["Set Default JDK", "Set default JDK for builds and runs"]],
+			"actions": [
+				{
+					"name": "main"
+				}, {
+					"name": "global_dependencies"
+				}, {
+					"command": "javatar_settings",
+					"args": {
+						"actiontype": "set_jdk",
+						"arg1": False
+					}
+				}
+			]
+		},
+		"local_dependencies": {
 			"selected_index": 2,
 			"items": [["Back", "Back to previous menu"], ["Add External .jar", "Add dependency .jar file"], ["Add Class Folder", "Add dependency class folder"]],
 			"actions": [
 				{
 					"name": "project_settings"
 				}, {
-					"command": "javatar_project",
+					"command": "javatar_settings",
 					"args": {
-						"actiontype": "add_external_jar"
+						"actiontype": "add_external_jar",
+						"arg1": True
 					}
 				}, {
-					"command": "javatar_project",
+					"command": "javatar_settings",
 					"args": {
-						"actiontype": "add_class_folder"
+						"actiontype": "add_class_folder",
+						"arg1": True
+					}
+				}
+			]
+		},
+		"global_dependencies": {
+			"selected_index": 2,
+			"items": [["Back", "Back to previous menu"], ["Add External .jar", "Add dependency .jar file"], ["Add Class Folder", "Add dependency class folder"]],
+			"actions": [
+				{
+					"name": "global_settings"
+				}, {
+					"command": "javatar_settings",
+					"args": {
+						"actiontype": "add_external_jar",
+						"arg1": False
+					}
+				}, {
+					"command": "javatar_settings",
+					"args": {
+						"actiontype": "add_class_folder",
+						"arg1": False
 					}
 				}
 			]

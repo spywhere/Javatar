@@ -3,15 +3,18 @@ import re
 import os
 import threading
 from .javatar_shell import *
+from .javatar_thread import *
 from .javatar_utils import *
 
 
 # JDK Path both global and project
 
 
-def detect_jdk():
-	thread = JavatarJDKDetectionThread()
+def detect_jdk(silent=False, on_done=None, progress=False):
+	thread = JavatarJDKDetectionThread(silent, on_done)
 	thread.start()
+	if progress:
+		ThreadProgress(thread, "Javatar is detecting installed JDK", "Javatar has finished JDK detection")
 
 
 def normalize_package(package):
@@ -147,7 +150,7 @@ def get_java_version(path="", check_all=False, executable=None):
 			executable = get_executable("version", path)
 	if executable is None:
 		return None
-	output = JavatarBlockShell().run("\""+executable+"\" -version")
+	output = JavatarBlockShell().run(executable+" -version")
 	if output["data"] is not None:
 		match = re.search(get_settings("java_version_match"), output["data"])
 		if match is not None:
@@ -228,6 +231,10 @@ def verify_jdk(jdks=None, listener=None):
 		if jdks.has(jdks.get("use")):
 			jdk = jdks.get(jdks.get("use"))
 			if "path" in jdk and "version" in jdk:
+				if not os.path.exists(jdk["path"]) or not is_jdk_dir(jdk["path"]):
+					jdks.set(jdks.get("use"), None)
+					jdks.set("use", None)
+					return verify_jdk(jdks, listener)
 				if listener is not None:
 					listener("selected", get_read_version(jdk))
 				return jdks
@@ -251,7 +258,7 @@ def verify_jdk(jdks=None, listener=None):
 				dirs = get_jdk_dirs(path)
 				for key in dirs:
 					jdks.set(key, dirs[key])
-	if not jdks.has("use"):
+	if not jdks.has("use") and jdks.get_dict() is not None:
 		latest_jdk = get_latest_jdk(jdks.get_dict())
 		if latest_jdk is None:
 			return None
@@ -270,14 +277,18 @@ def get_executable(name, path=None):
 			return jdk
 		else:
 			path = jdk["path"]
-	return os.path.join(path, get_settings("java_executables")[name])
+	return "\""+os.path.join(path, get_settings("java_executables")[name])+"\""
 
 
 class JavatarJDKDetectionThread(threading.Thread):
-	def __init__(self):
+	def __init__(self, silent=False, on_done=None):
+		self.silent = silent
+		self.on_done = on_done
 		threading.Thread.__init__(self)
 
 	def listener(self, detection, version):
+		if self.silent:
+			return
 		if detection == "default_checked" or detection == "default_detected":
 			print("[Javatar] Use default Java version [" + version + "]")
 		elif detection == "selected":
@@ -290,15 +301,22 @@ class JavatarJDKDetectionThread(threading.Thread):
 	def run(self, renew=False):
 		try:
 			jdks = verify_jdk(None, self.listener)
-			if jdks is not None:
-				set_settings("jdk_version", jdks.get_global_dict())
+			if jdks is not None and jdks.get_dict() is not None:
+				if jdks.get_global_dict() is not None:
+					set_settings("jdk_version", jdks.get_global_dict())
+				else:
+					del_settings("jdk_version")
 				if jdks.get_local_dict() is not None:
 					set_settings("jdk_version", jdks.get_local_dict(), True)
 				else:
 					del_settings("jdk_version", True)
 			else:
+				del_settings("jdk_version")
+				del_settings("jdk_version", True)
 				print("[Javatar] No JDK found")
 				sublime.error_message("Javatar cannot find JDK installed in your computer.\n\nPlease install or settings the location of installed JDK.")
+			if self.on_done is not None:
+				self.on_done()
 			self.result = True
 		except Exception as e:
 			print("JDK Detection Error: " + str(e))

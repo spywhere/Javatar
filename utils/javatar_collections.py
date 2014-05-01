@@ -118,59 +118,66 @@ def get_snippet_list():
 	return slist
 
 
-def get_dependencies():
-	dependencies = []
-	project_dependencies = get_project_settings("dependencies")
+def get_dependencies(local=True):
+	out_dependencies = []
+	if local:
+		dependencies = get_project_settings("dependencies")
+	else:
+		dependencies = get_global_settings("dependencies")
 	from os.path import exists
-	if project_dependencies is not None:
-		for dependency in project_dependencies:
+	if dependencies is not None:
+		for dependency in dependencies:
 			if exists(dependency):
-				dependencies.append([dependency, True])
-	for dependency in get_global_settings("dependencies"):
-		if exists(dependency):
-			dependencies.append([dependency, False])
-	return dependencies
+				out_dependencies.append([dependency, local])
+	if local:
+		for dependency in get_global_settings("dependencies"):
+			if exists(dependency):
+				out_dependencies.append([dependency, not local])
+	return out_dependencies
 
 
-def refresh_dependencies():
+def refresh_dependencies(local=None):
+	if local is None:
+		refresh_dependencies(True)
+		refresh_dependencies(False)
+		return
 	dependency_menu = {
 		"selected_index": 2,
 		"items": [["Back", "Back to previous menu"], ["Add External .jar", "Add dependency .jar file"], ["Add Class Folder", "Add dependency class folder"]],
 		"actions": [
 			{
 				"name": "project_settings"
-			}, {
-				"command": "javatar_project",
-				"args": {
-					"actiontype": "add_external_jar"
-				}
-			}, {
-				"command": "javatar_project",
-				"args": {
-					"actiontype": "add_class_folder"
-				}
 			}
 		]
 	}
-	dependencies = get_dependencies()
+
+	dependency_menu["actions"].append({"command": "javatar_settings", "args": {"actiontype": "add_external_jar", "arg1": local}})
+	dependency_menu["actions"].append({"command": "javatar_settings", "args": {"actiontype": "add_class_folder", "arg1": local}})
+
+	dependencies = get_dependencies(local)
 	for dependency in dependencies:
 		from os.path import isdir
 		if dependency[1]:
-			dependency_menu["actions"].append({"command": "javatar_project", "args": {"actiontype": "remove_dependency", "arg1": dependency[0], "arg2": True}})
+			dependency_menu["actions"].append({"command": "javatar_settings", "args": {"actiontype": "remove_dependency", "arg1": dependency[0], "arg2": True}})
 			name = get_path("name", dependency[0])
 			if isdir(dependency[0]):
 				dependency_menu["items"].append(["["+get_path("name", dependency[0])+"]", "Project dependency. Select to remove from the list"])
 			else:
 				dependency_menu["items"].append([get_path("name", dependency[0]), "Project dependency. Select to remove from the list"])
 		else:
-			dependency_menu["actions"].append({"command": "javatar_project", "args": {"actiontype": "remove_dependency", "arg1": dependency[0], "arg2": False}})
+			dependency_menu["actions"].append({"command": "javatar_settings", "args": {"actiontype": "remove_dependency", "arg1": dependency[0], "arg2": False}})
 			name = get_path("name", dependency[0])
 			if isdir(dependency[0]):
 				dependency_menu["items"].append(["["+get_path("name", dependency[0])+"]", "Global dependency. Select to remove from the list"])
 			else:
 				dependency_menu["items"].append([get_path("name", dependency[0]), "Global dependency. Select to remove from the list"])
+	menu_name = "_dependencies"
+	if local:
+		menu_name = "local" + menu_name
+	else:
+		menu_name = "global" + menu_name
 	sublime.active_window().run_command("javatar", {"replaceMenu": {
-		"name": "dependencies",
+		"name": menu_name,
 		"menu": dependency_menu
 	}})
 

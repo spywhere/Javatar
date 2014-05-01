@@ -62,7 +62,7 @@ class JavatarStatus():
 		if view is not None:
 			from .javatar_validator import is_java
 			if is_ready() and is_java() and get_settings("show_package_path"):
-				view.set_status(STATUS_NAME, "Package: " + to_readable_package(get_current_package(), True))
+				view.set_status(STATUS_NAME, "Package: " + to_readable_package(get_current_package(True), True))
 			else:
 				view.erase_status(STATUS_NAME)
 		self.running = False
