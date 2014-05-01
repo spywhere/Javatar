@@ -5,6 +5,17 @@ import copy
 import sublime
 
 
+# Memory support, condition
+'''
+{
+	"memory": ["add", "key", "value"]
+			  ["set", "key", "value"]
+			  ["del", "key"]
+			  ["if", "key", "is", "value", "command"]
+}
+'''
+
+
 class QuickMenu:
 	settings = {
 		"menu": [],

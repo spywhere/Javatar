@@ -6,6 +6,9 @@ from .javatar_shell import *
 from .javatar_utils import *
 
 
+# JDK Path both global and project
+
+
 def detect_jdk():
 	thread = JavatarJDKDetectionThread()
 	thread.start()
@@ -199,39 +202,38 @@ def get_jdk_dirs(path):
 
 def get_default_jdk(jdks=None):
 	if jdks is None:
-		jdks = get_settings("jdk_version")
-	if "use" not in jdks:
+		jdks = JavatarMergedDict(get_global_settings("jdk_version"), get_project_settings("jdk_version"))
+	if not jdks.has("use"):
 		return None
-	if jdks["use"] == "":
+	if jdks.get("use") == "":
 		return {"path":""}
-	elif jdks["use"] in jdks:
-		return jdks[jdks["use"]]
+	elif jdks.has(jdks.get("use")):
+		return jdks.get(jdks.get("use"))
 	return None
 
 
 def verify_jdk(jdks=None, listener=None):
 	if jdks is None:
-		jdks = get_settings("jdk_version")
-	if "use" in jdks:
-		if jdks["use"] == "":
+		jdks = JavatarMergedDict(get_global_settings("jdk_version"), get_project_settings("jdk_version"))
+	if jdks.has("use"):
+		if jdks.get("use") == "":
 			version = get_read_version(get_java_version(check_all=True))
 			if version is None:
-				del jdks["use"]
-				return verify_jdk(jdks)
+				jdks.set("use", None)
+				return verify_jdk(jdks, listener)
 			else:
 				if listener is not None:
 					listener("default_checked", version)
 				return jdks
-		if jdks["use"] in jdks:
-			jdk = jdks[jdks["use"]]
+		if jdks.has(jdks.get("use")):
+			jdk = jdks.get(jdks.get("use"))
 			if "path" in jdk and "version" in jdk:
 				if listener is not None:
 					listener("selected", get_read_version(jdk))
 				return jdks
-			else:
-				del jdks[jdks["use"]]
-				del jdks["use"]
-				return verify_jdk(jdks)
+		jdks.set(jdks.get("use"), None)
+		jdks.set("use", None)
+		return verify_jdk(jdks, listener)
 	platform = sublime.platform()
 	installation_path = get_settings("jdk_installation")
 	default_java = get_read_version(get_java_version(check_all=True))
@@ -239,7 +241,7 @@ def verify_jdk(jdks=None, listener=None):
 		if listener is not None:
 			listener("no_default", None)
 	else:
-		jdks["use"] = ""
+		jdks.set("use", "")
 		if listener is not None:
 			listener("default_detected", default_java)
 
@@ -248,14 +250,14 @@ def verify_jdk(jdks=None, listener=None):
 			if os.path.exists(path) and os.path.isdir(path):
 				dirs = get_jdk_dirs(path)
 				for key in dirs:
-					jdks[key] = dirs[key]
-	if "use" not in jdks:
-		latest_jdk = get_latest_jdk(jdks)
+					jdks.set(key, dirs[key])
+	if not jdks.has("use"):
+		latest_jdk = get_latest_jdk(jdks.get_dict())
 		if latest_jdk is None:
 			return None
 		if listener is not None:
 			listener("latest", latest_jdk)
-		jdks["use"] = latest_jdk
+		jdks.set("use", latest_jdk)
 	return jdks
 
 
@@ -289,7 +291,11 @@ class JavatarJDKDetectionThread(threading.Thread):
 		try:
 			jdks = verify_jdk(None, self.listener)
 			if jdks is not None:
-				set_settings("jdk_version", jdks)
+				set_settings("jdk_version", jdks.get_global_dict())
+				if jdks.get_local_dict() is not None:
+					set_settings("jdk_version", jdks.get_local_dict(), True)
+				else:
+					del_settings("jdk_version", True)
 			else:
 				print("[Javatar] No JDK found")
 				sublime.error_message("Javatar cannot find JDK installed in your computer.\n\nPlease install or settings the location of installed JDK.")

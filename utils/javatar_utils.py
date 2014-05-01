@@ -1,5 +1,6 @@
 import sublime
 import os
+from copy import deepcopy
 from .javatar_actions import *
 
 
@@ -61,6 +62,19 @@ def set_settings(key, val, project=False):
 	else:
 		SETTINGS.set(key, val)
 		sublime.save_settings(SETTINGSBASE)
+
+
+def del_settings(key, project=False):
+	if project:
+		window = sublime.active_window()
+		project_data = window.project_data()
+		if key in project_data:
+			del project_data[key]
+			window.set_project_data(project_data)
+	else:
+		if SETTINGS.has(key):
+			SETTINGS.erase(key)
+			sublime.save_settings(SETTINGSBASE)
 
 
 def is_debug():
@@ -280,3 +294,86 @@ def get_path(path_type="", dir_path="", dir_path2=""):
 		return name[0]
 	else:
 		return ""
+
+
+class JavatarMergedDict():
+	def __init__(self, dict1, dict2):
+		self.global_dict = dict1
+		self.local_dict = dict2
+
+	def get_dict(self, custom=None):
+		global_dict = deepcopy(self.global_dict)
+		if self.local_dict is not None:
+			if custom is not None:
+				return custom(global_dict, self.local_dict)
+			for setting in self.local_dict:
+				global_dict[setting] = self.local_dict[setting]
+		return global_dict
+
+	def get(self, key):
+		if self.local_dict is not None and key in self.local_dict:
+			return self.local_dict[key]
+		elif key in self.global_dict:
+			return self.global_dict[key]
+		return None
+
+	def has(self, key):
+		return (self.local_dict is not None and key in self.local_dict) or (self.global_dict is not None and key in self.global_dict)
+
+	def set(self, key, val, follow_level=True):
+		# Follow level:
+		# Set global only, except specified
+		# Remove local then global
+		if val is None:
+			if self.local_dict is not None and key in self.local_dict and follow_level:
+				del self.local_dict[key]
+			elif key in self.global_dict:
+				del self.global_dict[key]
+		else:
+			if follow_level:
+				if self.global_dict is None:
+					self.global_dict = {}
+				self.global_dict[key] = val
+			else:
+				if self.local_dict is None:
+					self.local_dict = {}
+				self.local_dict[key] = val
+
+	def get_local_dict(self):
+		if self.local_dict is not None and len(self.local_dict) > 0:
+			return self.local_dict
+		else:
+			return None
+
+	def get_global_dict(self):
+		return self.global_dict
+
+
+class JavatarDict():
+	def __init__(self, dict1):
+		self.jdict = dict1
+
+	def get_dict(self, custom=None):
+		return self.jdict
+
+	def get(self, key):
+		if self.jdict is not None and key in self.jdict:
+			return self.jdict[key]
+		return None
+
+	def has(self, key):
+		return (self.jdict is not None and key in self.jdict)
+
+	def set(self, key, val, to_global=False):
+		if val is None and self.jdict is not None and key in self.jdict and to_global:
+			del self.jdict[key]
+		else:
+			if self.jdict is None:
+				self.jdict = {}
+			self.jdict[key] = val
+
+	def get_local_dict(self):
+		return None
+
+	def get_global_dict(self):
+		return self.jdict
