@@ -15,8 +15,7 @@ def is_java(filepath=""):
 	if filepath is None or filepath is "":
 		filepath = view.file_name()
 	else:
-		view = None
-	isjava = False
+		filepath = None
 	if filepath is not None:
 		filename, ext = os.path.splitext(os.path.basename(filepath))
 		for extension in get_settings("java_extensions"):

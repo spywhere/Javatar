@@ -100,17 +100,18 @@ def package_as_directory(package):
 	return merge_path(package.split("."))
 
 
-def make_package(current_dir, package, silent=False):
-	target_dir = get_path("join", current_dir, package_as_directory(package))
-	if not os.path.exists(target_dir):
+def make_package(package_dir, silent=False):
+	if not os.path.exists(package_dir):
 		try:
-			os.makedirs(target_dir)
+			os.makedirs(package_dir)
 		except BaseException as e:
 			sublime.error_message("Error while create a package: " + str(e))
+			return False
 	else:
 		if not silent:
 			sublime.message_dialog("Package is already exists")
-	return target_dir
+		return False
+	return True
 
 
 def get_latest_jdk(jdks=None):

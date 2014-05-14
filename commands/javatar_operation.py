@@ -8,7 +8,7 @@ class JavatarCorrectClassCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
 		get_action().add_action("javatar.command.operation.correct_class.run", "Correct class")
 		if is_file() and is_java():
-			packageName = get_current_package(True)
+			packageName = get_current_package()
 			packageRegions = self.view.find_by_selector(get_settings("package_name_selector"))
 			classRegions = self.view.find_by_selector(get_settings("class_name_selector"))
 			if len(classRegions) > 0:

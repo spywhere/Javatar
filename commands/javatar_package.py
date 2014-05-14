@@ -222,12 +222,16 @@ class JavatarCreatePackageCommand(sublime_plugin.WindowCommand):
 			text = text[1:]
 			relative = False
 
-		if not is_project() and not is_file():
+		if not is_project() and not (is_project() and is_file()):
 			sublime.error_message("Cannot specify package location")
 			return
 		if not is_package(text):
 			sublime.error_message("Invalid package naming")
 			return
-
-		target_dir = make_package(get_package_root_dir(relative), text)
-		show_status("Package \""+to_package(target_dir)+"\" is created", None, False)
+		if relative and get_path("current_dir") is not None:
+			create_directory = get_path("join", get_path("current_dir"), package_as_directory(text))
+		else:
+			create_directory = get_path("join", get_package_root_dir(), package_as_directory(text))
+		package = to_package(get_path("relative", create_directory, get_package_root_dir()), False)
+		make_package(create_directory)
+		show_status("Package \""+package+"\" is created", None, False)

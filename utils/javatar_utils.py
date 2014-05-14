@@ -32,7 +32,13 @@ def read_settings(config):
 
 def get_project_settings(key, asList=False):
 	project_data = sublime.active_window().project_data()
-	if key in project_data:
+	if "javatar" in project_data and key in project_data["javatar"]:
+		if asList:
+			return [project_data["javatar"][key], True]
+		else:
+			return project_data["javatar"][key]
+	elif key in project_data:
+		# Deprecated
 		if asList:
 			return [project_data[key], True]
 		else:
@@ -57,7 +63,12 @@ def get_settings(key, asList=False):
 def set_settings(key, val, project=False):
 	if project:
 		project_data = sublime.active_window().project_data()
-		project_data[key] = val
+		if "javatar" in project_data:
+			data = project_data["javatar"]
+		else:
+			data = {}
+		data[key] = val
+		project_data["javatar"] = data
 		sublime.active_window().set_project_data(project_data)
 	else:
 		SETTINGS.set(key, val)
@@ -68,8 +79,8 @@ def del_settings(key, project=False):
 	if project:
 		window = sublime.active_window()
 		project_data = window.project_data()
-		if key in project_data:
-			del project_data[key]
+		if "javatar" in project_data and key in project_data["javatar"]:
+			del project_data["javatar"][key]
 			window.set_project_data(project_data)
 	else:
 		if SETTINGS.has(key):
@@ -91,7 +102,7 @@ def normalize_path(path):
 	if parent != get_path("parent", parent):
 		parent = normalize_path(parent)
 	for dir_path in os.listdir(parent):
-		if dir_path.lower() == name:
+		if dir_path.lower() == name.lower():
 			return get_path("join", parent, dir_path)
 	return path
 
@@ -101,13 +112,6 @@ def split_path(path):
 	if len(rest) <= 1:
 		return tail,
 	return split_path(rest) + (tail,)
-
-
-def join_path(paths):
-	outpath = ""
-	for path in paths:
-		outpath = os.path.join(outpath, path)
-	return outpath
 
 
 def merge_path(pathlist):
@@ -145,7 +149,7 @@ def to_readable_size(filepath):
 	return str(int(filesize/scale[0]*100)/100)+scale[1]
 
 
-def get_current_package(relative=False):
+def get_current_package(relative=True):
 	from .javatar_validator import is_project, is_file
 	if is_file() and get_path("current_dir") is not None:
 		return to_package(get_path("current_dir"), relative)
@@ -175,11 +179,9 @@ def to_package(path, relative=True):
 	return normalize_package(package)
 
 
-def get_package_root_dir(relative=False):
+def get_package_root_dir():
 	from .javatar_validator import is_project, is_file
-	if is_file() and relative:
-		return get_path("current_dir")
-	elif is_project():
+	if is_project():
 		return get_path("source_folder")
 	elif get_path("current_dir") is not None:
 		return get_path("current_dir")
@@ -235,9 +237,9 @@ def get_macro_data():
 	source_data["packages_path"] = sublime.packages_path()
 	source_data["sep"] = os.sep
 	if is_file():
-		source_data["full_class_path"] = normalize_package(get_current_package(True)+"."+get_class_name())
+		source_data["full_class_path"] = normalize_package(get_current_package()+"."+get_class_name())
 		source_data["class_name"] = get_class_name()
-		source_data["package"] = get_current_package(True)
+		source_data["package"] = get_current_package()
 	return source_data
 
 
@@ -248,27 +250,19 @@ def get_path(path_type="", dir_path="", dir_path2=""):
 		path = get_settings("source_folder")
 		if path != "":
 			return path
-		if path is None:
-			path = ""
-		folders = window.folders()
-		if len(folders) == 1:
-			return folders[0]
-		for folder in folders:
-			if is_file() and contains_file(folder, get_path("current_file")):
-				path = folder
-				break
-		return path
+		return get_path("project_dir")
 	elif path_type == "project_dir":
+		path = get_path("current_dir")
 		folders = window.folders()
 		if len(folders) == 1:
 			return folders[0]
 		elif len(folders) > 1:
-			return get_path("parent", folders[0])
-		for folder in folders:
-			if is_file() and contains_file(folder, get_path("current_file")):
-				return folder
-				break
-		return ""
+			if path is None:
+				path = folders[0]
+			for folder in folders:
+				if is_file() and contains_file(folder, get_path("current_file")):
+					return folder
+		return path
 	elif path_type == "current_dir":
 		if get_path("current_file") is not None:
 			return get_path("parent", get_path("current_file"))

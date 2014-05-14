@@ -5,26 +5,27 @@ from ..utils import *
 
 
 def getInfo(text):
-	relative = False
+	relative = True
 	if text.startswith("~"):
 		text = text[1:]
-		relative = True
+		relative = False
 
-	if not is_project() and not is_file():
-		sublime.error_message("Unknown package location")
+	if not is_project() and not (is_project() and is_file()):
+		sublime.error_message("Cannot specify package location")
 		return
 	if not is_package(text):
 		sublime.error_message("Invalid package naming")
 		return
+	if relative and get_path("current_dir") is not None:
+		create_directory = get_path("join", get_path("current_dir"), package_as_directory(get_package_path(text)))
+	else:
+		create_directory = get_path("join", get_package_root_dir(), package_as_directory(get_package_path(text)))
 
-	package = normalize_package(get_current_package(relative) + "." + get_package_path(text))
+	package = to_package(get_path("relative", create_directory, get_package_root_dir()), False)
+	make_package(create_directory, True)
 	className = get_class_name_by_regex(text)
-
-	target_dir = make_package(get_package_root_dir(), package_as_directory(package), True)
-	target_dir = normalize_path(target_dir)
-	package = to_package(target_dir)
-	file_path = get_path("join", get_package_root_dir(), get_path("join", package_as_directory(package), className + ".java"))
-	return {"file": file_path, "package": package, "class": className, "relative": relative}
+	file_path = get_path("join", create_directory, className + ".java")
+	return {"file": file_path, "package": package, "class": className}
 
 
 def getFileContents(classType, info):
@@ -40,7 +41,7 @@ def getFileContents(classType, info):
 	data = data.replace("%class%", info["class"])
 	data = data.replace("%file%", info["file"])
 	data = data.replace("%file_name%", get_path("name", info["file"]))
-	data = data.replace("%package_path%", get_current_package(True))
+	data = data.replace("%package_path%", info["package"])
 	return data
 
 

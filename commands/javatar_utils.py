@@ -2,6 +2,7 @@ import sublime
 import sublime_plugin
 import hashlib
 import urllib.request
+from ..parser import *
 from ..utils import *
 
 
@@ -27,11 +28,36 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
 				sublime.active_window().show_input_panel("URL:", "", self.remote_hash, None, None)
 		elif util_type == "hash":
 			if not is_stable():
-				print(hashlib.sha256(self.view.substr(sublime.Region(0,self.view.size())).encode("utf-8")).hexdigest())
+				print(hashlib.sha256(self.view.substr(sublime.Region(0, self.view.size())).encode("utf-8")).hexdigest())
 		elif util_type == "tojson":
 			if not is_stable():
-				jsonObj = sublime.decode_value(self.view.substr(sublime.Region(0,self.view.size())))
-				self.view.replace(edit, sublime.Region(0,self.view.size()), sublime.encode_value(jsonObj, True));
+				jsonObj = sublime.decode_value(self.view.substr(sublime.Region(0, self.view.size())))
+				self.view.replace(edit, sublime.Region(0, self.view.size()), sublime.encode_value(jsonObj, True));
+		elif util_type == "parse":
+			try:
+				grammars = sublime.find_resources("Java8.javatar-grammar")
+				if len(grammars) > 0:
+					scope = GrammarParser(sublime.decode_value(sublime.load_resource(grammars[0])))
+					parse_output = scope.parse_grammar(self.view.substr(sublime.Region(0, self.view.size())))
+					status_text = ""
+					if parse_output["success"]:
+						if not is_stable():
+							nodes = scope.find_all()
+							for node in nodes:
+								print("#" + str(node["begin"]) + ":" + str(node["end"]) + " => " + node["name"])
+								print("   => " + node["value"])
+							status_text = "Parsing got " + str(len(nodes)) + " tokens"
+							print("Total: " + str(len(nodes)) + " tokens")
+					if not is_stable():
+						if status_text != "" and str(parse_output["end"]) == str(self.view.size()):
+							status_text += " in {elapse_time:.2f}s".format(elapse_time=scope.get_elapse_time())
+						else:
+							status_text = "Parsing failed [" + str(parse_output["end"]) + "/" + str(self.view.size()) + "] in {elapse_time:.2f}s".format(elapse_time=scope.get_elapse_time())
+						print("Ending: " + str(parse_output["end"]) + "/" + str(self.view.size()))
+						print("Parsing Time: {elapse_time:.2f}s".format(elapse_time=scope.get_elapse_time()))
+						show_status(status_text, None, False)
+			except Exception:
+				print("Error occurred while parsing")
 		elif util_type == "reload":
 			if is_debug():
 				get_action().add_action("javatar.command.utils.reload.run", "Reload Javatar")

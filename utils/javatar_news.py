@@ -4,10 +4,10 @@ from .javatar_updater import *
 
 
 # YY.MM.DD.HH.MM
-VERSION = "14.05.02.01.02b"
+VERSION = "14.05.15.02.41b"
 UPDATEFOR = "all"
-NEWSID = 15
-NEWS = " - JDK Settings, now you can select which JDK you want to use. And also no more PATH settings now :D\n - Build and Run with dependencies\n\nJavatar has grow so much since the beginning, the manual is also bigger, so that Javatar has changed the README file to JavatarDoc that hosted on readthedocs.org instead. A link to JavatarDoc is located inside README file."
+NEWSID = 16
+NEWS = " - Javatar now nest project settings inside \"Javatar\" key\n - Fix path not working properly in some cases\n - Add license to Javatar\n - [Dev] Add a Java grammar parser. More informations in documentation\n\nYou can report/suggest any issue on Javatar repository. Link is already located in README file."
 
 
 def get_version():
