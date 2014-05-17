@@ -1,5 +1,6 @@
 '''
 ::GrammarParser::
+https://github.com/spywhere/GrammarParser
 
 The MIT License (MIT)
 
@@ -81,20 +82,29 @@ class GrammarParser():
 		if self.data is None or self.data != data:
 			self.data = data
 		else:
-			print("Already parse")
+			if self.printer is not None:
+				self.printer(0, "Already parse")
 			return True
 		starttime = clock()
 		if "compilation_unit" in self.grammar:
 			if self.printer is not None:
 				self.printer(0, "== Compilation unit ==")
-			parse_output = self.parse_rule(self.grammar["compilation_unit"], False, "", 0, 0)
+			begin = 0
+			# Pre separator (for beginning correction)
+			if ("before_separator" not in self.grammar["compilation_unit"] or self.grammar["compilation_unit"]["before_separator"]):
+				separator_output = self.parse_rule(self.grammar["separator"], True, "", 0, 0)
+				if separator_output["successive_match"]:
+					begin = separator_output["end"]
+					self.regions += separator_output["regions"]
+			parse_output = self.parse_rule(self.grammar["compilation_unit"], False, "", 0, begin)
 			if parse_output["successive_match"]:
 				self.regions += parse_output["regions"]
 			# Post separator (for ending correction)
-			separator_output = self.parse_rule(self.grammar["separator"], True, "", 0, parse_output["end"])
-			if separator_output["successive_match"]:
-				parse_output["end"] = separator_output["end"]
-				self.regions += separator_output["regions"]
+			if ("after_separator" not in self.grammar["compilation_unit"] or self.grammar["compilation_unit"]["after_separator"]):
+				separator_output = self.parse_rule(self.grammar["separator"], True, "", 0, parse_output["end"])
+				if separator_output["successive_match"]:
+					parse_output["end"] = separator_output["end"]
+					self.regions += separator_output["regions"]
 		self.elapse_time = clock()-starttime
 		return {"success":parse_output["successive_match"],"begin":parse_output["begin"],"end":parse_output["end"]}
 
@@ -165,7 +175,7 @@ class GrammarParser():
 					re_pattern = self.re_cache[rule["match"]]
 				else:
 					re_pattern = re.compile(rule["match"])
-				if not is_separator and "separator" in self.grammar:
+				if not is_separator and "separator" in self.grammar and ("before_separator" not in rule or rule["before_separator"]):
 					if self.printer is not None and not is_separator:
 						self.printer(level, "> Separator Before: " + str(begin))
 					separator_output = self.parse_rule(self.grammar["separator"], True, parent, level+1, begin)
@@ -191,7 +201,7 @@ class GrammarParser():
 					else:
 						if self.printer is not None and not is_separator:
 							self.printer(level, "> Skip: " + str(rule_output["end"]))
-				if not is_separator and rule_output["successive_match"] and "separator" in self.grammar:
+				if not is_separator and rule_output["successive_match"] and "separator" in self.grammar and ("after_separator" not in rule or rule["after_separator"]):
 					if self.printer is not None and not is_separator:
 						self.printer(level, "> Separator After: " + str(rule_output["end"]))
 					separator_output = self.parse_rule(self.grammar["separator"], True, parent, level+1, begin)

@@ -1,5 +1,12 @@
 [
     {
+        "keys": ["ctrl+shift+k","ctrl+shift+m"],
+        "command": "javatar_util",
+        "args": {
+            "util_type": "parse",
+            "text": "#"
+        }
+    },{
         "keys": ["ctrl+shift+k","ctrl+shift+k"],
         "command": "javatar",
         "args": {

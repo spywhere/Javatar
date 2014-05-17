@@ -1,5 +1,6 @@
 '''
 ::QuickMenu::
+https://github.com/spywhere/QuickMenu
 
 The MIT License (MIT)
 

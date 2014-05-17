@@ -4,11 +4,10 @@ import urllib
 import hashlib
 from .javatar_collections import *
 from .javatar_thread import *
+from .javatar_usage import JavatarPackageUsageThread
 from .javatar_utils import *
 
 
-# If you are going to visit the site, sorry for the crap design...
-PACKAGES_STATS = "http://digitalparticle.in.th/javatar/"
 PACKAGES_VERSION = "0.3"
 PACKAGES_REPO = "https://raw.github.com/spywhere/JavatarPackages/master/javatar_packages.json"
 
@@ -24,29 +23,9 @@ def send_package_action(params={}):
 	SilentThreadProgress(thread, send_package_action_complete)
 
 
-def send_usages(params={}, lasttime=False):
-	if get_settings("send_stats_and_usages"):
-		params["usage"] = "true"
-		thread = JavatarPackageUsageThread(params, lasttime)
-		thread.start()
-		SilentThreadProgress(thread, send_usage_complete)
-
-
 def send_package_action_complete(thread):
 	if thread.result and is_debug():
 		print("Javatar package action sent: " + thread.data)
-
-
-def send_usage_complete(thread):
-	if thread.result:
-		if thread.lasttime:
-			if is_debug():
-				print("Javatar usage data sent as last time: " + thread.data)
-			set_settings("javatar_gp", get_settings("javatar_gp")|0x1)
-		else:
-			if is_debug():
-				print("Javatar usage data sent: " + thread.data)
-			set_settings("javatar_gp", get_settings("javatar_gp")&(~0x1))
 
 
 def update_packages(no_require=False):
@@ -69,27 +48,6 @@ def update_complete(packageURL, require_package):
 			return
 	get_action().add_action("javatar.util.updater", "Install default package")
 	sublime.active_window().run_command("javatar_install", {"installtype": "remote_package", "name": require_package["name"], "filename": require_package["filename"], "url": packageURL, "checksum": require_package["hash"]})
-
-
-class JavatarPackageUsageThread(threading.Thread):
-	def __init__(self, params={}, lasttime=False):
-		self.lasttime = lasttime
-		self.params = params
-		threading.Thread.__init__(self)
-
-	def run(self):
-		try:
-			urllib.request.install_opener(urllib.request.build_opener(urllib.request.ProxyHandler()))
-			url = PACKAGES_STATS+"?"+urllib.parse.urlencode(self.params)
-			data = urllib.request.urlopen(url).read()
-			self.data = str(data)
-			self.datahash = hashlib.sha256(self.data.encode("utf-8")).hexdigest()
-			self.result = True
-		except Exception as e:
-			if is_debug():
-				print("Javatar Usage: " + str(e))
-			self.result = False
-
 
 
 class JavatarPackageUpdaterThread(threading.Thread):
@@ -136,7 +94,7 @@ class JavatarPackageUpdaterThread(threading.Thread):
 				if "packages" in packages[PACKAGES_VERSION]:
 					remote_update = False
 					if is_debug():
-						print("No Require Package: " + str(self.no_require))
+						print("Check Require Package: " + str(self.no_require))
 					if not self.no_require and "install" in packages[PACKAGES_VERSION]:
 						require_package_name = packages[PACKAGES_VERSION]["install"]
 					for package in packages[PACKAGES_VERSION]["packages"]:

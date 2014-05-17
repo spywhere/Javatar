@@ -3,7 +3,7 @@ import sublime
 import threading
 from .javatar_actions import *
 from .javatar_thread import *
-from ..utils.javatar_utils import to_readable_size, get_project_settings, get_global_settings, get_path
+from .javatar_utils import to_readable_size, get_project_settings, get_global_settings, get_path
 
 
 INSTALLED_PACKAGES = []
@@ -89,8 +89,9 @@ def packages_complete(data, no_require=False):
 
 	from .javatar_updater import update_packages
 	update_packages(no_require)
+	from .javatar_utils import stop_clock
 	from .javatar_java import detect_jdk
-	detect_jdk()
+	detect_jdk(on_done=stop_clock)
 
 
 def get_packages():

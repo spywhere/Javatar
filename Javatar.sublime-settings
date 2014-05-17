@@ -20,24 +20,24 @@
 	"send_stats_and_usages" : true,
 
 	// Update message id
-	//    -1 = Unsubscribe to important package updates notification (you should check out the README file for any updates information)
-	//    any other number = Assigned by package to show you proper updates message
+	//    -1 = Unsubscribe to important Javatar updates notification (you should check out the README file for any updates information)
+	//    any other number = Assigned by Javatar to show you proper updates message
 	"message_id" : 0,
 
 	// Enable Actions History to help developer solve the issue
 	"enable_actions_history" : true,
 
-	// Maximum waiting time for Javatar packages creation
+	// Maximum waiting time for Javatar packages creation (in seconds)
 	"maximum_waiting_time": 15,
 
-	// Default delay before hide a status text
+	// Default delay before hide a status text (in milliseconds)
 	"status_delay" : 5000,
 
 	// Show package path in status bar
 	"show_package_path" : true,
 
 	// Source folder (used as default package), must specified in full path
-	// Default is...
+	// Default is one of...
 	//    - Project-based source folder
 	//    - Top most directory/folder
 	//    - Current directory/folder

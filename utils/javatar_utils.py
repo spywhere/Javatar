@@ -6,6 +6,25 @@ from .javatar_actions import *
 
 SETTINGSBASE = None
 SETTINGS = None
+STARTUP_TIME = None
+
+
+def get_startup_time():
+	return STARTUP_TIME
+
+
+def start_clock():
+	global STARTUP_TIME
+	from time import clock
+	STARTUP_TIME = clock()
+
+
+def stop_clock():
+	global STARTUP_TIME
+	from time import clock
+	STARTUP_TIME = clock()-STARTUP_TIME
+	if not is_stable():
+		print("[Javatar] Startup Time: {0:.2f}s".format(STARTUP_TIME))
 
 
 def reset():

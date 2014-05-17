@@ -7,5 +7,6 @@ from .javatar_shell import *
 from .javatar_status import *
 from .javatar_thread import *
 from .javatar_updater import *
+from .javatar_usage import *
 from .javatar_utils import *
 from .javatar_validator import *

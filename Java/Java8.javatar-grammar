@@ -14,6 +14,7 @@
 		"multiple": true
 	},
 	"compilation_unit": {
+		"name": "CompilationUnit",
 		"parse": [
 			{
 				"include": "PackageDeclaration",

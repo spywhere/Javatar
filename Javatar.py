@@ -5,6 +5,7 @@ from .utils import *
 
 
 def startup():
+	start_clock()
 	get_action().add_action("javatar", "Startup")
 	reset() # clear data when restart
 	read_settings("Javatar.sublime-settings")
