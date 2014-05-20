@@ -5,6 +5,7 @@ from .utils import *
 
 
 def startup():
+	EventHandler.register_handler(on_change, EventHandler.ON_NEW|EventHandler.ON_ACTIVATED|EventHandler.ON_LOAD|EventHandler.ON_POST_SAVE|EventHandler.ON_CLONE)
 	start_clock()
 	get_action().add_action("javatar", "Startup")
 	reset() # clear data when restart
@@ -18,23 +19,6 @@ def plugin_loaded():
 	startup()
 
 
-class EventListener(sublime_plugin.EventListener):
-	def on_new(self, view):
-		refresh_dependencies()
-		hide_status()
-
-	def on_activated(self, view):
-		refresh_dependencies()
-		hide_status()
-
-	def on_load(self, view):
-		refresh_dependencies()
-		hide_status()
-
-	def on_post_save(self, view):
-		refresh_dependencies()
-		hide_status()
-
-	def on_clone(self, view):
-		refresh_dependencies()
-		hide_status()
+def on_change(view):
+	refresh_dependencies()
+	hide_status()

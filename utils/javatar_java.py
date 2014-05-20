@@ -7,9 +7,6 @@ from .javatar_thread import *
 from .javatar_utils import *
 
 
-# JDK Path both global and project
-
-
 def detect_jdk(silent=False, on_done=None, progress=False):
 	thread = JavatarJDKDetectionThread(silent, on_done)
 	thread.start()

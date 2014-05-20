@@ -279,7 +279,7 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 				}, {
 					"command": "javatar_util",
 					"args": {
-						"util_type": "test"
+						"util_type": "json_test"
 					}
 				}
 			]

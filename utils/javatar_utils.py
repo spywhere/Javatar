@@ -6,7 +6,9 @@ from .javatar_actions import *
 
 SETTINGSBASE = None
 SETTINGS = None
+SUBLIME_SETTINGS = None
 STARTUP_TIME = None
+LAST_TIMER = None
 
 
 def get_startup_time():
@@ -14,22 +16,26 @@ def get_startup_time():
 
 
 def start_clock():
-	global STARTUP_TIME
+	global LAST_TIMER
 	from time import clock
-	STARTUP_TIME = clock()
+	LAST_TIMER = clock()
 
 
-def stop_clock():
+def stop_clock(add=True, notify=True):
 	global STARTUP_TIME
 	from time import clock
-	STARTUP_TIME = clock()-STARTUP_TIME
-	if not is_stable():
+	if add and STARTUP_TIME is not None:
+		STARTUP_TIME += clock()-LAST_TIMER
+	else:
+		STARTUP_TIME = clock()-LAST_TIMER
+	if notify and not is_stable():
 		print("[Javatar] Startup Time: {0:.2f}s".format(STARTUP_TIME))
 
 
 def reset():
 	get_action().add_action("javatar.util.util.reset", "Reset all settings")
-	global SETTINGS, SETTINGSBASE
+	global SUBLIME_SETTINGS, SETTINGS, SETTINGSBASE
+	SUBLIME_SETTINGS = None
 	SETTINGS = None
 	SETTINGSBASE = None
 	from .javatar_collections import reset_snippets_and_packages
@@ -42,9 +48,10 @@ def is_ready():
 
 def read_settings(config):
 	get_action().add_action("javatar.util.util.read_settings", "Read settings")
-	global SETTINGS, SETTINGSBASE
+	global SUBLIME_SETTINGS, SETTINGS, SETTINGSBASE
 	SETTINGSBASE = config
 	SETTINGS = sublime.load_settings(config)
+	SUBLIME_SETTINGS = sublime.load_settings("Preferences.sublime-settings")
 	from .javatar_collections import load_snippets_and_packages
 	load_snippets_and_packages()
 
@@ -70,6 +77,10 @@ def get_global_settings(key, asList=False):
 		return [SETTINGS.get(key, None), False]
 	else:
 		return SETTINGS.get(key, None)
+
+
+def get_sublime_settings(key, default=None):
+	return SUBLIME_SETTINGS.get(key, default)
 
 
 def get_settings(key, asList=False):

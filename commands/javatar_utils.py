@@ -7,6 +7,12 @@ from ..utils import *
 
 
 class JavatarUtilCommand(sublime_plugin.TextCommand):
+	def on_done(self, obj):
+		print(str(sublime.encode_value(obj)))
+
+	def on_cancel(self):
+		print("Cancel")
+
 	def run(self, edit, util_type="", text="", region=None, dest=None):
 		if util_type == "insert":
 			self.view.insert(edit, 0, text)
@@ -33,6 +39,11 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
 			if not is_stable():
 				jsonObj = sublime.decode_value(self.view.substr(sublime.Region(0, self.view.size())))
 				self.view.replace(edit, sublime.Region(0, self.view.size()), sublime.encode_value(jsonObj, True));
+		elif util_type == "json_test":
+			if not is_stable():
+				panel = JSONPanel(window=self.view.window(), on_done=self.on_done, on_cancel=self.on_cancel)
+				view = panel.open("JSONTest.json")
+				sublime.set_timeout(lambda:view.run_command("javatar_util", {"util_type": "insert", "text": "{\n}"}), 50)
 		elif util_type == "parse":
 			try:
 				grammars = sublime.find_resources("Java8.javatar-grammar")

@@ -19,6 +19,12 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 		self.build_size = len(self.build_list)
 		self.progress = MultiThreadProgress("Preparing build", None, self.on_build_thread_complete, self.on_all_complete)
 		num_thread = 1
+
+		self.source_folder = get_path("source_folder")
+		self.build_output_location = get_settings("build_output_location")
+		self.build_command = get_settings("build_command")
+		self.build_location = get_settings("build_location")
+
 		if get_settings("parallel_build") > num_thread:
 			num_thread = get_settings("parallel_build")
 		for i in range(num_thread):
@@ -44,9 +50,9 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 		self.progress.set_message("[" + str(self.build_size-len(self.build_list)) + "/" + str(self.build_size) + "] Building ")
 
 	def create_build(self, file_path):
-		self.macro_data["sourcepath"] = "-sourcepath \"" + get_path("source_folder") + "\""
+		self.macro_data["sourcepath"] = "-sourcepath \"" + self.source_folder + "\""
 		dependencies = get_dependencies()
-		dependencies_param = ""
+		dependencies_param = None
 		for dependency in dependencies:
 			from os import pathsep
 			if dependencies_param is None:
@@ -55,8 +61,8 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 				dependencies_param += pathsep+"\""+dependency[0]+"\""
 		self.macro_data["classpath"] = dependencies_param
 		self.macro_data["d"] = ""
-		if get_settings("build_output_location") != "":
-			output_dir = parse_macro(get_settings("build_output_location"), self.macro_data, file_path)
+		if self.build_output_location != "":
+			output_dir = parse_macro(self.build_output_location, self.macro_data, file_path)
 			from os import makedirs
 			from os.path import isdir
 			if not isdir(output_dir):
@@ -65,9 +71,9 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 		executable = get_executable("build")
 		if executable is None:
 			return None
-		build_script = parse_macro(get_settings("build_command"), self.macro_data, file_path)
+		build_script = parse_macro(self.build_command, self.macro_data, file_path)
 		shell = JavatarSilentShell(executable+" "+build_script, self.on_build_done)
-		shell.set_cwd(parse_macro(get_settings("build_location"), self.macro_data))
+		shell.set_cwd(parse_macro(self.build_location, self.macro_data))
 		shell.start()
 		return shell
 
@@ -97,11 +103,16 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 		sublime.status_message("Building Finished [{0:.2f}s]".format(clock()-self.start_time))
 		get_action().add_action("javatar.command.build.complete", "Building Finished")
 
-	def buildAll(self, dir_path):
-		for path, subdirs, files in os.walk(dir_path):
-			for filename in files:
-				if is_java(get_path("join", path, filename)):
-					self.build_list.append(get_path("join", path, filename))
+	def get_java_files(self, dir_path):
+		for name in os.listdir(dir_path):
+			pathname = os.path.join(dir_path, name)
+			if os.path.isdir(pathname) and name not in get_sublime_settings("folder_exclude_patterns", []):
+				self.get_java_files(pathname)
+			elif os.path.isfile(pathname) and is_java(pathname):
+				self.build_list.append(pathname)
+
+	def build_all(self, dir_path):
+		self.get_java_files(dir_path)
 		if len(self.build_list) > 0:
 			get_action().add_action("javatar.command.build.build_all", "Build all")
 			self.build()
@@ -124,7 +135,7 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 							else:
 								sublime.error_message("Some Java files are not saved")
 								return
-				if not self.buildAll(get_package_root_dir()):
+				if not self.build_all(get_package_root_dir()):
 					sublime.error_message("No class to build")
 			else:
 				sublime.error_message("Unknown package location")
@@ -138,7 +149,7 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 							else:
 								sublime.error_message("Some Java files are not saved")
 								return
-				if not self.buildAll(get_path("current_dir")):
+				if not self.build_all(get_path("current_dir")):
 					sublime.error_message("No class to build")
 			else:
 				sublime.error_message("Unknown package location")

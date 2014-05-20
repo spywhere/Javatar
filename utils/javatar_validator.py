@@ -10,17 +10,16 @@ def is_java(filepath=""):
 	from .javatar_utils import get_settings
 	import os.path
 	view = sublime.active_window().active_view()
-	if view is None:
-		return False
 	if filepath is None or filepath is "":
+		if view is None:
+			return False
 		filepath = view.file_name()
-	else:
-		filepath = None
 	if filepath is not None:
 		filename, ext = os.path.splitext(os.path.basename(filepath))
 		for extension in get_settings("java_extensions"):
 			if ext == extension:
 				return True
+		return False
 	return (view is not None and len(view.find_by_selector(get_settings("java_source_selector"))) > 0)
 
 
@@ -38,12 +37,3 @@ def is_project(window=None):
 def is_file():
 	view = sublime.active_window().active_view()
 	return view is not None and view.file_name() is not None
-
-
-def get_java_level():
-	# Unsave = Package under project_dir if any
-
-	# 0 = Not allow to do anything
-	# 1 = Work under project_dir
-	# 2 = Work under current_dir
-	return 0
