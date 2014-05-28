@@ -5,7 +5,7 @@ from .javatar_usage import send_usages, get_usage_data, start_clock, stop_clock
 
 
 # YY.MM.DD.HH.MM
-VERSION = "14.05.21.01.19b"
+VERSION = "14.05.29.00.24b"
 UPDATEFOR = "all"
 NEWSID = 16
 NEWS = " - Javatar now nest project settings inside \"Javatar\" key\n - Fix path not working properly in some cases\n - Add license to Javatar\n - [Dev] Add a Java grammar parser. More informations in documentation\n\nYou can report/suggest any issue on Javatar repository. Link is already located in README file."
