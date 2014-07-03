@@ -58,17 +58,18 @@ def read_settings(config):
 
 def get_project_settings(key, asList=False):
 	project_data = sublime.active_window().project_data()
-	if "javatar" in project_data and key in project_data["javatar"]:
-		if asList:
-			return [project_data["javatar"][key], True]
-		else:
-			return project_data["javatar"][key]
-	elif key in project_data:
-		# Deprecated
-		if asList:
-			return [project_data[key], True]
-		else:
-			return project_data[key]
+	if project_data is not None:
+		if "javatar" in project_data and key in project_data["javatar"]:
+			if asList:
+				return [project_data["javatar"][key], True]
+			else:
+				return project_data["javatar"][key]
+		elif key in project_data:
+			# Deprecated
+			if asList:
+				return [project_data[key], True]
+			else:
+				return project_data[key]
 	return None
 
 
