@@ -33,6 +33,12 @@
 	// Default delay before hide a status text (in milliseconds)
 	"status_delay" : 5000,
 
+	// Allow Javatar to update project data for restoration
+	"allow_project_restoration": true,
+
+	// Time interval to update project data (for restoration)
+	"project_update_interval": 60000,
+
 	// Show package path in status bar
 	"show_package_path" : true,
 
@@ -154,5 +160,11 @@
 	"type_selector" : "storage.type.java|storage.type.generic.java|storage.type.annotation.java|entity.other.inherited-class",
 
 	// Primitive types fallback (default Java syntax is not 100% syntax perfect)
-	"primitive_type" : ["void", "boolean", "byte", "char", "short", "int", "float", "long", "double"]
+	"primitive_type" : ["void", "boolean", "byte", "char", "short", "int", "float", "long", "double"],
+
+	//////////////////////////////////
+	// Javatar Temporary Key/Value  //
+	// For project data restoration //
+	//////////////////////////////////
+	"project_data": {}
 }

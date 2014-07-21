@@ -5,14 +5,33 @@ from .javatar_usage import send_usages, get_usage_data, start_clock, stop_clock
 
 
 # YY.MM.DD.HH.MM
-VERSION = "14.05.29.00.24b"
+VERSION = "14.07.21.15.47b"
 UPDATEFOR = "all"
-NEWSID = 16
-NEWS = " - Javatar now nest project settings inside \"Javatar\" key\n - Fix path not working properly in some cases\n - Add license to Javatar\n - [Dev] Add a Java grammar parser. More informations in documentation\n\nYou can report/suggest any issue on Javatar repository. Link is already located in README file."
+NEWSID = 17
 
 
 def get_version():
 	return VERSION
+
+
+def show_news(title, prefix=""):
+	news = ("Just install Javatar? Checkout JavatarDoc for Javatar informations and guides. Link is located in README file.\n\n"
+			"It has been a long time since last update to Javatar that is because I am working on full-time job in this period. But here is another update to Javatar!\n\n"
+			"These are updates and fixes for Javatar " + VERSION + "...\n"
+			"- Fix Javatar shell cannot receive input when there is no output printed on buffer"
+			"     Enter any input while Javatar is printing output messages is not gurranteed when sent\n"
+			"- Fix Javatar shell stop receive output data too early when Java application terminated\n"
+			"- Add project data restoration feature when user restart Sublime Text\n"
+			"     This happens on OSX and may be on some platforms when user restart Sublime Text."
+			"Project data lost cause user to set their project settings again if they not save it before."
+			"You can disable/enable this restoration feature in Javatar user's preferences.\n"
+			"- Change Javatar news from message dialog to this new buffer style for less annoying\n\n"
+			"You can report/suggest any issue on Javatar repository. Link is already located in README file.")
+	view = sublime.active_window().new_file()
+	view.set_name(title)
+	view.run_command("javatar_util", {"util_type": "add", "text": prefix+news})
+	view.set_read_only(True)
+	view.set_scratch(True)
 
 
 def check_news():
@@ -22,10 +41,10 @@ def check_news():
 		if get_settings("message_id") != -1:
 			stop_clock(notify=False)
 			if is_stable() and (UPDATEFOR == "stable" or UPDATEFOR == "all"):
-				sublime.message_dialog("Javatar: Package has been updated!\n" + NEWS)
+				show_news("Javatar: Package has been updated!")
 				get_action().add_action("javatar.util.news", "Show stable news")
 			elif not is_stable() and (UPDATEFOR == "dev" or UPDATEFOR == "all"):
-				sublime.message_dialog("Javatar [Dev]: Package has been updated!\n" + NEWS)
+				show_news("Javatar [Dev]: Package has been updated!")
 				get_action().add_action("javatar.util.news", "Show dev news")
 			start_clock()
 			send_usages(get_usage_data())

@@ -9,6 +9,7 @@ SETTINGS = None
 SUBLIME_SETTINGS = None
 STARTUP_TIME = None
 LAST_TIMER = None
+UPDATE_READY = False
 
 
 def get_startup_time():
@@ -46,12 +47,36 @@ def is_ready():
 	return SETTINGS is not None
 
 
+def save_project_state(repeat=True):
+	if UPDATE_READY:
+		project_data = {}
+		for window in sublime.windows():
+			project_data[str(window.id())] = window.project_data()
+		set_settings("project_data", project_data)
+		if repeat:
+			sublime.set_timeout(save_project_state, get_settings("project_update_interval"))
+
+
+def restore_project_state():
+	global UPDATE_READY
+	project_data = get_global_settings("project_data")
+	if len(project_data) > 0:
+		for window in sublime.windows():
+			if str(window.id()) in project_data:
+				window.set_project_data(project_data[str(window.id())])
+				if is_debug():
+					print("[Javatar] Restore project data on window " + str(window.id()))
+	UPDATE_READY = True
+	save_project_state()
+
+
 def read_settings(config):
 	get_action().add_action("javatar.util.util.read_settings", "Read settings")
 	global SUBLIME_SETTINGS, SETTINGS, SETTINGSBASE
 	SETTINGSBASE = config
 	SETTINGS = sublime.load_settings(config)
 	SUBLIME_SETTINGS = sublime.load_settings("Preferences.sublime-settings")
+	restore_project_state()
 	from .javatar_collections import load_snippets_and_packages
 	load_snippets_and_packages()
 

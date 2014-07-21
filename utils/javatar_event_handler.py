@@ -26,6 +26,8 @@ class EventHandler():
 	ON_ACTIVATED_ASYNC = 0x20000
 	ON_DEACTIVATED = 0x40000
 	ON_DEACTIVATED_ASYNC = 0x80000
+	ON_POST_TEXT_COMMAND = 0x100000
+	ON_POST_WINDOW_COMMAND = 0x800000
 
 	handlers = []
 
@@ -220,6 +222,25 @@ class EventHandler():
 				else:
 					handler(view)
 
+	@staticmethod
+	def post_text_command(view, command_name, args):
+		for handler, event in EventHandler.handlers:
+			if event&EventHandler.ON_POST_TEXT_COMMAND > 0:
+				if hasattr(handler, "on_post_text_command"):
+					handler.on_post_text_command(view, command_name, args)
+				else:
+					handler(view, command_name, args)
+
+	@staticmethod
+	def post_text_command(window, command_name, args):
+		for handler, event in EventHandler.handlers:
+			if event&EventHandler.ON_POST_WINDOW_COMMAND > 0:
+				if hasattr(handler, "on_post_window_command"):
+					handler.on_post_window_command(window, command_name, args)
+				else:
+					handler(window, command_name, args)
+
+
 class EventListener(sublime_plugin.EventListener):
 	def on_new(self, view):
 		EventHandler.on_new(view)
@@ -280,3 +301,9 @@ class EventListener(sublime_plugin.EventListener):
 
 	def on_deactivated_async(self, view):
 		EventHandler.on_deactivated_async(view)
+
+	def post_text_command(self, view, command_name, args):
+		EventHandler.post_text_command(view, command_name, args)
+
+	def post_window_command(self, window, command_name, args):
+		EventHandler.post_window_command(window, command_name, args)

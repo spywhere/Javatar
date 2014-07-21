@@ -37,20 +37,23 @@ class JavatarShell(threading.Thread):
 			proc.terminate()
 
 	def read_stdout(self):
-		while self.proc.poll() is None:
+		while True:
 			data = os.read(self.proc.stdout.fileno(), 512)
 			if len(data) > 0:
-				self.read_only = False
 				self.view.run_command("javatar_util", {"util_type": "add", "text": data.decode("UTF-8").replace("\r\n","\n")})
 				self.old_data = self.view.substr(sublime.Region(0, self.view.size()))
 				if self.to_console:
 					print(data.decode("UTF-8").replace("\r\n","\n"))
+			elif self.proc.poll() is not None:
+				break
+		self.isReadable = False
 
 	def read_stdin(self):
 		while self.proc.poll() is None:
 			if "\n" in self.data_in:
 				os.write(self.proc.stdin.fileno(), self.data_in.encode("UTF-8"))
 				self.data_in = ""
+		self.isWritable = False
 
 	def run(self):
 		start_time = clock()
@@ -58,7 +61,8 @@ class JavatarShell(threading.Thread):
 		self.old_data = self.view.substr(sublime.Region(0, self.view.size()))
 		self.data_in = ""
 		self.return_code = None
-		self.read_only = True
+		self.isReadable = True;
+		self.isWritable = True;
 
 		threading.Thread(target=self.read_stdout).start()
 		threading.Thread(target=self.read_stdin).start()
@@ -66,12 +70,12 @@ class JavatarShell(threading.Thread):
 		while self.view is not None and self.view.window() is not None:
 			if len(self.old_data) < self.view.size():
 				self.data_in = self.view.substr(sublime.Region(len(self.old_data), self.view.size()))
-			if self.read_only or len(self.old_data) > self.view.size():
+			if len(self.old_data) > self.view.size():
 				self.view.run_command("javatar_util", {"util_type": "clear"})
 				self.view.run_command("javatar_util", {"util_type": "add", "text": self.old_data})
-
 			if self.proc.poll() is not None:
 				self.return_code = self.proc.poll()
+			if not self.isWritable and not self.isReadable:
 				self.proc.stdout.close()
 				self.proc.stdin.close()
 				break
@@ -113,7 +117,7 @@ class JavatarSilentShell(threading.Thread):
 			proc.terminate()
 
 	def read_stdout(self):
-		while self.proc.poll() is None:
+		while True:
 			data = os.read(self.proc.stdout.fileno(), 512)
 			if len(data) > 0:
 				if self.data_out is None:
@@ -122,17 +126,22 @@ class JavatarSilentShell(threading.Thread):
 					self.data_out += data.decode("UTF-8").replace("\r\n","\n")
 				if self.to_console:
 					print(data.decode("UTF-8").replace("\r\n","\n"))
+			elif self.proc.poll() is not None:
+				break
+		self.isReadable = False
 
 	def run(self):
 		start_time = clock()
 		self.proc = self.popen(self.cmds, self.cwd)
 		self.return_code = None
+		self.isReadable = True
 
 		threading.Thread(target=self.read_stdout).start()
 
 		while True:
 			if self.proc.poll() is not None:
 				self.return_code = self.proc.poll()
+			if not self.isReadable:
 				self.proc.stdout.close()
 				break
 		if self.return_code is None:
@@ -147,12 +156,14 @@ class JavatarBlockShell():
 		self.proc = self.popen(cmds, cwd)
 		self.return_code = None
 		self.data_out = None
+		self.isReadable = True
 
 		threading.Thread(target=self.read_stdout).start()
 
 		while True:
 			if self.proc.poll() is not None:
 				self.return_code = self.proc.poll()
+			if not self.isReadable:
 				self.proc.stdout.close()
 				break
 		if self.return_code is None:
@@ -185,3 +196,6 @@ class JavatarBlockShell():
 					self.data_out = data.decode("UTF-8").replace("\r\n","\n")
 				else:
 					self.data_out += data.decode("UTF-8").replace("\r\n","\n")
+			elif self.proc.poll() is not None:
+				break
+		self.isReadable = False
