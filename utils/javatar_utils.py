@@ -48,7 +48,7 @@ def is_ready():
 
 
 def save_project_state(repeat=True):
-	if UPDATE_READY:
+	if UPDATE_READY and get_settings("allow_project_restoration"):
 		project_data = {}
 		for window in sublime.windows():
 			project_data[str(window.id())] = window.project_data()
@@ -59,15 +59,16 @@ def save_project_state(repeat=True):
 
 def restore_project_state():
 	global UPDATE_READY
-	project_data = get_global_settings("project_data")
-	if len(project_data) > 0:
-		for window in sublime.windows():
-			if str(window.id()) in project_data:
-				window.set_project_data(project_data[str(window.id())])
-				if is_debug():
-					print("[Javatar] Restore project data on window " + str(window.id()))
-	UPDATE_READY = True
-	save_project_state()
+	if get_settings("allow_project_restoration"):
+		project_data = get_global_settings("project_data")
+		if len(project_data) > 0:
+			for window in sublime.windows():
+				if str(window.id()) in project_data:
+					window.set_project_data(project_data[str(window.id())])
+					if is_debug():
+						print("[Javatar] Restore project data on window " + str(window.id()))
+		UPDATE_READY = True
+		save_project_state()
 
 
 def read_settings(config):
