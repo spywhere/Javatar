@@ -23,9 +23,12 @@ def is_java(filepath=""):
 	return (view is not None and len(view.find_by_selector(get_settings("java_source_selector"))) > 0)
 
 
-def is_package(package):
+def is_package(package, special=False):
 	from .javatar_utils import get_settings
-	return re.match(get_settings("package_name_match"), package, re.M) is not None
+	if special:
+		return re.match(get_settings("special_package_name_match"), package, re.M) is not None
+	else:
+		return re.match(get_settings("package_name_match"), package, re.M) is not None
 
 
 def is_project(window=None):

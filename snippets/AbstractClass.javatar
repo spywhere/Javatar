@@ -1,7 +1,0 @@
-%class:Abstract Class%
-%description:Create a new empty abstract class%
-%package%
-
-public abstract class %class% {
-	${1}
-}

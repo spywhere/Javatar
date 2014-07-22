@@ -5,9 +5,9 @@ from .javatar_usage import send_usages, get_usage_data, start_clock, stop_clock
 
 
 # YY.MM.DD.HH.MM
-VERSION = "14.07.21.15.47b"
+VERSION = "14.07.22.14.16b"
 UPDATEFOR = "all"
-NEWSID = 17
+NEWSID = 18
 
 
 def get_version():
@@ -15,9 +15,14 @@ def get_version():
 
 
 def show_news(title, prefix=""):
-	news = ("Just install Javatar? Checkout JavatarDoc for Javatar informations and guides. Link is located in README file.\n\n"
-			"It has been a long time since last update to Javatar that is because I am working on full-time job in this period. But here is another update to Javatar!\n\n"
+	news = ("Just install Javatar? Checkout JavatarDoc for Javatar information and guides. Link is located in README file.\n\n"
+			"A small update but got a new improvement on class creation. Be sure to checkout JavaDoc!\n"
 			"These are updates and fixes for Javatar " + VERSION + "...\n"
+			"- Javatar Shell will now scroll to bottom\n"
+			"- Class creation improvements (See JavaDoc for more information)\n"
+			"- Remove abstract class snippets since a new class creation improvement can do more!\n\n"
+			"It has been a long time since last update to Javatar that is because I am working on full-time job in this period. But here is another update to Javatar!\n\n"
+			"These are updates and fixes for Javatar 14.07.21.15.47b...\n"
 			"- Fix Javatar shell cannot receive input when there is no output printed on buffer"
 			"     Enter any input while Javatar is printing output messages is not gurranteed when sent\n"
 			"- Fix Javatar shell stop receive output data too early when Java application terminated\n"

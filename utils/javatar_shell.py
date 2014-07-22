@@ -3,6 +3,7 @@ import os, sys
 import threading
 import subprocess
 from time import clock
+from .javatar_utils import *
 
 
 class JavatarShell(threading.Thread):
@@ -40,8 +41,14 @@ class JavatarShell(threading.Thread):
 		while True:
 			data = os.read(self.proc.stdout.fileno(), 512)
 			if len(data) > 0:
+				_, layout_height = self.view.layout_extent()
+				_, viewport_height = self.view.viewport_extent()
+				viewport_posx, viewport_posy = self.view.viewport_position()
 				self.view.run_command("javatar_util", {"util_type": "add", "text": data.decode("UTF-8").replace("\r\n","\n")})
 				self.old_data = self.view.substr(sublime.Region(0, self.view.size()))
+				if get_settings("autoscroll_to_bottom") and viewport_posy >= layout_height-viewport_height-get_settings("autoscroll_snap_range"):
+					_, layout_height = self.view.layout_extent()
+					self.view.set_viewport_position((viewport_posx, layout_height-viewport_height), False)
 				if self.to_console:
 					print(data.decode("UTF-8").replace("\r\n","\n"))
 			elif self.proc.poll() is not None:

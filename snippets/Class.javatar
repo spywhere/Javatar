@@ -2,6 +2,6 @@
 %description:Create a new empty class%
 %package%
 
-public class %class% {
-	${1}
+%visibility%%modifier%class %class%%inheritance% {
+	%body%
 }
