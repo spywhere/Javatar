@@ -45,7 +45,7 @@ class JavatarShell(threading.Thread):
 				_, viewport_height = self.view.viewport_extent()
 				viewport_posx, viewport_posy = self.view.viewport_position()
 				self.view.run_command("javatar_util", {"util_type": "add", "text": data.decode("UTF-8").replace("\r\n","\n")})
-				self.old_data = self.view.substr(sublime.Region(0, self.view.size()))
+				self.old_data += data.decode("UTF-8").replace("\r\n","\n")
 				if get_settings("autoscroll_to_bottom") and viewport_posy >= layout_height-viewport_height-get_settings("autoscroll_snap_range"):
 					_, layout_height = self.view.layout_extent()
 					self.view.set_viewport_position((viewport_posx, layout_height-viewport_height), False)
@@ -57,8 +57,15 @@ class JavatarShell(threading.Thread):
 
 	def read_stdin(self):
 		while self.proc.poll() is None:
+			# If input make output less than before, reset it
+			if len(self.old_data) > self.view.size():
+				self.view.run_command("javatar_util", {"util_type": "clear"})
+				self.view.run_command("javatar_util", {"util_type": "add", "text": self.old_data})
+			elif len(self.old_data) < self.view.size():
+				self.data_in = self.view.substr(sublime.Region(len(self.old_data), self.view.size()))
 			if "\n" in self.data_in:
 				os.write(self.proc.stdin.fileno(), self.data_in.encode("UTF-8"))
+				self.old_data = self.view.substr(sublime.Region(0, self.view.size()))
 				self.data_in = ""
 		self.isWritable = False
 
@@ -75,11 +82,6 @@ class JavatarShell(threading.Thread):
 		threading.Thread(target=self.read_stdin).start()
 
 		while self.view is not None and self.view.window() is not None:
-			if len(self.old_data) < self.view.size():
-				self.data_in = self.view.substr(sublime.Region(len(self.old_data), self.view.size()))
-			if len(self.old_data) > self.view.size():
-				self.view.run_command("javatar_util", {"util_type": "clear"})
-				self.view.run_command("javatar_util", {"util_type": "add", "text": self.old_data})
 			if self.proc.poll() is not None:
 				self.return_code = self.proc.poll()
 			if not self.isWritable and not self.isReadable:
