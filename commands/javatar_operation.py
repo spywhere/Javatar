@@ -4,6 +4,18 @@ import re
 from ..utils import *
 
 
+class JavatarTestOperationCommand(sublime_plugin.WindowCommand):
+	def run(self, class_name=None):
+		if class_name is None:
+			self.window.show_input_panel("Class Name:", "", self.run, None, None)
+		else:
+			get_class(class_name, self.window, self.class_callback)
+
+	def class_callback(self, class_info, local):
+		print("Local: " + str(local))
+		print(str(class_info))
+
+
 class JavatarCorrectClassCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
 		get_action().add_action("javatar.command.operation.correct_class.run", "Correct class")

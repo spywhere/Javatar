@@ -126,7 +126,7 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 		get_action().add_action("javatar.command.build.run", "Build [build_type=" + build_type + "]")
 		view = sublime.active_window().active_view()
 		if build_type == "project":
-			if is_project() or is_file():
+			if is_project():
 				for view in self.window.views():
 					if is_java(view.file_name()):
 						if view.is_dirty():
@@ -140,7 +140,7 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 			else:
 				sublime.error_message("Unknown package location")
 		elif build_type == "package":
-			if is_file():
+			if is_project():
 				for view in self.window.views():
 					if is_java(view.file_name()):
 						if view.is_dirty():
@@ -154,7 +154,7 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 			else:
 				sublime.error_message("Unknown package location")
 		elif build_type == "working":
-			if is_file():
+			if is_project():
 				for view in self.window.views():
 					if is_java(view.file_name()):
 						self.build_list.append(view.file_name())
@@ -172,7 +172,7 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 			else:
 				sublime.error_message("Unknown package location")
 		elif build_type == "class":
-			if is_file():
+			if is_project() and is_file():
 				if is_java(view.file_name()):
 					if self.window.active_view().is_dirty():
 						if get_settings("automatic_save"):

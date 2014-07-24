@@ -7,6 +7,9 @@ from .javatar_thread import *
 from .javatar_utils import *
 
 
+CLASSES = []
+
+
 def detect_jdk(silent=False, on_done=None, progress=False):
 	thread = JavatarJDKDetectionThread(silent, on_done)
 	thread.start()
@@ -20,49 +23,76 @@ def normalize_package(package):
 	return re.sub("\\.*$", "", package)
 
 
+def to_class(class_content):
+	class_structure = None
+	class_type = None
+	return (class_structure, class_type)
+
+
+def get_class_structure(class_name, package):
+	search_types = ["interface", "class", "enum", "exception", "error", "type", "annotation"]
+	for search_type in search_types:
+		if search_type in package:
+			for clazz in package[search_type]:
+				if class_name == clazz["name"]:
+					return (clazz, search_type)
+	return (None, None)
+
+
 def get_all_types(packageImports):
 	imports = []
-	if "package" in packageImports:
-		if "interface" in packageImports:
-			imports += packageImports["interface"]
-		if "class" in packageImports:
-			imports += packageImports["class"]
-		if "enum" in packageImports:
-			imports += packageImports["enum"]
-		if "exception" in packageImports:
-			imports += packageImports["exception"]
-		if "error" in packageImports:
-			imports += packageImports["error"]
-		if "type" in packageImports:
-			imports += packageImports["type"]
-		if "annotation" in packageImports:
-			imports += packageImports["annotation"]
-	else:
-		if "interface" in packageImports:
-			for interface in packageImports["interface"]:
-				imports.append(interface["name"])
-		if "class" in packageImports:
-			for clazz in packageImports["class"]:
-				imports.append(clazz["name"])
-		if "enum" in packageImports:
-			for enum in packageImports["enum"]:
-				imports.append(enum["name"])
-		if "exception" in packageImports:
-			for exception in packageImports["exception"]:
-				imports.append(exception["name"])
-		if "error" in packageImports:
-			for error in packageImports["error"]:
-				imports.append(error["name"])
-		if "type" in packageImports:
-			for types in packageImports["type"]:
-				imports.append(types["name"])
-		if "annotation" in packageImports:
-			for annotation in packageImports["annotation"]:
-				imports.append(annotation["name"])
+	search_types = ["interface", "class", "enum", "exception", "error", "type", "annotation"]
+	for search_type in search_types:
+		if search_type in packageImports:
+			if "package" in packageImports:
+				# .javatar-imports format
+				imports += packageImports[search_type]
+			else:
+				# .javatar-packages format
+				for clazz in packageImports[search_type]:
+					imports.append(clazz["name"])
 	return imports
 
 
-def find_class(path, classname):
+def get_class(classname, window=None, callback=None, allow_manual=True, step=1):
+	if callback is None:
+		return
+	if window is None:
+		window = sublime.active_window()
+	classes = find_class(get_package_root_dir(), classname, True)
+	if len(classes) > 0:
+		select_classes(window=window, classes=classes, callback=callback, allow_manual=allow_manual)
+	else:
+		callback(class_info=None, local=None)
+
+
+def select_classes(index=None, window=None, callback=None, classes=[], allow_manual=True):
+	if callback is None:
+		return
+	global CLASSES
+	if index is None:
+		if len(classes) > 1:
+			CLASSES = classes
+			panel_class = []
+			for clazz in classes:
+				panel_class.append(clazz["classpath"])
+			if allow_manual:
+				panel_class.append("Enter Package Manually")
+			window.show_quick_panel(panel_class, select_classes)
+		elif len(classes) > 0:
+			callback(class_info=classes[0]["class"], local=classes[0]["local"])
+		else:
+			callback(class_info=None, local=None)
+	elif index < 0:
+		callback(class_info=None, local=None)
+	elif index >= len(CLASSES):
+		# Enter manually
+		callback(class_info={}, local=None)
+	else:
+		callback(class_info=CLASSES[index]["class"], local=CLASSES[index]["local"])
+
+
+def find_class(path, classname, with_info=False):
 	# If it is a default class, should import manually
 	from .javatar_collections import get_packages
 	classes = []
@@ -71,7 +101,14 @@ def find_class(path, classname):
 		for filename in filenames:
 			if filename == classname + ".java":
 				classpath = to_package(without_extension(os.path.join(root, filename)))
-				classes.append(classpath)
+				if with_info:
+					class_file = open(os.path.join(root, filename), "r")
+					class_content = class_file.read()
+					class_file.close()
+					class_structure, class_type = to_class(class_content)
+					classes.append({"classpath": classpath, "class": class_structure, "type": class_type, "local": True})
+				else:
+					classes.append(classpath)
 				foundClass = True
 	for packageImport in get_packages():
 		if "packages" in packageImport:
@@ -79,8 +116,12 @@ def find_class(path, classname):
 				package = packageImport["packages"][packageName]
 				if not foundClass and "default" in package and package["default"]:
 					continue
-				if classname in get_all_types(package):
-					classes.append(packageName+"."+classname)
+				if with_info:
+					class_structure, class_type = get_class_structure(classname, package)
+					if class_structure is not None:
+						classes.append({"classpath": packageName+"."+classname, "class": class_structure, "type": class_type, "local": False})
+				elif classname in get_all_types(package):
+						classes.append(packageName+"."+classname)
 	classes.sort()
 	return classes
 

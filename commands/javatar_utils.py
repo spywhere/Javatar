@@ -45,50 +45,8 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
 				view = panel.open("JSONTest.json")
 				sublime.set_timeout(lambda:view.run_command("javatar_util", {"util_type": "insert", "text": "{\n}"}), 50)
 		elif util_type == "parse":
-			try:
-				grammars = sublime.find_resources("Java8.javatar-grammar")
-				if len(grammars) > 0:
-					scope = GrammarParser(sublime.decode_value(sublime.load_resource(grammars[0])))
-					parse_output = scope.parse_grammar(self.view.substr(sublime.Region(0, self.view.size())))
-					status_text = ""
-					if parse_output["success"]:
-						if not is_stable():
-							if text == "":
-								nodes = scope.find_all()
-							elif text == "#":
-								selections = self.view.sel()
-								nodes = scope.find_by_region([0, 0])
-								if len(selections) > 0:
-									first_sel = selections[0]
-									if first_sel.empty():
-										nodes = scope.find_by_region([first_sel.begin(), first_sel.end()])
-									else:
-										nodes = scope.find_inside_region([first_sel.begin(), first_sel.end()])
-							else:
-								nodes = scope.find_by_selectors(text)
-							if text != "#":
-								status_text = "Parsing got " + str(len(nodes)) + " tokens"
-							for node in nodes:
-								if text == "#":
-									if status_text == "":
-										status_text += node["name"]
-									else:
-										status_text += " " + node["name"]
-								else:
-									print("#" + str(node["begin"]) + ":" + str(node["end"]) + " => " + node["name"])
-									print("   => " + node["value"])
-							print("Total: " + str(len(nodes)) + " tokens")
-					if not is_stable():
-						if text != "#":
-							if status_text != "" and str(parse_output["end"]) == str(self.view.size()):
-								status_text += " in {elapse_time:.2f}s".format(elapse_time=scope.get_elapse_time())
-							else:
-								status_text = "Parsing failed [" + str(parse_output["end"]) + "/" + str(self.view.size()) + "] in {elapse_time:.2f}s".format(elapse_time=scope.get_elapse_time())
-						print("Ending: " + str(parse_output["end"]) + "/" + str(self.view.size()))
-						print("Parsing Time: {elapse_time:.2f}s".format(elapse_time=scope.get_elapse_time()))
-						show_status(status_text, None, False)
-			except Exception:
-				print("Error occurred while parsing")
+			if not is_stable():
+				sublime.active_window().show_input_panel("Parse Parameter:", "", self.parse_code, None, None)
 		elif util_type == "reload":
 			if is_debug():
 				get_action().add_action("javatar.command.utils.reload.run", "Reload Javatar")
@@ -101,6 +59,52 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
 						reload(sys.modules[mod])
 				from ..Javatar import plugin_loaded
 				plugin_loaded()
+
+	def parse_code(self, text):
+		try:
+			grammars = sublime.find_resources("Java*.javatar-grammar")
+			if len(grammars) > 0:
+				scope = GrammarParser(sublime.decode_value(sublime.load_resource(grammars[0])))
+				parse_output = scope.parse_grammar(self.view.substr(sublime.Region(0, self.view.size())))
+				status_text = ""
+				if parse_output["success"]:
+					if not is_stable():
+						if text == "":
+							nodes = scope.find_all()
+						elif text == "#":
+							selections = self.view.sel()
+							nodes = scope.find_by_region([0, 0])
+							if len(selections) > 0:
+								first_sel = selections[0]
+								if first_sel.empty():
+									nodes = scope.find_by_region([first_sel.begin(), first_sel.end()])
+								else:
+									nodes = scope.find_inside_region([first_sel.begin(), first_sel.end()])
+						else:
+							nodes = scope.find_by_selectors(text)
+						if text != "#":
+							status_text = "Parsing got " + str(len(nodes)) + " tokens"
+						for node in nodes:
+							if text == "#":
+								if status_text == "":
+									status_text += node["name"]
+								else:
+									status_text += " " + node["name"]
+							else:
+								print("#" + str(node["begin"]) + ":" + str(node["end"]) + " => " + node["name"])
+								print("   => " + node["value"])
+						print("Total: " + str(len(nodes)) + " tokens")
+				if not is_stable():
+					if text != "#":
+						if status_text != "" and str(parse_output["end"]) == str(self.view.size()):
+							status_text += " in {elapse_time:.2f}s".format(elapse_time=scope.get_elapse_time())
+						else:
+							status_text = "Parsing failed [" + str(parse_output["end"]) + "/" + str(self.view.size()) + "] in {elapse_time:.2f}s".format(elapse_time=scope.get_elapse_time())
+					print("Ending: " + str(parse_output["end"]) + "/" + str(self.view.size()))
+					print("Parsing Time: {elapse_time:.2f}s".format(elapse_time=scope.get_elapse_time()))
+					show_status(status_text, None, False)
+		except Exception:
+			print("Error occurred while parsing")
 
 	def remote_hash(self, url):
 		try:

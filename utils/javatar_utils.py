@@ -183,9 +183,9 @@ def show_status(text, delay=None, require_java=True):
 	get_status().set_status(text, delay, require_java)
 
 
-def hide_status():
+def hide_status(clear=True):
 	from .javatar_status import get_status
-	get_status().hide_status()
+	get_status().hide_status(clear)
 
 
 def to_readable_size(filepath):

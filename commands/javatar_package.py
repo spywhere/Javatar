@@ -213,9 +213,15 @@ class JavatarCreatePackageCommand(sublime_plugin.WindowCommand):
 		self.showInput()
 
 	def showInput(self):
-		sublime.active_window().show_input_panel("Package Name:", "", self.createPackage, "", "")
+		sublime.active_window().show_input_panel("Package Name:", "", self.createPackage, self.on_change, self.on_cancel)
 
-	def createPackage(self, text):
+	def on_change(self, text):
+		show_status(self.createPackage(text, True), delay=-1, require_java=False)
+
+	def on_cancel(self):
+		hide_status(clear=True)
+
+	def createPackage(self, text, on_change=False):
 		get_action().add_action("javatar.command.package.create_package", "Create package [package="+text+"]")
 		relative = True
 		if text.startswith("~"):
@@ -223,9 +229,13 @@ class JavatarCreatePackageCommand(sublime_plugin.WindowCommand):
 			relative = False
 
 		if not is_project() and not (is_project() and is_file()):
+			if on_change:
+				return "Cannot specify package location"
 			sublime.error_message("Cannot specify package location")
 			return
 		if not is_package(text):
+			if on_change:
+				return "Invalid package naming"
 			sublime.error_message("Invalid package naming")
 			return
 		if relative and get_path("current_dir") is not None:
@@ -233,5 +243,7 @@ class JavatarCreatePackageCommand(sublime_plugin.WindowCommand):
 		else:
 			create_directory = get_path("join", get_package_root_dir(), package_as_directory(text))
 		package = to_package(get_path("relative", create_directory, get_package_root_dir()), False)
+		if on_change:
+			return "Package \""+package+"\" will be created"
 		make_package(create_directory)
 		show_status("Package \""+package+"\" is created", None, False)

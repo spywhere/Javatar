@@ -4,16 +4,20 @@ import sublime_plugin
 from ..utils import *
 
 
-def get_info(text):
+def get_info(text, on_change=False):
 	relative = True
 	if text.startswith("~"):
 		text = text[1:]
 		relative = False
 
 	if not is_project() and not (is_project() and is_file()):
+		if on_change:
+			return "Cannot specify package location"
 		sublime.error_message("Cannot specify package location")
 		return
 	if not is_package(text, True):
+		if on_change:
+			return "Invalid package naming"
 		sublime.error_message("Invalid package naming")
 		return
 	if relative and get_path("current_dir") is not None:
@@ -33,7 +37,9 @@ def get_info(text):
 	}
 
 	body = "${1}"
-	visibility = visibilityMap["public"]
+	visibility_keyword = "public"
+	visibility = visibilityMap[visibility_keyword]
+	modifier_keyword = ""
 	modifier = ""
 	extends = []
 	implements = []
@@ -44,12 +50,14 @@ def get_info(text):
 	for visibilityKeyword, visibilityCode in visibilityMap.items():
 		if className.lower().startswith(visibilityKeyword):
 			className = className[len(visibilityKeyword):]
+			visibility_keyword = visibilityKeyword
 			visibility = visibilityCode;
 			break
 
 	for modifierKeyword, modifierCode in modifierMap.items():
 		if className.lower().startswith(modifierKeyword):
 			className = className[len(modifierKeyword):]
+			modifier_keyword = modifierKeyword
 			modifier = modifierCode
 			break
 
@@ -78,7 +86,7 @@ def get_info(text):
 		body = "public static void main(String[] args) {\n\t\t${1}\n\t}"
 
 	file_path = get_path("join", create_directory, className + ".java")
-	return {"file": file_path, "package": package, "visibility": visibility, "modifier": modifier, "class": className, "extends": extends, "implements": implements, "body": body}
+	return {"file": file_path, "package": package, "visibility_keyword": visibility_keyword, "visibility": visibility, "modifier_keyword": modifier_keyword, "modifier": modifier, "class": className, "extends": extends, "implements": implements, "body": body}
 
 
 def get_file_contents(classType, info):
@@ -94,8 +102,11 @@ def get_file_contents(classType, info):
 	inheritance = ""
 	# Enum can only implements interfaces
 	# Interface can only extends another interface
-	if classType != "Enumeration" and len(info["extends"]) > 0:
-		inheritance = " extends " + ", ".join(info["extends"])
+	if classType != "Enumerator" and len(info["extends"]) > 0:
+		if classType == "Class" and len(info["extends"]) > 1:
+			inheritance = " extends "+info["extends"][0]
+		else:
+			inheritance = " extends " + ", ".join(info["extends"])
 	if classType != "Interface" and len(info["implements"]) > 0:
 		inheritance += " implements " + ", ".join(info["implements"])
 
@@ -131,16 +142,57 @@ def create_class_file(file_path, contents, msg, info):
 
 
 class JavatarCreateCommand(sublime_plugin.WindowCommand):
-	def run(self, text="", create_type=""):
-		get_action().add_action("javatar.command.create.run", "Create [create_type=" + create_type + "]")
+	def run(self, text="", create_type="", on_change=False):
+		if on_change:
+			if text == "":
+				return get_info(text, on_change)
+		else:
+			get_action().add_action("javatar.command.create.run", "Create [create_type=" + create_type + "]")
 		if create_type != "":
 			self.show_input(-1, create_type)
 			return
 		if text != "":
-			info = get_info(text)
+			info = get_info(text, on_change)
+			if on_change:
+				if type(info) is str:
+					return info
+				elif os.path.exists(info["file"]):
+					return self.create_type + " \"" + info["class"] + "\" already exists"
+				else:
+					prefix = ""
+					additional_text = ""
+					if info["visibility_keyword"] != "":
+						prefix += info["visibility_keyword"]
+					if info["modifier_keyword"] != "":
+						prefix += " " + info["modifier_keyword"]
+					prefix += " " + self.create_type
+					prefix = prefix[:1].upper() + prefix[1:].lower()
+
+					if len(info["extends"]) > 2:
+						additional_text += ", extends \"" + "\", \"".join(info["extends"][:2]) + "\" and " + str(len(info["extends"])-2) + " more classes"
+					elif len(info["extends"]) > 0:
+						additional_text += ", extends \"" + "\", \"".join(info["extends"]) + "\""
+					if len(info["implements"]) > 2:
+						additional_text += ", implements \"" + "\", \"".join(info["implements"][:2]) + "\" and " + str(len(info["implements"])-2) + " more classes"
+					elif len(info["implements"]) > 0:
+						additional_text += ", implements \"" + "\", \"".join(info["implements"]) + "\""
+
+					if self.create_type == "Class" and len(info["extends"]) > 1:
+						additional_text += " [Warning! Class can be extent only once]"
+					elif self.create_type == "Enumerator" and len(info["extends"]) > 0:
+						additional_text += " [Warning! Enumerator use \"implements\" instead of \"extends\"]"
+					elif self.create_type == "Interface" and len(info["implements"]) > 0:
+						additional_text += " [Warning! Interface use \"extends\" instead of \"implements\"]"
+					return prefix + " \"" + info["class"] + "\" will be created within package \"" + to_readable_package(info["package"], True) + "\"" + additional_text
 			get_action().add_action("javatar.command.create.run", "Create [info=" + str(info) + "]")
-			create_class_file(info["file"], get_file_contents(self.create_type, info), self.create_type + "\"" + info["class"] + "\" already exists", info)
+			create_class_file(info["file"], get_file_contents(self.create_type, info), self.create_type + " \"" + info["class"] + "\" already exists", info)
 			sublime.set_timeout(lambda: show_status(self.create_type + " \"" + info["class"] + "\" is created within package \"" + to_readable_package(info["package"], True) + "\""), 500)
+
+	def on_change(self, text):
+		show_status(self.run(text, on_change=True), delay=-1, require_java=False)
+
+	def on_cancel(self):
+		hide_status(clear=True)
 
 	def show_input(self, index, create_type=""):
 		if create_type != "" or index >= 0:
@@ -148,4 +200,4 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
 				self.create_type = create_type
 			else:
 				self.create_type = get_snippet_name(index)
-			sublime.active_window().show_input_panel(self.create_type + " Name:", "", self.run, "", "")
+			sublime.active_window().show_input_panel(self.create_type + " Name:", "", self.run, self.on_change, self.on_cancel)
