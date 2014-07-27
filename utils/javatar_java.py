@@ -7,7 +7,7 @@ from .javatar_thread import *
 from .javatar_utils import *
 
 
-CLASSES = []
+TMP = {}
 
 
 def detect_jdk(silent=False, on_done=None, progress=False):
@@ -63,16 +63,20 @@ def get_class(classname, window=None, callback=None, allow_manual=True, step=1):
 	if len(classes) > 0:
 		select_classes(window=window, classes=classes, callback=callback, allow_manual=allow_manual)
 	else:
+		print("No class")
 		callback(class_info=None, local=None)
 
 
 def select_classes(index=None, window=None, callback=None, classes=[], allow_manual=True):
 	if callback is None:
+		print("No callback")
 		return
-	global CLASSES
+	global TMP
 	if index is None:
 		if len(classes) > 1:
-			CLASSES = classes
+			TMP = {}
+			TMP["classes"] = classes
+			TMP["callback"] = callback
 			panel_class = []
 			for clazz in classes:
 				panel_class.append(clazz["classpath"])
@@ -82,14 +86,19 @@ def select_classes(index=None, window=None, callback=None, classes=[], allow_man
 		elif len(classes) > 0:
 			callback(class_info=classes[0]["class"], local=classes[0]["local"])
 		else:
+			print("No class2")
 			callback(class_info=None, local=None)
 	elif index < 0:
+		print("Cancel")
+		callback = TMP["callback"]
 		callback(class_info=None, local=None)
-	elif index >= len(CLASSES):
+	elif index >= len(TMP["classes"]):
+		callback = TMP["callback"]
 		# Enter manually
 		callback(class_info={}, local=None)
 	else:
-		callback(class_info=CLASSES[index]["class"], local=CLASSES[index]["local"])
+		callback = TMP["callback"]
+		callback(class_info=TMP["classes"][index]["class"], local=TMP["classes"][index]["local"])
 
 
 def find_class(path, classname, with_info=False):
@@ -122,7 +131,10 @@ def find_class(path, classname, with_info=False):
 						classes.append({"classpath": packageName+"."+classname, "class": class_structure, "type": class_type, "local": False})
 				elif classname in get_all_types(package):
 						classes.append(packageName+"."+classname)
-	classes.sort()
+	if with_info:
+		classes.sort(key=lambda x: x["classpath"])
+	else:
+		classes.sort()
 	return classes
 
 

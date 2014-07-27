@@ -44,7 +44,8 @@ def get_info(text, on_change=False):
 	extends = []
 	implements = []
 	package = to_package(get_path("relative", create_directory, get_package_root_dir()), False)
-	make_package(create_directory, True)
+	if not on_change:
+		make_package(create_directory, True)
 	className = get_class_name_by_regex(text)
 
 	for visibilityKeyword, visibilityCode in visibilityMap.items():
@@ -154,7 +155,7 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
 		if text != "":
 			info = get_info(text, on_change)
 			if on_change:
-				if type(info) is str:
+				if type(info) is str and info != "":
 					return info
 				elif os.path.exists(info["file"]):
 					return self.create_type + " \"" + info["class"] + "\" already exists"
