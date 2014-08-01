@@ -2,7 +2,7 @@ import sublime
 import os, sys
 import threading
 import subprocess
-from time import clock
+from time import clock, sleep
 from .javatar_utils import *
 
 
@@ -44,15 +44,17 @@ class JavatarShell(threading.Thread):
 				_, layout_height = self.view.layout_extent()
 				_, viewport_height = self.view.viewport_extent()
 				viewport_posx, viewport_posy = self.view.viewport_position()
-				self.view.run_command("javatar_util", {"util_type": "add", "text": data.decode("UTF-8").replace("\r\n","\n")})
-				self.old_data += data.decode("UTF-8").replace("\r\n","\n")
+				decoded_data = data.decode("utf-8", get_settings("encoding_handle")).replace("\r\n","\n")
+				self.view.run_command("javatar_util", {"util_type": "add", "text": decoded_data})
+				self.old_data += decoded_data
 				if get_settings("autoscroll_to_bottom") and viewport_posy >= layout_height-viewport_height-get_settings("autoscroll_snap_range"):
 					_, layout_height = self.view.layout_extent()
 					self.view.set_viewport_position((viewport_posx, layout_height-viewport_height), False)
 				if self.to_console:
-					print(data.decode("UTF-8").replace("\r\n","\n"))
+					print(decoded_data)
 			elif self.proc.poll() is not None:
 				break
+			sleep(0.01)
 		self.isReadable = False
 
 	def read_stdin(self):
@@ -67,6 +69,7 @@ class JavatarShell(threading.Thread):
 				os.write(self.proc.stdin.fileno(), self.data_in.encode("UTF-8"))
 				self.old_data = self.view.substr(sublime.Region(0, self.view.size()))
 				self.data_in = ""
+			sleep(0.01)
 		self.isWritable = False
 
 	def run(self):
@@ -88,6 +91,7 @@ class JavatarShell(threading.Thread):
 				self.proc.stdout.close()
 				self.proc.stdin.close()
 				break
+			sleep(0.01)
 		if self.return_code is None:
 			self.kill(self.proc)
 		self.result = True
@@ -129,14 +133,16 @@ class JavatarSilentShell(threading.Thread):
 		while True:
 			data = os.read(self.proc.stdout.fileno(), 512)
 			if len(data) > 0:
+				decoded_data = data.decode("utf-8", get_settings("encoding_handle")).replace("\r\n","\n")
 				if self.data_out is None:
-					self.data_out = data.decode("UTF-8").replace("\r\n","\n")
+					self.data_out = decoded_data
 				else:
-					self.data_out += data.decode("UTF-8").replace("\r\n","\n")
+					self.data_out += decoded_data
 				if self.to_console:
-					print(data.decode("UTF-8").replace("\r\n","\n"))
+					print(decoded_data)
 			elif self.proc.poll() is not None:
 				break
+			sleep(0.01)
 		self.isReadable = False
 
 	def run(self):
@@ -153,6 +159,7 @@ class JavatarSilentShell(threading.Thread):
 			if not self.isReadable:
 				self.proc.stdout.close()
 				break
+			sleep(0.01)
 		if self.return_code is None:
 			self.kill(self.proc)
 		self.result = True
@@ -175,6 +182,7 @@ class JavatarBlockShell():
 			if not self.isReadable:
 				self.proc.stdout.close()
 				break
+			sleep(0.01)
 		if self.return_code is None:
 			self.kill(self.proc)
 		return {"elapse_time": clock()-start_time, "data": self.data_out, "return_code": self.return_code}
@@ -201,10 +209,12 @@ class JavatarBlockShell():
 		while self.proc.poll() is None:
 			data = os.read(self.proc.stdout.fileno(), 512)
 			if len(data) > 0:
+				decoded_data = data.decode("utf-8", get_settings("encoding_handle")).replace("\r\n","\n")
 				if self.data_out is None:
-					self.data_out = data.decode("UTF-8").replace("\r\n","\n")
+					self.data_out = decoded_data
 				else:
-					self.data_out += data.decode("UTF-8").replace("\r\n","\n")
+					self.data_out += decoded_data
 			elif self.proc.poll() is not None:
 				break
+			sleep(0.01)
 		self.isReadable = False

@@ -36,7 +36,7 @@
 	// Allow Javatar to update project data for restoration
 	"allow_project_restoration": true,
 
-	// Time interval to update project data (for restoration)
+	// Time interval to update project data for restoration (in milliseconds)
 	"project_update_interval": 60000,
 
 	// Show package path in status bar
@@ -122,6 +122,12 @@
 	// Build log view creation delay (in second)
 	//    Increase this value can helps prevent double view from showing but also freeze computer for a specified time
 	"build_log_delay" : 0.05,
+
+	// Error handler on output encoding
+	//    ignore = Remove all invalid encoding character
+	//    replace = Replace all invalid encoding character with "?" symbol
+	// Change this value without knowing what you're doing is not a good idea
+	"encoding_handle": "replace",
 
 	//////////////////////////////////
 	// Javatar Validations Settings //
