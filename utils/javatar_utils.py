@@ -258,6 +258,18 @@ def without_extension(file_path):
 	return file_path
 
 
+def get_main_class_name(file_path=None, view=None):
+	from .javatar_validator import is_file
+	if view is not None:
+		return without_extension(get_path("name", view.file_name()))
+	elif file_path is not None:
+		return without_extension(get_path("name", file_path))
+	else:
+		if is_file():
+			return get_main_class_name(None, sublime.active_window().active_view())
+	return None
+
+
 def get_class_name(file_path=None, view=None):
 	from .javatar_validator import is_file
 	if view is not None:
@@ -285,7 +297,9 @@ def parse_macro(text, macro_data=None, file_path=None):
 	return text
 
 
-def get_macro_data():
+def get_macro_data(class_name=None):
+	if class_name is None:
+		class_name = get_class_name()
 	from .javatar_java import normalize_package
 	from .javatar_validator import is_file
 	source_data = {}
@@ -294,7 +308,7 @@ def get_macro_data():
 	source_data["packages_path"] = sublime.packages_path()
 	source_data["sep"] = os.sep
 	if is_file():
-		source_data["full_class_path"] = normalize_package(get_current_package()+"."+get_class_name())
+		source_data["full_class_path"] = normalize_package(get_current_package()+"."+class_name)
 		source_data["class_name"] = get_class_name()
 		source_data["package"] = get_current_package()
 	return source_data
