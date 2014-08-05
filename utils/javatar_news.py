@@ -5,7 +5,7 @@ from .javatar_usage import send_usages, get_usage_data, start_clock, stop_clock
 
 
 # YY.MM.DD.HH.MM
-VERSION = "14.08.05.11.16b"
+VERSION = "14.08.05.12.36b"
 UPDATEFOR = "all"
 NEWSID = 18
 

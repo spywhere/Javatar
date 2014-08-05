@@ -54,7 +54,7 @@ class JavatarShell(threading.Thread):
 					print(decoded_data)
 			elif self.proc.poll() is not None:
 				break
-			sleep(0.01)
+			sleep(get_settings("shell_refresh_interval"))
 		self.isReadable = False
 
 	def read_stdin(self):
@@ -69,7 +69,7 @@ class JavatarShell(threading.Thread):
 				os.write(self.proc.stdin.fileno(), self.data_in.encode("UTF-8"))
 				self.old_data = self.view.substr(sublime.Region(0, self.view.size()))
 				self.data_in = ""
-			sleep(0.01)
+			sleep(get_settings("shell_refresh_interval"))
 		self.isWritable = False
 
 	def run(self):
@@ -91,7 +91,7 @@ class JavatarShell(threading.Thread):
 				self.proc.stdout.close()
 				self.proc.stdin.close()
 				break
-			sleep(0.01)
+			sleep(get_settings("shell_refresh_interval"))
 		if self.return_code is None:
 			self.kill(self.proc)
 		self.result = True
@@ -142,7 +142,7 @@ class JavatarSilentShell(threading.Thread):
 					print(decoded_data)
 			elif self.proc.poll() is not None:
 				break
-			sleep(0.01)
+			sleep(get_settings("shell_refresh_interval"))
 		self.isReadable = False
 
 	def run(self):
@@ -159,7 +159,7 @@ class JavatarSilentShell(threading.Thread):
 			if not self.isReadable:
 				self.proc.stdout.close()
 				break
-			sleep(0.01)
+			sleep(get_settings("shell_refresh_interval"))
 		if self.return_code is None:
 			self.kill(self.proc)
 		self.result = True
@@ -182,7 +182,7 @@ class JavatarBlockShell():
 			if not self.isReadable:
 				self.proc.stdout.close()
 				break
-			sleep(0.01)
+			sleep(get_settings("shell_refresh_interval"))
 		if self.return_code is None:
 			self.kill(self.proc)
 		return {"elapse_time": clock()-start_time, "data": self.data_out, "return_code": self.return_code}
@@ -216,5 +216,5 @@ class JavatarBlockShell():
 					self.data_out += decoded_data
 			elif self.proc.poll() is not None:
 				break
-			sleep(0.01)
+			sleep(get_settings("shell_refresh_interval"))
 		self.isReadable = False
