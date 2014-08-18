@@ -123,7 +123,7 @@
 	//    Increase this value can helps prevent double view from showing but also freeze computer for a specified time
 	"build_log_delay" : 0.05,
 
-	// Refresh rate for Javatar shell
+	// Refresh rate for Javatar shell (in second)
 	//    Increase this value can helps shell output to print more smoothly but it's also affect the system performances
 	"shell_refresh_interval": 0.01,
 

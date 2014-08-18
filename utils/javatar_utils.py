@@ -316,8 +316,8 @@ def get_macro_data(class_name=None):
 
 def get_path(path_type="", dir_path="", dir_path2=""):
 	window = sublime.active_window()
+	from .javatar_validator import is_file
 	if path_type == "source_folder":
-		from .javatar_validator import is_file
 		path = get_settings("source_folder")
 		if path != "":
 			return path
