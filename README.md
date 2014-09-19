@@ -12,11 +12,15 @@ For better understanding, check out an example included within this repository.
 ### Parsing
 Before start parsing, you will need to create a new instance of GrammarParser...
 
-	parser = new GrammarParser(grammar)
+```py
+parser = GrammarParser(grammar)
+```
 
 If you want to print the rule calls, you need to specified a callback (in this case, printer function) in constructor...
 
-	parser = new GrammarParser(grammar, printer)
+```py
+parser = GrammarParser(grammar, printer)
+```
 	
 Printer function will receive 2 arguments from GrammarParser.
 
@@ -29,7 +33,9 @@ For grammar, please refer to Language Grammar section below.
 
 After you instantiate a new GrammarParser, you can parse document by...
 
-	parse_output = parser.parse_grammar(source_data)
+```py
+parse_output = parser.parse_grammar(source_data)
+```
 
 Source data is just data you want to parse with grammar. The output is a Python dictionary contains...
 
@@ -53,8 +59,9 @@ So, if you want to ensure 100% successful parsing, you may want to use both `suc
 When parsing is finished, you can select a portion of nodes (or tokens) to use. There're many ways you can select a specific one...
 
  - Find by selector
-
-		nodes = parser.find_by_selector(selector)
+	```py
+	nodes = parser.find_by_selector(selector)
+	```
 
 	Selector is simply a string which is part of call tree.
 	As default, the selector will select any nodes that its call tree *starts with* the selector. If you want the selector to select any nodes that its call tree *contains* the selector, just add `>` at start of the selector.
@@ -73,7 +80,9 @@ When parsing is finished, you can select a portion of nodes (or tokens) to use. 
 	[ ] indicate that it's an optional option.
  - Find by selector(s)
 
- 		nodes = parser.find_by_selectors(selectors)
+	```py
+ 	nodes = parser.find_by_selectors(selectors)
+ 	```
  	
  	This is works same as find_by_selector but, in this one, you can specified multiple selectors at once. Just separate each selector using `|` and any matched nodes will be selected.
  	
@@ -83,25 +92,33 @@ When parsing is finished, you can select a portion of nodes (or tokens) to use. 
  	
  	**Note! Spaces are also count as selector name.**
  - Find by RegEx
- 
- 		nodes = parser.find_by_regex(regex)
+
+	```py 
+ 	nodes = parser.find_by_regex(regex)
+ 	```
  	
  	This is one of the flexible option to select nodes. RegEx will be matched with call tree as default. Add `@` will switch to node name instead. But in this time, find all and childs flags cannot be set (`>` at start and end of selector) since RegEx can check all of that by specified a RegEx pattern.
  - Find by region
- 
- 		nodes = parser.find_by_region([start, end])
+
+	```py 
+ 	nodes = parser.find_by_region([start, end])
+	```
  	
  	This is use when you want to select all nodes that *covered* specified region.
  
  - Find inside region
- 
- 		nodes = parser.find_inside_region([start, end])
+
+	```py
+ 	nodes = parser.find_inside_region([start, end])
+ 	```
  	
  	This is used similar to find by region. But this one will find all nodes that *inside* specified region instead.
 
  - Find all
- 
- 		nodes = parser.find_all()
+
+	```py
+	nodes = parser.find_all()
+	```
  		
  	This is used when you want to select all nodes.
 
@@ -161,7 +178,9 @@ Grammar rule is smallest part of grammar. It's used to match and redirect to ano
 ### Validate Grammar
 When you finish create a new language grammar, you might want to check if any of rules are not used or unexists. You can validate your grammar by...
 
-	validate_output = parser.validate_grammar()
+```py
+validate_output = parser.validate_grammar()
+```
 
 The output from validation is a Python dictionary contains...
 
