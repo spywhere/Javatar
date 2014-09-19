@@ -3,7 +3,7 @@
 A Python lexerless recursive descent grammar parser
 
 ### Usage
-Place this file anywhere in your project and import by using `from GrammarParser import *` or `from GrammarParser import GrammarParser` or similar.
+Place files from this repository anywhere in your project and import by using `from GrammarParser import *` or `from GrammarParser import GrammarParser` or similar.
 
 For better understanding, check out an example included within this repository.
 
@@ -40,7 +40,7 @@ parse_output = parser.parse_grammar(source_data)
 Source data is just data you want to parse with grammar. The output is a Python dictionary contains...
 
  - `success`
-   - Boolean indicate that parser successfully parse document or not.
+   - Boolean indicate that parser successfully parsed the document or not.
  - `begin`
    - An integer indicate a starting position
  - `end`
@@ -49,14 +49,14 @@ Source data is just data you want to parse with grammar. The output is a Python 
 #### Difference between `success` and `end`
 Let's say you have a Python document and we will parse it using Java grammar. The compilation unit of Java is simply an optional of package declaration, multiple (equivalent to star in Regular Expression) of import declarations and multiple of type declarations.
 
-When you parse the document, parser will return `success` as `True` and `end` as `0` since Python document has 0 package declaration (it's optional so it can be omitted), 0 import declaration (it's multiple so ir can be omitted) and 0 type declaration (it's multiple again so it can be omitted too).
+When you parse the document, parser will return `success` as `True` and `end` as `0` since Python document has 0 package declaration (it is optional so it can be omitted), 0 import declaration (it is multiple so it can be omitted) and 0 type declaration (it is multiple again so it can be omitted too).
 
-That's not correct, right?
+That is not correct, right?
 
 So, if you want to ensure 100% successful parsing, you may want to use both `success` and `end` to check if `success` is `True` and `end` is at the last position of document.
 
 ### Selectors
-When parsing is finished, you can select a portion of nodes (or tokens) to use. There're many ways you can select a specific one...
+When parsing is finished, you can select a portion of nodes (or tokens) to use. There are many ways you can select a specific one...
 
  - Find by selector
 	```py
@@ -66,10 +66,10 @@ When parsing is finished, you can select a portion of nodes (or tokens) to use. 
 	Selector is simply a string which is part of call tree.
 	As default, the selector will select any nodes that its call tree *starts with* the selector. If you want the selector to select any nodes that its call tree *contains* the selector, just add `>` at start of the selector.
 	
-	You can let's it search using node name by specified `@` at start of the selector. And if you want to show its childs (if any) you might add `>` at the end of the selector.
+	You can let it search using node name by specified `@` at start of the selector. And if you want to show its childs (if any) you might add `>` at the end of the selector.
 
 
-	To summarize, here's the selector format...
+	To summarize, here is the selector format...
 	
 		[@][>]selector[>]
 	
@@ -77,7 +77,7 @@ When parsing is finished, you can select a portion of nodes (or tokens) to use. 
 	\> (At start) = Find anywhere that contains selector<br />
 	\> (At the end) = Find only its childs
 
-	[ ] indicate that it's an optional option.
+	[ ] indicate that it is an optional option.
  - Find by selector(s)
 
 	```py
@@ -150,7 +150,7 @@ A language grammar is a Python dictionary which contains 3 root key/value pairs:
 Each key is an optional grammar rule. You may want to specified some of them or all of them.
 
 ### Grammar Rule
-Grammar rule is smallest part of grammar. It's used to match and redirect to another rule by using a key/value pair...
+Grammar rule is smallest part of grammar. It is used to match and redirect to another rule by using a key/value pair...
 	
  - `name` - String
    - This is used to named a node or a token which you can select by selector (with `@`).
@@ -169,11 +169,11 @@ Grammar rule is smallest part of grammar. It's used to match and redirect to ano
  - `include` - String
    - This is used to include a rule from repository to itself. Very useful when you want to include a rule from another rule.
  - `optional` - Boolean
-   - This is used to specified current rule as optional. That's mean if this rule is invalid, it will still valid. Works same as `?` in RegEx.
+   - This is used to specified current rule as optional. That is mean if this rule is invalid, it will still valid. Works same as `?` in RegEx.
  - `multiple` - Boolean
-   - This is used to specified current rule as multiple occurrance. That's mean this rule will matched multiple times as possible. Works same as `*` in RegEx.
+   - This is used to specified current rule as multiple occurrance. That is mean this rule will matched multiple times as possible. Works same as `*` in RegEx.
 
-`match`, `parse`, `parse_any` and `include` can not be used at the same time (only one per rule). This prevent a problem may cause in later version when reorder a priority.
+`match`, `parse`, `parse_any` and `include` cannot be used at the same time (only one per rule). This prevent a problem may cause in later version when reorder a priority.
 	
 ### Validate Grammar
 When you finish create a new language grammar, you might want to check if any of rules are not used or unexists. You can validate your grammar by...
