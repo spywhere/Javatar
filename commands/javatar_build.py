@@ -11,11 +11,13 @@ from ..utils import *
 class JavatarBuildCommand(sublime_plugin.WindowCommand):
 	build_list = []
 	build_size = -1
+	failed = False
 	view = None
 
 	def build(self):
 		self.start_time = clock()
 		self.view = None
+		self.failed = False
 		self.build_size = len(self.build_list)
 		self.progress = MultiThreadProgress("Preparing build", None, self.on_build_thread_complete, self.on_all_complete)
 		num_thread = 1
@@ -84,6 +86,7 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 		if data is not None:
 			if self.view is None:
 				self.view = self.window.new_file()
+				self.failed = True
 				self.view.set_name("Preparing build log...")
 				self.view.set_syntax_file("Packages/Javatar/syntax/JavaCompilationError.tmLanguage")
 				# Prevent view access while creating which cause double view to create
@@ -93,15 +96,21 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
 
 	def on_all_complete(self):
 		if self.build_size < 0:
+			show_notification("Building Cancelled")
 			sublime.status_message("Building Cancelled")
 			get_action().add_action("javatar.command.build.complete", "Building Cancelled")
 			return
 
+		message = "Building Finished [{0:.2f}s]"
+		if self.failed:
+			message = "Building Failed [{0:.2f}s]"
+
+		show_notification(message.format(clock()-self.start_time))
 		self.build_size = -1
 		if self.view is not None:
-			self.view.set_name("Building Finished [{0:.2f}s]".format(clock()-self.start_time))
-		sublime.status_message("Building Finished [{0:.2f}s]".format(clock()-self.start_time))
-		get_action().add_action("javatar.command.build.complete", "Building Finished")
+			self.view.set_name(message.format(clock()-self.start_time))
+		sublime.status_message(message.format(clock()-self.start_time))
+		get_action().add_action("javatar.command.build.complete", message.format(clock()-self.start_time))
 
 	def get_java_files(self, dir_path):
 		for name in os.listdir(dir_path):

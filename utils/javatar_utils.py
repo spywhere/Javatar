@@ -178,6 +178,10 @@ def merge_path(pathlist):
 	return outpath
 
 
+def show_notification(message, title="Javatar"):
+	sublime.run_command("sub_notify", {"title": title, "msg": message, "sound": True})
+
+
 def show_status(text, delay=None, require_java=True):
 	from .javatar_status import get_status
 	get_status().set_status(text, delay, require_java)

@@ -82,12 +82,14 @@ def get_info(text, on_change=False):
 		elif len(extendsComponent) > 0:
 			implements = implementsComponent[1].split(",")
 
+	asmain = False
 	if className.lower().endswith("asmain"):
+		asmain = True
 		className = className[:-6]
 		body = "public static void main(String[] args) {\n\t\t${1}\n\t}"
 
 	file_path = get_path("join", create_directory, className + ".java")
-	return {"file": file_path, "package": package, "visibility_keyword": visibility_keyword, "visibility": visibility, "modifier_keyword": modifier_keyword, "modifier": modifier, "class": className, "extends": extends, "implements": implements, "body": body}
+	return {"file": file_path, "package": package, "visibility_keyword": visibility_keyword, "visibility": visibility, "modifier_keyword": modifier_keyword, "modifier": modifier, "class": className, "extends": extends, "implements": implements, "body": body, "asmain": asmain}
 
 
 def get_file_contents(classType, info):
@@ -166,6 +168,8 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
 						prefix += info["visibility_keyword"]
 					if info["modifier_keyword"] != "":
 						prefix += " " + info["modifier_keyword"]
+					if info["asmain"]:
+						prefix += " main"
 					prefix += " " + self.create_type
 					prefix = prefix[:1].upper() + prefix[1:].lower()
 
