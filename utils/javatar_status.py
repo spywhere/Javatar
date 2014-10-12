@@ -72,7 +72,7 @@ class JavatarStatus():
 					view.set_status(STATUS_NAME, "Package: " + to_readable_package(get_current_package(), True))
 				else:
 					view.set_status(STATUS_NAME, self.permtext)
-			else:
+			elif self.permtext == "":
 				view.erase_status(STATUS_NAME)
 		self.running = False
 

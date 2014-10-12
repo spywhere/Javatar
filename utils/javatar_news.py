@@ -5,7 +5,7 @@ from .javatar_usage import send_usages, get_usage_data, start_clock, stop_clock
 
 
 # YY.MM.DD.HH.MM
-VERSION = "14.09.26.13.45b"
+VERSION = "14.10.12.08.32b"
 UPDATEFOR = "all"
 NEWSID = 18
 
@@ -19,6 +19,7 @@ def show_news(title, prefix=""):
 			"A small update but got a new improvement on class creation. Be sure to checkout JavaDoc!\n"
 			"These are updates and fixes for Javatar " + VERSION + "...\n"
 			"- Build notification via SubNotify (more details in JavatarDoc)\n"
+			"- Fix package/class creation did not show any details\n"
 			"- Fix Javatar Shell cause Sublime Text crash on output encoding error\n"
 			"- Javatar Shell will now scroll to bottom\n"
 			"- Class creation improvements (See JavaDoc for more information)\n"
