@@ -1,8 +1,12 @@
 from GrammarParser import *
-import sys, json, argparse, os.path
+import json
+import argparse
+import os.path
+
 
 def printer(level, msg):
     print((" "*level) + msg)
+
 
 def run():
     # Command-line stuffs

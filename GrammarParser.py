@@ -27,6 +27,7 @@ SOFTWARE.
 import re
 from time import clock
 
+
 class GrammarParser():
     def __init__(self, grammar, printer=None):
         self.grammar = grammar
@@ -105,7 +106,7 @@ class GrammarParser():
                     parse_output["end"] = separator_output["end"]
                     self.regions += separator_output["regions"]
         self.elapse_time = clock()-starttime
-        return {"success":parse_output["successive_match"],"begin":parse_output["begin"],"end":parse_output["end"]}
+        return {"success": parse_output["successive_match"], "begin": parse_output["begin"], "end": parse_output["end"]}
 
     def parse_rule_list(self, rules, is_separator, parent, level, begin):
         regions = []
@@ -134,7 +135,6 @@ class GrammarParser():
         return parse_output
 
     def parse_rule_list_any(self, rules, is_separator, parent, level, begin):
-        regions = []
         if self.printer is not None and not is_separator:
             self.printer(level, "== Rule list once [" + str(len(rules)) + "] ==")
         index = 0
