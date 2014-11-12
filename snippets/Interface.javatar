@@ -3,5 +3,5 @@
 %package%
 
 %visibility%interface %class%%inheritance% {
-	${1}
+    ${1}
 }

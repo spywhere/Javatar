@@ -1,3000 +1,3000 @@
 {
-	// Java 8 Grammar references from
-	//   http://docs.oracle.com/javase/specs/jls/se8/html/index.html
-	//   https://github.com/antlr/grammars-v4/tree/master/java8
-	"separator": {
-		"parse_any": [
-			{
-				"include": "Comment"
-			},
-			{
-				"include": "WhiteSpace"
-			}
-		],
-		"multiple": true
-	},
-	"compilation_unit": {
-		"name": "CompilationUnit",
-		"parse": [
-			{
-				"include": "PackageDeclaration",
-				"optional": true
-			},
-			{
-				"include": "ImportDeclaration",
-				"multiple": true
-			},
-			{
-				"include": "TypeDeclaration",
-				"multiple": true
-			}
-		]
-	},
-	"repository": {
-		"PackageDeclaration": {
-			"name": "PackageDeclaration",
-			"parse": [
-				{
-					"include": "Annotation",
-					"multiple": true
-				},
-				{
-					"match": "package"
-				},
-				{
-					"include": "QualifiedName"
-				},
-				{
-					"match": ";"
-				}
-			]
-		},
-		"ImportDeclaration": {
-			"name": "ImportDeclaration",
-			"parse": [
-				{
-					"match": "import"
-				},
-				{
-					"match": "static",
-					"optional": true
-				},
-				{
-					"include": "QualifiedName"
-				},
-				{
-					"parse": [
-						{
-							"match": "\\."
-						},
-						{
-							"match": "\\*"
-						}
-					],
-					"optional": true
-				},
-				{
-					"match": ";"
-				}
-			]
-		},
-		"TypeDeclaration": {
-			"name": "TypeDeclaration",
-			"parse_any": [
-				{
-					"parse": [
-						{
-							"include": "ClassOrInterfaceModifier",
-							"multiple": true
-						},
-						{
-							"include": "ClassDeclaration"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"include": "ClassOrInterfaceModifier",
-							"multiple": true
-						},
-						{
-							"include": "EnumDeclaration"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"include": "ClassOrInterfaceModifier",
-							"multiple": true
-						},
-						{
-							"include": "InterfaceDeclaration"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"include": "ClassOrInterfaceModifier",
-							"multiple": true
-						},
-						{
-							"include": "AnnotationTypeDeclaration"
-						}
-					]
-				},
-				{
-					"match": ";"
-				}
-			]
-		},
-		"Modifier": {
-			"name": "Modifier",
-			"parse_any": [
-				{
-					"include": "ClassOrInterfaceModifier"
-				},
-				{
-					"match": "native|synchronized|transient|volatile"
-				}
-			]
-		},
-		"ClassOrInterfaceModifier": {
-			"name": "ClassOrInterfaceModifier",
-			"parse_any": [
-				{
-					"include": "Annotation"
-				},
-				{
-					"match": "public|protected|private|static|abstract|final|strictfp"
-				}
-			]
-		},
-		"VariableModifier": {
-			"name": "VariableModifier",
-			"parse_any": [
-				{
-					"match": "final"
-				},
-				{
-					"include": "Annotation"
-				}
-			]
-		},
-		"ClassDeclaration": {
-			"name": "ClassDeclaration",
-			"parse": [
-				{
-					"match": "class"
-				},
-				{
-					"include": "Identifier"
-				},
-				{
-					"include": "TypeParameters",
-					"optional": true
-				},
-				{
-					"parse": [
-						{
-							"match": "extends"
-						},
-						{
-							"include": "Type"
-						}
-					],
-					"optional": true
-				},
-				{
-					"parse": [
-						{
-							"match": "implements"
-						},
-						{
-							"include": "TypeList"
-						}
-					],
-					"optional": true
-				},
-				{
-					"include": "ClassBody"
-				}
-			]
-		},
-		"TypeParameters": {
-			"name": "TypeParameters",
-			"parse": [
-				{
-					"match": "<"
-				},
-				{
-					"include": "TypeParameter"
-				},
-				{
-					"parse": [
-						{
-							"match": ","
-						},
-						{
-							"include": "TypeParameter"
-						}
-					],
-					"multiple": true
-				},
-				{
-					"match": ">"
-				}
-			]
-		},
-		"TypeParameter": {
-			"name": "TypeParameter",
-			"parse": [
-				{
-					"include": "Annotation",
-					"multiple": true
-				},
-				{
-					"include": "Identifier"
-				},
-				{
-					"parse": [
-						{
-							"match": "extends"
-						},
-						{
-							"include": "TypeBound"
-						}
-					],
-					"optional": true
-				}
-			]
-		},
-		"TypeBound": {
-			"name": "TypeBound",
-			"parse": [
-				{
-					"include": "Type"
-				},
-				{
-					"parse": [
-						{
-							"match": "&"
-						},
-						{
-							"include": "Type"
-						}
-					],
-					"multiple": true
-				}
-			]
-		},
-		"EnumDeclaration": {
-			"name": "EnumDeclaration",
-			"parse": [
-				{
-					"match": "enum"
-				},
-				{
-					"include": "Identifier"
-				},
-				{
-					"parse": [
-						{
-							"match": "implements"
-						},
-						{
-							"include": "TypeList"
-						}
-					],
-					"optional": true
-				},
-				{
-					"match": "{"
-				},
-				{
-					"include": "EnumConstants",
-					"optional": true
-				},
-				{
-					"match": ",",
-					"optional": true
-				},
-				{
-					"include": "EnumBodyDeclarations",
-					"optional": true
-				},
-				{
-					"match": "}"
-				}
-			]
-		},
-		"EnumConstants": {
-			"name": "EnumConstants",
-			"parse": [
-				{
-					"include": "EnumConstant"
-				},
-				{
-					"parse": [
-						{
-							"match": ","
-						},
-						{
-							"include": "EnumConstant"
-						}
-					],
-					"multiple": true
-				}
-			]
-		},
-		"EnumConstant": {
-			"name": "EnumConstant",
-			"parse": [
-				{
-					"include": "Annotation",
-					"multiple": true
-				},
-				{
-					"include": "Identifier"
-				},
-				{
-					"include": "Arguments",
-					"optional": true
-				},
-				{
-					"include": "ClassBody",
-					"optional": true
-				}
-			]
-		},
-		"EnumBodyDeclarations": {
-			"name": "EnumBodyDeclarations",
-			"parse": [
-				{
-					"match": ";"
-				},
-				{
-					"include": "ClassBodyDeclaration",
-					"multiple": true
-				}
-			]
-		},
-		"InterfaceDeclaration": {
-			"name": "InterfaceDeclaration",
-			"parse": [
-				{
-					"match": "interface"
-				},
-				{
-					"include": "Identifier"
-				},
-				{
-					"include": "TypeParameters",
-					"optional": true
-				},
-				{
-					"parse": [
-						{
-							"match": "extends"
-						},
-						{
-							"include": "TypeList"
-						}
-					],
-					"optional": true
-				},
-				{
-					"include": "InterfaceBody"
-				}
-			]
-		},
-		"TypeList": {
-			"name": "TypeList",
-			"parse": [
-				{
-					"include": "Type"
-				},
-				{
-					"parse": [
-						{
-							"match": ","
-						},
-						{
-							"include": "Type"
-						}
-					],
-					"multiple": true
-				}
-			]
-		},
-		"ClassBody": {
-			"name": "ClassBody",
-			"parse": [
-				{
-					"match": "{"
-				},
-				{
-					"include": "ClassBodyDeclaration",
-					"multiple": true
-				},
-				{
-					"match": "}"
-				}
-			]
-		},
-		"InterfaceBody": {
-			"name": "InterfaceBody",
-			"parse": [
-				{
-					"match": "{"
-				},
-				{
-					"include": "InterfaceBodyDeclaration",
-					"multiple": true
-				},{
-					"match": "}"
-				}
-			]
-		},
-		"ClassBodyDeclaration": {
-			"name": "ClassBodyDeclaration",
-			"parse_any": [
-				{
-					"match": ";"
-				},
-				{
-					"parse": [
-						{
-							"match": "static",
-							"optional": true
-						},
-						{
-							"include": "Block"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"include": "Modifier",
-							"multiple": true
-						},
-						{
-							"include": "MemberDeclaration"
-						}
-					]
-				}
-			]
-		},
-		"MemberDeclaration": {
-			"name": "MemberDeclaration",
-			"parse_any": [
-				{
-					"include": "MethodDeclaration"
-				},
-				{
-					"include": "GenericMethodDeclaration"
-				},
-				{
-					"include": "FieldDeclaration"
-				},
-				{
-					"include": "ConstructorDeclaration"
-				},
-				{
-					"include": "GenericConstructorDeclaration"
-				},
-				{
-					"include": "InterfaceDeclaration"
-				},
-				{
-					"include": "AnnotationTypeDeclaration"
-				},
-				{
-					"include": "ClassDeclaration"
-				},
-				{
-					"include": "EnumDeclaration"
-				}
-			]
-		},
-		"MethodDeclaration": {
-			"name": "MethodDeclaration",
-			"parse": [
-				{
-					"parse_any": [
-						{
-							"include": "Type"
-						},
-						{
-							"match": "void"
-						}
-					]
-				},
-				{
-					"include": "Identifier"
-				},
-				{
-					"include": "FormalParameters"
-				},
-				{
-					"parse": [
-						{
-							"match": "\\["
-						},
-						{
-							"match": "\\]"
-						}
-					],
-					"multiple": true
-				},
-				{
-					"parse": [
-						{
-							"match": "throws"
-						},
-						{
-							"include": "QualifiedNameList"
-						}
-					],
-					"optional": true
-				},
-				{
-					"parse_any": [
-						{
-							"include": "MethodBody"
-						},
-						{
-							"match": ";"
-						}
-					]
-				}
-			]
-		},
-		"GenericMethodDeclaration": {
-			"name": "GenericMethodDeclaration",
-			"parse": [
-				{
-					"include": "TypeParameters"
-				},
-				{
-					"include": "MethodDeclaration"
-				}
-			]
-		},
-		"ConstructorDeclaration": {
-			"name": "ConstructorDeclaration",
-			"parse": [
-				{
-					"include": "Identifier"
-				},
-				{
-					"include": "FormalParameters"
-				},
-				{
-					"parse": [
-						{
-							"match": "throws"
-						},
-						{
-							"include": "QualifiedNameList"
-						}
-					],
-					"optional": true
-				},
-				{
-					"include": "ConstructorBody"
-				}
-			]
-		},
-		"GenericConstructorDeclaration": {
-			"name": "GenericConstructorDeclaration",
-			"parse": [
-				{
-					"include": "TypeParameters"
-				},
-				{
-					"include": "ConstructorDeclaration"
-				}
-			]
-		},
-		"FieldDeclaration": {
-			"name": "FieldDeclaration",
-			"parse": [
-				{
-					"include": "Type"
-				},
-				{
-					"include": "VariableDeclarators"
-				},
-				{
-					"match": ";"
-				}
-			]
-		},
-		"InterfaceBodyDeclaration": {
-			"name": "InterfaceBodyDeclaration",
-			"parse": [
-				{
-					"include": "Modifier",
-					"multiple": true
-				},
-				{
-					"include": "InterfaceMemberDeclaration"
-				},
-				{
-					"match": ";"
-				}
-			]
-		},
-		"InterfaceMemberDeclaration": {
-			"name": "InterfaceMemberDeclaration",
-			"parse_any": [
-				{
-					"include": "ConstDeclaration"
-				},
-				{
-					"include": "InterfaceMemberDeclaration"
-				},
-				{
-					"include": "GenericInterfaceMethodDeclaration"
-				},
-				{
-					"include": "InterfaceDeclaration"
-				},
-				{
-					"include": "AnnotationTypeDeclaration"
-				},
-				{
-					"include": "ClassDeclaration"
-				},
-				{
-					"include": "EnumDeclaration"
-				}
-			]
-		},
-		"ConstDeclaration": {
-			"name": "ConstDeclaration",
-			"parse": [
-				{
-					"include": "Type"
-				},
-				{
-					"include": "ConstantDeclarator"
-				},
-				{
-					"parse": [
-						{
-							"match": ","
-						},
-						{
-							"include": "ConstantDeclarator"
-						}
-					],
-					"multiple": true
-				},
-				{
-					"match": ";"
-				}
-			]
-		},
-		"ConstantDeclarator": {
-			"name": "ConstantDeclarator",
-			"parse": [
-				{
-					"include": "Identifier"
-				},
-				{
-					"parse": [
-						{
-							"match": "\\["
-						},
-						{
-							"match": "\\]"
-						}
-					],
-					"multiple": true
-				},
-				{
-					"match": "="
-				},
-				{
-					"include": "VariableInitializer"
-				}
-			]
-		},
-		"InterfaceMethodDeclaration": {
-			"name": "InterfaceMethodDeclaration",
-			"parse": [
-				{
-					"parse": [
-						{
-							"include": "Type"
-						},
-						{
-							"match": "void"
-						}
-					]
-				},
-				{
-					"include": "Identifier"
-				},
-				{
-					"include": "FormalParameters"
-				},
-				{
-					"parse": [
-						{
-							"match": "\\["
-						},
-						{
-							"match": "\\]"
-						}
-					],
-					"multiple": true
-				},
-				{
-					"parse": [
-						{
-							"match": "throws"
-						},
-						{
-							"include": "QualifiedNameList"
-						}
-					],
-					"optional": true
-				},
-				{
-					"match": ";"
-				}
-			]
-		},
-		"GenericInterfaceMethodDeclaration": {
-			"name": "GenericInterfaceMethodDeclaration",
-			"parse": [
-				{
-					"include": "TypeParameters"
-				},
-				{
-					"include": "InterfaceMethodDeclaration"
-				}
-			]
-		},
-		"VariableDeclarators": {
-			"name": "VariableDeclarators",
-			"parse": [
-				{
-					"include": "VariableDeclarator"
-				},
-				{
-					"parse": [
-						{
-							"match": ","
-						},
-						{
-							"include": "VariableDeclarator"
-						}
-					],
-					"multiple": true
-				}
-			]
-		},
-		"VariableDeclarator": {
-			"name": "VariableDeclarator",
-			"parse": [
-				{
-					"include": "VariableDeclaratorId"
-				},
-				{
-					"parse": [
-						{
-							"match": "="
-						},
-						{
-							"include": "VariableInitializer"
-						}
-					],
-					"optional": true
-				}
-			]
-		},
-		"VariableDeclaratorId": {
-			"name": "VariableDeclaratorId",
-			"parse": [
-				{
-					"include": "Identifier"
-				},
-				{
-					"parse": [
-						{
-							"match": "\\["
-						},
-						{
-							"match": "\\]"
-						}
-					],
-					"multiple": true
-				}
-			]
-		},
-		"VariableInitializer": {
-			"name": "VariableInitializer",
-			"parse_any": [
-				{
-					"include": "ArrayInitializer"
-				},
-				{
-					"include": "Expression"
-				}
-			]
-		},
-		"ArrayInitializer": {
-			"name": "ArrayInitializer",
-			"parse": [
-				{
-					"match": "{"
-				},
-				{
-					"parse": [
-						{
-							"include": "VariableInitializer"
-						},
-						{
-							"parse": [
-								{
-									"match": ","
-								},
-								{
-									"include": "VariableInitializer"
-								}
-							],
-							"multiple": true
-						},
-						{
-							"match": ",",
-							"optional": true
-						}
-					],
-					"optional": true
-				},
-				{
-					"match": "}"
-				}
-			]
-		},
-		"EnumConstantName": {
-			"name": "EnumConstantName",
-			"include": "Identifier"
-		},
-		"Type": {
-			"name": "Type",
-			"parse_any": [
-				{
-					"parse": [
-						{
-							"include": "ClassOrInterfaceType"
-						},
-						{
-							"parse": [
-								{
-									"match": "\\["
-								},
-								{
-									"match": "\\]"
-								}
-							],
-							"multiple": true
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"include": "PrimitiveType"
-						},
-						{
-							"parse": [
-								{
-									"match": "\\["
-								},
-								{
-									"match": "\\]"
-								}
-							],
-							"multiple": true
-						}
-					]
-				}
-			]
-		},
-		"ClassOrInterfaceType": {
-			"name": "ClassOrInterfaceType",
-			"parse": [
-				{
-					"include": "Identifier"
-				},
-				{
-					"include": "TypeArguments",
-					"optional": true
-				},
-				{
-					"parse": [
-						{
-							"match": "\\."
-						},
-						{
-							"include": "Identifier"
-						},
-						{
-							"include": "TypeArguments",
-							"optional": true
-						}
-					],
-					"multiple": true
-				}
-			]
-		},
-		"PrimitiveType": {
-			"name": "PrimitiveType",
-			"match": "boolean|char|byte|short|int|long|float|double"
-		},
-		"TypeArguments": {
-			"name": "TypeArguments",
-			"parse": [
-				{
-					"match": "<"
-				},
-				{
-					"parse": [
-						{
-							"include": "TypeArgument"
-						},
-						{
-							"parse": [
-								{
-									"match": ","
-								},
-								{
-									"include": "TypeArgument"
-								}
-							],
-							"multiple": true
-						}
-					]
-				},
-				{
-					"match": ">"
-				}
-			]
-		},
-		"TypeArgument": {
-			"name": "TypeArgument",
-			"parse_any": [
-				{
-					"include": "Type"
-				},
-				{
-					"parse": [
-						{
-							"match": "\\?"
-						},
-						{
-							"parse": [
-								{
-									"match": "extends|super"
-								},
-								{
-									"include": "Type"
-								}
-							],
-							"optional": true
-						}
-					]
-				}
-			]
-		},
-		"QualifiedNameList": {
-			"name": "QualifiedNameList",
-			"parse": [
-				{
-					"include": "QualifiedName"
-				},
-				{
-					"parse": [
-						{
-							"match": ","
-						},
-						{
-							"include": "QualifiedName"
-						}
-					],
-					"multiple": true
-				}
-			]
-		},
-		"FormalParameters": {
-			"name": "FormalParameters",
-			"parse": [
-				{
-					"match": "\\("
-				},
-				{
-					"include": "FormalParameterList",
-					"optional": true
-				},
-				{
-					"match": "\\)"
-				}
-			]
-		},
-		"FormalParameterList": {
-			"name": "FormalParameterList",
-			"parse_any": [
-				{
-					"parse": [
-						{
-							"include": "FormalParameter"
-						},
-						{
-							"parse": [
-								{
-									"match": ","
-								},
-								{
-									"include": "FormalParameter"
-								}
-							],
-							"multiple": true
-						},
-						{
-							"parse": [
-								{
-									"match": ","
-								},
-								{
-									"include": "LastFormalParameter"
-								}
-							],
-							"optional": true
-						}
-					]
-				},
-				{
-					"include": "LastFormalParameter"
-				}
-			]
-		},
-		"FormalParameter": {
-			"name": "FormalParameter",
-			"parse": [
-				{
-					"include": "VariableModifier",
-					"multiple": true
-				},
-				{
-					"include": "Type"
-				},
-				{
-					"include": "VariableDeclaratorId"
-				}
-			]
-		},
-		"LastFormalParameter": {
-			"name": "LastFormalParameter",
-			"parse": [
-				{
-					"include": "VariableModifier",
-					"multiple": true
-				},
-				{
-					"include": "Type"
-				},
-				{
-					"match": "\\.\\.\\."
-				},
-				{
-					"include": "VariableDeclaratorId"
-				}
-			]
-		},
-		"MethodBody": {
-			"name": "MethodBody",
-			"include": "Block"
-		},
-		"ConstructorBody": {
-			"name": "ConstructorBody",
-			"include": "Block"
-		},
-		"QualifiedName": {
-			"name": "QualifiedName",
-			"parse": [
-				{
-					"include": "Identifier"
-				},
-				{
-					"parse": [
-						{
-							"match": "\\."
-						},
-						{
-							"include": "Identifier"
-						}
-					],
-					"multiple": true
-				}
-			]
-		},
-		"Literal": {
-			"name": "Literal",
-			"parse_any": [
-				{
-					"include": "IntegerLiteral"
-				},
-				{
-					"include": "FloatingPointLiteral"
-				},
-				{
-					"include": "CharacterLiteral"
-				},
-				{
-					"include": "StringLiteral"
-				},
-				{
-					"include": "BooleanLiteral"
-				},
-				{
-					"match": "null"
-				}
-			]
-		},
-		"Annotation": {
-			"name": "Annotation",
-			"parse": [
-				{
-					"match": "@"
-				},
-				{
-					"include": "AnnotationName"
-				},
-				{
-					"parse": [
-						{
-							"match": "\\("
-						},
-						{
-							"parse_any": [
-								{
-									"include": "ElementValuePairs"
-								},
-								{
-									"include": "ElementValue"
-								}
-							],
-							"optional": true
-						},
-						{
-							"match": "\\)"
-						}
-					],
-					"optional": true
-				}
-			]
-		},
-		"AnnotationName": {
-			"name": "AnnotationName",
-			"include": "QualifiedName"
-		},
-		"ElementValuePairs": {
-			"name": "ElementValuePairs",
-			"parse": [
-				{
-					"include": "ElementValuePair"
-				},
-				{
-					"parse": [
-						{
-							"match": ","
-						},
-						{
-							"include": "ElementValuePair"
-						}
-					],
-					"multiple": true
-				}
-			]
-		},
-		"ElementValuePair": {
-			"name": "ElementValuePair",
-			"parse": [
-				{
-					"include": "Identifier"
-				},
-				{
-					"match": "="
-				},
-				{
-					"include": "ElementValue"
-				}
-			]
-		},
-		"ElementValue": {
-			"name": "ElementValue",
-			"parse_any": [
-				{
-					"include": "Expression"
-				},
-				{
-					"include": "Annotation"
-				},
-				{
-					"include": "ElementValueArrayInitializer"
-				}
-			]
-		},
-		"ElementValueArrayInitializer": {
-			"name": "ElementValueArrayInitializer",
-			"parse": [
-				{
-					"match": "{"
-				},
-				{
-					"parse": [
-						{
-							"include": "ElementValue"
-						},
-						{
-							"parse": [
-								{
-									"match": ","
-								},
-								{
-									"include": "ElementValue"
-								}
-							],
-							"multiple": true
-						}
-					],
-					"optional": true
-				},
-				{
-					"match": ",",
-					"optional": true
-				},
-				{
-					"match": "}"
-				}
-			]
-		},
-		"AnnotationTypeDeclaration": {
-			"name": "AnnotationTypeDeclaration",
-			"parse": [
-				{
-					"match": "@"
-				},
-				{
-					"match": "interface"
-				},
-				{
-					"include": "Identifier"
-				},
-				{
-					"include": "AnnotationTypeBody"
-				}
-			]
-		},
-		"AnnotationTypeBody": {
-			"name": "AnnotationTypeBody",
-			"parse": [
-				{
-					"match": "{"
-				},
-				{
-					"include": "AnnotationTypeElementDeclaration",
-					"multiple": true
-				},
-				{
-					"match": "}"
-				}
-			]
-		},
-		"AnnotationTypeElementDeclaration": {
-			"name": "AnnotationTypeElementDeclaration",
-			"parse_any": [
-				{
-					"parse": [
-						{
-							"include": "Modifier",
-							"multiple": true
-						},
-						{
-							"include": "AnnotationTypeElementRest"
-						}
-					]
-				},
-				{
-					"match": ";"
-				}
-			]
-		},
-		"AnnotationTypeElementRest": {
-			"name": "AnnotationTypeElementRest",
-			"parse_any": [
-				{
-					"parse": [
-						{
-							"include": "Type"
-						},
-						{
-							"include": "AnnotationMethodOrConstantRest"
-						},
-						{
-							"match": ";"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"include": "ClassDeclaration"
-						},
-						{
-							"match": ";",
-							"optional": true
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"include": "InterfaceDeclaration"
-						},
-						{
-							"match": ";",
-							"optional": true
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"include": "EnumDeclaration"
-						},
-						{
-							"match": ";",
-							"optional": true
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"include": "AnnotationTypeDeclaration"
-						},
-						{
-							"match": ";",
-							"optional": true
-						}
-					]
-				}
-			]
-		},
-		"AnnotationMethodOrConstantRest": {
-			"name": "AnnotationMethodOrConstantRest",
-			"parse_any": [
-				{
-					"include": "AnnotationMethodRest"
-				},
-				{
-					"include": "AnnotationConstRest"
-				}
-			]
-		},
-		"AnnotationMethodRest": {
-			"name": "AnnotationMethodRest",
-			"parse": [
-				{
-					"include": "Identifier"
-				},
-				{
-					"match": "\\("
-				},
-				{
-					"match": "\\)"
-				},
-				{
-					"include": "DefaultValue",
-					"optional": true
-				}
-			]
-		},
-		"AnnotationConstRest": {
-			"name": "AnnotationConstRest",
-			"include": "VariableDeclarators"
-		},
-		"DefaultValue": {
-			"name": "DefaultValue",
-			"parse": [
-				{
-					"match": "default"
-				},
-				{
-					"include": "ElementValue"
-				}
-			]
-		},
-		"Block": {
-			"name": "Block",
-			"parse": [
-				{
-					"match": "{"
-				},
-				{
-					"include": "BlockStatement",
-					"multiple": true
-				},
-				{
-					"match": "}"
-				}
-			]
-		},
-		"BlockStatement": {
-			"name": "BlockStatement",
-			"parse_any": [
-				{
-					"include": "LocalVariableDeclarationStatement"
-				},
-				{
-					"include": "Statement"
-				},
-				{
-					"include": "TypeDeclaration"
-				}
-			]
-		},
-		"LocalVariableDeclarationStatement": {
-			"name": "LocalVariableDeclarationStatement",
-			"parse": [
-				{
-					"include": "LocalVariableDeclaration"
-				},
-				{
-					"match": ";"
-				}
-			]
-		},
-		"LocalVariableDeclaration": {
-			"name": "LocalVariableDeclaration",
-			"parse": [
-				{
-					"include": "VariableModifier",
-					"multiple": true
-				},
-				{
-					"include": "Type"
-				},
-				{
-					"include": "VariableDeclarators"
-				}
-			]
-		},
-		"Statement": {
-			"name": "Statement",
-			"parse_any": [
-				{
-					"include": "Block"
-				},
-				{
-					"parse": [
-						{
-							"match": "assert"
-						},
-						{
-							"include": "Expression"
-						},
-						{
-							"parse": [
-								{
-									"match": ":"
-								},
-								{
-									"include": "Expression"
-								}
-							],
-							"optional": true
-						},
-						{
-							"match": ";"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "if"
-						},
-						{
-							"include": "ParExpression"
-						},
-						{
-							"include": "Statement"
-						},
-						{
-							"parse": [
-								{
-									"match": "else"
-								},
-								{
-									"match": "if"
-								},
-								{
-									"include": "Statement"
-								}
-							],
-							"multiple": true
-						},
-						{
-							"parse": [
-								{
-									"match": "else"
-								},
-								{
-									"include": "Statement"
-								}
-							],
-							"optional": true
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "for"
-						},
-						{
-							"match": "\\("
-						},
-						{
-							"include": "ForControl"
-						},
-						{
-							"match": "\\)"
-						},
-						{
-							"include": "Statement"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "while"
-						},
-						{
-							"include": "ParExpression"
-						},
-						{
-							"include": "Statement"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "do"
-						},
-						{
-							"include": "Statement"
-						},
-						{
-							"match": "while"
-						},
-						{
-							"include": "ParExpression"
-						},
-						{
-							"match": ";"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "try"
-						},
-						{
-							"include": "Block"
-						},
-						{
-							"parse_any": [
-								{
-									"parse": [
-										{
-											"parse": [
-												{
-													"include": "CatchClause"
-												},
-												{
-													"include": "CatchClause",
-													"multiple": true
-												}
-											]
-										},
-										{
-											"include": "FinallyBlock",
-											"optional": true
-										}
-									]
-								},
-								{
-									"include": "FinallyBlock"
-								}
-							]
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "try"
-						},
-						{
-							"include": "ResourceSpecification"
-						},
-						{
-							"include": "Block"
-						},
-						{
-							"include": "CatchClause",
-							"multiple": true
-						},
-						{
-							"include": "FinallyBlock",
-							"optional": true
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "switch"
-						},
-						{
-							"include": "ParExpression"
-						},
-						{
-							"match": "{"
-						},
-						{
-							"include": "SwitchBlockStatementGroup",
-							"multiple": true
-						},
-						{
-							"include": "SwitchLabel",
-							"multiple": true
-						},
-						{
-							"match": "}"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "synchronized"
-						},
-						{
-							"include": "ParExpression"
-						},
-						{
-							"include": "Block"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "return"
-						},
-						{
-							"include": "Expression",
-							"optional": true
-						},
-						{
-							"match": ";"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "throw"
-						},
-						{
-							"include": "Expression"
-						},
-						{
-							"match": ";"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "break"
-						},
-						{
-							"include": "Identifier",
-							"optional": true
-						},
-						{
-							"match": ";"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "continue"
-						},
-						{
-							"include": "Identifier",
-							"optional": true
-						},
-						{
-							"match": ";"
-						}
-					]
-				},
-				{
-					"match": ";"
-				},
-				{
-					"parse": [
-						{
-							"include": "StatementExpression"
-						},
-						{
-							"match": ";"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"include": "Identifier"
-						},
-						{
-							"match": ":"
-						},
-						{
-							"include": "Statement"
-						}
-					]
-				}
-			]
-		},
-		"CatchClause": {
-			"name": "CatchClause",
-			"parse": [
-				{
-					"match": "catch"
-				},
-				{
-					"match": "\\("
-				},
-				{
-					"include": "VariableModifier",
-					"multiple": true
-				},
-				{
-					"include": "CatchType"
-				},
-				{
-					"include": "Identifier"
-				},
-				{
-					"match": "\\)"
-				},
-				{
-					"include": "Block"
-				}
-			]
-		},
-		"CatchType": {
-			"name": "CatchType",
-			"parse": [
-				{
-					"include": "QualifiedName"
-				},
-				{
-					"parse": [
-						{
-							"match": "\\|"
-						},
-						{
-							"include": "QualifiedName"
-						}
-					],
-					"multiple": true
-				}
-			]
-		},
-		"FinallyBlock": {
-			"name": "FinallyBlock",
-			"parse": [
-				{
-					"match": "finally"
-				},
-				{
-					"include": "Block"
-				}
-			]
-		},
-		"ResourceSpecification": {
-			"name": "ResourceSpecification",
-			"parse": [
-				{
-					"match": "\\("
-				},
-				{
-					"include": "Resources"
-				},
-				{
-					"match": ";",
-					"optional": true
-				},
-				{
-					"match": "\\)"
-				}
-			]
-		},
-		"Resources": {
-			"name": "Resources",
-			"parse": [
-				{
-					"include": "Resource"
-				},
-				{
-					"parse": [
-						{
-							"match": ";"
-						},
-						{
-							"include": "Resource"
-						}
-					],
-					"multiple": true
-				}
-			]
-		},
-		"Resource": {
-			"name": "Resource",
-			"parse": [
-				{
-					"include": "VariableModifier",
-					"multiple": true
-				},
-				{
-					"include": "ClassOrInterfaceType"
-				},
-				{
-					"include": "VariableDeclaratorId"
-				},
-				{
-					"match": "="
-				},
-				{
-					"include": "Expression"
-				}
-			]
-		},
-		"SwitchBlockStatementGroup": {
-			"name": "SwitchBlockStatementGroup",
-			"parse": [
-				{
-					"parse": [
-						{
-							"include": "SwitchLabel"
-						},
-						{
-							"include": "SwitchLabel",
-							"multiple": true
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"include": "BlockStatement"
-						},
-						{
-							"include": "BlockStatement",
-							"multiple": true
-						}
-					]
-				}
-			]
-		},
-		"SwitchLabel": {
-			"name": "SwitchLabel",
-			"parse_any": [
-				{
-					"parse": [
-						{
-							"match": "case"
-						},
-						{
-							"include": "ConstantExpression"
-						},
-						{
-							"match": ":"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "case"
-						},
-						{
-							"include": "EnumConstantName"
-						},
-						{
-							"match": ":"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "default"
-						},
-						{
-							"match": ":"
-						}
-					]
-				}
-			]
-		},
-		"ForControl": {
-			"name": "ForControl",
-			"parse_any": [
-				{
-					"include": "EnhancedForControl"
-				},
-				{
-					"parse": [
-						{
-							"include": "ForInit",
-							"optional": true
-						},
-						{
-							"match": ";"
-						},
-						{
-							"include": "Expression",
-							"optional": true
-						},
-						{
-							"match": ";"
-						},
-						{
-							"include": "ForUpdate",
-							"optional": true
-						}
-					]
-				}
-			]
-		},
-		"ForInit": {
-			"name": "ForInit",
-			"parse_any": [
-				{
-					"include": "LocalVariableDeclaration"
-				},
-				{
-					"include": "ExpressionList"
-				}
-			]
-		},
-		"EnhancedForControl": {
-			"name": "EnhancedForControl",
-			"parse": [
-				{
-					"include": "VariableModifier",
-					"multiple": true
-				},
-				{
-					"include": "Type"
-				},
-				{
-					"include": "Identifier"
-				},
-				{
-					"match": ":"
-				},
-				{
-					"include": "Expression"
-				}
-			]
-		},
-		"ForUpdate": {
-			"name": "ForUpdate",
-			"include": "ExpressionList"
-		},
-		"ParExpression": {
-			"name": "ParExpression",
-			"parse": [
-				{
-					"match": "\\("
-				},
-				{
-					"include": "Expression"
-				},
-				{
-					"match": "\\)"
-				}
-			]
-		},
-		"ExpressionList": {
-			"name": "ExpressionList",
-			"parse": [
-				{
-					"include": "Expression"
-				},
-				{
-					"parse": [
-						{
-							"match": ","
-						},
-						{
-							"include": "Expression"
-						}
-					],
-					"multiple": true
-				}
-			]
-		},
-		"StatementExpression": {
-			"name": "StatementExpression",
-			"include": "Expression"
-		},
-		"ConstantExpression": {
-			"name": "ConstantExpression",
-			"include": "Expression"
-		},
-		"Expression": {
-			"name": "Expression",
-			"parse": [
-				{
-					"parse_any": [
-						{
-							"parse": [
-								{
-									"match": "new"
-								},
-								{
-									"include": "Creator"
-								}
-							]
-						},
-						{
-							"parse": [
-								{
-									"match": "\\("
-								},
-								{
-									"include": "Type"
-								},
-								{
-									"match": "\\)"
-								},
-								{
-									"include": "Expression"
-								}
-							]
-						},
-						{
-							"parse": [
-								{
-									"match": "\\+\\+|--|\\+|-|~|!"
-								},
-								{
-									"include": "Expression"
-								}
-							]
-						},
-						{
-							"include": "LambdaExpression"
-						},
-						{
-							"include": "Primary"
-						}
-					]
-				},
-				{
-					"include": "ExpressionFollow",
-					"optional": true
-				}
-			]
-		},
-		"ExpressionFollow": {
-			"name": "ExpressionFollow",
-			"exclude": {
-				"match": ";"
-			},
-			"parse_any": [
-				{
-					"parse": [
-						{
-							"match": "\\."
-						},
-						{
-							"match": "this"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "\\."
-						},
-						{
-							"match": "new"
-						},
-						{
-							"include": "NonWildcardTypeArguments",
-							"optional": true
-						},
-						{
-							"include": "InnerCreator"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "\\."
-						},
-						{
-							"match": "super"
-						},
-						{
-							"include": "SuperSuffix"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "\\."
-						},
-						{
-							"include": "ExplicitGenericInvocation"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "\\["
-						},
-						{
-							"include": "Expression"
-						},
-						{
-							"match": "\\]"
-						},
-						{
-							"parse": [
-								{
-									"match": "\\."
-								},
-								{
-									"include": "Primary"
-								}
-							],
-							"optional": true
-						},
-						{
-							"include": "ExpressionFollow",
-							"optional": true
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "\\("
-						},
-						{
-							"include": "ExpressionList",
-							"optional": true
-						},
-						{
-							"match": "\\)"
-						},
-						{
-							"parse": [
-								{
-									"match": "\\."
-								},
-								{
-									"include": "Primary"
-								}
-							],
-							"optional": true
-						},
-						{
-							"include": "ExpressionFollow",
-							"optional": true
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "\\+\\+|--"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "\\?"
-						},
-						{
-							"include": "Expression"
-						},
-						{
-							"match": ":"
-						},
-						{
-							"include": "Expression"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "instanceof"
-						},
-						{
-							"include": "Type"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"parse_any": [
-								{
-									"parse": [
-										{
-											"match": "<"
-										},
-										{
-											"match": "<"
-										}
-									]
-								},
-								{
-									"parse": [
-										{
-											"match": ">"
-										},
-										{
-											"match": ">"
-										},
-										{
-											"match": ">"
-										}
-									]
-								},
-								{
-									"parse": [
-										{
-											"match": ">"
-										},
-										{
-											"match": ">"
-										}
-									]
-								}
-							]
-						},
-						{
-							"include": "Expression"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "(>>>?|<<)=|[<>=!+\\-*/&|^%]=|&&|\\|\\||[*/%+-<>&^|=]"
-						},
-						{
-							"include": "Expression"
-						}
-					]
-				}
-			]
-		},
-		"LambdaExpression": {
-			"name": "LambdaExpression",
-			"parse": [
-				{
-					"include": "LambdaParameters"
-				},
-				{
-					"match": "->"
-				},
-				{
-					"include": "LambdaBody"
-				}
-			]
-		},
-		"LambdaParameters": {
-			"name": "LambdaParameters",
-			"parse_any": [
-				{
-					"include": "Identifier"
-				},
-				{
-					"parse": [
-						{
-							"match": "\\("
-						},
-						{
-							"include": "FormalParameterList",
-							"optional": true
-						},
-						{
-							"match": "\\)"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "\\("
-						},
-						{
-							"include": "InferredFormalParameterList"
-						},
-						{
-							"match": "\\)"
-						}
-					]
-				}
-			]
-		},
-		"InferredFormalParameterList": {
-			"name": "InferredFormalParameterList",
-			"parse": [
-				{
-					"include": "Identifier"
-				},
-				{
-					"parse": [
-						{
-							"match": ","
-						},
-						{
-							"include": "Identifier"
-						}
-					],
-					"multiple": true
-				}
-			]
-		},
-		"LambdaBody": {
-			"name": "LambdaBody",
-			"parse_any": [
-				{
-					"include": "Expression"
-				},
-				{
-					"include": "Block"
-				}
-			]
-		},
-		"Primary": {
-			"name": "Primary",
-			"parse_any": [
-				{
-					"parse": [
-						{
-							"match": "\\("
-						},
-						{
-							"include": "Expression"
-						},
-						{
-							"match": "\\)"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "void"
-						},
-						{
-							"match": "\\."
-						},
-						{
-							"match": "class"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"include": "Type"
-						},
-						{
-							"match": "\\."
-						},
-						{
-							"match": "class"
-						}
-					]
-				},
-				{
-					"include": "Literal"
-				},
-				{
-					"include": "Identifier"
-				},
-				{
-					"match": "this|super"
-				},
-				{
-					"parse": [
-						{
-							"include": "NonWildcardTypeArguments"
-						},
-						{
-							"parse_any": [
-								{
-									"include": "ExplicitGenericInvocationSuffix"
-								},
-								{
-									"parse": [
-										{
-											"match": "this"
-										},
-										{
-											"include": "Arguments"
-										}
-									]
-								}
-							]
-						}
-					]
-				}
-			]
-		},
-		"Creator": {
-			"name": "Creator",
-			"parse_any": [
-				{
-					"parse": [
-						{
-							"include": "NonWildcardTypeArguments"
-						},
-						{
-							"include": "CreatedName"
-						},
-						{
-							"include": "ClassCreatorRest"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"include": "CreatedName"
-						},
-						{
-							"parse_any": [
-								{
-									"include": "ArrayCreatorRest"
-								},
-								{
-									"include": "ClassCreatorRest"
-								}
-							]
-						}
-					]
-				}
-			]
-		},
-		"CreatedName": {
-			"name": "CreatedName",
-			"parse_any": [
-				{
-					"parse": [
-						{
-							"include": "Identifier"
-						},
-						{
-							"include": "TypeArgumentsOrDiamond",
-							"optional": true
-						},
-						{
-							"parse": [
-								{
-									"match": "\\."
-								},
-								{
-									"include": "Identifier"
-								},
-								{
-									"include": "TypeArgumentsOrDiamond",
-									"optional": true
-								}
-							],
-							"multiple": true
-						}
-					]
-				},
-				{
-					"include": "PrimitiveType"
-				}
-			]
-		},
-		"InnerCreator": {
-			"name": "InnerCreator",
-			"parse": [
-				{
-					"include": "Identifier"
-				},
-				{
-					"include": "NonWildcardTypeArgumentsOrDiamond",
-					"optional": true
-				},
-				{
-					"include": "ClassCreatorRest"
-				}
-			]
-		},
-		"ArrayCreatorRest": {
-			"name": "ArrayCreatorRest",
-			"parse": [
-				{
-					"match": "\\["
-				},
-				{
-					"parse_any": [
-						{
-							"parse": [
-								{
-									"match": "\\]"
-								},
-								{
-									"parse": [
-										{
-											"match": "\\["
-										},
-										{
-											"match": "\\]"
-										}
-									],
-									"multiple": true
-								},
-								{
-									"include": "ArrayInitializer"
-								}
-							]
-						},
-						{
-							"parse": [
-								{
-									"include": "Expression"
-								},
-								{
-									"match": "\\]"
-								},
-								{
-									"parse": [
-										{
-											"match": "\\["
-										},
-										{
-											"include": "Expression"
-										},
-										{
-											"match": "\\]"
-										}
-									],
-									"multiple": true
-								},
-								{
-									"parse": [
-										{
-											"match": "\\["
-										},
-										{
-											"match": "\\]"
-										}
-									],
-									"multiple": true
-								}
-							]
-						}
-					]
-				}
-			]
-		},
-		"ClassCreatorRest": {
-			"name": "ClassCreatorRest",
-			"parse": [
-				{
-					"include": "Arguments"
-				},
-				{
-					"include": "ClassBody",
-					"optional": true
-				}
-			]
-		},
-		"ExplicitGenericInvocation": {
-			"name": "ExplicitGenericInvocation",
-			"parse": [
-				{
-					"include": "NonWildcardTypeArguments"
-				},
-				{
-					"include": "ExplicitGenericInvocationSuffix"
-				}
-			]
-		},
-		"NonWildcardTypeArguments": {
-			"name": "NonWildcardTypeArguments",
-			"parse": [
-				{
-					"match": "<"
-				},
-				{
-					"include": "TypeList"
-				},
-				{
-					"match": ">"
-				}
-			]
-		},
-		"TypeArgumentsOrDiamond": {
-			"name": "TypeArgumentsOrDiamond",
-			"parse_any": [
-				{
-					"parse": [
-						{
-							"match": "<"
-						},
-						{
-							"match": ">"
-						}
-					]
-				},{
-					"include": "TypeArguments"
-				}
-			]
-		},
-		"NonWildcardTypeArgumentsOrDiamond": {
-			"name": "NonWildcardTypeArgumentsOrDiamond",
-			"parse_any": [
-				{
-					"parse": [
-						{
-							"match": "<"
-						},
-						{
-							"match": ">"
-						}
-					]
-				},{
-					"include": "NonWildcardTypeArguments"
-				}
-			]
-		},
-		"SuperSuffix": {
-			"name": "SuperSuffix",
-			"parse_any": [
-				{
-					"include": "Arguments"
-				},
-				{
-					"parse": [
-						{
-							"match": "\\."
-						},
-						{
-							"include": "Identifier"
-						},
-						{
-							"include": "Arguments",
-							"optional": true
-						}
-					]
-				}
-			]
-		},
-		"ExplicitGenericInvocationSuffix": {
-			"name": "ExplicitGenericInvocationSuffix",
-			"parse_any": [
-				{
-					"parse": [
-						{
-							"match": "super"
-						},
-						{
-							"include": "SuperSuffix"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"include": "Identifier"
-						},
-						{
-							"include": "Arguments"
-						}
-					]
-				}
-			]
-		},
-		"Arguments": {
-			"name": "Arguments",
-			"parse": [
-				{
-					"match": "\\("
-				},
-				{
-					"include": "ExpressionList",
-					"optional": true
-				},
-				{
-					"match": "\\)"
-				}
-			]
-		},
-		// Lexical
-		"IntegerLiteral": {
-			"name": "IntegerLiteral",
-			"parse_any": [
-				{
-					"include": "DecimalIntegerLiteral"
-				},
-				{
-					"include": "HexIntegerLiteral"
-				},
-				{
-					"include": "OctalIntegerLiteral"
-				},
-				{
-					"include": "BinaryIntegerLiteral"
-				}
-			]
-		},
-		"DecimalIntegerLiteral": {
-			"name": "DecimalIntegerLiteral",
-			"parse": [
-				{
-					"include": "DecimalNumeral"
-				},
-				{
-					"include": "IntegerTypeSuffix",
-					"optional": true
-				}
-			]
-		},
-		"HexIntegerLiteral": {
-			"name": "HexIntegerLiteral",
-			"parse": [
-				{
-					"include": "HexNumeral"
-				},
-				{
-					"include": "IntegerTypeSuffix",
-					"optional": true
-				}
-			]
-		},
-		"OctalIntegerLiteral": {
-			"name": "OctalIntegerLiteral",
-			"parse": [
-				{
-					"include": "OctalNumeral"
-				},
-				{
-					"include": "IntegerTypeSuffix",
-					"optional": true
-				}
-			]
-		},
-		"BinaryIntegerLiteral": {
-			"name": "BinaryIntegerLiteral",
-			"parse": [
-				{
-					"include": "BinaryNumeral"
-				},
-				{
-					"include": "IntegerTypeSuffix",
-					"optional": true
-				}
-			]
-		},
-		"IntegerTypeSuffix": {
-			"name": "IntegerTypeSuffix",
-			"match": "[lL]"
-		},
-		"DecimalNumeral": {
-			"name": "DecimalNumeral",
-			"match": "([1-9]([\\d_]*\\d)?)|0"
-		},
+    // Java 8 Grammar references from
+    //   http://docs.oracle.com/javase/specs/jls/se8/html/index.html
+    //   https://github.com/antlr/grammars-v4/tree/master/java8
+    "separator": {
+        "parse_any": [
+            {
+                "include": "Comment"
+            },
+            {
+                "include": "WhiteSpace"
+            }
+        ],
+        "multiple": true
+    },
+    "compilation_unit": {
+        "name": "CompilationUnit",
+        "parse": [
+            {
+                "include": "PackageDeclaration",
+                "optional": true
+            },
+            {
+                "include": "ImportDeclaration",
+                "multiple": true
+            },
+            {
+                "include": "TypeDeclaration",
+                "multiple": true
+            }
+        ]
+    },
+    "repository": {
+        "PackageDeclaration": {
+            "name": "PackageDeclaration",
+            "parse": [
+                {
+                    "include": "Annotation",
+                    "multiple": true
+                },
+                {
+                    "match": "package"
+                },
+                {
+                    "include": "QualifiedName"
+                },
+                {
+                    "match": ";"
+                }
+            ]
+        },
+        "ImportDeclaration": {
+            "name": "ImportDeclaration",
+            "parse": [
+                {
+                    "match": "import"
+                },
+                {
+                    "match": "static",
+                    "optional": true
+                },
+                {
+                    "include": "QualifiedName"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "\\."
+                        },
+                        {
+                            "match": "\\*"
+                        }
+                    ],
+                    "optional": true
+                },
+                {
+                    "match": ";"
+                }
+            ]
+        },
+        "TypeDeclaration": {
+            "name": "TypeDeclaration",
+            "parse_any": [
+                {
+                    "parse": [
+                        {
+                            "include": "ClassOrInterfaceModifier",
+                            "multiple": true
+                        },
+                        {
+                            "include": "ClassDeclaration"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "include": "ClassOrInterfaceModifier",
+                            "multiple": true
+                        },
+                        {
+                            "include": "EnumDeclaration"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "include": "ClassOrInterfaceModifier",
+                            "multiple": true
+                        },
+                        {
+                            "include": "InterfaceDeclaration"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "include": "ClassOrInterfaceModifier",
+                            "multiple": true
+                        },
+                        {
+                            "include": "AnnotationTypeDeclaration"
+                        }
+                    ]
+                },
+                {
+                    "match": ";"
+                }
+            ]
+        },
+        "Modifier": {
+            "name": "Modifier",
+            "parse_any": [
+                {
+                    "include": "ClassOrInterfaceModifier"
+                },
+                {
+                    "match": "native|synchronized|transient|volatile"
+                }
+            ]
+        },
+        "ClassOrInterfaceModifier": {
+            "name": "ClassOrInterfaceModifier",
+            "parse_any": [
+                {
+                    "include": "Annotation"
+                },
+                {
+                    "match": "public|protected|private|static|abstract|final|strictfp"
+                }
+            ]
+        },
+        "VariableModifier": {
+            "name": "VariableModifier",
+            "parse_any": [
+                {
+                    "match": "final"
+                },
+                {
+                    "include": "Annotation"
+                }
+            ]
+        },
+        "ClassDeclaration": {
+            "name": "ClassDeclaration",
+            "parse": [
+                {
+                    "match": "class"
+                },
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "include": "TypeParameters",
+                    "optional": true
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "extends"
+                        },
+                        {
+                            "include": "Type"
+                        }
+                    ],
+                    "optional": true
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "implements"
+                        },
+                        {
+                            "include": "TypeList"
+                        }
+                    ],
+                    "optional": true
+                },
+                {
+                    "include": "ClassBody"
+                }
+            ]
+        },
+        "TypeParameters": {
+            "name": "TypeParameters",
+            "parse": [
+                {
+                    "match": "<"
+                },
+                {
+                    "include": "TypeParameter"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": ","
+                        },
+                        {
+                            "include": "TypeParameter"
+                        }
+                    ],
+                    "multiple": true
+                },
+                {
+                    "match": ">"
+                }
+            ]
+        },
+        "TypeParameter": {
+            "name": "TypeParameter",
+            "parse": [
+                {
+                    "include": "Annotation",
+                    "multiple": true
+                },
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "extends"
+                        },
+                        {
+                            "include": "TypeBound"
+                        }
+                    ],
+                    "optional": true
+                }
+            ]
+        },
+        "TypeBound": {
+            "name": "TypeBound",
+            "parse": [
+                {
+                    "include": "Type"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "&"
+                        },
+                        {
+                            "include": "Type"
+                        }
+                    ],
+                    "multiple": true
+                }
+            ]
+        },
+        "EnumDeclaration": {
+            "name": "EnumDeclaration",
+            "parse": [
+                {
+                    "match": "enum"
+                },
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "implements"
+                        },
+                        {
+                            "include": "TypeList"
+                        }
+                    ],
+                    "optional": true
+                },
+                {
+                    "match": "{"
+                },
+                {
+                    "include": "EnumConstants",
+                    "optional": true
+                },
+                {
+                    "match": ",",
+                    "optional": true
+                },
+                {
+                    "include": "EnumBodyDeclarations",
+                    "optional": true
+                },
+                {
+                    "match": "}"
+                }
+            ]
+        },
+        "EnumConstants": {
+            "name": "EnumConstants",
+            "parse": [
+                {
+                    "include": "EnumConstant"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": ","
+                        },
+                        {
+                            "include": "EnumConstant"
+                        }
+                    ],
+                    "multiple": true
+                }
+            ]
+        },
+        "EnumConstant": {
+            "name": "EnumConstant",
+            "parse": [
+                {
+                    "include": "Annotation",
+                    "multiple": true
+                },
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "include": "Arguments",
+                    "optional": true
+                },
+                {
+                    "include": "ClassBody",
+                    "optional": true
+                }
+            ]
+        },
+        "EnumBodyDeclarations": {
+            "name": "EnumBodyDeclarations",
+            "parse": [
+                {
+                    "match": ";"
+                },
+                {
+                    "include": "ClassBodyDeclaration",
+                    "multiple": true
+                }
+            ]
+        },
+        "InterfaceDeclaration": {
+            "name": "InterfaceDeclaration",
+            "parse": [
+                {
+                    "match": "interface"
+                },
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "include": "TypeParameters",
+                    "optional": true
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "extends"
+                        },
+                        {
+                            "include": "TypeList"
+                        }
+                    ],
+                    "optional": true
+                },
+                {
+                    "include": "InterfaceBody"
+                }
+            ]
+        },
+        "TypeList": {
+            "name": "TypeList",
+            "parse": [
+                {
+                    "include": "Type"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": ","
+                        },
+                        {
+                            "include": "Type"
+                        }
+                    ],
+                    "multiple": true
+                }
+            ]
+        },
+        "ClassBody": {
+            "name": "ClassBody",
+            "parse": [
+                {
+                    "match": "{"
+                },
+                {
+                    "include": "ClassBodyDeclaration",
+                    "multiple": true
+                },
+                {
+                    "match": "}"
+                }
+            ]
+        },
+        "InterfaceBody": {
+            "name": "InterfaceBody",
+            "parse": [
+                {
+                    "match": "{"
+                },
+                {
+                    "include": "InterfaceBodyDeclaration",
+                    "multiple": true
+                },{
+                    "match": "}"
+                }
+            ]
+        },
+        "ClassBodyDeclaration": {
+            "name": "ClassBodyDeclaration",
+            "parse_any": [
+                {
+                    "match": ";"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "static",
+                            "optional": true
+                        },
+                        {
+                            "include": "Block"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "include": "Modifier",
+                            "multiple": true
+                        },
+                        {
+                            "include": "MemberDeclaration"
+                        }
+                    ]
+                }
+            ]
+        },
+        "MemberDeclaration": {
+            "name": "MemberDeclaration",
+            "parse_any": [
+                {
+                    "include": "MethodDeclaration"
+                },
+                {
+                    "include": "GenericMethodDeclaration"
+                },
+                {
+                    "include": "FieldDeclaration"
+                },
+                {
+                    "include": "ConstructorDeclaration"
+                },
+                {
+                    "include": "GenericConstructorDeclaration"
+                },
+                {
+                    "include": "InterfaceDeclaration"
+                },
+                {
+                    "include": "AnnotationTypeDeclaration"
+                },
+                {
+                    "include": "ClassDeclaration"
+                },
+                {
+                    "include": "EnumDeclaration"
+                }
+            ]
+        },
+        "MethodDeclaration": {
+            "name": "MethodDeclaration",
+            "parse": [
+                {
+                    "parse_any": [
+                        {
+                            "include": "Type"
+                        },
+                        {
+                            "match": "void"
+                        }
+                    ]
+                },
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "include": "FormalParameters"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "\\["
+                        },
+                        {
+                            "match": "\\]"
+                        }
+                    ],
+                    "multiple": true
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "throws"
+                        },
+                        {
+                            "include": "QualifiedNameList"
+                        }
+                    ],
+                    "optional": true
+                },
+                {
+                    "parse_any": [
+                        {
+                            "include": "MethodBody"
+                        },
+                        {
+                            "match": ";"
+                        }
+                    ]
+                }
+            ]
+        },
+        "GenericMethodDeclaration": {
+            "name": "GenericMethodDeclaration",
+            "parse": [
+                {
+                    "include": "TypeParameters"
+                },
+                {
+                    "include": "MethodDeclaration"
+                }
+            ]
+        },
+        "ConstructorDeclaration": {
+            "name": "ConstructorDeclaration",
+            "parse": [
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "include": "FormalParameters"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "throws"
+                        },
+                        {
+                            "include": "QualifiedNameList"
+                        }
+                    ],
+                    "optional": true
+                },
+                {
+                    "include": "ConstructorBody"
+                }
+            ]
+        },
+        "GenericConstructorDeclaration": {
+            "name": "GenericConstructorDeclaration",
+            "parse": [
+                {
+                    "include": "TypeParameters"
+                },
+                {
+                    "include": "ConstructorDeclaration"
+                }
+            ]
+        },
+        "FieldDeclaration": {
+            "name": "FieldDeclaration",
+            "parse": [
+                {
+                    "include": "Type"
+                },
+                {
+                    "include": "VariableDeclarators"
+                },
+                {
+                    "match": ";"
+                }
+            ]
+        },
+        "InterfaceBodyDeclaration": {
+            "name": "InterfaceBodyDeclaration",
+            "parse": [
+                {
+                    "include": "Modifier",
+                    "multiple": true
+                },
+                {
+                    "include": "InterfaceMemberDeclaration"
+                },
+                {
+                    "match": ";"
+                }
+            ]
+        },
+        "InterfaceMemberDeclaration": {
+            "name": "InterfaceMemberDeclaration",
+            "parse_any": [
+                {
+                    "include": "ConstDeclaration"
+                },
+                {
+                    "include": "InterfaceMemberDeclaration"
+                },
+                {
+                    "include": "GenericInterfaceMethodDeclaration"
+                },
+                {
+                    "include": "InterfaceDeclaration"
+                },
+                {
+                    "include": "AnnotationTypeDeclaration"
+                },
+                {
+                    "include": "ClassDeclaration"
+                },
+                {
+                    "include": "EnumDeclaration"
+                }
+            ]
+        },
+        "ConstDeclaration": {
+            "name": "ConstDeclaration",
+            "parse": [
+                {
+                    "include": "Type"
+                },
+                {
+                    "include": "ConstantDeclarator"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": ","
+                        },
+                        {
+                            "include": "ConstantDeclarator"
+                        }
+                    ],
+                    "multiple": true
+                },
+                {
+                    "match": ";"
+                }
+            ]
+        },
+        "ConstantDeclarator": {
+            "name": "ConstantDeclarator",
+            "parse": [
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "\\["
+                        },
+                        {
+                            "match": "\\]"
+                        }
+                    ],
+                    "multiple": true
+                },
+                {
+                    "match": "="
+                },
+                {
+                    "include": "VariableInitializer"
+                }
+            ]
+        },
+        "InterfaceMethodDeclaration": {
+            "name": "InterfaceMethodDeclaration",
+            "parse": [
+                {
+                    "parse": [
+                        {
+                            "include": "Type"
+                        },
+                        {
+                            "match": "void"
+                        }
+                    ]
+                },
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "include": "FormalParameters"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "\\["
+                        },
+                        {
+                            "match": "\\]"
+                        }
+                    ],
+                    "multiple": true
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "throws"
+                        },
+                        {
+                            "include": "QualifiedNameList"
+                        }
+                    ],
+                    "optional": true
+                },
+                {
+                    "match": ";"
+                }
+            ]
+        },
+        "GenericInterfaceMethodDeclaration": {
+            "name": "GenericInterfaceMethodDeclaration",
+            "parse": [
+                {
+                    "include": "TypeParameters"
+                },
+                {
+                    "include": "InterfaceMethodDeclaration"
+                }
+            ]
+        },
+        "VariableDeclarators": {
+            "name": "VariableDeclarators",
+            "parse": [
+                {
+                    "include": "VariableDeclarator"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": ","
+                        },
+                        {
+                            "include": "VariableDeclarator"
+                        }
+                    ],
+                    "multiple": true
+                }
+            ]
+        },
+        "VariableDeclarator": {
+            "name": "VariableDeclarator",
+            "parse": [
+                {
+                    "include": "VariableDeclaratorId"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "="
+                        },
+                        {
+                            "include": "VariableInitializer"
+                        }
+                    ],
+                    "optional": true
+                }
+            ]
+        },
+        "VariableDeclaratorId": {
+            "name": "VariableDeclaratorId",
+            "parse": [
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "\\["
+                        },
+                        {
+                            "match": "\\]"
+                        }
+                    ],
+                    "multiple": true
+                }
+            ]
+        },
+        "VariableInitializer": {
+            "name": "VariableInitializer",
+            "parse_any": [
+                {
+                    "include": "ArrayInitializer"
+                },
+                {
+                    "include": "Expression"
+                }
+            ]
+        },
+        "ArrayInitializer": {
+            "name": "ArrayInitializer",
+            "parse": [
+                {
+                    "match": "{"
+                },
+                {
+                    "parse": [
+                        {
+                            "include": "VariableInitializer"
+                        },
+                        {
+                            "parse": [
+                                {
+                                    "match": ","
+                                },
+                                {
+                                    "include": "VariableInitializer"
+                                }
+                            ],
+                            "multiple": true
+                        },
+                        {
+                            "match": ",",
+                            "optional": true
+                        }
+                    ],
+                    "optional": true
+                },
+                {
+                    "match": "}"
+                }
+            ]
+        },
+        "EnumConstantName": {
+            "name": "EnumConstantName",
+            "include": "Identifier"
+        },
+        "Type": {
+            "name": "Type",
+            "parse_any": [
+                {
+                    "parse": [
+                        {
+                            "include": "ClassOrInterfaceType"
+                        },
+                        {
+                            "parse": [
+                                {
+                                    "match": "\\["
+                                },
+                                {
+                                    "match": "\\]"
+                                }
+                            ],
+                            "multiple": true
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "include": "PrimitiveType"
+                        },
+                        {
+                            "parse": [
+                                {
+                                    "match": "\\["
+                                },
+                                {
+                                    "match": "\\]"
+                                }
+                            ],
+                            "multiple": true
+                        }
+                    ]
+                }
+            ]
+        },
+        "ClassOrInterfaceType": {
+            "name": "ClassOrInterfaceType",
+            "parse": [
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "include": "TypeArguments",
+                    "optional": true
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "\\."
+                        },
+                        {
+                            "include": "Identifier"
+                        },
+                        {
+                            "include": "TypeArguments",
+                            "optional": true
+                        }
+                    ],
+                    "multiple": true
+                }
+            ]
+        },
+        "PrimitiveType": {
+            "name": "PrimitiveType",
+            "match": "boolean|char|byte|short|int|long|float|double"
+        },
+        "TypeArguments": {
+            "name": "TypeArguments",
+            "parse": [
+                {
+                    "match": "<"
+                },
+                {
+                    "parse": [
+                        {
+                            "include": "TypeArgument"
+                        },
+                        {
+                            "parse": [
+                                {
+                                    "match": ","
+                                },
+                                {
+                                    "include": "TypeArgument"
+                                }
+                            ],
+                            "multiple": true
+                        }
+                    ]
+                },
+                {
+                    "match": ">"
+                }
+            ]
+        },
+        "TypeArgument": {
+            "name": "TypeArgument",
+            "parse_any": [
+                {
+                    "include": "Type"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "\\?"
+                        },
+                        {
+                            "parse": [
+                                {
+                                    "match": "extends|super"
+                                },
+                                {
+                                    "include": "Type"
+                                }
+                            ],
+                            "optional": true
+                        }
+                    ]
+                }
+            ]
+        },
+        "QualifiedNameList": {
+            "name": "QualifiedNameList",
+            "parse": [
+                {
+                    "include": "QualifiedName"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": ","
+                        },
+                        {
+                            "include": "QualifiedName"
+                        }
+                    ],
+                    "multiple": true
+                }
+            ]
+        },
+        "FormalParameters": {
+            "name": "FormalParameters",
+            "parse": [
+                {
+                    "match": "\\("
+                },
+                {
+                    "include": "FormalParameterList",
+                    "optional": true
+                },
+                {
+                    "match": "\\)"
+                }
+            ]
+        },
+        "FormalParameterList": {
+            "name": "FormalParameterList",
+            "parse_any": [
+                {
+                    "parse": [
+                        {
+                            "include": "FormalParameter"
+                        },
+                        {
+                            "parse": [
+                                {
+                                    "match": ","
+                                },
+                                {
+                                    "include": "FormalParameter"
+                                }
+                            ],
+                            "multiple": true
+                        },
+                        {
+                            "parse": [
+                                {
+                                    "match": ","
+                                },
+                                {
+                                    "include": "LastFormalParameter"
+                                }
+                            ],
+                            "optional": true
+                        }
+                    ]
+                },
+                {
+                    "include": "LastFormalParameter"
+                }
+            ]
+        },
+        "FormalParameter": {
+            "name": "FormalParameter",
+            "parse": [
+                {
+                    "include": "VariableModifier",
+                    "multiple": true
+                },
+                {
+                    "include": "Type"
+                },
+                {
+                    "include": "VariableDeclaratorId"
+                }
+            ]
+        },
+        "LastFormalParameter": {
+            "name": "LastFormalParameter",
+            "parse": [
+                {
+                    "include": "VariableModifier",
+                    "multiple": true
+                },
+                {
+                    "include": "Type"
+                },
+                {
+                    "match": "\\.\\.\\."
+                },
+                {
+                    "include": "VariableDeclaratorId"
+                }
+            ]
+        },
+        "MethodBody": {
+            "name": "MethodBody",
+            "include": "Block"
+        },
+        "ConstructorBody": {
+            "name": "ConstructorBody",
+            "include": "Block"
+        },
+        "QualifiedName": {
+            "name": "QualifiedName",
+            "parse": [
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "\\."
+                        },
+                        {
+                            "include": "Identifier"
+                        }
+                    ],
+                    "multiple": true
+                }
+            ]
+        },
+        "Literal": {
+            "name": "Literal",
+            "parse_any": [
+                {
+                    "include": "IntegerLiteral"
+                },
+                {
+                    "include": "FloatingPointLiteral"
+                },
+                {
+                    "include": "CharacterLiteral"
+                },
+                {
+                    "include": "StringLiteral"
+                },
+                {
+                    "include": "BooleanLiteral"
+                },
+                {
+                    "match": "null"
+                }
+            ]
+        },
+        "Annotation": {
+            "name": "Annotation",
+            "parse": [
+                {
+                    "match": "@"
+                },
+                {
+                    "include": "AnnotationName"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "\\("
+                        },
+                        {
+                            "parse_any": [
+                                {
+                                    "include": "ElementValuePairs"
+                                },
+                                {
+                                    "include": "ElementValue"
+                                }
+                            ],
+                            "optional": true
+                        },
+                        {
+                            "match": "\\)"
+                        }
+                    ],
+                    "optional": true
+                }
+            ]
+        },
+        "AnnotationName": {
+            "name": "AnnotationName",
+            "include": "QualifiedName"
+        },
+        "ElementValuePairs": {
+            "name": "ElementValuePairs",
+            "parse": [
+                {
+                    "include": "ElementValuePair"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": ","
+                        },
+                        {
+                            "include": "ElementValuePair"
+                        }
+                    ],
+                    "multiple": true
+                }
+            ]
+        },
+        "ElementValuePair": {
+            "name": "ElementValuePair",
+            "parse": [
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "match": "="
+                },
+                {
+                    "include": "ElementValue"
+                }
+            ]
+        },
+        "ElementValue": {
+            "name": "ElementValue",
+            "parse_any": [
+                {
+                    "include": "Expression"
+                },
+                {
+                    "include": "Annotation"
+                },
+                {
+                    "include": "ElementValueArrayInitializer"
+                }
+            ]
+        },
+        "ElementValueArrayInitializer": {
+            "name": "ElementValueArrayInitializer",
+            "parse": [
+                {
+                    "match": "{"
+                },
+                {
+                    "parse": [
+                        {
+                            "include": "ElementValue"
+                        },
+                        {
+                            "parse": [
+                                {
+                                    "match": ","
+                                },
+                                {
+                                    "include": "ElementValue"
+                                }
+                            ],
+                            "multiple": true
+                        }
+                    ],
+                    "optional": true
+                },
+                {
+                    "match": ",",
+                    "optional": true
+                },
+                {
+                    "match": "}"
+                }
+            ]
+        },
+        "AnnotationTypeDeclaration": {
+            "name": "AnnotationTypeDeclaration",
+            "parse": [
+                {
+                    "match": "@"
+                },
+                {
+                    "match": "interface"
+                },
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "include": "AnnotationTypeBody"
+                }
+            ]
+        },
+        "AnnotationTypeBody": {
+            "name": "AnnotationTypeBody",
+            "parse": [
+                {
+                    "match": "{"
+                },
+                {
+                    "include": "AnnotationTypeElementDeclaration",
+                    "multiple": true
+                },
+                {
+                    "match": "}"
+                }
+            ]
+        },
+        "AnnotationTypeElementDeclaration": {
+            "name": "AnnotationTypeElementDeclaration",
+            "parse_any": [
+                {
+                    "parse": [
+                        {
+                            "include": "Modifier",
+                            "multiple": true
+                        },
+                        {
+                            "include": "AnnotationTypeElementRest"
+                        }
+                    ]
+                },
+                {
+                    "match": ";"
+                }
+            ]
+        },
+        "AnnotationTypeElementRest": {
+            "name": "AnnotationTypeElementRest",
+            "parse_any": [
+                {
+                    "parse": [
+                        {
+                            "include": "Type"
+                        },
+                        {
+                            "include": "AnnotationMethodOrConstantRest"
+                        },
+                        {
+                            "match": ";"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "include": "ClassDeclaration"
+                        },
+                        {
+                            "match": ";",
+                            "optional": true
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "include": "InterfaceDeclaration"
+                        },
+                        {
+                            "match": ";",
+                            "optional": true
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "include": "EnumDeclaration"
+                        },
+                        {
+                            "match": ";",
+                            "optional": true
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "include": "AnnotationTypeDeclaration"
+                        },
+                        {
+                            "match": ";",
+                            "optional": true
+                        }
+                    ]
+                }
+            ]
+        },
+        "AnnotationMethodOrConstantRest": {
+            "name": "AnnotationMethodOrConstantRest",
+            "parse_any": [
+                {
+                    "include": "AnnotationMethodRest"
+                },
+                {
+                    "include": "AnnotationConstRest"
+                }
+            ]
+        },
+        "AnnotationMethodRest": {
+            "name": "AnnotationMethodRest",
+            "parse": [
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "match": "\\("
+                },
+                {
+                    "match": "\\)"
+                },
+                {
+                    "include": "DefaultValue",
+                    "optional": true
+                }
+            ]
+        },
+        "AnnotationConstRest": {
+            "name": "AnnotationConstRest",
+            "include": "VariableDeclarators"
+        },
+        "DefaultValue": {
+            "name": "DefaultValue",
+            "parse": [
+                {
+                    "match": "default"
+                },
+                {
+                    "include": "ElementValue"
+                }
+            ]
+        },
+        "Block": {
+            "name": "Block",
+            "parse": [
+                {
+                    "match": "{"
+                },
+                {
+                    "include": "BlockStatement",
+                    "multiple": true
+                },
+                {
+                    "match": "}"
+                }
+            ]
+        },
+        "BlockStatement": {
+            "name": "BlockStatement",
+            "parse_any": [
+                {
+                    "include": "LocalVariableDeclarationStatement"
+                },
+                {
+                    "include": "Statement"
+                },
+                {
+                    "include": "TypeDeclaration"
+                }
+            ]
+        },
+        "LocalVariableDeclarationStatement": {
+            "name": "LocalVariableDeclarationStatement",
+            "parse": [
+                {
+                    "include": "LocalVariableDeclaration"
+                },
+                {
+                    "match": ";"
+                }
+            ]
+        },
+        "LocalVariableDeclaration": {
+            "name": "LocalVariableDeclaration",
+            "parse": [
+                {
+                    "include": "VariableModifier",
+                    "multiple": true
+                },
+                {
+                    "include": "Type"
+                },
+                {
+                    "include": "VariableDeclarators"
+                }
+            ]
+        },
+        "Statement": {
+            "name": "Statement",
+            "parse_any": [
+                {
+                    "include": "Block"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "assert"
+                        },
+                        {
+                            "include": "Expression"
+                        },
+                        {
+                            "parse": [
+                                {
+                                    "match": ":"
+                                },
+                                {
+                                    "include": "Expression"
+                                }
+                            ],
+                            "optional": true
+                        },
+                        {
+                            "match": ";"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "if"
+                        },
+                        {
+                            "include": "ParExpression"
+                        },
+                        {
+                            "include": "Statement"
+                        },
+                        {
+                            "parse": [
+                                {
+                                    "match": "else"
+                                },
+                                {
+                                    "match": "if"
+                                },
+                                {
+                                    "include": "Statement"
+                                }
+                            ],
+                            "multiple": true
+                        },
+                        {
+                            "parse": [
+                                {
+                                    "match": "else"
+                                },
+                                {
+                                    "include": "Statement"
+                                }
+                            ],
+                            "optional": true
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "for"
+                        },
+                        {
+                            "match": "\\("
+                        },
+                        {
+                            "include": "ForControl"
+                        },
+                        {
+                            "match": "\\)"
+                        },
+                        {
+                            "include": "Statement"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "while"
+                        },
+                        {
+                            "include": "ParExpression"
+                        },
+                        {
+                            "include": "Statement"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "do"
+                        },
+                        {
+                            "include": "Statement"
+                        },
+                        {
+                            "match": "while"
+                        },
+                        {
+                            "include": "ParExpression"
+                        },
+                        {
+                            "match": ";"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "try"
+                        },
+                        {
+                            "include": "Block"
+                        },
+                        {
+                            "parse_any": [
+                                {
+                                    "parse": [
+                                        {
+                                            "parse": [
+                                                {
+                                                    "include": "CatchClause"
+                                                },
+                                                {
+                                                    "include": "CatchClause",
+                                                    "multiple": true
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            "include": "FinallyBlock",
+                                            "optional": true
+                                        }
+                                    ]
+                                },
+                                {
+                                    "include": "FinallyBlock"
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "try"
+                        },
+                        {
+                            "include": "ResourceSpecification"
+                        },
+                        {
+                            "include": "Block"
+                        },
+                        {
+                            "include": "CatchClause",
+                            "multiple": true
+                        },
+                        {
+                            "include": "FinallyBlock",
+                            "optional": true
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "switch"
+                        },
+                        {
+                            "include": "ParExpression"
+                        },
+                        {
+                            "match": "{"
+                        },
+                        {
+                            "include": "SwitchBlockStatementGroup",
+                            "multiple": true
+                        },
+                        {
+                            "include": "SwitchLabel",
+                            "multiple": true
+                        },
+                        {
+                            "match": "}"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "synchronized"
+                        },
+                        {
+                            "include": "ParExpression"
+                        },
+                        {
+                            "include": "Block"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "return"
+                        },
+                        {
+                            "include": "Expression",
+                            "optional": true
+                        },
+                        {
+                            "match": ";"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "throw"
+                        },
+                        {
+                            "include": "Expression"
+                        },
+                        {
+                            "match": ";"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "break"
+                        },
+                        {
+                            "include": "Identifier",
+                            "optional": true
+                        },
+                        {
+                            "match": ";"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "continue"
+                        },
+                        {
+                            "include": "Identifier",
+                            "optional": true
+                        },
+                        {
+                            "match": ";"
+                        }
+                    ]
+                },
+                {
+                    "match": ";"
+                },
+                {
+                    "parse": [
+                        {
+                            "include": "StatementExpression"
+                        },
+                        {
+                            "match": ";"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "include": "Identifier"
+                        },
+                        {
+                            "match": ":"
+                        },
+                        {
+                            "include": "Statement"
+                        }
+                    ]
+                }
+            ]
+        },
+        "CatchClause": {
+            "name": "CatchClause",
+            "parse": [
+                {
+                    "match": "catch"
+                },
+                {
+                    "match": "\\("
+                },
+                {
+                    "include": "VariableModifier",
+                    "multiple": true
+                },
+                {
+                    "include": "CatchType"
+                },
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "match": "\\)"
+                },
+                {
+                    "include": "Block"
+                }
+            ]
+        },
+        "CatchType": {
+            "name": "CatchType",
+            "parse": [
+                {
+                    "include": "QualifiedName"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "\\|"
+                        },
+                        {
+                            "include": "QualifiedName"
+                        }
+                    ],
+                    "multiple": true
+                }
+            ]
+        },
+        "FinallyBlock": {
+            "name": "FinallyBlock",
+            "parse": [
+                {
+                    "match": "finally"
+                },
+                {
+                    "include": "Block"
+                }
+            ]
+        },
+        "ResourceSpecification": {
+            "name": "ResourceSpecification",
+            "parse": [
+                {
+                    "match": "\\("
+                },
+                {
+                    "include": "Resources"
+                },
+                {
+                    "match": ";",
+                    "optional": true
+                },
+                {
+                    "match": "\\)"
+                }
+            ]
+        },
+        "Resources": {
+            "name": "Resources",
+            "parse": [
+                {
+                    "include": "Resource"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": ";"
+                        },
+                        {
+                            "include": "Resource"
+                        }
+                    ],
+                    "multiple": true
+                }
+            ]
+        },
+        "Resource": {
+            "name": "Resource",
+            "parse": [
+                {
+                    "include": "VariableModifier",
+                    "multiple": true
+                },
+                {
+                    "include": "ClassOrInterfaceType"
+                },
+                {
+                    "include": "VariableDeclaratorId"
+                },
+                {
+                    "match": "="
+                },
+                {
+                    "include": "Expression"
+                }
+            ]
+        },
+        "SwitchBlockStatementGroup": {
+            "name": "SwitchBlockStatementGroup",
+            "parse": [
+                {
+                    "parse": [
+                        {
+                            "include": "SwitchLabel"
+                        },
+                        {
+                            "include": "SwitchLabel",
+                            "multiple": true
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "include": "BlockStatement"
+                        },
+                        {
+                            "include": "BlockStatement",
+                            "multiple": true
+                        }
+                    ]
+                }
+            ]
+        },
+        "SwitchLabel": {
+            "name": "SwitchLabel",
+            "parse_any": [
+                {
+                    "parse": [
+                        {
+                            "match": "case"
+                        },
+                        {
+                            "include": "ConstantExpression"
+                        },
+                        {
+                            "match": ":"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "case"
+                        },
+                        {
+                            "include": "EnumConstantName"
+                        },
+                        {
+                            "match": ":"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "default"
+                        },
+                        {
+                            "match": ":"
+                        }
+                    ]
+                }
+            ]
+        },
+        "ForControl": {
+            "name": "ForControl",
+            "parse_any": [
+                {
+                    "include": "EnhancedForControl"
+                },
+                {
+                    "parse": [
+                        {
+                            "include": "ForInit",
+                            "optional": true
+                        },
+                        {
+                            "match": ";"
+                        },
+                        {
+                            "include": "Expression",
+                            "optional": true
+                        },
+                        {
+                            "match": ";"
+                        },
+                        {
+                            "include": "ForUpdate",
+                            "optional": true
+                        }
+                    ]
+                }
+            ]
+        },
+        "ForInit": {
+            "name": "ForInit",
+            "parse_any": [
+                {
+                    "include": "LocalVariableDeclaration"
+                },
+                {
+                    "include": "ExpressionList"
+                }
+            ]
+        },
+        "EnhancedForControl": {
+            "name": "EnhancedForControl",
+            "parse": [
+                {
+                    "include": "VariableModifier",
+                    "multiple": true
+                },
+                {
+                    "include": "Type"
+                },
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "match": ":"
+                },
+                {
+                    "include": "Expression"
+                }
+            ]
+        },
+        "ForUpdate": {
+            "name": "ForUpdate",
+            "include": "ExpressionList"
+        },
+        "ParExpression": {
+            "name": "ParExpression",
+            "parse": [
+                {
+                    "match": "\\("
+                },
+                {
+                    "include": "Expression"
+                },
+                {
+                    "match": "\\)"
+                }
+            ]
+        },
+        "ExpressionList": {
+            "name": "ExpressionList",
+            "parse": [
+                {
+                    "include": "Expression"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": ","
+                        },
+                        {
+                            "include": "Expression"
+                        }
+                    ],
+                    "multiple": true
+                }
+            ]
+        },
+        "StatementExpression": {
+            "name": "StatementExpression",
+            "include": "Expression"
+        },
+        "ConstantExpression": {
+            "name": "ConstantExpression",
+            "include": "Expression"
+        },
+        "Expression": {
+            "name": "Expression",
+            "parse": [
+                {
+                    "parse_any": [
+                        {
+                            "parse": [
+                                {
+                                    "match": "new"
+                                },
+                                {
+                                    "include": "Creator"
+                                }
+                            ]
+                        },
+                        {
+                            "parse": [
+                                {
+                                    "match": "\\("
+                                },
+                                {
+                                    "include": "Type"
+                                },
+                                {
+                                    "match": "\\)"
+                                },
+                                {
+                                    "include": "Expression"
+                                }
+                            ]
+                        },
+                        {
+                            "parse": [
+                                {
+                                    "match": "\\+\\+|--|\\+|-|~|!"
+                                },
+                                {
+                                    "include": "Expression"
+                                }
+                            ]
+                        },
+                        {
+                            "include": "LambdaExpression"
+                        },
+                        {
+                            "include": "Primary"
+                        }
+                    ]
+                },
+                {
+                    "include": "ExpressionFollow",
+                    "optional": true
+                }
+            ]
+        },
+        "ExpressionFollow": {
+            "name": "ExpressionFollow",
+            "exclude": {
+                "match": ";"
+            },
+            "parse_any": [
+                {
+                    "parse": [
+                        {
+                            "match": "\\."
+                        },
+                        {
+                            "match": "this"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "\\."
+                        },
+                        {
+                            "match": "new"
+                        },
+                        {
+                            "include": "NonWildcardTypeArguments",
+                            "optional": true
+                        },
+                        {
+                            "include": "InnerCreator"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "\\."
+                        },
+                        {
+                            "match": "super"
+                        },
+                        {
+                            "include": "SuperSuffix"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "\\."
+                        },
+                        {
+                            "include": "ExplicitGenericInvocation"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "\\["
+                        },
+                        {
+                            "include": "Expression"
+                        },
+                        {
+                            "match": "\\]"
+                        },
+                        {
+                            "parse": [
+                                {
+                                    "match": "\\."
+                                },
+                                {
+                                    "include": "Primary"
+                                }
+                            ],
+                            "optional": true
+                        },
+                        {
+                            "include": "ExpressionFollow",
+                            "optional": true
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "\\("
+                        },
+                        {
+                            "include": "ExpressionList",
+                            "optional": true
+                        },
+                        {
+                            "match": "\\)"
+                        },
+                        {
+                            "parse": [
+                                {
+                                    "match": "\\."
+                                },
+                                {
+                                    "include": "Primary"
+                                }
+                            ],
+                            "optional": true
+                        },
+                        {
+                            "include": "ExpressionFollow",
+                            "optional": true
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "\\+\\+|--"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "\\?"
+                        },
+                        {
+                            "include": "Expression"
+                        },
+                        {
+                            "match": ":"
+                        },
+                        {
+                            "include": "Expression"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "instanceof"
+                        },
+                        {
+                            "include": "Type"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "parse_any": [
+                                {
+                                    "parse": [
+                                        {
+                                            "match": "<"
+                                        },
+                                        {
+                                            "match": "<"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "parse": [
+                                        {
+                                            "match": ">"
+                                        },
+                                        {
+                                            "match": ">"
+                                        },
+                                        {
+                                            "match": ">"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "parse": [
+                                        {
+                                            "match": ">"
+                                        },
+                                        {
+                                            "match": ">"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "include": "Expression"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "(>>>?|<<)=|[<>=!+\\-*/&|^%]=|&&|\\|\\||[*/%+-<>&^|=]"
+                        },
+                        {
+                            "include": "Expression"
+                        }
+                    ]
+                }
+            ]
+        },
+        "LambdaExpression": {
+            "name": "LambdaExpression",
+            "parse": [
+                {
+                    "include": "LambdaParameters"
+                },
+                {
+                    "match": "->"
+                },
+                {
+                    "include": "LambdaBody"
+                }
+            ]
+        },
+        "LambdaParameters": {
+            "name": "LambdaParameters",
+            "parse_any": [
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "\\("
+                        },
+                        {
+                            "include": "FormalParameterList",
+                            "optional": true
+                        },
+                        {
+                            "match": "\\)"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "\\("
+                        },
+                        {
+                            "include": "InferredFormalParameterList"
+                        },
+                        {
+                            "match": "\\)"
+                        }
+                    ]
+                }
+            ]
+        },
+        "InferredFormalParameterList": {
+            "name": "InferredFormalParameterList",
+            "parse": [
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": ","
+                        },
+                        {
+                            "include": "Identifier"
+                        }
+                    ],
+                    "multiple": true
+                }
+            ]
+        },
+        "LambdaBody": {
+            "name": "LambdaBody",
+            "parse_any": [
+                {
+                    "include": "Expression"
+                },
+                {
+                    "include": "Block"
+                }
+            ]
+        },
+        "Primary": {
+            "name": "Primary",
+            "parse_any": [
+                {
+                    "parse": [
+                        {
+                            "match": "\\("
+                        },
+                        {
+                            "include": "Expression"
+                        },
+                        {
+                            "match": "\\)"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "void"
+                        },
+                        {
+                            "match": "\\."
+                        },
+                        {
+                            "match": "class"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "include": "Type"
+                        },
+                        {
+                            "match": "\\."
+                        },
+                        {
+                            "match": "class"
+                        }
+                    ]
+                },
+                {
+                    "include": "Literal"
+                },
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "match": "this|super"
+                },
+                {
+                    "parse": [
+                        {
+                            "include": "NonWildcardTypeArguments"
+                        },
+                        {
+                            "parse_any": [
+                                {
+                                    "include": "ExplicitGenericInvocationSuffix"
+                                },
+                                {
+                                    "parse": [
+                                        {
+                                            "match": "this"
+                                        },
+                                        {
+                                            "include": "Arguments"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "Creator": {
+            "name": "Creator",
+            "parse_any": [
+                {
+                    "parse": [
+                        {
+                            "include": "NonWildcardTypeArguments"
+                        },
+                        {
+                            "include": "CreatedName"
+                        },
+                        {
+                            "include": "ClassCreatorRest"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "include": "CreatedName"
+                        },
+                        {
+                            "parse_any": [
+                                {
+                                    "include": "ArrayCreatorRest"
+                                },
+                                {
+                                    "include": "ClassCreatorRest"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "CreatedName": {
+            "name": "CreatedName",
+            "parse_any": [
+                {
+                    "parse": [
+                        {
+                            "include": "Identifier"
+                        },
+                        {
+                            "include": "TypeArgumentsOrDiamond",
+                            "optional": true
+                        },
+                        {
+                            "parse": [
+                                {
+                                    "match": "\\."
+                                },
+                                {
+                                    "include": "Identifier"
+                                },
+                                {
+                                    "include": "TypeArgumentsOrDiamond",
+                                    "optional": true
+                                }
+                            ],
+                            "multiple": true
+                        }
+                    ]
+                },
+                {
+                    "include": "PrimitiveType"
+                }
+            ]
+        },
+        "InnerCreator": {
+            "name": "InnerCreator",
+            "parse": [
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "include": "NonWildcardTypeArgumentsOrDiamond",
+                    "optional": true
+                },
+                {
+                    "include": "ClassCreatorRest"
+                }
+            ]
+        },
+        "ArrayCreatorRest": {
+            "name": "ArrayCreatorRest",
+            "parse": [
+                {
+                    "match": "\\["
+                },
+                {
+                    "parse_any": [
+                        {
+                            "parse": [
+                                {
+                                    "match": "\\]"
+                                },
+                                {
+                                    "parse": [
+                                        {
+                                            "match": "\\["
+                                        },
+                                        {
+                                            "match": "\\]"
+                                        }
+                                    ],
+                                    "multiple": true
+                                },
+                                {
+                                    "include": "ArrayInitializer"
+                                }
+                            ]
+                        },
+                        {
+                            "parse": [
+                                {
+                                    "include": "Expression"
+                                },
+                                {
+                                    "match": "\\]"
+                                },
+                                {
+                                    "parse": [
+                                        {
+                                            "match": "\\["
+                                        },
+                                        {
+                                            "include": "Expression"
+                                        },
+                                        {
+                                            "match": "\\]"
+                                        }
+                                    ],
+                                    "multiple": true
+                                },
+                                {
+                                    "parse": [
+                                        {
+                                            "match": "\\["
+                                        },
+                                        {
+                                            "match": "\\]"
+                                        }
+                                    ],
+                                    "multiple": true
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        "ClassCreatorRest": {
+            "name": "ClassCreatorRest",
+            "parse": [
+                {
+                    "include": "Arguments"
+                },
+                {
+                    "include": "ClassBody",
+                    "optional": true
+                }
+            ]
+        },
+        "ExplicitGenericInvocation": {
+            "name": "ExplicitGenericInvocation",
+            "parse": [
+                {
+                    "include": "NonWildcardTypeArguments"
+                },
+                {
+                    "include": "ExplicitGenericInvocationSuffix"
+                }
+            ]
+        },
+        "NonWildcardTypeArguments": {
+            "name": "NonWildcardTypeArguments",
+            "parse": [
+                {
+                    "match": "<"
+                },
+                {
+                    "include": "TypeList"
+                },
+                {
+                    "match": ">"
+                }
+            ]
+        },
+        "TypeArgumentsOrDiamond": {
+            "name": "TypeArgumentsOrDiamond",
+            "parse_any": [
+                {
+                    "parse": [
+                        {
+                            "match": "<"
+                        },
+                        {
+                            "match": ">"
+                        }
+                    ]
+                },{
+                    "include": "TypeArguments"
+                }
+            ]
+        },
+        "NonWildcardTypeArgumentsOrDiamond": {
+            "name": "NonWildcardTypeArgumentsOrDiamond",
+            "parse_any": [
+                {
+                    "parse": [
+                        {
+                            "match": "<"
+                        },
+                        {
+                            "match": ">"
+                        }
+                    ]
+                },{
+                    "include": "NonWildcardTypeArguments"
+                }
+            ]
+        },
+        "SuperSuffix": {
+            "name": "SuperSuffix",
+            "parse_any": [
+                {
+                    "include": "Arguments"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "\\."
+                        },
+                        {
+                            "include": "Identifier"
+                        },
+                        {
+                            "include": "Arguments",
+                            "optional": true
+                        }
+                    ]
+                }
+            ]
+        },
+        "ExplicitGenericInvocationSuffix": {
+            "name": "ExplicitGenericInvocationSuffix",
+            "parse_any": [
+                {
+                    "parse": [
+                        {
+                            "match": "super"
+                        },
+                        {
+                            "include": "SuperSuffix"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "include": "Identifier"
+                        },
+                        {
+                            "include": "Arguments"
+                        }
+                    ]
+                }
+            ]
+        },
+        "Arguments": {
+            "name": "Arguments",
+            "parse": [
+                {
+                    "match": "\\("
+                },
+                {
+                    "include": "ExpressionList",
+                    "optional": true
+                },
+                {
+                    "match": "\\)"
+                }
+            ]
+        },
+        // Lexical
+        "IntegerLiteral": {
+            "name": "IntegerLiteral",
+            "parse_any": [
+                {
+                    "include": "DecimalIntegerLiteral"
+                },
+                {
+                    "include": "HexIntegerLiteral"
+                },
+                {
+                    "include": "OctalIntegerLiteral"
+                },
+                {
+                    "include": "BinaryIntegerLiteral"
+                }
+            ]
+        },
+        "DecimalIntegerLiteral": {
+            "name": "DecimalIntegerLiteral",
+            "parse": [
+                {
+                    "include": "DecimalNumeral"
+                },
+                {
+                    "include": "IntegerTypeSuffix",
+                    "optional": true
+                }
+            ]
+        },
+        "HexIntegerLiteral": {
+            "name": "HexIntegerLiteral",
+            "parse": [
+                {
+                    "include": "HexNumeral"
+                },
+                {
+                    "include": "IntegerTypeSuffix",
+                    "optional": true
+                }
+            ]
+        },
+        "OctalIntegerLiteral": {
+            "name": "OctalIntegerLiteral",
+            "parse": [
+                {
+                    "include": "OctalNumeral"
+                },
+                {
+                    "include": "IntegerTypeSuffix",
+                    "optional": true
+                }
+            ]
+        },
+        "BinaryIntegerLiteral": {
+            "name": "BinaryIntegerLiteral",
+            "parse": [
+                {
+                    "include": "BinaryNumeral"
+                },
+                {
+                    "include": "IntegerTypeSuffix",
+                    "optional": true
+                }
+            ]
+        },
+        "IntegerTypeSuffix": {
+            "name": "IntegerTypeSuffix",
+            "match": "[lL]"
+        },
+        "DecimalNumeral": {
+            "name": "DecimalNumeral",
+            "match": "([1-9]([\\d_]*\\d)?)|0"
+        },
 
-		"LineTerminator": {
-			// "name": "LineTerminator",
-			"match": "\\r\\n|[\\r\\n]"
-		},
-		"WhiteSpace": {
-			//"name": "WhiteSpace",
-			"parse_any": [
-				{
-					"match": "[ \\t\\v]"
-				},
-				{
-					"include": "LineTerminator"
-				}
-			]
-		},
-		"Comment": {
-			// "name": "Comment",
-			"parse_any": [
-				{
-					"parse": [
-						{
-							"match": "/\\*"
-						},
-						{
-							"exclude": {
-								"match": "\\*/"
-							},
-							"match": "(\\*(?!/)|[^*](?<!\\*/))*",
-							"multiple": true
-						},
-						{
-							"match": "\\*/"
-						}
-					]
-				},
-				{
-					"parse": [
-						{
-							"match": "//"
-						},
-						{
-							"match": "[^\r\n]",
-							"multiple": true
-						}
-					]
-				}
-			]
-		},
-		"Identifier": {
-			"name": "Identifier",
-			"exclude": {
-				"parse_any": [
-					{
-						"include": "Keyword"
-					},
-					{
-						"include": "BooleanLiteral"
-					},
-					{
-						"include": "NullLiteral"
-					}
-				]
-			},
-			"match": "[a-zA-Z_$][a-zA-Z_$0-9]*"
-		},
-		"Keyword": {
-			"name": "Keyword",
-			"match": "\\b(abstract|assert|boolean|break|byte|case|catch|char|class|const|continue|default|do|double|else|enum|extends|final|finally|float|for|goto|if|implements|import|instanceof|int|interface|long|native|new|package|private|protected|public|return|short|static|strictfp|super|switch|synchronized|this|throw|throws|transient|try|void|volatile|while)\\b"
-		},
-		"HexNumeral": {
-			"name": "HexNumeral",
-			"match": "0[xX][\\da-fA-F]([\\da-fA-F_]*[\\da-fA-F])?"
-		},
-		"OctalNumeral": {
-			"name": "OctalNumeral",
-			"match": "0[0-7]([0-7_]*[0-7])?"
-		},
-		"BinaryNumeral": {
-			"name": "BinaryNumeral",
-			"match": "0[bB][01]([01_]*[01])?"
-		},
-		"FloatingPointLiteral": {
-			"name": "FloatingPointLiteral",
-			"parse_any": [
-				{
-					"include": "DecimalFloatingPointLiteral"
-				},
-				{
-					"include": "HexadecimalFloatingPointLiteral"
-				}
-			]
-		},
-		"DecimalFloatingPointLiteral": {
-			"name": "DecimalFloatingPointLiteral",
-			"match": "[0-9]([0-9_]*[0-9])?\\.([0-9]([0-9_]*[0-9])?)?([eE][+-]?[0-9]([0-9_]*[0-9])?)?([fFdD])?|\\.[0-9]([0-9_]*[0-9])?([eE][+-]?[0-9]([0-9_]*[0-9])?)?([fFdD])?|[0-9]([0-9_]*[0-9])?[eE][+-]?[0-9]([0-9_]*[0-9])?([fFdD])?|[0-9]([0-9_]*[0-9])?([eE][+-]?[0-9]([0-9_]*[0-9])?)?[fFdD]?"
-		},
-		"HexadecimalFloatingPointLiteral": {
-			"name": "HexadecimalFloatingPointLiteral",
-			"match": "(0[xX][0-9a-fA-F]([0-9a-fA-F_]*[0-9a-fA-F])?\\.?|0[xX]([0-9a-fA-F]([0-9a-fA-F_]*[0-9a-fA-F])?)?\\.[0-9a-fA-F]([0-9a-fA-F_]*[0-9a-fA-F])?)[pP][+-]?[0-9]([0-9_]*[0-9])?[fFdD]?"
-		},
-		"BooleanLiteral": {
-			"name": "BooleanLiteral",
-			"match": "\\b(true|false)\\b"
-		},
-		"CharacterLiteral": {
-			"name": "CharacterLiteral",
-			"parse_any": [
-				{
-					"parse": [
-						{
-							"match": "'"
-						},
-						{
-							"parse_any": [
-								{
-									"match": "(?![\\r\\v'\\\\])."
-								},
-								{
-									"include": "EscapeSequence"
-								}
-							]
-						},
-						{
-							"match": "'"
-						}
-					]
-				}
-			]
-		},
-		"StringLiteral": {
-			"name": "StringLiteral",
-			"parse": [
-				{
-					"match": "\""
-				},
-				{
-					"parse_any": [
-						{
-							"match": "[^\\r\\v\"\\\\]"
-						},
-						{
-							"include": "EscapeSequence"
-						}
-					],
-					"multiple": true
-				},{
-					"match": "\""
-				}
-			]
-		},
-		"EscapeSequence": {
-			"name": "EscapeSequence",
-			"match": "\\\\[ubtnfr\"'\\\\]|\\\\[0-3][0-7]{2}|\\\\[0-7]{2}|\\\\[0-7]"
-		},
-		"NullLiteral": {
-			"name": "NullLiteral",
-			"match": "\\bnull\\b"
-		}
-	}
+        "LineTerminator": {
+            // "name": "LineTerminator",
+            "match": "\\r\\n|[\\r\\n]"
+        },
+        "WhiteSpace": {
+            //"name": "WhiteSpace",
+            "parse_any": [
+                {
+                    "match": "[ \\t\\v]"
+                },
+                {
+                    "include": "LineTerminator"
+                }
+            ]
+        },
+        "Comment": {
+            // "name": "Comment",
+            "parse_any": [
+                {
+                    "parse": [
+                        {
+                            "match": "/\\*"
+                        },
+                        {
+                            "exclude": {
+                                "match": "\\*/"
+                            },
+                            "match": "(\\*(?!/)|[^*](?<!\\*/))*",
+                            "multiple": true
+                        },
+                        {
+                            "match": "\\*/"
+                        }
+                    ]
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "//"
+                        },
+                        {
+                            "match": "[^\r\n]",
+                            "multiple": true
+                        }
+                    ]
+                }
+            ]
+        },
+        "Identifier": {
+            "name": "Identifier",
+            "exclude": {
+                "parse_any": [
+                    {
+                        "include": "Keyword"
+                    },
+                    {
+                        "include": "BooleanLiteral"
+                    },
+                    {
+                        "include": "NullLiteral"
+                    }
+                ]
+            },
+            "match": "[a-zA-Z_$][a-zA-Z_$0-9]*"
+        },
+        "Keyword": {
+            "name": "Keyword",
+            "match": "\\b(abstract|assert|boolean|break|byte|case|catch|char|class|const|continue|default|do|double|else|enum|extends|final|finally|float|for|goto|if|implements|import|instanceof|int|interface|long|native|new|package|private|protected|public|return|short|static|strictfp|super|switch|synchronized|this|throw|throws|transient|try|void|volatile|while)\\b"
+        },
+        "HexNumeral": {
+            "name": "HexNumeral",
+            "match": "0[xX][\\da-fA-F]([\\da-fA-F_]*[\\da-fA-F])?"
+        },
+        "OctalNumeral": {
+            "name": "OctalNumeral",
+            "match": "0[0-7]([0-7_]*[0-7])?"
+        },
+        "BinaryNumeral": {
+            "name": "BinaryNumeral",
+            "match": "0[bB][01]([01_]*[01])?"
+        },
+        "FloatingPointLiteral": {
+            "name": "FloatingPointLiteral",
+            "parse_any": [
+                {
+                    "include": "DecimalFloatingPointLiteral"
+                },
+                {
+                    "include": "HexadecimalFloatingPointLiteral"
+                }
+            ]
+        },
+        "DecimalFloatingPointLiteral": {
+            "name": "DecimalFloatingPointLiteral",
+            "match": "[0-9]([0-9_]*[0-9])?\\.([0-9]([0-9_]*[0-9])?)?([eE][+-]?[0-9]([0-9_]*[0-9])?)?([fFdD])?|\\.[0-9]([0-9_]*[0-9])?([eE][+-]?[0-9]([0-9_]*[0-9])?)?([fFdD])?|[0-9]([0-9_]*[0-9])?[eE][+-]?[0-9]([0-9_]*[0-9])?([fFdD])?|[0-9]([0-9_]*[0-9])?([eE][+-]?[0-9]([0-9_]*[0-9])?)?[fFdD]?"
+        },
+        "HexadecimalFloatingPointLiteral": {
+            "name": "HexadecimalFloatingPointLiteral",
+            "match": "(0[xX][0-9a-fA-F]([0-9a-fA-F_]*[0-9a-fA-F])?\\.?|0[xX]([0-9a-fA-F]([0-9a-fA-F_]*[0-9a-fA-F])?)?\\.[0-9a-fA-F]([0-9a-fA-F_]*[0-9a-fA-F])?)[pP][+-]?[0-9]([0-9_]*[0-9])?[fFdD]?"
+        },
+        "BooleanLiteral": {
+            "name": "BooleanLiteral",
+            "match": "\\b(true|false)\\b"
+        },
+        "CharacterLiteral": {
+            "name": "CharacterLiteral",
+            "parse_any": [
+                {
+                    "parse": [
+                        {
+                            "match": "'"
+                        },
+                        {
+                            "parse_any": [
+                                {
+                                    "match": "(?![\\r\\v'\\\\])."
+                                },
+                                {
+                                    "include": "EscapeSequence"
+                                }
+                            ]
+                        },
+                        {
+                            "match": "'"
+                        }
+                    ]
+                }
+            ]
+        },
+        "StringLiteral": {
+            "name": "StringLiteral",
+            "parse": [
+                {
+                    "match": "\""
+                },
+                {
+                    "parse_any": [
+                        {
+                            "match": "[^\\r\\v\"\\\\]"
+                        },
+                        {
+                            "include": "EscapeSequence"
+                        }
+                    ],
+                    "multiple": true
+                },{
+                    "match": "\""
+                }
+            ]
+        },
+        "EscapeSequence": {
+            "name": "EscapeSequence",
+            "match": "\\\\[ubtnfr\"'\\\\]|\\\\[0-3][0-7]{2}|\\\\[0-7]{2}|\\\\[0-7]"
+        },
+        "NullLiteral": {
+            "name": "NullLiteral",
+            "match": "\\bnull\\b"
+        }
+    }
 }

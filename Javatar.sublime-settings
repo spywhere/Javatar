@@ -1,190 +1,190 @@
 {
-	// Per-project settings can be set in .sublime-project file
+    // Per-project settings can be set in .sublime-project file
 
-	//////////////////////
-	// Javatar Settings //
-	//////////////////////
+    //////////////////////
+    // Javatar Settings //
+    //////////////////////
 
-	// Debugging purpose:
-	"debug_mode" : false,
+    // Debugging purpose:
+    "debug_mode" : false,
 
-	// Javatar general purpose value
-	"javatar_gp": 0,
+    // Javatar general purpose value
+    "javatar_gp": 0,
 
-	// Package Subscription:
-	//    dev = Developer release (contains new features, bugs and also debugging messages enabled)
-	//    otherwise = Stable release (safe to use, only stable features enabled)
-	"package_channel" : "stable",
+    // Package Subscription:
+    //    dev = Developer release (contains new features, bugs and also debugging messages enabled)
+    //    otherwise = Stable release (safe to use, only stable features enabled)
+    "package_channel" : "stable",
 
-	// Automatically send statistics and usages informations
-	"send_stats_and_usages" : true,
+    // Automatically send statistics and usages informations
+    "send_stats_and_usages" : true,
 
-	// Update message id
-	//    -1 = Unsubscribe to important Javatar updates notification (you should check out the JavatarDoc for any update information)
-	//    any other number = Assigned by Javatar to show you a proper update message
-	"message_id" : 0,
+    // Update message id
+    //    -1 = Unsubscribe to important Javatar updates notification (you should check out the JavatarDoc for any update information)
+    //    any other number = Assigned by Javatar to show you a proper update message
+    "message_id" : 0,
 
-	// Enable Actions History to helps developer solve the issue
-	"enable_actions_history" : true,
+    // Enable Actions History to helps developer solve the issue
+    "enable_actions_history" : true,
 
-	// Maximum waiting time for Javatar packages creation (in seconds)
-	"maximum_waiting_time": 15,
+    // Maximum waiting time for Javatar packages creation (in seconds)
+    "maximum_waiting_time": 15,
 
-	// Default delay before hide a status text (in milliseconds)
-	"status_delay" : 5000,
+    // Default delay before hide a status text (in milliseconds)
+    "status_delay" : 5000,
 
-	// Allow Javatar to update project data for restoration
-	"allow_project_restoration": true,
+    // Allow Javatar to update project data for restoration
+    "allow_project_restoration": true,
 
-	// Time interval to update project data for restoration (in milliseconds)
-	"project_update_interval": 60000,
+    // Time interval to update project data for restoration (in milliseconds)
+    "project_update_interval": 60000,
 
-	// Show package path in status bar
-	"show_package_path" : true,
+    // Show package path in status bar
+    "show_package_path" : true,
 
-	// Source folder (used as default package), must specified in full path
-	// Default is one of...
-	//    - Project-based source folder
-	//    - Top most directory/folder
-	//    - Current directory/folder
-	"source_folder" : "",
+    // Source folder (used as default package), must specified in full path
+    // Default is one of...
+    //    - Project-based source folder
+    //    - Top most directory/folder
+    //    - Current directory/folder
+    "source_folder" : "",
 
-	// Dependency .jar files, use when build
-	"dependencies" : [],
+    // Dependency .jar files, use when build
+    "dependencies" : [],
 
-	// Initial directory for finding dependencies
-	"dependencies_path" : "$project_dir",
+    // Initial directory for finding dependencies
+    "dependencies_path" : "$project_dir",
 
-	///////////////////
-	// Java Settings //
-	///////////////////
+    ///////////////////
+    // Java Settings //
+    ///////////////////
 
-	// JDK installation path, should contains "jdk1.<major>.0_<minor>" folder or similar
-	// Javatar will use this path to detect your JDK installations and let's you select version you want to use
-	// Name should be your os name that get from sublime.platform(), value is a list of path of JDK
-	// Javatar will use current JDK that you are using, otherwise it will use latest version you have
-	//
-	// References: http://docs.oracle.com/javase/8/docs/technotes/guides/install/index.html
-	"jdk_installation" : {
-		"osx" : ["/Library/Java/JavaVirtualMachines"],
-		"windows" : ["C:\\Program Files\\Java", "C:\\Program Files (x86)\\Java"],
-		"linux" : ["/usr/jdk"],
-		"all" : ["/usr/jdk"]
-	},
+    // JDK installation path, should contains "jdk1.<major>.0_<minor>" folder or similar
+    // Javatar will use this path to detect your JDK installations and let's you select version you want to use
+    // Name should be your os name that get from sublime.platform(), value is a list of path of JDK
+    // Javatar will use current JDK that you are using, otherwise it will use latest version you have
+    //
+    // References: http://docs.oracle.com/javase/8/docs/technotes/guides/install/index.html
+    "jdk_installation" : {
+        "osx" : ["/Library/Java/JavaVirtualMachines"],
+        "windows" : ["C:\\Program Files\\Java", "C:\\Program Files (x86)\\Java"],
+        "linux" : ["/usr/jdk"],
+        "all" : ["/usr/jdk"]
+    },
 
-	// List of JDK path that Javatar detected and currently use
-	// This should be READ-ONLY unless you know what you are doing
-	"jdk_version" : {},
+    // List of JDK path that Javatar detected and currently use
+    // This should be READ-ONLY unless you know what you are doing
+    "jdk_version" : {},
 
-	// Executables that Javatar use to build and run
-	"java_executables" : {
-		"build" : "javac",
-		"run" : "java",
-		"version": "java"
-	},
+    // Executables that Javatar use to build and run
+    "java_executables" : {
+        "build" : "javac",
+        "run" : "java",
+        "version": "java"
+    },
 
-	////////////////////////////
-	// Run and Build Settings //
-	////////////////////////////
+    ////////////////////////////
+    // Run and Build Settings //
+    ////////////////////////////
 
-	// Enable automatic save before build
-	"automatic_save" : false,
+    // Enable automatic save before build
+    "automatic_save" : false,
 
-	// Location to run "run" command
-	"run_location" : "$project_dir",
+    // Location to run "run" command
+    "run_location" : "$project_dir",
 
-	// Run command
-	"run_command" : "$classpath $full_class_path",
+    // Run command
+    "run_command" : "$classpath $full_class_path",
 
-	// Amount from bottom to snap into autoscrolling area
-	// Increase this number if autoscroll is not working properly
-	"autoscroll_snap_range": 1,
+    // Amount from bottom to snap into autoscrolling area
+    // Increase this number if autoscroll is not working properly
+    "autoscroll_snap_range": 1,
 
-	// Always scroll view to bottom in output window
-	"autoscroll_to_bottom": true,
+    // Always scroll view to bottom in output window
+    "autoscroll_to_bottom": true,
 
-	// Location to run "build" command
-	"build_location" : "$project_dir",
+    // Location to run "build" command
+    "build_location" : "$project_dir",
 
-	// Build output (class files) location
-	//    Specified here and Javatar will create target path and reference by -d flag in build_command
-	//    "javac" don't create target directory as default
-	//    In this case, "%project_directory%/bin"
-	"build_output_location" : "$project_dir$sepbin",
+    // Build output (class files) location
+    //    Specified here and Javatar will create target path and reference by -d flag in build_command
+    //    "javac" don't create target directory as default
+    //    In this case, "%project_directory%/bin"
+    "build_output_location" : "$project_dir$sepbin",
 
-	// Build command
-	"build_command" : "$sourcepath $classpath $d \"$file\"",
+    // Build command
+    "build_command" : "$sourcepath $classpath $d \"$file\"",
 
-	// Number of build thread
-	//    Increase this value can helps building done faster but also use more performances
-	"parallel_build" : 2,
+    // Number of build thread
+    //    Increase this value can helps building done faster but also use more performances
+    "parallel_build" : 2,
 
-	// Build log view creation delay (in second)
-	//    Increase this value can helps prevent double view from showing but also freeze computer for a specified time
-	"build_log_delay" : 0.05,
+    // Build log view creation delay (in second)
+    //    Increase this value can helps prevent double view from showing but also freeze computer for a specified time
+    "build_log_delay" : 0.05,
 
-	// Refresh rate for Javatar shell (in second)
-	//    Increase this value can helps shell output to print more smoothly but it's also affect the system performances
-	"shell_refresh_interval": 0.01,
+    // Refresh rate for Javatar shell (in second)
+    //    Increase this value can helps shell output to print more smoothly but it's also affect the system performances
+    "shell_refresh_interval": 0.01,
 
-	// Error handler on output encoding
-	//    ignore = Remove all invalid encoding character
-	//    replace = Replace all invalid encoding character with "?" symbol
-	// Change this value without knowing what you're doing is not a good idea
-	"encoding_handle": "replace",
+    // Error handler on output encoding
+    //    ignore = Remove all invalid encoding character
+    //    replace = Replace all invalid encoding character with "?" symbol
+    // Change this value without knowing what you're doing is not a good idea
+    "encoding_handle": "replace",
 
-	//////////////////////////////////
-	// Javatar Validations Settings //
-	//////////////////////////////////
+    //////////////////////////////////
+    // Javatar Validations Settings //
+    //////////////////////////////////
 
-	// Java file extensions
-	"java_extensions" : [".java"],
+    // Java file extensions
+    "java_extensions" : [".java"],
 
-	// Java source code validation using scope selector
-	"java_source_selector" : "source.java",
+    // Java source code validation using scope selector
+    "java_source_selector" : "source.java",
 
-	// Java version matching using RegEx (get from java -version)
-	"java_version_match" : "(\\d+.\\d+.\\d+)_?([0-9a-zA-Z]+)?",
+    // Java version matching using RegEx (get from java -version)
+    "java_version_match" : "(\\d+.\\d+.\\d+)_?([0-9a-zA-Z]+)?",
 
-	// Method call replacement pattern using RegEx (Use in completions)
-	"method_replacement" : "\\(.*?\\)(?![,\\)])",
+    // Method call replacement pattern using RegEx (Use in completions)
+    "method_replacement" : "\\(.*?\\)(?![,\\)])",
 
-	// Package validation using RegEx
-	"package_name_match" : "^([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*$",
+    // Package validation using RegEx
+    "package_name_match" : "^([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*$",
 
-	// Package (with special characters) validation using RegEx
-	"special_package_name_match" : "^([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$,<:]*$",
+    // Package (with special characters) validation using RegEx
+    "special_package_name_match" : "^([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$,<:]*$",
 
-	// Package matching using RegEx
-	"package_match" : "^([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*",
+    // Package matching using RegEx
+    "package_match" : "^([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*",
 
-	// Class in package matching using RegEx
-	"package_class_match" : "([a-zA-Z_$][a-zA-Z\\\\d_$,<:]*)$",
+    // Class in package matching using RegEx
+    "package_class_match" : "([a-zA-Z_$][a-zA-Z\\\\d_$,<:]*)$",
 
-	// Package scope selector (Use in Organize Imports)
-	"package_meta_selector" : "meta.package.java",
+    // Package scope selector (Use in Organize Imports)
+    "package_meta_selector" : "meta.package.java",
 
-	// Import scope selector (Use in Organize Imports)
-	"import_meta_selector" : "meta.import.java",
+    // Import scope selector (Use in Organize Imports)
+    "import_meta_selector" : "meta.import.java",
 
-	// Package in package keyword scope selector (Use in Organize Imports)
-	"package_name_selector" : "storage.modifier.package.java",
+    // Package in package keyword scope selector (Use in Organize Imports)
+    "package_name_selector" : "storage.modifier.package.java",
 
-	// Class name scope selector (Use in Organize Imports)
-	"class_name_selector" : "entity.name.type.class.java",
+    // Class name scope selector (Use in Organize Imports)
+    "class_name_selector" : "entity.name.type.class.java",
 
-	// Package in import keyword scope selector (Use in Organize Imports)
-	"package_import_selector" : "storage.modifier.import.java",
+    // Package in import keyword scope selector (Use in Organize Imports)
+    "package_import_selector" : "storage.modifier.import.java",
 
-	// Types and classes scope selector (Use in Organize Imports)
-	"type_selector" : "storage.type.java|storage.type.generic.java|storage.type.annotation.java|entity.other.inherited-class",
+    // Types and classes scope selector (Use in Organize Imports)
+    "type_selector" : "storage.type.java|storage.type.generic.java|storage.type.annotation.java|entity.other.inherited-class",
 
-	// Primitive types fallback (default Java syntax is not 100% syntax perfect)
-	"primitive_type" : ["void", "boolean", "byte", "char", "short", "int", "float", "long", "double"],
+    // Primitive types fallback (default Java syntax is not 100% syntax perfect)
+    "primitive_type" : ["void", "boolean", "byte", "char", "short", "int", "float", "long", "double"],
 
-	//////////////////////////////////
-	// Javatar Temporary Key/Value  //
-	// For project data restoration //
-	//////////////////////////////////
-	"project_data": {}
+    //////////////////////////////////
+    // Javatar Temporary Key/Value  //
+    // For project data restoration //
+    //////////////////////////////////
+    "project_data": {}
 }

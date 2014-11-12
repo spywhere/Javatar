@@ -3,5 +3,5 @@
 %package%
 
 %visibility%%modifier%class %class%%inheritance% {
-	%body%
+    %body%
 }
