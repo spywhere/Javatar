@@ -1,7 +1,7 @@
 import sublime
 import threading
 import urllib
-import hashlib
+# import hashlib
 import traceback
 from .javatar_collections import *
 from .javatar_thread import *
