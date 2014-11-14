@@ -226,8 +226,8 @@ class JavatarCreatePackageCommand(sublime_plugin.WindowCommand):
     def createPackage(self, text, on_change=False):
         add_action(
             "javatar.command.package.create_package",
-            Create package [package="+text
-        +"]")
+            "Create package [package="+text+"]"
+        )
         relative = True
         if text.startswith("~"):
             text = text[1:]

@@ -104,7 +104,7 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
         if step == 0:
             #gathering info
             self.reset()
-            get_action().add_action("javatar.command.operation.organize_imports.step0", "Organize Imports [step=0] Gathering info")
+            add_action("javatar.command.operation.organize_imports.step0", "Organize Imports [step=0] Gathering info")
             importedPackagesRegions = self.view.find_by_selector(get_settings("package_import_selector"))
             useTypesRegions = self.view.find_by_selector(get_settings("type_selector"))
 
@@ -133,7 +133,7 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
             self.run(edit, 1)
         elif step == 1:
             #select classes
-            get_action().add_action("javatar.command.operation.organize_imports.step1", "Organize Imports [step=1] Select classes")
+            add_action("javatar.command.operation.organize_imports.step1", "Organize Imports [step=1] Select classes")
             if len(self.needImportTypes) > 0 and self.index < len(self.needImportTypes):
                 classes = find_class(get_package_root_dir(), self.needImportTypes[self.index])
                 if len(classes) > 0:

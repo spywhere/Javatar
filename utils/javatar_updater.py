@@ -50,7 +50,7 @@ def update_complete(packageURL, require_package):
                 "Conflict package was already installed"
             )
             return
-    get_action().add_action("javatar.util.updater", "Install default package")
+    add_action("javatar.util.updater", "Install default package")
     sublime.active_window().run_command("javatar_install", {"installtype": "remote_package", "name": require_package["name"], "filename": require_package["filename"], "url": packageURL, "checksum": require_package["hash"]})
 
 
@@ -86,7 +86,7 @@ class JavatarPackageUpdaterThread(threading.Thread):
                     packageURL = packages[PACKAGES_VERSION]["url"]
                 else:
                     self.result_message = "No URL to packages channel"
-                    get_action().add_action("javatar.util.updater", self.result_message)
+                    add_action("javatar.util.updater", self.result_message)
                     self.result = False
                     return
                 if "deprecated" in packages[PACKAGES_VERSION] and packages[PACKAGES_VERSION]["deprecated"]:
@@ -134,14 +134,14 @@ class JavatarPackageUpdaterThread(threading.Thread):
                         sublime.set_timeout(lambda: self.on_complete(packageURL, require_package), 3000)
                 else:
                     self.result_message = "No Javatar packages available"
-                    get_action().add_action("javatar.util.updater", self.result_message)
+                    add_action("javatar.util.updater", self.result_message)
                     self.result = False
             else:
                 self.result_message = "Javatar packages are incompatible with current version"
-                get_action().add_action("javatar.util.updater", self.result_message)
+                add_action("javatar.util.updater", self.result_message)
                 self.result = False
         except Exception as e:
             self.result_message = "Javatar packages update has failed: " + str(e)
             traceback.print_exc()
-            get_action().add_action("javatar.util.updater", self.result_message)
+            add_action("javatar.util.updater", self.result_message)
             self.result = False

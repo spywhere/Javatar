@@ -150,7 +150,7 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
             if text == "":
                 return get_info(text, on_change)
         else:
-            get_action().add_action("javatar.command.create.run", "Create [create_type=" + create_type + "]")
+            add_action("javatar.command.create.run", "Create [create_type=" + create_type + "]")
         if create_type != "":
             self.show_input(-1, create_type)
             return
@@ -189,7 +189,7 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
                     elif self.create_type == "Interface" and len(info["implements"]) > 0:
                         additional_text += " [Warning! Interface use \"extends\" instead of \"implements\"]"
                     return prefix + " \"" + info["class"] + "\" will be created within package \"" + to_readable_package(info["package"], True) + "\"" + additional_text
-            get_action().add_action("javatar.command.create.run", "Create [info=" + str(info) + "]")
+            add_action("javatar.command.create.run", "Create [info=" + str(info) + "]")
             create_class_file(info["file"], get_file_contents(self.create_type, info), self.create_type + " \"" + info["class"] + "\" already exists", info)
             sublime.set_timeout(lambda: show_status(self.create_type + " \"" + info["class"] + "\" is created within package \"" + to_readable_package(info["package"], True) + "\""), 500)
 
