@@ -63,7 +63,10 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
         return dir_list
 
     def run(self, actiontype, arg1=None, arg2=None):
-        get_action().add_action("javatar.command.project.run", "Project Settings [type="+actiontype+"]")
+        add_action(
+            "javatar.command.project.run",
+            "Project Settings [type={}]".format(actiontype)
+        )
         self.actiontype = actiontype
         if actiontype == "set_source_folder":
             self.panel_list = self.get_folders()

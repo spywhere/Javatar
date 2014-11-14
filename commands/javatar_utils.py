@@ -127,7 +127,9 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
 
 class JavatarReload_packagesCommand(sublime_plugin.WindowCommand):
     def run(self):
-        get_action().add_action("javatar.command.utils.reload_packages.run", "Reload Packages")
+        add_action(
+            "javatar.command.utils.reload_packages.run", "Reload Packages"
+        )
         reset_packages()
         load_packages()
 

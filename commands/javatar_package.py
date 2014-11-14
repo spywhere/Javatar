@@ -164,7 +164,10 @@ class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):
     def run(self, first=True, again=False):
         if first:
             self.package_info = []
-            get_action().add_action("javatar.command.package.create_javatar_package.run", "Create Javatar Package")
+            add_action(
+                "javatar.command.package.create_javatar_package.run",
+                "Create Javatar Package"
+            )
         if self.package_step is None:
             self.package_step = [
                 {"input": "Package Name", "flags": "not empty", "message": "Welcome to Javatar Packages wizard\n   This wizard will helps you through package creation and automated some tasks for you.\n   First, you must ensure that you already place \"JavatarDoclet\" in " + get_path("parent", get_package_root_dir()) + "\n\nWizard will ask you for the following infomations...\n - Package name: This will be your package name which appear on installation\n - Preferred file name: This will be your package file name that will be created and uploaded to packages channel\n - Conflicted packages: This informations help users install your package without conflicting another package\n - Source folder: You will be asked for source folder to generate a proper .javatar-packages file\n\nTo cancel, dismiss this dialog and press \"Escape\" key"},
@@ -221,7 +224,10 @@ class JavatarCreatePackageCommand(sublime_plugin.WindowCommand):
         hide_status(clear=True)
 
     def createPackage(self, text, on_change=False):
-        get_action().add_action("javatar.command.package.create_package", "Create package [package="+text+"]")
+        add_action(
+            "javatar.command.package.create_package",
+            Create package [package="+text
+        +"]")
         relative = True
         if text.startswith("~"):
             text = text[1:]

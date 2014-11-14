@@ -34,7 +34,7 @@ def stop_clock(add=True, notify=True):
 
 
 def reset():
-    get_action().add_action("javatar.util.util.reset", "Reset all settings")
+    add_action("javatar.util.util.reset", "Reset all settings")
     global SUBLIME_SETTINGS, SETTINGS, SETTINGSBASE
     SUBLIME_SETTINGS = None
     SETTINGS = None
@@ -72,7 +72,7 @@ def restore_project_state():
 
 
 def read_settings(config):
-    get_action().add_action("javatar.util.util.read_settings", "Read settings")
+    add_action("javatar.util.util.read_settings", "Read settings")
     global SUBLIME_SETTINGS, SETTINGS, SETTINGSBASE
     SETTINGSBASE = config
     SETTINGS = sublime.load_settings(config)

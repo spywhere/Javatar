@@ -31,7 +31,7 @@ class JavatarRunMainCommand(sublime_plugin.WindowCommand):
             sublime.error_message("Unknown package location")
 
     def on_run(self):
-        get_action().add_action("javatar.command.run.on_run", "Run main class")
+        add_action("javatar.command.run.on_run", "Run main class")
         view = sublime.active_window().active_view()
         file_path = view.file_name()
         self.class_name = get_main_class_name(file_path, view)

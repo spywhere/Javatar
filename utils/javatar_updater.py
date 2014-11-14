@@ -30,7 +30,7 @@ def send_package_action_complete(thread):
 
 
 def update_packages(no_require=False):
-    get_action().add_action("javatar.util.updater", "Check packages update")
+    add_action("javatar.util.updater", "Check packages update")
     thread = JavatarPackageUpdaterThread(update_complete)
     thread.no_require = no_require
     thread.start()
@@ -45,7 +45,10 @@ def update_complete(packageURL, require_package):
         package_conflict = require_package["conflict"]
     for conflict in package_conflict:
         if get_installed_package(conflict) is not None:
-            get_action().add_action("javatar.util.updater", "Conflict package was already installed")
+            add_action(
+                "javatar.util.updater",
+                "Conflict package was already installed"
+            )
             return
     get_action().add_action("javatar.util.updater", "Install default package")
     sublime.active_window().run_command("javatar_install", {"installtype": "remote_package", "name": require_package["name"], "filename": require_package["filename"], "url": packageURL, "checksum": require_package["hash"]})

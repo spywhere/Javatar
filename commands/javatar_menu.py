@@ -335,6 +335,17 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 
     def select(self, info):
         if info["index"] < 0:
-            get_action().add_action("javatar.command.menu.select", "Exit menu [from_sublime="+str(info["from_sublime"])+"]")
+            add_action(
+                "javatar.command.menu.select",
+                "Exit menu [from_sublime={}]".format(
+                    info["from_sublime"]
+                )
+            )
         else:
-            get_action().add_action("javatar.command.menu.select", "Select item " + str(info["items"][info["index"]]) + " [from_sublime="+str(info["from_sublime"])+"]")
+            add_action(
+                "javatar.command.menu.select",
+                "Select item {} [from_sublime={}]".format(
+                    info["items"][info["index"]],
+                    info["from_sublime"]
+                )
+            )
