@@ -4,7 +4,10 @@ from ..utils import *
 
 class JavatarCallCommand(sublime_plugin.TextCommand):
     def run(self, edit, call_type=""):
-        get_action().add_action("javatar.command.call.run", "Call [call_type=" + call_type + "]")
+        add_action(
+            "javatar.command.call.run",
+            "Call [call_type=" + call_type + "]"
+        )
         if not is_java():
             sublime.error_message("Current file is not Java")
             return

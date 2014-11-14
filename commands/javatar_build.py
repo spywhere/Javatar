@@ -98,7 +98,9 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
         if self.build_size < 0:
             show_notification("Building Cancelled")
             sublime.status_message("Building Cancelled")
-            get_action().add_action("javatar.command.build.complete", "Building Cancelled")
+            add_action(
+                "javatar.command.build.complete", "Building Cancelled"
+            )
             return
 
         message = "Building Finished [{0:.2f}s]"
@@ -110,7 +112,10 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
         if self.view is not None:
             self.view.set_name(message.format(clock()-self.start_time))
         sublime.status_message(message.format(clock()-self.start_time))
-        get_action().add_action("javatar.command.build.complete", message.format(clock()-self.start_time))
+        add_action(
+            "javatar.command.build.complete",
+            message.format(clock()-self.start_time)
+        )
 
     def get_java_files(self, dir_path):
         for name in os.listdir(dir_path):
@@ -123,7 +128,9 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
     def build_all(self, dir_path):
         self.get_java_files(dir_path)
         if len(self.build_list) > 0:
-            get_action().add_action("javatar.command.build.build_all", "Build all")
+            add_action(
+                "javatar.command.build.build_all", "Build all"
+            )
             self.build()
             return True
         else:
@@ -132,7 +139,10 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
     def run(self, build_type=""):
         self.macro_data = get_macro_data()
         self.build_list = []
-        get_action().add_action("javatar.command.build.run", "Build [build_type=" + build_type + "]")
+        add_action(
+            "javatar.command.build.run",
+            "Build [build_type=" + build_type + "]"
+        )
         view = sublime.active_window().active_view()
         if build_type == "project":
             if is_project():
@@ -174,7 +184,10 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
                                 sublime.error_message("Some Java files are not saved")
                                 return
                 if len(self.build_list) > 0:
-                    get_action().add_action("javatar.command.build.build_working", "Build working files")
+                    add_action(
+                        "javatar.command.build.build_working",
+                        "Build working files"
+                    )
                     self.build()
                 else:
                     sublime.error_message("No class to build")
@@ -189,7 +202,9 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
                         else:
                             sublime.error_message("Current file is not saved")
                             return
-                    get_action().add_action("javatar.command.build.build_file", "Build file")
+                    add_action(
+                        "javatar.command.build.build_file", "Build file"
+                    )
                     self.build_list.append(view.file_name())
                     self.build()
                 else:

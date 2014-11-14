@@ -33,17 +33,19 @@ def show_news(title, prefix=""):
 
 
 def check_news():
-    get_action().add_action("javatar.util.news", "Check news")
+    add_action("javatar.util.news", "Check news")
     from .javatar_utils import get_settings, set_settings, is_stable
     if get_settings("message_id") < NEWSID:
         if get_settings("message_id") != -1:
             stop_clock(notify=False)
             if is_stable() and (UPDATEFOR == "stable" or UPDATEFOR == "all"):
                 show_news("Javatar: Package has been updated!")
-                get_action().add_action("javatar.util.news", "Show stable news")
+                add_action(
+                    "javatar.util.news", "Show stable news"
+                )
             elif not is_stable() and (UPDATEFOR == "dev" or UPDATEFOR == "all"):
                 show_news("Javatar [Dev]: Package has been updated!")
-                get_action().add_action("javatar.util.news", "Show dev news")
+                add_action("javatar.util.news", "Show dev news")
             start_clock()
             send_usages(get_usage_data())
             set_settings("message_id", NEWSID)

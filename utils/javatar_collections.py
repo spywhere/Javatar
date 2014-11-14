@@ -17,14 +17,18 @@ Allow a new javatar format for packaging a custom jar file (atleast easier for b
 
 
 def reset_snippets_and_packages():
-    get_action().add_action("javatar.util.collection.reset", "Reset all snippets")
+    add_action(
+        "javatar.util.collection.reset", "Reset all snippets"
+    )
     global SNIPPETS
     SNIPPETS = []
     reset_packages()
 
 
 def reset_packages():
-    get_action().add_action("javatar.util.collection.reset", "Reset all default packages")
+    add_action(
+        "javatar.util.collection.reset", "Reset all default packages"
+    )
     global INSTALLED_PACKAGES, DEFAULT_PACKAGES
     INSTALLED_PACKAGES = []
     DEFAULT_PACKAGES = []
@@ -42,7 +46,9 @@ def get_installed_package(name):
 
 
 def load_snippets_and_packages():
-    get_action().add_action("javatar.util.collection.get_snippet_files", "Load snippets")
+    add_action(
+        "javatar.util.collection.get_snippet_files", "Load snippets"
+    )
     thread = JavatarSnippetsLoaderThread(snippets_complete)
     thread.start()
     ThreadProgress(thread, "Loading Javatar snippets", "Javatar snippets has been loaded")
@@ -55,7 +61,10 @@ def snippets_complete(data):
 
 
 def load_packages(no_require=False):
-    get_action().add_action("javatar.util.collection.get_package_files", "Load Java default packages")
+    add_action(
+        "javatar.util.collection.get_package_files",
+        "Load Java default packages"
+    )
     thread = JavatarPackagesLoaderThread(packages_complete, no_require)
     thread.start()
     ThreadProgress(thread, "Loading Javatar packages", "Javatar packages has been loaded")
@@ -189,7 +198,10 @@ class JavatarSnippetsLoaderThread(threading.Thread):
         threading.Thread.__init__(self)
 
     def analyse_snippet(self, file):
-        get_action().add_action("javatar.util.collection.analyse_snippet", "Analyse snippet [file="+file+"]")
+        add_action(
+            "javatar.util.collection.analyse_snippet",
+            "Analyse snippet [file="+file+"]"
+        )
         data = sublime.load_resource(file)
         classScope = None
         classRe = re.search("%class:(.*)%(\\s*)", data, re.M)
@@ -218,7 +230,10 @@ class JavatarSnippetsLoaderThread(threading.Thread):
         from .javatar_utils import get_path
         for filepath in sublime.find_resources("*.javatar"):
             filename = get_path("name", filepath)
-            get_action().add_action("javatar.util.collection", "Javatar snippet " + filename + " loaded")
+            add_action(
+                "javatar.util.collection",
+                "Javatar snippet " + filename + " loaded"
+            )
             print("Javatar snippet " + filename + " loaded")
             snippets.append(self.analyse_snippet(filepath))
 
@@ -258,7 +273,10 @@ class JavatarPackagesLoaderThread(threading.Thread):
         return [packages, classes]
 
     def analyse_package(self, filepath):
-        get_action().add_action("javatar.util.collection.analyse_import", "Analyse package [file="+filepath+"]")
+        add_action(
+            "javatar.util.collection.analyse_import",
+            "Analyse package [file="+filepath+"]"
+        )
         try:
             from .javatar_utils import get_path
             imports = sublime.decode_value(sublime.load_resource(filepath))
@@ -280,7 +298,10 @@ class JavatarPackagesLoaderThread(threading.Thread):
         from .javatar_utils import get_path
         for filepath in sublime.find_resources("*.javatar-packages"):
             filename = get_path("name", filepath)
-            get_action().add_action("javatar.util.collection", "Javatar default package " + filename + " loaded")
+            add_action(
+                "javatar.util.collection",
+                "Javatar default package " + filename + " loaded"
+            )
             imports = self.analyse_package(filepath)
             if imports is not None:
                 default_packages.append(imports)

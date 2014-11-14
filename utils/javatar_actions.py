@@ -33,3 +33,7 @@ def get_action():
     if ACTION is None:
         ACTION = ActionList()
     return ACTION
+
+
+def add_action(name, action):
+    get_action().add_action(name, action)

@@ -18,7 +18,9 @@ class JavatarTestOperationCommand(sublime_plugin.WindowCommand):
 
 class JavatarCorrectClassCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        get_action().add_action("javatar.command.operation.correct_class.run", "Correct class")
+        add_action(
+            "javatar.command.operation.correct_class.run", "Correct class"
+        )
         if is_file() and is_java():
             packageName = get_current_package()
             packageRegions = self.view.find_by_selector(get_settings("package_name_selector"))
@@ -145,8 +147,11 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
                 self.index = 0
                 self.run(edit, 3)
         elif step == 2:
-            #select classes callback
-            get_action().add_action("javatar.command.operation.organize_imports.step2", "Organize Imports [step=2] Select classes callback")
+            # select classes callback
+            add_action(
+                "javatar.command.operation.organize_imports.step2",
+                "Organize Imports [step=2] Select classes callback"
+            )
             if isinstance(self.selectedPackage, int):
                 if self.needImportTypes[self.index] not in self.postAskTypes:
                     self.postAskTypes.append(self.needImportTypes[self.index])
@@ -165,8 +170,11 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
             else:
                 self.run(edit, 1)
         elif step == 3:
-            #add default imports
-            get_action().add_action("javatar.command.operation.organize_imports.step3", "Organize Imports [step=3] Add default imports")
+            # add default imports
+            add_action(
+                "javatar.command.operation.organize_imports.step3",
+                "Organize Imports [step=3] Add default imports"
+            )
             for packageImport in get_packages():
                 importOnce = False
                 if "packages" in packageImport:
@@ -189,16 +197,22 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
                             self.alwaysImportedPackages.append(packageName)
             self.run(edit, 4)
         elif step == 4:
-            #ask package
-            get_action().add_action("javatar.command.operation.organize_imports.step4", "Organize Imports [step=4] Ask package")
+            # ask package
+            add_action(
+                "javatar.command.operation.organize_imports.step4",
+                "Organize Imports [step=4] Ask package"
+            )
             self.askTypes += self.postAskTypes
             if len(self.askTypes) > 0 and self.index < len(self.askTypes):
                 self.askPackage(-1, self.askTypes[self.index])
             else:
                 self.run(edit, 6)
         elif step == 5:
-            #ask package callback
-            get_action().add_action("javatar.command.operation.organize_imports.step5", "Organize Imports [step=5] Ask package callback")
+            # ask package callback
+            add_action(
+                "javatar.command.operation.organize_imports.step5",
+                "Organize Imports [step=5] Ask package callback"
+            )
             if self.selectedPackage is not None:
                 self.importedPackages.append(self.selectedPackage)
                 if get_package_path(self.selectedPackage) in self.importedPackagesStat:
@@ -212,8 +226,11 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
             else:
                 self.run(edit, 4)
         elif step == 6:
-            #import
-            get_action().add_action("javatar.command.operation.organize_imports.step6", "Organize Imports [step=6] Import")
+            # import
+            add_action(
+                "javatar.command.operation.organize_imports.step6",
+                "Organize Imports [step=6] Import"
+            )
             importCode = ""
 
             #clear old imports
@@ -282,7 +299,10 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
                 self.selectedPackage = None
             else:
                 if self.classes[index] == "Enter Package Manually":
-                    get_action().add_action("javatar.command.operation.organize_imports.step2", "Organize Imports - Enter Package Manually")
+                    add_action(
+                        "javatar.command.operation.organize_imports.step2",
+                        "Organize Imports - Enter Package Manually"
+                    )
                     self.selectedPackage = -1
                 else:
                     self.selectedPackage = self.classes[index]
@@ -312,7 +332,11 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 
 class JavatarRenameOperationCommand(sublime_plugin.WindowCommand):
     def run(self, text="", rename_type=""):
-        get_action().add_action("javatar.command.operation.rename.run", "Rename [rename_type="+rename_type+"]")
+        add_action(
+            "javatar.command.operation.rename.run",
+            "Rename [rename_type={}]"
+            .format(rename_type)
+        )
         if rename_type == "class":
             if is_file() and is_java():
                 classRegion = sublime.active_window().active_view().find(get_settings("class_name_prefix")+get_settings("class_name_scope")+get_settings("class_name_suffix"), 0)
