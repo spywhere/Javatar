@@ -163,8 +163,10 @@ def refresh_dependencies(local=None):
         ]
     }
 
-    dependency_menu["actions"].append({"command": "javatar_settings", "args": {"actiontype": "add_external_jar", "arg1": local}})
-    dependency_menu["actions"].append({"command": "javatar_settings", "args": {"actiontype": "add_class_folder", "arg1": local}})
+    dependency_menu["actions"].extend([
+        {"command": "javatar_settings", "args": {"actiontype": "add_external_jar", "arg1": local}},
+        {"command": "javatar_settings", "args": {"actiontype": "add_class_folder", "arg1": local}}
+    ])
 
     dependencies = get_dependencies(local)
     for dependency in dependencies:

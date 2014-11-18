@@ -19,9 +19,7 @@ def detect_jdk(silent=False, on_done=None, progress=False):
 
 
 def normalize_package(package):
-    while package.startswith("."):
-        package = package[1:]
-    return re.sub("\\.*$", "", package)
+    return re.sub("\\.*$", "", package.lstrip('.'))
 
 
 def to_class(class_content):
@@ -218,10 +216,7 @@ def get_java_version(path="", check_all=False, executable=None):
 
 
 def dict_to_list(dicto):
-    olist = []
-    for key in dicto:
-        olist.append(dicto[key])
-    return olist
+    return list(dicto.keys())
 
 
 def is_jdk_dir(path):
