@@ -1,3 +1,5 @@
+import os.path
+
 import sublime
 import re
 
@@ -8,7 +10,6 @@ import re
 
 def is_java(filepath=""):
     from .javatar_utils import get_settings
-    import os.path
     view = sublime.active_window().active_view()
     if filepath is None or filepath is "":
         if view is None:

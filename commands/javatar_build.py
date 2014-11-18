@@ -1,3 +1,6 @@
+from os import pathsep, makedirs
+from os.path import isdir
+
 import sublime
 import sublime_plugin
 from time import clock, sleep
@@ -56,7 +59,6 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
         dependencies = get_dependencies()
         dependencies_param = ""
         for dependency in dependencies:
-            from os import pathsep
             if dependencies_param == "":
                 dependencies_param = "-classpath ."+pathsep+"\""+dependency[0]+"\""
             else:
@@ -65,8 +67,6 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
         self.macro_data["d"] = ""
         if self.build_output_location != "":
             output_dir = parse_macro(self.build_output_location, self.macro_data, file_path)
-            from os import makedirs
-            from os.path import isdir
             if not isdir(output_dir):
                 makedirs(output_dir)
             self.macro_data["d"] = "-d \"" + output_dir + "\""

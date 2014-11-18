@@ -1,3 +1,6 @@
+import sys
+from imp import reload
+
 import sublime
 import sublime_plugin
 import hashlib
@@ -45,8 +48,6 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
         elif util_type == "reload" and is_debug():
             add_action("javatar.command.utils.reload.run", "Reload Javatar")
             print("Reloading Javatar...")
-            import sys
-            from imp import reload
             for mod in sys.modules:
                 if mod.lower().startswith("javatar") and not mod.lower().endswith("_utils") and sys.modules[mod] is not None:
                     print("Reloading module " + mod + "...")

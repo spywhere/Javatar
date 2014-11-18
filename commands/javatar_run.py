@@ -1,3 +1,5 @@
+from os import pathsep
+
 import sublime
 import sublime_plugin
 from ..utils import *
@@ -39,7 +41,6 @@ class JavatarRunMainCommand(sublime_plugin.WindowCommand):
         dependencies = get_dependencies()
         dependencies_param = "-classpath \""+self.output_dir+"\""
         for dependency in dependencies:
-            from os import pathsep
             dependencies_param += pathsep+"\""+dependency[0]+"\""
         macro_data["classpath"] = dependencies_param
         executable = get_executable("run")

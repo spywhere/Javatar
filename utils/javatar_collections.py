@@ -1,3 +1,5 @@
+from os.path import isdir, exists
+
 import re
 import sublime
 import threading
@@ -135,7 +137,6 @@ def get_dependencies(local=True):
         dependencies = get_project_settings("dependencies")
     else:
         dependencies = get_global_settings("dependencies")
-    from os.path import exists
     if dependencies is not None:
         for dependency in dependencies:
             if exists(dependency):
@@ -167,7 +168,6 @@ def refresh_dependencies(local=None):
 
     dependencies = get_dependencies(local)
     for dependency in dependencies:
-        from os.path import isdir
         name = get_path("name", dependency[0])
         if dependency[1]:
             dependency_menu["actions"].append({"command": "javatar_settings", "args": {"actiontype": "remove_dependency", "arg1": dependency[0], "arg2": True}})

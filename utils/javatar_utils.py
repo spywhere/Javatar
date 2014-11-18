@@ -1,3 +1,5 @@
+from time import clock
+
 import sublime
 import os
 from copy import deepcopy
@@ -18,13 +20,11 @@ def get_startup_time():
 
 def start_clock():
     global LAST_TIMER
-    from time import clock
     LAST_TIMER = clock()
 
 
 def stop_clock(add=True, notify=True):
     global STARTUP_TIME
-    from time import clock
     if add and STARTUP_TIME is not None:
         STARTUP_TIME += clock()-LAST_TIMER
     else:
