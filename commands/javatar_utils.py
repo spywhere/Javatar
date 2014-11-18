@@ -153,54 +153,21 @@ class JavatarConvertCommand(sublime_plugin.WindowCommand):
                 if "default" in imports:
                     packages_file["packages"][package]["default"] = imports["default"]
 
-                if "interface" in imports:
-                    total_class += len(imports["interface"])
+                to_include = {
+                    "interface",
+                    "class",
+                    "enum",
+                    "exception",
+                    "error",
+                    "annotation",
+                    "type"
+                }
 
-                    packages_file["packages"][package]["interface"] = [
+                for key in to_include:
+                    total_class += len(imports[key])
+                    packages_file["packages"][package][key] = [
                         {"name": clss, "fields": [], "methods:": []}
-                        for clss in imports["interface"]
-                    ]
-
-                if "class" in imports:
-                    total_class += len(imports["class"])
-                    packages_file["packages"][package]["class"] = [
-                        {"name": clss, "fields": [], "methods:": []}
-                        for clss in imports["class"]
-                    ]
-
-                if "enum" in imports:
-                    total_class += len(imports["enum"])
-                    packages_file["packages"][package]["enum"] = [
-                        {"name": clss, "fields": [], "methods:": []}
-                        for clss in imports["enum"]
-                    ]
-
-                if "exception" in imports:
-                    total_class += len(imports["exception"])
-                    packages_file["packages"][package]["exception"] = [
-                        {"name": clss, "fields": [], "methods:": []}
-                        for clss in imports["exception"]
-                    ]
-
-                if "error" in imports:
-                    total_class += len(imports["error"])
-                    packages_file["packages"][package]["error"] = [
-                        {"name": clss, "fields": [], "methods:": []}
-                        for clss in imports["error"]
-                    ]
-
-                if "annotation" in imports:
-                    total_class += len(imports["annotation"])
-                    packages_file["packages"][package]["annotation"] = [
-                        {"name": clss, "fields": [], "methods:": []}
-                        for clss in imports["annotation"]
-                    ]
-
-                if "type" in imports:
-                    total_class += len(imports["type"])
-                    packages_file["packages"][package]["type"] = [
-                        {"name": clss, "fields": [], "methods:": []}
-                        for clss in imports["type"]
+                        for clss in imports[key]
                     ]
 
             with open(get_path("join", get_path("parent", sublime.packages_path()), filepath.replace(".javatar-imports", "-converted.javatar-packages")), "w") as filew:
