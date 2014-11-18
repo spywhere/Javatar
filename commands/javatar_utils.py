@@ -143,47 +143,49 @@ class JavatarConvertCommand(sublime_plugin.WindowCommand):
             total_package = 0
             total_class = 0
             for imports in imports_file:
-                if "package" in imports:
-                    total_package += 1
-                    package = imports["package"]
-                    packages_file["packages"][package] = {}
-                    if "default" in imports:
-                        packages_file["packages"][package]["default"] = imports["default"]
-                    if "interface" in imports:
-                        packages_file["packages"][package]["interface"] = []
-                        total_class += len(imports["interface"])
-                        for clss in imports["interface"]:
-                            packages_file["packages"][package]["interface"].append({"name": clss, "fields": [], "methods:": []})
-                    if "class" in imports:
-                        packages_file["packages"][package]["class"] = []
-                        total_class += len(imports["class"])
-                        for clss in imports["class"]:
-                            packages_file["packages"][package]["class"].append({"name": clss, "fields": [], "methods:": []})
-                    if "enum" in imports:
-                        packages_file["packages"][package]["enum"] = []
-                        total_class += len(imports["enum"])
-                        for clss in imports["enum"]:
-                            packages_file["packages"][package]["enum"].append({"name": clss, "fields": [], "methods:": []})
-                    if "exception" in imports:
-                        packages_file["packages"][package]["exception"] = []
-                        total_class += len(imports["exception"])
-                        for clss in imports["exception"]:
-                            packages_file["packages"][package]["exception"].append({"name": clss, "fields": [], "methods:": []})
-                    if "error" in imports:
-                        packages_file["packages"][package]["error"] = []
-                        total_class += len(imports["error"])
-                        for clss in imports["error"]:
-                            packages_file["packages"][package]["error"].append({"name": clss, "fields": [], "methods:": []})
-                    if "annotation" in imports:
-                        packages_file["packages"][package]["annotation"] = []
-                        total_class += len(imports["annotation"])
-                        for clss in imports["annotation"]:
-                            packages_file["packages"][package]["annotation"].append({"name": clss, "fields": [], "methods:": []})
-                    if "type" in imports:
-                        packages_file["packages"][package]["type"] = []
-                        total_class += len(imports["type"])
-                        for clss in imports["type"]:
-                            packages_file["packages"][package]["type"].append({"name": clss, "fields": [], "methods:": []})
+                if "package" not in imports:
+                    continue
+
+                total_package += 1
+                package = imports["package"]
+                packages_file["packages"][package] = {}
+                if "default" in imports:
+                    packages_file["packages"][package]["default"] = imports["default"]
+                if "interface" in imports:
+                    packages_file["packages"][package]["interface"] = []
+                    total_class += len(imports["interface"])
+                    for clss in imports["interface"]:
+                        packages_file["packages"][package]["interface"].append({"name": clss, "fields": [], "methods:": []})
+                if "class" in imports:
+                    packages_file["packages"][package]["class"] = []
+                    total_class += len(imports["class"])
+                    for clss in imports["class"]:
+                        packages_file["packages"][package]["class"].append({"name": clss, "fields": [], "methods:": []})
+                if "enum" in imports:
+                    packages_file["packages"][package]["enum"] = []
+                    total_class += len(imports["enum"])
+                    for clss in imports["enum"]:
+                        packages_file["packages"][package]["enum"].append({"name": clss, "fields": [], "methods:": []})
+                if "exception" in imports:
+                    packages_file["packages"][package]["exception"] = []
+                    total_class += len(imports["exception"])
+                    for clss in imports["exception"]:
+                        packages_file["packages"][package]["exception"].append({"name": clss, "fields": [], "methods:": []})
+                if "error" in imports:
+                    packages_file["packages"][package]["error"] = []
+                    total_class += len(imports["error"])
+                    for clss in imports["error"]:
+                        packages_file["packages"][package]["error"].append({"name": clss, "fields": [], "methods:": []})
+                if "annotation" in imports:
+                    packages_file["packages"][package]["annotation"] = []
+                    total_class += len(imports["annotation"])
+                    for clss in imports["annotation"]:
+                        packages_file["packages"][package]["annotation"].append({"name": clss, "fields": [], "methods:": []})
+                if "type" in imports:
+                    packages_file["packages"][package]["type"] = []
+                    total_class += len(imports["type"])
+                    for clss in imports["type"]:
+                        packages_file["packages"][package]["type"].append({"name": clss, "fields": [], "methods:": []})
             with open(get_path("join", get_path("parent", sublime.packages_path()), filepath.replace(".javatar-imports", "-converted.javatar-packages")), "w") as filew:
                 filew.write(sublime.encode_value(packages_file, True))
                 sublime.message_dialog("Conversion Done\nTotal Packages: " + str(total_package) + "\nTotal Classes: " + str(total_class))
