@@ -50,7 +50,7 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
                 sublime.active_window().show_input_panel("Parse Parameter:", "", self.parse_code, None, None)
         elif util_type == "reload":
             if is_debug():
-                get_action().add_action("javatar.command.utils.reload.run", "Reload Javatar")
+                add_action("javatar.command.utils.reload.run", "Reload Javatar")
                 print("Reloading Javatar...")
                 import sys
                 from imp import reload
@@ -137,7 +137,7 @@ class JavatarReload_packagesCommand(sublime_plugin.WindowCommand):
 class JavatarConvertCommand(sublime_plugin.WindowCommand):
     def run(self):
         for filepath in sublime.find_resources("*.javatar-imports"):
-            get_action().add_action("javatar.command.utils.convert.run", "Converting imports \""+get_path("name", filepath)+"\"")
+            add_action("javatar.command.utils.convert.run", "Converting imports \""+get_path("name", filepath)+"\"")
             packages_file = {"name": get_path("name", filepath), "packages": {}}
             imports_file = sublime.decode_value(sublime.load_resource(filepath))
             total_package = 0
