@@ -307,15 +307,18 @@ def get_macro_data(class_name=None):
         class_name = get_class_name()
     from .javatar_java import normalize_package
     from .javatar_validator import is_file
-    source_data = {}
-    source_data["project_dir"] = get_path("project_dir")
-    source_data["source_folder"] = get_path("source_folder")
-    source_data["packages_path"] = sublime.packages_path()
-    source_data["sep"] = os.sep
+    source_data = {
+        "project_dir": get_path("project_dir"),
+        "source_folder": get_path("source_folder"),
+        "packages_path": sublime.packages_path(),
+        "sep": os.sep,
+    }
     if is_file():
-        source_data["full_class_path"] = normalize_package(get_current_package()+"."+class_name)
-        source_data["class_name"] = get_class_name()
-        source_data["package"] = get_current_package()
+        source_data.update({
+            "full_class_path": normalize_package(get_current_package()+"."+class_name),
+            "class_name": get_class_name(),
+            "package": get_current_package()
+        })
     return source_data
 
 

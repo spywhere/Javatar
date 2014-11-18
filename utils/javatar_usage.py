@@ -18,21 +18,21 @@ def get_usage_version():
 
 
 def get_usage_data():
-    data = {}
     from .javatar_news import get_version
     from .javatar_utils import get_settings, get_path
-    data["SchemaVersion"] = get_usage_version()
-    data["JavatarVersion"] = get_version()
-    data["JavatarChannel"] = str.lower(get_settings("package_channel"))
-    data["JavatarDebugMode"] = str.lower(str(get_settings("debug_mode")))
-    data["JavatarAsPackage"] = str.lower(str(get_path("exist", get_path("join", sublime.installed_packages_path(), "Javatar.sublime-package"))))
-    data["JavatarStartupTime"] = "{0:.2f}s".format(get_startup_time())
-    data["JavatarNews"] = str(get_settings("message_id"))
-    data["JavatarActionHistory"] = str.lower(str(get_settings("enable_actions_history")))
-    data["JavatarSendUsage"] = str.lower(str(get_settings("send_stats_and_usages")))
-    data["SublimeVersion"] = str(sublime.version())
-    data["Platform"] = sublime.platform()
-    return data
+    return {
+        "SchemaVersion": get_usage_version(),
+        "JavatarVersion": get_version(),
+        "JavatarChannel": str.lower(get_settings("package_channel")),
+        "JavatarDebugMode": str.lower(str(get_settings("debug_mode"))),
+        "JavatarAsPackage": str.lower(str(get_path("exist", get_path("join", sublime.installed_packages_path(), "Javatar.sublime-package")))),
+        "JavatarStartupTime": "{0:.2f}s".format(get_startup_time()),
+        "JavatarNews": str(get_settings("message_id")),
+        "JavatarActionHistory": str.lower(str(get_settings("enable_actions_history"))),
+        "JavatarSendUsage": str.lower(str(get_settings("send_stats_and_usages"))),
+        "SublimeVersion": str(sublime.version()),
+        "Platform": sublime.platform(),
+    }
 
 
 def send_usages(params={}, lasttime=False):
