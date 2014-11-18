@@ -50,8 +50,10 @@ def get_all_types(packageImports):
                 imports += packageImports[search_type]
             else:
                 # .javatar-packages format
-                for clazz in packageImports[search_type]:
-                    imports.append(clazz["name"])
+                imports.extend(
+                    clazz["name"]
+                    for clazz in packageImports[search_type]
+                )
     return imports
 
 

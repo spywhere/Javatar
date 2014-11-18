@@ -49,9 +49,10 @@ def is_ready():
 
 def save_project_state(repeat=True):
     if UPDATE_READY and get_settings("allow_project_restoration"):
-        project_data = {}
-        for window in sublime.windows():
-            project_data[str(window.id())] = window.project_data()
+        project_data = {
+            str(window.id()): window.project_data()
+            for window in sublime.windows()
+        }
         set_settings("project_data", project_data)
         if repeat:
             sublime.set_timeout(save_project_state, get_settings("project_update_interval"))

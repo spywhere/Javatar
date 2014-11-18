@@ -125,10 +125,10 @@ def get_snippet_name(index):
 
 
 def get_snippet_list():
-    slist = []
-    for snippet in SNIPPETS:
-        slist.append([snippet["class"], snippet["description"]])
-    return slist
+    return [
+        [snippet["class"], snippet["description"]]
+        for snippet in SNIPPETS
+    ]
 
 
 def get_dependencies(local=True):
