@@ -279,9 +279,15 @@ class JavatarPackagesLoaderThread(threading.Thread):
             "javatar.util.collection.analyse_import",
             "Analyse package [file="+filepath+"]"
         )
+        from .javatar_utils import get_path
+
         try:
-            from .javatar_utils import get_path
             imports = sublime.decode_value(sublime.load_resource(filepath))
+
+        except ValueError:
+            sublime.error_message("Invalid JSON format")
+
+        else:
             if "experiment" in imports and imports["experiment"]:
                 return None
             filename = get_path("name", filepath)
@@ -291,8 +297,7 @@ class JavatarPackagesLoaderThread(threading.Thread):
             self.installed_packages.append({"name": filename, "path": filepath})
             print("Javatar package \"" + filename + "\" loaded with " + str(count[1]) + " classes in " + str(count[0]) + " packages")
             return imports
-        except ValueError:
-            sublime.error_message("Invalid JSON format")
+
         return None
 
     def run(self):
