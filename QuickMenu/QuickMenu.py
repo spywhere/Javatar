@@ -88,7 +88,7 @@ class QuickMenu:
 
     def setSelectedIndex(self, menu, index):
         if menu in self.settings["menu"] and "selected_index" in self.settings["menu"][menu]:
-                self.settings["menu"][menu]["selected_index"] = index
+            self.settings["menu"][menu]["selected_index"] = index
 
     def show(self, window=None, on_done=None, menu=None, action=None, flags=0, on_highlight=None, level=0):
         selected_index = -1
@@ -129,7 +129,7 @@ class QuickMenu:
                             sublime.message_dialog("Invalid menu selection")
                         return
                     self.tmp["sublime"] = False
-                    self.show(window, on_done, menu, menu["actions"][action["item"]-1], flags, on_highlight, level+1)
+                    self.show(window, on_done, menu, menu["actions"][action["item"] - 1], flags, on_highlight, level + 1)
                     return
             elif "command" in action:
                 if "args" in action:
@@ -148,13 +148,13 @@ class QuickMenu:
             else:
                 return
         if "selected_index" in menu and menu["selected_index"] > 0:
-            selected_index = menu["selected_index"]-1
+            selected_index = menu["selected_index"] - 1
         if self.settings["save_selected"] and "previous_selected_index" in menu and menu["previous_selected_index"] >= 0:
             selected_index = menu["previous_selected_index"]
         self.tmp["menu"] = menu
         self.tmp["window"] = window
         self.tmp["callback"] = on_done
-        self.tmp["level"] = self.tmp["level"]+1
+        self.tmp["level"] = self.tmp["level"] + 1
         window.show_quick_panel(menu["items"], self.select, flags, selected_index, on_highlight)
 
     def select(self, index=-1):

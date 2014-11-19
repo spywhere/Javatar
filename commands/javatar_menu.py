@@ -327,7 +327,7 @@ class JavatarCommand(sublime_plugin.WindowCommand):
             if is_debug():
                 self.qm.insertItem("main", 0, ["Reload Javatar", "Reload Javatar modules (debug only)"], {"command": "javatar_util", "args": {"util_type": "reload"}})
             from ..utils.javatar_news import get_version
-            self.qm.addItems("help", [["Javatar", "v"+get_version()]], [{}])
+            self.qm.addItems("help", [["Javatar", "v" + get_version()]], [{}])
         if replaceMenu is not None:
             self.qm.setMenu(replaceMenu["name"], replaceMenu["menu"])
             return

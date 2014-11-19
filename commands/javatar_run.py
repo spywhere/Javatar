@@ -1,3 +1,5 @@
+from os import pathsep
+
 import sublime
 import sublime_plugin
 from ..utils import *
@@ -18,7 +20,7 @@ class JavatarRunMainCommand(sublime_plugin.WindowCommand):
                         found_main = True
                         break
                 if found_main:
-                    file_path = without_extension(get_path("relative", view.file_name(), get_package_root_dir()))+".class"
+                    file_path = without_extension(get_path("relative", view.file_name(), get_package_root_dir())) + ".class"
                     if not get_path("exist", get_path("join", self.output_dir, file_path)):
                         sublime.error_message("File is not compiled")
                         return
@@ -37,10 +39,9 @@ class JavatarRunMainCommand(sublime_plugin.WindowCommand):
         self.class_name = get_main_class_name(file_path, view)
         macro_data = get_macro_data(self.class_name)
         dependencies = get_dependencies()
-        dependencies_param = "-classpath \""+self.output_dir+"\""
+        dependencies_param = "-classpath \"" + self.output_dir + "\""
         for dependency in dependencies:
-            from os import pathsep
-            dependencies_param += pathsep+"\""+dependency[0]+"\""
+            dependencies_param += pathsep + "\"" + dependency[0] + "\""
         macro_data["classpath"] = dependencies_param
         executable = get_executable("run")
         if executable is None:
@@ -50,7 +51,7 @@ class JavatarRunMainCommand(sublime_plugin.WindowCommand):
         self.view.set_syntax_file("Packages/Javatar/syntax/JavaStackTrace.tmLanguage")
         self.view.set_name("Running " + self.class_name + " ...")
         self.view.set_scratch(True)
-        shell = JavatarShell(executable+" "+run_script, self.view, self.on_complete)
+        shell = JavatarShell(executable + " " + run_script, self.view, self.on_complete)
         shell.set_cwd(parse_macro(get_settings("run_location"), macro_data))
         shell.start()
         ThreadProgress(shell, "Running Javatar Shell", "Javatar Shell has been stopped")

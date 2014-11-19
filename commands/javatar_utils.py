@@ -1,3 +1,6 @@
+import sys
+from imp import reload
+
 import sublime
 import sublime_plugin
 import hashlib
@@ -27,39 +30,30 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
             self.view.set_read_only(True)
         elif util_type == "clear_read_only":
             self.view.set_read_only(False)
-        elif util_type == "test":
-            if not is_stable():
-                self.view.show_popup_menu(["A", "B"], self.nothing)
-        elif util_type == "remote_hash":
-            if not is_stable():
-                sublime.active_window().show_input_panel("URL:", "", self.remote_hash, None, None)
-        elif util_type == "hash":
-            if not is_stable():
-                print(hashlib.sha256(self.view.substr(sublime.Region(0, self.view.size())).encode("utf-8")).hexdigest())
-        elif util_type == "tojson":
-            if not is_stable():
-                jsonObj = sublime.decode_value(self.view.substr(sublime.Region(0, self.view.size())))
-                self.view.replace(edit, sublime.Region(0, self.view.size()), sublime.encode_value(jsonObj, True))
-        elif util_type == "json_test":
-            if not is_stable():
-                panel = JSONPanel(window=self.view.window(), on_done=self.on_done, on_cancel=self.on_cancel)
-                view = panel.open("JSONTest.json")
-                sublime.set_timeout(lambda: view.run_command("javatar_util", {"util_type": "insert", "text": "{\n}"}), 50)
-        elif util_type == "parse":
-            if not is_stable():
-                sublime.active_window().show_input_panel("Parse Parameter:", "", self.parse_code, None, None)
-        elif util_type == "reload":
-            if is_debug():
-                add_action("javatar.command.utils.reload.run", "Reload Javatar")
-                print("Reloading Javatar...")
-                import sys
-                from imp import reload
-                for mod in sys.modules:
-                    if mod.lower().startswith("javatar") and not mod.lower().endswith("_utils") and sys.modules[mod] is not None:
-                        print("Reloading module " + mod + "...")
-                        reload(sys.modules[mod])
-                from ..Javatar import plugin_loaded
-                plugin_loaded()
+        elif util_type == "test" and not is_stable():
+            self.view.show_popup_menu(["A", "B"], self.nothing)
+        elif util_type == "remote_hash" and not is_stable():
+            sublime.active_window().show_input_panel("URL:", "", self.remote_hash, None, None)
+        elif util_type == "hash" and not is_stable():
+            print(hashlib.sha256(self.view.substr(sublime.Region(0, self.view.size())).encode("utf-8")).hexdigest())
+        elif util_type == "tojson" and not is_stable():
+            jsonObj = sublime.decode_value(self.view.substr(sublime.Region(0, self.view.size())))
+            self.view.replace(edit, sublime.Region(0, self.view.size()), sublime.encode_value(jsonObj, True))
+        elif util_type == "json_test" and not is_stable():
+            panel = JSONPanel(window=self.view.window(), on_done=self.on_done, on_cancel=self.on_cancel)
+            view = panel.open("JSONTest.json")
+            sublime.set_timeout(lambda: view.run_command("javatar_util", {"util_type": "insert", "text": "{\n}"}), 50)
+        elif util_type == "parse" and not is_stable():
+            sublime.active_window().show_input_panel("Parse Parameter:", "", self.parse_code, None, None)
+        elif util_type == "reload" and is_debug():
+            add_action("javatar.command.utils.reload.run", "Reload Javatar")
+            print("Reloading Javatar...")
+            for mod in sys.modules:
+                if mod.lower().startswith("javatar") and not mod.lower().endswith("_utils") and sys.modules[mod] is not None:
+                    print("Reloading module " + mod + "...")
+                    reload(sys.modules[mod])
+            from ..Javatar import plugin_loaded
+            plugin_loaded()
 
     def parse_code(self, text):
         try:
@@ -68,33 +62,32 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
                 scope = GrammarParser(sublime.decode_value(sublime.load_resource(grammars[0])))
                 parse_output = scope.parse_grammar(self.view.substr(sublime.Region(0, self.view.size())))
                 status_text = ""
-                if parse_output["success"]:
-                    if not is_stable():
-                        if text == "":
-                            nodes = scope.find_all()
-                        elif text == "#":
-                            selections = self.view.sel()
-                            nodes = scope.find_by_region([0, 0])
-                            if len(selections) > 0:
-                                first_sel = selections[0]
-                                if first_sel.empty():
-                                    nodes = scope.find_by_region([first_sel.begin(), first_sel.end()])
-                                else:
-                                    nodes = scope.find_inside_region([first_sel.begin(), first_sel.end()])
-                        else:
-                            nodes = scope.find_by_selectors(text)
-                        if text != "#":
-                            status_text = "Parsing got " + str(len(nodes)) + " tokens"
-                        for node in nodes:
-                            if text == "#":
-                                if status_text == "":
-                                    status_text += node["name"]
-                                else:
-                                    status_text += " " + node["name"]
+                if parse_output["success"] and not is_stable():
+                    if text == "":
+                        nodes = scope.find_all()
+                    elif text == "#":
+                        selections = self.view.sel()
+                        nodes = scope.find_by_region([0, 0])
+                        if len(selections) > 0:
+                            first_sel = selections[0]
+                            if first_sel.empty():
+                                nodes = scope.find_by_region([first_sel.begin(), first_sel.end()])
                             else:
-                                print("#" + str(node["begin"]) + ":" + str(node["end"]) + " => " + node["name"])
-                                print("   => " + node["value"])
-                        print("Total: " + str(len(nodes)) + " tokens")
+                                nodes = scope.find_inside_region([first_sel.begin(), first_sel.end()])
+                    else:
+                        nodes = scope.find_by_selectors(text)
+                    if text != "#":
+                        status_text = "Parsing got " + str(len(nodes)) + " tokens"
+                    for node in nodes:
+                        if text == "#":
+                            if status_text == "":
+                                status_text += node["name"]
+                            else:
+                                status_text += " " + node["name"]
+                        else:
+                            print("#" + str(node["begin"]) + ":" + str(node["end"]) + " => " + node["name"])
+                            print("   => " + node["value"])
+                    print("Total: " + str(len(nodes)) + " tokens")
                 if not is_stable():
                     if text != "#":
                         if status_text != "" and str(parse_output["end"]) == str(self.view.size()):
@@ -137,53 +130,39 @@ class JavatarReload_packagesCommand(sublime_plugin.WindowCommand):
 class JavatarConvertCommand(sublime_plugin.WindowCommand):
     def run(self):
         for filepath in sublime.find_resources("*.javatar-imports"):
-            add_action("javatar.command.utils.convert.run", "Converting imports \""+get_path("name", filepath)+"\"")
+            add_action("javatar.command.utils.convert.run", "Converting imports \"" + get_path("name", filepath) + "\"")
             packages_file = {"name": get_path("name", filepath), "packages": {}}
             imports_file = sublime.decode_value(sublime.load_resource(filepath))
             total_package = 0
             total_class = 0
             for imports in imports_file:
-                if "package" in imports:
-                    total_package += 1
-                    package = imports["package"]
-                    packages_file["packages"][package] = {}
-                    if "default" in imports:
-                        packages_file["packages"][package]["default"] = imports["default"]
-                    if "interface" in imports:
-                        packages_file["packages"][package]["interface"] = []
-                        total_class += len(imports["interface"])
-                        for clss in imports["interface"]:
-                            packages_file["packages"][package]["interface"].append({"name": clss, "fields": [], "methods:": []})
-                    if "class" in imports:
-                        packages_file["packages"][package]["class"] = []
-                        total_class += len(imports["class"])
-                        for clss in imports["class"]:
-                            packages_file["packages"][package]["class"].append({"name": clss, "fields": [], "methods:": []})
-                    if "enum" in imports:
-                        packages_file["packages"][package]["enum"] = []
-                        total_class += len(imports["enum"])
-                        for clss in imports["enum"]:
-                            packages_file["packages"][package]["enum"].append({"name": clss, "fields": [], "methods:": []})
-                    if "exception" in imports:
-                        packages_file["packages"][package]["exception"] = []
-                        total_class += len(imports["exception"])
-                        for clss in imports["exception"]:
-                            packages_file["packages"][package]["exception"].append({"name": clss, "fields": [], "methods:": []})
-                    if "error" in imports:
-                        packages_file["packages"][package]["error"] = []
-                        total_class += len(imports["error"])
-                        for clss in imports["error"]:
-                            packages_file["packages"][package]["error"].append({"name": clss, "fields": [], "methods:": []})
-                    if "annotation" in imports:
-                        packages_file["packages"][package]["annotation"] = []
-                        total_class += len(imports["annotation"])
-                        for clss in imports["annotation"]:
-                            packages_file["packages"][package]["annotation"].append({"name": clss, "fields": [], "methods:": []})
-                    if "type" in imports:
-                        packages_file["packages"][package]["type"] = []
-                        total_class += len(imports["type"])
-                        for clss in imports["type"]:
-                            packages_file["packages"][package]["type"].append({"name": clss, "fields": [], "methods:": []})
+                if "package" not in imports:
+                    continue
+
+                total_package += 1
+                package = imports["package"]
+                packages_file["packages"][package] = {}
+
+                if "default" in imports:
+                    packages_file["packages"][package]["default"] = imports["default"]
+
+                to_include = {
+                    "interface",
+                    "class",
+                    "enum",
+                    "exception",
+                    "error",
+                    "annotation",
+                    "type"
+                }
+
+                for key in to_include:
+                    total_class += len(imports[key])
+                    packages_file["packages"][package][key] = [
+                        {"name": clss, "fields": [], "methods:": []}
+                        for clss in imports[key]
+                    ]
+
             with open(get_path("join", get_path("parent", sublime.packages_path()), filepath.replace(".javatar-imports", "-converted.javatar-packages")), "w") as filew:
                 filew.write(sublime.encode_value(packages_file, True))
                 sublime.message_dialog("Conversion Done\nTotal Packages: " + str(total_package) + "\nTotal Classes: " + str(total_class))

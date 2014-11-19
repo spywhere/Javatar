@@ -1,3 +1,5 @@
+from os.path import isdir, exists
+
 import re
 import sublime
 import threading
@@ -123,10 +125,10 @@ def get_snippet_name(index):
 
 
 def get_snippet_list():
-    slist = []
-    for snippet in SNIPPETS:
-        slist.append([snippet["class"], snippet["description"]])
-    return slist
+    return [
+        [snippet["class"], snippet["description"]]
+        for snippet in SNIPPETS
+    ]
 
 
 def get_dependencies(local=True):
@@ -135,7 +137,6 @@ def get_dependencies(local=True):
         dependencies = get_project_settings("dependencies")
     else:
         dependencies = get_global_settings("dependencies")
-    from os.path import exists
     if dependencies is not None:
         for dependency in dependencies:
             if exists(dependency):
@@ -162,23 +163,24 @@ def refresh_dependencies(local=None):
         ]
     }
 
-    dependency_menu["actions"].append({"command": "javatar_settings", "args": {"actiontype": "add_external_jar", "arg1": local}})
-    dependency_menu["actions"].append({"command": "javatar_settings", "args": {"actiontype": "add_class_folder", "arg1": local}})
+    dependency_menu["actions"].extend([
+        {"command": "javatar_settings", "args": {"actiontype": "add_external_jar", "arg1": local}},
+        {"command": "javatar_settings", "args": {"actiontype": "add_class_folder", "arg1": local}}
+    ])
 
     dependencies = get_dependencies(local)
     for dependency in dependencies:
-        from os.path import isdir
         name = get_path("name", dependency[0])
         if dependency[1]:
             dependency_menu["actions"].append({"command": "javatar_settings", "args": {"actiontype": "remove_dependency", "arg1": dependency[0], "arg2": True}})
             if isdir(dependency[0]):
-                dependency_menu["items"].append(["["+name+"]", "Project dependency. Select to remove from the list"])
+                dependency_menu["items"].append(["[" + name + "]", "Project dependency. Select to remove from the list"])
             else:
                 dependency_menu["items"].append([name, "Project dependency. Select to remove from the list"])
         else:
             dependency_menu["actions"].append({"command": "javatar_settings", "args": {"actiontype": "remove_dependency", "arg1": dependency[0], "arg2": False}})
             if isdir(dependency[0]):
-                dependency_menu["items"].append(["["+name+"]", "Global dependency. Select to remove from the list"])
+                dependency_menu["items"].append(["[" + name + "]", "Global dependency. Select to remove from the list"])
             else:
                 dependency_menu["items"].append([name, "Global dependency. Select to remove from the list"])
     menu_name = "_dependencies"
@@ -200,7 +202,7 @@ class JavatarSnippetsLoaderThread(threading.Thread):
     def analyse_snippet(self, file):
         add_action(
             "javatar.util.collection.analyse_snippet",
-            "Analyse snippet [file="+file+"]"
+            "Analyse snippet [file=" + file + "]"
         )
         data = sublime.load_resource(file)
         classScope = None
@@ -252,34 +254,41 @@ class JavatarPackagesLoaderThread(threading.Thread):
     def count_classes(self, imports):
         packages = 0
         classes = 0
+
+        keys = {
+            "interface",
+            "class",
+            "enum",
+            "exception",
+            "error",
+            "annotation",
+            "type"
+        }
+
         if "packages" in imports:
             for packageName in imports["packages"]:
                 package = imports["packages"][packageName]
                 packages += 1
-                if "interface" in package:
-                    classes += len(package["interface"])
-                if "class" in package:
-                    classes += len(package["class"])
-                if "enum" in package:
-                    classes += len(package["enum"])
-                if "exception" in package:
-                    classes += len(package["exception"])
-                if "error" in package:
-                    classes += len(package["error"])
-                if "annotation" in package:
-                    classes += len(package["annotation"])
-                if "type" in package:
-                    classes += len(package["type"])
+
+                for key in keys:
+                    classes += len(package[key])
+
         return [packages, classes]
 
     def analyse_package(self, filepath):
         add_action(
             "javatar.util.collection.analyse_import",
-            "Analyse package [file="+filepath+"]"
+            "Analyse package [file=" + filepath + "]"
         )
+        from .javatar_utils import get_path
+
         try:
-            from .javatar_utils import get_path
             imports = sublime.decode_value(sublime.load_resource(filepath))
+
+        except ValueError:
+            sublime.error_message("Invalid JSON format")
+
+        else:
             if "experiment" in imports and imports["experiment"]:
                 return None
             filename = get_path("name", filepath)
@@ -289,8 +298,7 @@ class JavatarPackagesLoaderThread(threading.Thread):
             self.installed_packages.append({"name": filename, "path": filepath})
             print("Javatar package \"" + filename + "\" loaded with " + str(count[1]) + " classes in " + str(count[0]) + " packages")
             return imports
-        except ValueError:
-            sublime.error_message("Invalid JSON format")
+
         return None
 
     def run(self):

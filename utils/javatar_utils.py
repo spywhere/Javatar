@@ -1,3 +1,5 @@
+from time import clock
+
 import sublime
 import os
 from copy import deepcopy
@@ -18,17 +20,15 @@ def get_startup_time():
 
 def start_clock():
     global LAST_TIMER
-    from time import clock
     LAST_TIMER = clock()
 
 
 def stop_clock(add=True, notify=True):
     global STARTUP_TIME
-    from time import clock
     if add and STARTUP_TIME is not None:
-        STARTUP_TIME += clock()-LAST_TIMER
+        STARTUP_TIME += clock() - LAST_TIMER
     else:
-        STARTUP_TIME = clock()-LAST_TIMER
+        STARTUP_TIME = clock() - LAST_TIMER
     if notify and not is_stable():
         print("[Javatar] Startup Time: {0:.2f}s".format(STARTUP_TIME))
 
@@ -49,9 +49,10 @@ def is_ready():
 
 def save_project_state(repeat=True):
     if UPDATE_READY and get_settings("allow_project_restoration"):
-        project_data = {}
-        for window in sublime.windows():
-            project_data[str(window.id())] = window.project_data()
+        project_data = {
+            str(window.id()): window.project_data()
+            for window in sublime.windows()
+        }
         set_settings("project_data", project_data)
         if repeat:
             sublime.set_timeout(save_project_state, get_settings("project_update_interval"))
@@ -194,20 +195,20 @@ def hide_status(clear=True):
 
 def to_readable_size(filepath):
     if filepath[0:8] == "Packages":
-        filepath = sublime.packages_path()+filepath[8:]
+        filepath = sublime.packages_path() + filepath[8:]
     scales = [
-        [1000**5, "PB"],
-        [1000**4, "TB"],
-        [1000**3, "GB"],
-        [1000**2, "MB"],
-        [1000**1, "KB"],
-        [1000**0, "B"]
+        [1000 ** 5, "PB"],
+        [1000 ** 4, "TB"],
+        [1000 ** 3, "GB"],
+        [1000 ** 2, "MB"],
+        [1000 ** 1, "KB"],
+        [1000 ** 0, "B"]
     ]
     filesize = os.path.getsize(filepath)
     for scale in scales:
         if filesize >= scale[0]:
             break
-    return str(int(filesize/scale[0]*100)/100)+scale[1]
+    return str(int(filesize / scale[0] * 100) / 100) + scale[1]
 
 
 def get_current_package(relative=True):
@@ -297,7 +298,7 @@ def parse_macro(text, macro_data=None, file_path=None):
         text = text.replace("$file", file_path)
     if macro_data is not None:
         for key in macro_data:
-            text = text.replace("$"+key, macro_data[key])
+            text = text.replace("$" + key, macro_data[key])
     return text
 
 
@@ -306,15 +307,18 @@ def get_macro_data(class_name=None):
         class_name = get_class_name()
     from .javatar_java import normalize_package
     from .javatar_validator import is_file
-    source_data = {}
-    source_data["project_dir"] = get_path("project_dir")
-    source_data["source_folder"] = get_path("source_folder")
-    source_data["packages_path"] = sublime.packages_path()
-    source_data["sep"] = os.sep
+    source_data = {
+        "project_dir": get_path("project_dir"),
+        "source_folder": get_path("source_folder"),
+        "packages_path": sublime.packages_path(),
+        "sep": os.sep,
+    }
     if is_file():
-        source_data["full_class_path"] = normalize_package(get_current_package()+"."+class_name)
-        source_data["class_name"] = get_class_name()
-        source_data["package"] = get_current_package()
+        source_data.update({
+            "full_class_path": normalize_package(get_current_package() + "." + class_name),
+            "class_name": get_class_name(),
+            "package": get_current_package()
+        })
     return source_data
 
 

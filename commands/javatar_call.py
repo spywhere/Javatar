@@ -18,7 +18,7 @@ class JavatarCallCommand(sublime_plugin.TextCommand):
             elif call_type == "subpackage_name":
                 self.view.insert(edit, sel.a, get_current_package().split(".")[-1])
             elif call_type == "full_class_name":
-                self.view.insert(edit, sel.a, normalize_package(get_current_package()+"."+get_class_name()))
+                self.view.insert(edit, sel.a, normalize_package(get_current_package() + "." + get_class_name()))
             elif call_type == "class_name":
                 self.view.insert(edit, sel.a, get_class_name())
 

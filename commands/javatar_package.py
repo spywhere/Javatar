@@ -60,20 +60,20 @@ class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):
 
     def finalize_package(self, output, path, path2, time=0):
         # should not exceed 10 seconds
-        if not os.path.exists(path+".json"):
+        if not os.path.exists(path + ".json"):
             if time < get_settings("maximum_waiting_time"):
-                sublime.set_timeout(lambda: self.finalize_package(output, path, path2, time+1), 1000)
+                sublime.set_timeout(lambda: self.finalize_package(output, path, path2, time + 1), 1000)
             else:
                 sublime.message_dialog("Package creation taking too long...")
             return
-        shutil.move(path+".json", path2+".javatar-packages")
+        shutil.move(path + ".json", path2 + ".javatar-packages")
 
-        datafile = open(path2+".javatar-packages", "r")
+        datafile = open(path2 + ".javatar-packages", "r")
         data = datafile.read()
         datafile.close()
         datahash = hashlib.sha256(data.encode("utf-8")).hexdigest()
         output += "*Hash Checksum: " + datahash + "\n"
-        output += "*File Size: " + to_readable_size(path2+".javatar-packages") + "\n"
+        output += "*File Size: " + to_readable_size(path2 + ".javatar-packages") + "\n"
 
         # Print sample code
 
@@ -86,7 +86,7 @@ class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):
         for name in os.listdir(path):
             pathname = os.path.join(path, name)
             if os.path.isdir(pathname) and name == class_path[level]:
-                return self.is_doclet_folder(pathname, level+1)
+                return self.is_doclet_folder(pathname, level + 1)
         return False
 
     def get_filename(self):
@@ -122,7 +122,7 @@ class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):
                 continue
             if char >= '0' and char <= '9':
                 justnumber = True
-                if justspace and index+1 < len(infilename) and infilename[index+1] == '.':
+                if justspace and index + 1 < len(infilename) and infilename[index + 1] == '.':
                     filename += '-'
             else:
                 justnumber = False
@@ -152,7 +152,7 @@ class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):
         return folder_list
 
     def get_folders(self):
-        source_folders = [[get_path("name", get_path("project_dir")), get_path("project_dir")+"/"]]
+        source_folders = [[get_path("name", get_path("project_dir")), get_path("project_dir") + "/"]]
         source_folders += self.get_source_folder(get_path("project_dir"))
         folders = []
         rootlen = len(get_path("project_dir"))
@@ -249,6 +249,6 @@ class JavatarCreatePackageCommand(sublime_plugin.WindowCommand):
             create_directory = get_path("join", get_package_root_dir(), package_as_directory(text))
         package = to_package(get_path("relative", create_directory, get_package_root_dir()), False)
         if on_change:
-            return "Package \""+package+"\" will be created"
+            return "Package \"" + package + "\" will be created"
         make_package(create_directory)
-        show_status("Package \""+package+"\" is created", None, False)
+        show_status("Package \"" + package + "\" is created", None, False)

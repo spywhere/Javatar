@@ -107,7 +107,7 @@ def get_file_contents(classType, info):
     # Interface can only extends another interface
     if classType != "Enumerator" and len(info["extends"]) > 0:
         if classType == "Class" and len(info["extends"]) > 1:
-            inheritance = " extends "+info["extends"][0]
+            inheritance = " extends " + info["extends"][0]
         else:
             inheritance = " extends " + ", ".join(info["extends"])
     if classType != "Interface" and len(info["implements"]) > 0:
@@ -174,11 +174,11 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
                     prefix = prefix[:1].upper() + prefix[1:].lower()
 
                     if len(info["extends"]) > 2:
-                        additional_text += ", extends \"" + "\", \"".join(info["extends"][:2]) + "\" and " + str(len(info["extends"])-2) + " more classes"
+                        additional_text += ", extends \"" + "\", \"".join(info["extends"][:2]) + "\" and " + str(len(info["extends"]) - 2) + " more classes"
                     elif len(info["extends"]) > 0:
                         additional_text += ", extends \"" + "\", \"".join(info["extends"]) + "\""
                     if len(info["implements"]) > 2:
-                        additional_text += ", implements \"" + "\", \"".join(info["implements"][:2]) + "\" and " + str(len(info["implements"])-2) + " more classes"
+                        additional_text += ", implements \"" + "\", \"".join(info["implements"][:2]) + "\" and " + str(len(info["implements"]) - 2) + " more classes"
                     elif len(info["implements"]) > 0:
                         additional_text += ", implements \"" + "\", \"".join(info["implements"]) + "\""
 
