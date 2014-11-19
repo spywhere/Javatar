@@ -254,24 +254,25 @@ class JavatarPackagesLoaderThread(threading.Thread):
     def count_classes(self, imports):
         packages = 0
         classes = 0
+
+        keys = {
+            "interface",
+            "class",
+            "enum",
+            "exception",
+            "error",
+            "annotation",
+            "type"
+        }
+
         if "packages" in imports:
             for packageName in imports["packages"]:
                 package = imports["packages"][packageName]
                 packages += 1
-                if "interface" in package:
-                    classes += len(package["interface"])
-                if "class" in package:
-                    classes += len(package["class"])
-                if "enum" in package:
-                    classes += len(package["enum"])
-                if "exception" in package:
-                    classes += len(package["exception"])
-                if "error" in package:
-                    classes += len(package["error"])
-                if "annotation" in package:
-                    classes += len(package["annotation"])
-                if "type" in package:
-                    classes += len(package["type"])
+
+                for key in keys:
+                    classes += len(package[key])
+
         return [packages, classes]
 
     def analyse_package(self, filepath):

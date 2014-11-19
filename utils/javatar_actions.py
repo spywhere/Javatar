@@ -14,12 +14,18 @@ class ActionList:
                 return True
         return False
 
-    def get_action(self, include=[], exclude=[]):
-        out = []
-        for action in self.actions:
-            if (len(include) <= 0 or self.is_starts_with(action[0], include)) and (len(exclude) <= 0 or not self.is_starts_with(action[0], exclude)):
-                out.append(action[1])
-        return out
+    def get_action(self, include=None, exclude=None):
+        include = include or []
+        exclude = exclude or []
+
+        return [
+            action[1]
+            for action in self.actions
+            if (
+                (len(include) <= 0 or self.is_starts_with(action[0], include)) and
+                (len(exclude) <= 0 or not self.is_starts_with(action[0], exclude))
+            )
+        ]
 
     def clear_action(self):
         self.actions = {}
