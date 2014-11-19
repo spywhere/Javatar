@@ -77,7 +77,7 @@ class ThreadProgress():
         sublime.set_timeout(lambda: self.run(0), 100)
 
     def anim_fx(self, i, message, thread):
-        return {"i": (i+1) % 3, "message": "%s %s" % (self.message, "." * (i+1)), "delay": 300}
+        return {"i": (i + 1) % 3, "message": "%s %s" % (self.message, "." * (i + 1)), "delay": 300}
 
     def run(self, i):
         if not self.thread.is_alive():
@@ -94,7 +94,7 @@ class ThreadProgress():
         tmsg = ""
         if hasattr(self.thread, "msg"):
             tmsg = self.thread.msg
-        sublime.status_message(info["message"]+tmsg)
+        sublime.status_message(info["message"] + tmsg)
         sublime.set_timeout(lambda: self.run(info["i"]), info["delay"])
 
 

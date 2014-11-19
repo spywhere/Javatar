@@ -26,9 +26,9 @@ def start_clock():
 def stop_clock(add=True, notify=True):
     global STARTUP_TIME
     if add and STARTUP_TIME is not None:
-        STARTUP_TIME += clock()-LAST_TIMER
+        STARTUP_TIME += clock() - LAST_TIMER
     else:
-        STARTUP_TIME = clock()-LAST_TIMER
+        STARTUP_TIME = clock() - LAST_TIMER
     if notify and not is_stable():
         print("[Javatar] Startup Time: {0:.2f}s".format(STARTUP_TIME))
 
@@ -195,20 +195,20 @@ def hide_status(clear=True):
 
 def to_readable_size(filepath):
     if filepath[0:8] == "Packages":
-        filepath = sublime.packages_path()+filepath[8:]
+        filepath = sublime.packages_path() + filepath[8:]
     scales = [
-        [1000**5, "PB"],
-        [1000**4, "TB"],
-        [1000**3, "GB"],
-        [1000**2, "MB"],
-        [1000**1, "KB"],
-        [1000**0, "B"]
+        [1000 ** 5, "PB"],
+        [1000 ** 4, "TB"],
+        [1000 ** 3, "GB"],
+        [1000 ** 2, "MB"],
+        [1000 ** 1, "KB"],
+        [1000 ** 0, "B"]
     ]
     filesize = os.path.getsize(filepath)
     for scale in scales:
         if filesize >= scale[0]:
             break
-    return str(int(filesize/scale[0]*100)/100)+scale[1]
+    return str(int(filesize / scale[0] * 100) / 100) + scale[1]
 
 
 def get_current_package(relative=True):
@@ -298,7 +298,7 @@ def parse_macro(text, macro_data=None, file_path=None):
         text = text.replace("$file", file_path)
     if macro_data is not None:
         for key in macro_data:
-            text = text.replace("$"+key, macro_data[key])
+            text = text.replace("$" + key, macro_data[key])
     return text
 
 
@@ -315,7 +315,7 @@ def get_macro_data(class_name=None):
     }
     if is_file():
         source_data.update({
-            "full_class_path": normalize_package(get_current_package()+"."+class_name),
+            "full_class_path": normalize_package(get_current_package() + "." + class_name),
             "class_name": get_class_name(),
             "package": get_current_package()
         })

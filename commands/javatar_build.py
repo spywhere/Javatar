@@ -52,7 +52,7 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
                 self.progress.run()
             if self.view is not None:
                 self.view.set_name(self.progress.get_message())
-        self.progress.set_message("[" + str(self.build_size-len(self.build_list)) + "/" + str(self.build_size) + "] Building ")
+        self.progress.set_message("[" + str(self.build_size - len(self.build_list)) + "/" + str(self.build_size) + "] Building ")
 
     def create_build(self, file_path):
         self.macro_data["sourcepath"] = "-sourcepath \"" + self.source_folder + "\""
@@ -60,9 +60,9 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
         dependencies_param = ""
         for dependency in dependencies:
             if dependencies_param == "":
-                dependencies_param = "-classpath ."+pathsep+"\""+dependency[0]+"\""
+                dependencies_param = "-classpath ." + pathsep + "\"" + dependency[0] + "\""
             else:
-                dependencies_param += pathsep+"\""+dependency[0]+"\""
+                dependencies_param += pathsep + "\"" + dependency[0] + "\""
         self.macro_data["classpath"] = dependencies_param
         self.macro_data["d"] = ""
         if self.build_output_location != "":
@@ -74,7 +74,7 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
         if executable is None:
             return None
         build_script = parse_macro(self.build_command, self.macro_data, file_path)
-        shell = JavatarSilentShell(executable+" "+build_script, self.on_build_done)
+        shell = JavatarSilentShell(executable + " " + build_script, self.on_build_done)
         shell.set_cwd(parse_macro(self.build_location, self.macro_data))
         shell.start()
         return shell
@@ -107,14 +107,14 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
         if self.failed:
             message = "Building Failed [{0:.2f}s]"
 
-        show_notification(message.format(clock()-self.start_time))
+        show_notification(message.format(clock() - self.start_time))
         self.build_size = -1
         if self.view is not None:
-            self.view.set_name(message.format(clock()-self.start_time))
-        sublime.status_message(message.format(clock()-self.start_time))
+            self.view.set_name(message.format(clock() - self.start_time))
+        sublime.status_message(message.format(clock() - self.start_time))
         add_action(
             "javatar.command.build.complete",
-            message.format(clock()-self.start_time)
+            message.format(clock() - self.start_time)
         )
 
     def get_java_files(self, dir_path):

@@ -126,7 +126,7 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
                     self.importedPackagesStat[get_package_path(package)] = 1
 
             for useType in self.useTypes:
-                if useType not in self.importedTypes and useType not in self.needImportTypes and (not is_file() or (is_file() and not get_path("exist", get_path("join", get_path("current_dir"), useType+".java")))):
+                if useType not in self.importedTypes and useType not in self.needImportTypes and (not is_file() or (is_file() and not get_path("exist", get_path("join", get_path("current_dir"), useType + ".java")))):
                     self.needImportTypes.append(useType)
 
             self.index = 0
@@ -186,7 +186,7 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
                                 self.askTypes.remove(importType)
                                 if "default" in package and package["default"]:
                                     continue
-                                packageCode = packageName+"."+importType
+                                packageCode = packageName + "." + importType
                                 if packageCode not in self.importedPackages:
                                     self.importedPackages.append(packageCode)
                                 if packageCode in self.importedPackagesStat:
@@ -243,10 +243,10 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 
             importsRegions = self.view.find_by_selector(get_settings("import_meta_selector"))
             while len(importsRegions) > 0:
-                regionWithNewLine = sublime.Region(importsRegions[0].begin(), importsRegions[0].end()+1)
+                regionWithNewLine = sublime.Region(importsRegions[0].begin(), importsRegions[0].end() + 1)
                 while self.view.substr(regionWithNewLine)[-1] == "\n":
-                    regionWithNewLine = sublime.Region(regionWithNewLine.begin(), regionWithNewLine.end()+1)
-                regionWithNewLine = sublime.Region(regionWithNewLine.begin(), regionWithNewLine.end()-1)
+                    regionWithNewLine = sublime.Region(regionWithNewLine.begin(), regionWithNewLine.end() + 1)
+                regionWithNewLine = sublime.Region(regionWithNewLine.begin(), regionWithNewLine.end() - 1)
                 self.view.replace(edit, regionWithNewLine, "")
                 importsRegions = self.view.find_by_selector(get_settings("import_meta_selector"))
 
@@ -261,7 +261,7 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
                 if get_class_name_by_regex(importPackage) in self.useTypes:
                     importedPackages.append(importPackage)
             for importPackage in self.alwaysImportedPackages:
-                importedPackages.append(importPackage+".*")
+                importedPackages.append(importPackage + ".*")
 
             if is_debug():
                 print(str(self.importedPackagesStat))
@@ -280,7 +280,7 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
                     className = "<Unknown>"
                 else:
                     className = get_class_name()
-                sublime.set_timeout(lambda: show_status("Imports organized in class \""+className+"\""), 500)
+                sublime.set_timeout(lambda: show_status("Imports organized in class \"" + className + "\""), 500)
 
     def selectClasses(self, index=None, classes=[]):
         if index is None:
@@ -314,10 +314,10 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
             self.view.run_command("javatar_organize_imports", {"step": 5})
         elif isinstance(package, int):
             self.ctype = ctype
-            sublime.set_timeout(lambda: self.view.window().show_input_panel("Package for type \""+ctype+"\":", "", self.askPackage, "", self.askPackage), 10)
+            sublime.set_timeout(lambda: self.view.window().show_input_panel("Package for type \"" + ctype + "\":", "", self.askPackage, "", self.askPackage), 10)
         else:
             if is_package(package):
-                self.selectedPackage = package+"."+self.ctype
+                self.selectedPackage = package + "." + self.ctype
                 self.view.run_command("javatar_organize_imports", {"step": 5})
             elif package == "":
                 self.selectedPackage = None
@@ -339,7 +339,7 @@ class JavatarRenameOperationCommand(sublime_plugin.WindowCommand):
         )
         if rename_type == "class":
             if is_file() and is_java():
-                classRegion = sublime.active_window().active_view().find(get_settings("class_name_prefix")+get_settings("class_name_scope")+get_settings("class_name_suffix"), 0)
+                classRegion = sublime.active_window().active_view().find(get_settings("class_name_prefix") + get_settings("class_name_scope") + get_settings("class_name_suffix"), 0)
                 classCode = sublime.active_window().active_view().substr(classRegion)
                 classCode = re.sub(get_settings("class_name_prefix"), "", classCode)
                 classCode = re.sub(get_settings("class_name_suffix"), "", classCode)

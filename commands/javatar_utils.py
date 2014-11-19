@@ -130,7 +130,7 @@ class JavatarReload_packagesCommand(sublime_plugin.WindowCommand):
 class JavatarConvertCommand(sublime_plugin.WindowCommand):
     def run(self):
         for filepath in sublime.find_resources("*.javatar-imports"):
-            add_action("javatar.command.utils.convert.run", "Converting imports \""+get_path("name", filepath)+"\"")
+            add_action("javatar.command.utils.convert.run", "Converting imports \"" + get_path("name", filepath) + "\"")
             packages_file = {"name": get_path("name", filepath), "packages": {}}
             imports_file = sublime.decode_value(sublime.load_resource(filepath))
             total_package = 0

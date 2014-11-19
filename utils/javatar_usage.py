@@ -64,7 +64,7 @@ class JavatarPackageUsageThread(threading.Thread):
     def run(self):
         try:
             urllib.request.install_opener(urllib.request.build_opener(urllib.request.ProxyHandler()))
-            url = PACKAGES_STATS+"?"+urllib.parse.urlencode(self.params)
+            url = PACKAGES_STATS + "?" + urllib.parse.urlencode(self.params)
             data = urllib.request.urlopen(url).read()
             self.data = str(data)
             self.datahash = hashlib.sha256(self.data.encode("utf-8")).hexdigest()

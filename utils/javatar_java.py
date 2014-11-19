@@ -129,9 +129,9 @@ def find_class(path, classname, with_info=False):
                 if with_info:
                     class_structure, class_type = get_class_structure(classname, package)
                     if class_structure is not None:
-                        classes.append({"classpath": packageName+"."+classname, "class": class_structure, "type": class_type, "local": False})
+                        classes.append({"classpath": packageName + "." + classname, "class": class_structure, "type": class_type, "local": False})
                 elif classname in get_all_types(package):
-                        classes.append(packageName+"."+classname)
+                    classes.append(packageName + "." + classname)
     if with_info:
         classes.sort(key=lambda x: x["classpath"])
     else:
@@ -180,9 +180,9 @@ def get_latest_jdk(jdks=None):
 def get_read_version(version=None):
     if version is None:
         return version
-    v = "JDK"+version["version"]
+    v = "JDK" + version["version"]
     if "update" in version:
-        v += "u"+version["update"]
+        v += "u" + version["update"]
     return v
 
 
@@ -202,7 +202,7 @@ def get_java_version(path="", check_all=False, executable=None):
             executable = get_executable("version", path)
     if executable is None:
         return None
-    output = JavatarBlockShell().run(executable+" -version")
+    output = JavatarBlockShell().run(executable + " -version")
     if output["data"] is not None:
         match = re.search(get_settings("java_version_match"), output["data"])
         if match is not None:
@@ -326,7 +326,7 @@ def get_executable(name, path=None):
             return jdk
         else:
             path = jdk["path"]
-    return "\""+os.path.join(path, get_settings("java_executables")[name])+"\""
+    return "\"" + os.path.join(path, get_settings("java_executables")[name]) + "\""
 
 
 class JavatarJDKDetectionThread(threading.Thread):

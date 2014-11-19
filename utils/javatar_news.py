@@ -27,7 +27,7 @@ def show_news(title, prefix=""):
             "You can report/suggest any issue on Javatar repository. Link is already located in README file.")
     view = sublime.active_window().new_file()
     view.set_name(title)
-    view.run_command("javatar_util", {"util_type": "add", "text": prefix+news})
+    view.run_command("javatar_util", {"util_type": "add", "text": prefix + news})
     view.set_read_only(True)
     view.set_scratch(True)
 

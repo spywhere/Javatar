@@ -28,11 +28,11 @@ class JavatarTabNotification():
         index = 0
         for view_info in self.views:
             if view_info[2] is None or view_info[2] > 0:
-                view_info[0].set_name(view_info[1]+("!"*i))
+                view_info[0].set_name(view_info[1] + ("!" * i))
                 if view_info[2] is not None:
                     self.views[index][2] -= 1
             else:
-                view_info[0].set_name(view_info[1]+"!")
+                view_info[0].set_name(view_info[1] + "!")
             index += 1
         self.running = len(self.views) > 0
         if self.running:

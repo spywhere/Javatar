@@ -174,13 +174,13 @@ def refresh_dependencies(local=None):
         if dependency[1]:
             dependency_menu["actions"].append({"command": "javatar_settings", "args": {"actiontype": "remove_dependency", "arg1": dependency[0], "arg2": True}})
             if isdir(dependency[0]):
-                dependency_menu["items"].append(["["+name+"]", "Project dependency. Select to remove from the list"])
+                dependency_menu["items"].append(["[" + name + "]", "Project dependency. Select to remove from the list"])
             else:
                 dependency_menu["items"].append([name, "Project dependency. Select to remove from the list"])
         else:
             dependency_menu["actions"].append({"command": "javatar_settings", "args": {"actiontype": "remove_dependency", "arg1": dependency[0], "arg2": False}})
             if isdir(dependency[0]):
-                dependency_menu["items"].append(["["+name+"]", "Global dependency. Select to remove from the list"])
+                dependency_menu["items"].append(["[" + name + "]", "Global dependency. Select to remove from the list"])
             else:
                 dependency_menu["items"].append([name, "Global dependency. Select to remove from the list"])
     menu_name = "_dependencies"
@@ -202,7 +202,7 @@ class JavatarSnippetsLoaderThread(threading.Thread):
     def analyse_snippet(self, file):
         add_action(
             "javatar.util.collection.analyse_snippet",
-            "Analyse snippet [file="+file+"]"
+            "Analyse snippet [file=" + file + "]"
         )
         data = sublime.load_resource(file)
         classScope = None
@@ -278,7 +278,7 @@ class JavatarPackagesLoaderThread(threading.Thread):
     def analyse_package(self, filepath):
         add_action(
             "javatar.util.collection.analyse_import",
-            "Analyse package [file="+filepath+"]"
+            "Analyse package [file=" + filepath + "]"
         )
         from .javatar_utils import get_path
 
