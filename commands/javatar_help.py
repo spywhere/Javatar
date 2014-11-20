@@ -28,8 +28,9 @@ REPORT_TEMPLATE = '''\
 
 
 class JavatarHelpCommand(sublime_plugin.WindowCommand):
-    def __init__(self):
+    def __init__(self, window):
         self.action = ""
+        super().__init__(window)
 
     def run(self, selector=None, action=""):
         if self.action != "":
@@ -49,14 +50,11 @@ class JavatarHelpCommand(sublime_plugin.WindowCommand):
                     include = selectors[0].split(",")
                     exclude = []
 
-                actionText = ""
                 actions = get_action().get_action(include, exclude)
-                c = 1
-                for action in actions:
-                    if c > 1:
-                        actionText += "\n"
-                    actionText += str(c) + ". " + action
-                    c += 1
+                actionText = '\n'.join(
+                    '{}. {}'.format(i, action)
+                    for i, action in enumerate(actions, 1)
+                )
 
                 report = REPORT_TEMPLATE.format_map({
                     "javatar_version": get_version(),
