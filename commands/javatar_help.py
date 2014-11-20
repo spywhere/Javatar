@@ -1,10 +1,35 @@
+from os.path import join, exists
+
 import sublime
 import sublime_plugin
 from ..utils import *
 
+REPORT_TEMPLATE = '''\
+## Javatar Report
+### System Informations
+* Javatar Version: `{javatar_version}`
+* Sublime Version: `{sublime_version}`
+* Package Path: `{packages_path}`
+* Javatar Channel: `{javatar_channel}`
+* Sublime Channel: `{sublime_channel}`
+* Is Debug Mode: `{is_debug}`
+* Platform: `{platform}`
+* As Packages: `{is_package}`
+* Package Control: `{package_control}`
+* Architecture: `{arch}`
+* Javatar's Parent Folder: `{parent_folder}`
+* Is Project: `{is_project}`
+* Is File: `{is_file}`
+* Is Java: `{is_java}`
+
+### Action List
+{actions}
+'''
+
 
 class JavatarHelpCommand(sublime_plugin.WindowCommand):
-    action = ""
+    def __init__(self):
+        self.action = ""
 
     def run(self, selector=None, action=""):
         if self.action != "":
@@ -16,23 +41,6 @@ class JavatarHelpCommand(sublime_plugin.WindowCommand):
                 return
             self.action = action
             if selector is not None:
-                report = "## Javatar Report\n### System Informations\n* Javatar Version: `%javatar_version%`\n* Sublime Version: `%sublime_version%`\n* Package Path: `%packages_path%`\n* Javatar Channel: `%javatar_channel%`\n* Sublime Channel: `%sublime_channel%`\n* Is Debug Mode: `%is_debug%`\n* Platform: `%platform%`\n* As Packages: `%is_package%`\n* Package Control: `%package_control%`\n* Architecture: `%arch%`\n* Javatar's Parent Folder: `%parent_folder%`\n* Is Project: `%is_project%`\n* Is File: `%is_file%`\n* Is Java: `%is_java%`\n\n### Action List\n%actions%"
-                report = report.replace("%javatar_version%", get_version())
-                report = report.replace("%javatar_channel%", str.lower(get_settings("package_channel")))
-                report = report.replace("%is_package%", str(get_path("exist", get_path("join", sublime.installed_packages_path(), "Javatar.sublime-package"))))
-                report = report.replace("%parent_folder%", get_path("javatar_parent"))
-                report = report.replace("%sublime_version%", str(sublime.version()))
-                report = report.replace("%sublime_channel%", sublime.channel())
-                report = report.replace("%is_debug%", str(get_settings("debug_mode")))
-                report = report.replace("%package_control%", str(get_path("exist", get_path("join", sublime.packages_path(), "Package Control")) or get_path("exist", get_path("join", sublime.installed_packages_path(), "Package Control.sublime-package"))))
-                report = report.replace("%is_project%", str(is_project()))
-                report = report.replace("%is_file%", str(is_file()))
-                report = report.replace("%is_java%", str(is_java()))
-
-                report = report.replace("%packages_path%", sublime.packages_path())
-                report = report.replace("%platform%", sublime.platform())
-                report = report.replace("%arch%", sublime.arch())
-
                 selectors = selector.split("|")
                 if len(selectors) > 1:
                     include = selectors[0].split(",")
@@ -49,7 +57,24 @@ class JavatarHelpCommand(sublime_plugin.WindowCommand):
                         actionText += "\n"
                     actionText += str(c) + ". " + action
                     c += 1
-                report = report.replace("%actions%", actionText)
+
+                report = REPORT_TEMPLATE.format_map({
+                    "javatar_version": get_version(),
+                    "javatar_channel": str.lower(get_settings("package_channel")),
+                    "is_package": exists(join(sublime.installed_packages_path(), "Javatar.sublime-package")),
+                    "parent_folder": get_javatar_parent(),
+                    "sublime_version": sublime.version(),
+                    "sublime_channel": sublime.channel(),
+                    "is_debug": get_settings("debug_mode"),
+                    "package_control": exists(join(sublime.packages_path(), "Package Control")) or exists(join(sublime.installed_packages_path(), "Package Control.sublime-package")),
+                    "is_project": is_project(),
+                    "is_file": is_file(),
+                    "is_java": is_java(),
+                    "packages_path": sublime.packages_path(),
+                    "platform": sublime.platform(),
+                    "arch": sublime.arch(),
+                    "actions": actionText,
+                })
 
                 view = self.window.new_file()
                 view.set_name("Javatar Actions History Report")
