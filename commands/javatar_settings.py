@@ -68,40 +68,46 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
             "Project Settings [type={}]".format(actiontype)
         )
         self.actiontype = actiontype
-        if actiontype == "set_source_folder":
-            self.panel_list = self.get_folders()
-            if len(self.panel_list) < 1:
-                sublime.error_message("No source folder available")
-                return
-            sublime.active_window().show_quick_panel(self.panel_list, self.on_panel_complete)
-        elif actiontype == "add_external_jar":
-            self.local = arg1
-            fd = JavatarBrowseDialog(initial_dir=parse_macro(get_settings("dependencies_path"), get_macro_data()), path_filter=self.jar_file_filter, on_done=self.on_panel_complete, on_cancel=self.on_panel_cancel)
-            fd.browse(prelist=self.file_prelist)
-        elif actiontype == "add_class_folder":
-            self.local = arg1
-            fd = JavatarBrowseDialog(initial_dir=parse_macro(get_settings("dependencies_path"), get_macro_data()), path_filter=self.directory_filter, selector=self.dir_selector, on_done=self.on_panel_complete, on_cancel=self.on_panel_cancel)
-            fd.browse(prelist=self.dir_prelist)
-        elif actiontype == "remove_dependency":
-            self.local = arg2
-            if arg2:
-                dependencies = get_project_settings("dependencies")
-            else:
-                dependencies = get_global_settings("dependencies")
-            if arg1 in dependencies:
-                dependencies.remove(arg1)
-            set_settings("dependencies", dependencies, arg2)
-            refresh_dependencies()
-            menu_name = "_dependencies"
-            if self.local:
-                menu_name = "local" + menu_name
-            else:
-                menu_name = "global" + menu_name
-            sublime.set_timeout(lambda: sublime.active_window().run_command("javatar", {"action": {"name": menu_name}}), 10)
-            sublime.set_timeout(lambda: show_status("Dependency \"" + get_path("name", arg1) + "\" has been removed", None, False), 500)
-        elif actiontype == "set_jdk":
-            self.local = arg1
-            detect_jdk(True, self.detect_jdk_complete, True)
+        getattr(self, actiontype)(arg1, arg2)
+
+    def set_source_folder(self, arg1=None, arg2=None):
+        self.panel_list = self.get_folders()
+        if len(self.panel_list) < 1:
+            sublime.error_message("No source folder available")
+            return
+        sublime.active_window().show_quick_panel(self.panel_list, self.on_panel_complete)
+
+    def add_external_jar(self, arg1=None, arg2=None):
+        self.local = arg1
+        fd = JavatarBrowseDialog(initial_dir=parse_macro(get_settings("dependencies_path"), get_macro_data()), path_filter=self.jar_file_filter, on_done=self.on_panel_complete, on_cancel=self.on_panel_cancel)
+        fd.browse(prelist=self.file_prelist)
+
+    def add_class_folder(self, arg1=None, arg2=None):
+        self.local = arg1
+        fd = JavatarBrowseDialog(initial_dir=parse_macro(get_settings("dependencies_path"), get_macro_data()), path_filter=self.directory_filter, selector=self.dir_selector, on_done=self.on_panel_complete, on_cancel=self.on_panel_cancel)
+        fd.browse(prelist=self.dir_prelist)
+
+    def remove_dependency(self, arg1=None, arg2=None):
+        self.local = arg2
+        if arg2:
+            dependencies = get_project_settings("dependencies")
+        else:
+            dependencies = get_global_settings("dependencies")
+        if arg1 in dependencies:
+            dependencies.remove(arg1)
+        set_settings("dependencies", dependencies, arg2)
+        refresh_dependencies()
+        menu_name = "_dependencies"
+        if self.local:
+            menu_name = "local" + menu_name
+        else:
+            menu_name = "global" + menu_name
+        sublime.set_timeout(lambda: sublime.active_window().run_command("javatar", {"action": {"name": menu_name}}), 10)
+        sublime.set_timeout(lambda: show_status("Dependency \"" + get_path("name", arg1) + "\" has been removed", None, False), 500)
+
+    def set_jdk(self, arg1=None, arg2=None):
+        self.local = arg1
+        detect_jdk(True, self.detect_jdk_complete, True)
 
     def detect_jdk_complete(self):
         if self.local:
