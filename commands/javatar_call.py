@@ -3,6 +3,13 @@ from ..utils import *
 
 
 class JavatarCallCommand(sublime_plugin.TextCommand):
+    descriptions = {
+        "package_name": "Insert Package Name",
+        "subpackage_name": "Insert Subpackage Name",
+        "full_class_name": "Insert Full Class Name",
+        "class_name": "Insert Class Name"
+    }
+
     def run(self, edit, call_type=""):
         add_action(
             "javatar.command.call.run",
@@ -23,12 +30,4 @@ class JavatarCallCommand(sublime_plugin.TextCommand):
                 self.view.insert(edit, sel.a, get_class_name())
 
     def description(self, call_type=""):
-        if call_type == "package_name":
-            return "Insert Package Name"
-        elif call_type == "subpackage_name":
-            return "Insert Subpackage Name"
-        elif call_type == "full_class_name":
-            return "Insert Full Class Name"
-        elif call_type == "class_name":
-            return "Insert Class Name"
-        return None
+        return self.descriptions.get(call_type, None)
