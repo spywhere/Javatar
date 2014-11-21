@@ -125,7 +125,7 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
                 self.importedPackagesStat[get_package_path(package)] = 1
 
         for useType in self.useTypes:
-            if useType not in self.importedTypes and useType not in self.needImportTypes and (not is_file() or (is_file() and not get_path("exist", get_path("join", get_path("current_dir"), useType + ".java")))):
+            if useType not in self.importedTypes and useType not in self.needImportTypes and (not is_file() or (is_file() and not exists(join(get_current_dir(), useType + ".java")))):
                 self.needImportTypes.append(useType)
 
         self.index = 0
@@ -379,6 +379,6 @@ class JavatarRenameOperationCommand(sublime_plugin.WindowCommand):
                 elif not is_java():
                     sublime.error_message("Current file is not Java")
         elif rename_type == "package":
-            currentPackage = to_package(get_path("current_dir"))
+            currentPackage = to_package(get_current_dir())
             if text is None or text == "":
                 sublime.active_window().show_input_panel("New Package Name:", currentPackage, self.run, "", "")

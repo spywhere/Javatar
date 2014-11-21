@@ -1,5 +1,6 @@
+import os
 from os import pathsep, makedirs
-from os.path import isdir
+from os.path import isdir, basename
 
 import sublime
 import sublime_plugin
@@ -25,7 +26,7 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
         self.progress = MultiThreadProgress("Preparing build", None, self.on_build_thread_complete, self.on_all_complete)
         num_thread = 1
 
-        self.source_folder = get_path("source_folder")
+        self.source_folder = get_source_folder()
         self.build_output_location = get_settings("build_output_location")
         self.build_command = get_settings("build_command")
         self.build_location = get_settings("build_location")
@@ -47,7 +48,7 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
             build = self.create_build(file_path)
             if build is None:
                 return
-            self.progress.add(build, get_path("name", file_path))
+            self.progress.add(build, basename(file_path))
             if not self.progress.running:
                 self.progress.run()
             if self.view is not None:
@@ -161,7 +162,7 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
                         else:
                             sublime.error_message("Some Java files are not saved")
                             return
-            if not self.build_all(get_path("current_dir")):
+            if not self.build_all(get_current_dir()):
                 sublime.error_message("No class to build")
         else:
             sublime.error_message("Unknown package location")

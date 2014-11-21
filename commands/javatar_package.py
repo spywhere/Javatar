@@ -1,6 +1,7 @@
 import sublime
 import sublime_plugin
 import os
+from os.path import join, dirname, relpath, basename
 import shlex
 import shutil
 import hashlib
@@ -24,7 +25,7 @@ class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):
         output += "* Package filename: " + self.package_info[1] + "\n"
         if self.package_info[2] != "":
             output += "* Package conflicts: " + self.package_info[2] + "\n"
-        search_path = get_path("parent", get_path("project_dir"))
+        search_path = dirname(get_project_dir())
         doclet_path = None
         for name in os.listdir(search_path):
             pathname = os.path.join(search_path, name)
@@ -39,10 +40,10 @@ class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):
         # make sure that run in correct directory
         command = "cd " + shlex.quote(search_path) + ";"
         command += "echo Generating...;"
-        command += "javadoc -sourcepath " + shlex.quote(os.path.join(get_path("source_folder"), self.package_info[3][1][1:])) + " -docletpath " + shlex.quote(doclet_path) + " -name " + shlex.quote(self.package_info[0]) + " -doclet me.spywhere.doclet.Javatar -quiet "
+        command += "javadoc -sourcepath " + shlex.quote(os.path.join(get_source_folder(), self.package_info[3][1][1:])) + " -docletpath " + shlex.quote(doclet_path) + " -name " + shlex.quote(self.package_info[0]) + " -doclet me.spywhere.doclet.Javatar -quiet "
 
-        rootlen = len(os.path.join(get_path("project_dir"), self.package_info[3][1][1:]))
-        package_dirs = self.get_source_folder(os.path.join(get_path("project_dir"), self.package_info[3][1][1:]))
+        rootlen = len(os.path.join(get_project_dir(), self.package_info[3][1][1:]))
+        package_dirs = self.get_source_folder(os.path.join(get_project_dir(), self.package_info[3][1][1:]))
         for package_dir in package_dirs:
             if self.is_source_folder(package_dir[1], False):
                 package = to_package(package_dir[1][rootlen:], False)
@@ -152,10 +153,10 @@ class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):
         return folder_list
 
     def get_folders(self):
-        source_folders = [[get_path("name", get_path("project_dir")), get_path("project_dir") + "/"]]
-        source_folders += self.get_source_folder(get_path("project_dir"))
+        source_folders = [[basename(get_project_dir()), get_project_dir() + "/"]]
+        source_folders += self.get_source_folder(get_project_dir())
         folders = []
-        rootlen = len(get_path("project_dir"))
+        rootlen = len(get_project_dir())
         for name, folder in source_folders:
             if self.is_source_folder(folder):
                 folders.append([name, folder[rootlen:]])
@@ -170,7 +171,7 @@ class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):
             )
         if self.package_step is None:
             self.package_step = [
-                {"input": "Package Name", "flags": "not empty", "message": "Welcome to Javatar Packages wizard\n   This wizard will helps you through package creation and automated some tasks for you.\n   First, you must ensure that you already place \"JavatarDoclet\" in " + get_path("parent", get_package_root_dir()) + "\n\nWizard will ask you for the following infomations...\n - Package name: This will be your package name which appear on installation\n - Preferred file name: This will be your package file name that will be created and uploaded to packages channel\n - Conflicted packages: This informations help users install your package without conflicting another package\n - Source folder: You will be asked for source folder to generate a proper .javatar-packages file\n\nTo cancel, dismiss this dialog and press \"Escape\" key"},
+                {"input": "Package Name", "flags": "not empty", "message": "Welcome to Javatar Packages wizard\n   This wizard will helps you through package creation and automated some tasks for you.\n   First, you must ensure that you already place \"JavatarDoclet\" in " + dirname(get_package_root_dir()) + "\n\nWizard will ask you for the following infomations...\n - Package name: This will be your package name which appear on installation\n - Preferred file name: This will be your package file name that will be created and uploaded to packages channel\n - Conflicted packages: This informations help users install your package without conflicting another package\n - Source folder: You will be asked for source folder to generate a proper .javatar-packages file\n\nTo cancel, dismiss this dialog and press \"Escape\" key"},
                 {"input": "Preferred File Name", "from": self.get_filename},
                 {"input": "Conflict Packages starts with", "initial": "Package1,Package2,Package3"},
                 {"quick_panel": self.get_folders, "on_error": "No source folder can be use", "message": "Select source folder"}
@@ -238,17 +239,23 @@ class JavatarCreatePackageCommand(sublime_plugin.WindowCommand):
                 return "Cannot specify package location"
             sublime.error_message("Cannot specify package location")
             return
+
         if not is_package(text):
             if on_change:
                 return "Invalid package naming"
             sublime.error_message("Invalid package naming")
             return
-        if relative and get_path("current_dir") is not None:
-            create_directory = get_path("join", get_path("current_dir"), package_as_directory(text))
+
+        if relative and get_current_dir() is not None:
+            create_directory = join(get_current_dir(), package_as_directory(text))
+
         else:
-            create_directory = get_path("join", get_package_root_dir(), package_as_directory(text))
-        package = to_package(get_path("relative", create_directory, get_package_root_dir()), False)
+            create_directory = join(get_package_root_dir(), package_as_directory(text))
+
+        package = to_package(relpath(create_directory, get_package_root_dir()), False)
+
         if on_change:
             return "Package \"" + package + "\" will be created"
+
         make_package(create_directory)
         show_status("Package \"" + package + "\" is created", None, False)

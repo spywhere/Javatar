@@ -1,3 +1,5 @@
+from os.path import join, exists
+
 import sublime
 import threading
 import urllib
@@ -19,13 +21,13 @@ def get_usage_version():
 
 def get_usage_data():
     from .javatar_news import get_version
-    from .javatar_utils import get_settings, get_path
+    from .javatar_utils import get_settings
     return {
         "SchemaVersion": get_usage_version(),
         "JavatarVersion": get_version(),
         "JavatarChannel": str.lower(get_settings("package_channel")),
         "JavatarDebugMode": str.lower(str(get_settings("debug_mode"))),
-        "JavatarAsPackage": str.lower(str(get_path("exist", get_path("join", sublime.installed_packages_path(), "Javatar.sublime-package")))),
+        "JavatarAsPackage": str.lower(str(exists(join(sublime.installed_packages_path(), "Javatar.sublime-package")))),
         "JavatarStartupTime": "{0:.2f}s".format(get_startup_time()),
         "JavatarNews": str(get_settings("message_id")),
         "JavatarActionHistory": str.lower(str(get_settings("enable_actions_history"))),

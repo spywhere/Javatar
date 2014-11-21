@@ -1,4 +1,5 @@
 import os
+from os.path import join, relpath, basename
 import sublime
 import sublime_plugin
 from ..utils import *
@@ -20,10 +21,10 @@ def get_info(text, on_change=False):
             return "Invalid package naming"
         sublime.error_message("Invalid package naming")
         return
-    if relative and get_path("current_dir") is not None:
-        create_directory = get_path("join", get_path("current_dir"), package_as_directory(get_package_path(text)))
+    if relative and get_current_dir() is not None:
+        create_directory = join(get_current_dir(), package_as_directory(get_package_path(text)))
     else:
-        create_directory = get_path("join", get_package_root_dir(), package_as_directory(get_package_path(text)))
+        create_directory = join(get_package_root_dir(), package_as_directory(get_package_path(text)))
 
     visibilityMap = {
         "public": "public ",
@@ -43,7 +44,7 @@ def get_info(text, on_change=False):
     modifier = ""
     extends = []
     implements = []
-    package = to_package(get_path("relative", create_directory, get_package_root_dir()), False)
+    package = to_package(relpath(create_directory, get_package_root_dir()), False)
     if not on_change:
         make_package(create_directory, True)
     className = get_class_name_by_regex(text)
@@ -88,7 +89,7 @@ def get_info(text, on_change=False):
         className = className[:-6]
         body = "public static void main(String[] args) {\n\t\t${1}\n\t}"
 
-    file_path = get_path("join", create_directory, className + ".java")
+    file_path = join(create_directory, className + ".java")
     return {"file": file_path, "package": package, "visibility_keyword": visibility_keyword, "visibility": visibility, "modifier_keyword": modifier_keyword, "modifier": modifier, "class": className, "extends": extends, "implements": implements, "body": body, "asmain": asmain}
 
 
@@ -115,7 +116,7 @@ def get_file_contents(classType, info):
 
     data = data.replace("%class%", info["class"])
     data = data.replace("%file%", info["file"])
-    data = data.replace("%file_name%", get_path("name", info["file"]))
+    data = data.replace("%file_name%", basename(info["file"]))
     data = data.replace("%package_path%", info["package"])
     data = data.replace("%visibility%", info["visibility"])
     if classType == "Class":

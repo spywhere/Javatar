@@ -156,13 +156,13 @@ def is_stable():
 
 
 def normalize_path(path):
-    name = get_path("name", path)
-    parent = get_path("parent", path)
-    if parent != get_path("parent", parent):
+    name = basename(path)
+    parent = dirname(path)
+    if parent != dirname(parent):
         parent = normalize_path(parent)
     for dir_path in os.listdir(parent):
         if dir_path.lower() == name.lower():
-            return get_path("join", parent, dir_path)
+            return join(parent, dir_path)
     return path
 
 
@@ -173,11 +173,7 @@ def split_path(path):
     return split_path(rest) + (tail,)
 
 
-def merge_path(pathlist):
-    outpath = ""
-    for path in pathlist:
-        outpath = get_path("join", outpath, path)
-    return outpath
+merge_path = lambda pathlist: join(*pathlist)
 
 
 def show_notification(message, title="Javatar"):
@@ -214,10 +210,10 @@ def to_readable_size(filepath):
 
 def get_current_package(relative=True):
     from .javatar_validator import is_project, is_file
-    if is_file() and get_path("current_dir") is not None:
-        return to_package(get_path("current_dir"), relative)
-    elif is_project() and get_path("source_folder") is not None:
-        return to_package(get_path("source_folder"), relative)
+    if is_file() and get_current_dir() is not None:
+        return to_package(get_current_dir(), relative)
+    elif is_project() and get_source_folder() is not None:
+        return to_package(get_source_folder(), relative)
     else:
         return ""
 
@@ -236,7 +232,7 @@ def to_readable_package(package, asPackage=False):
 
 def to_package(path, relative=True):
     if relative:
-        path = get_path("relative", path, get_package_root_dir())
+        path = relpath(path, get_package_root_dir())
     package = ".".join(split_path(path))
     from .javatar_java import normalize_package
     return normalize_package(package)
@@ -245,9 +241,9 @@ def to_package(path, relative=True):
 def get_package_root_dir():
     from .javatar_validator import is_project
     if is_project():
-        return get_path("source_folder")
-    elif get_path("current_dir") is not None:
-        return get_path("current_dir")
+        return get_source_folder()
+    elif get_current_dir() is not None:
+        return get_current_dir()
     else:
         return ""
 
@@ -267,9 +263,9 @@ def without_extension(file_path):
 def get_main_class_name(file_path=None, view=None):
     from .javatar_validator import is_file
     if view is not None:
-        return without_extension(get_path("name", view.file_name()))
+        return without_extension(basename(view.file_name()))
     elif file_path is not None:
-        return without_extension(get_path("name", file_path))
+        return without_extension(basename(file_path))
     else:
         if is_file():
             return get_main_class_name(None, sublime.active_window().active_view())
@@ -283,9 +279,9 @@ def get_class_name(file_path=None, view=None):
         if len(classRegions) > 0:
             return view.substr(classRegions[0])
         else:
-            return without_extension(get_path("name", view.file_name()))
+            return without_extension(basename(view.file_name()))
     elif file_path is not None:
-        return without_extension(get_path("name", file_path))
+        return without_extension(basename(file_path))
     else:
         if is_file():
             return get_class_name(None, sublime.active_window().active_view())
@@ -294,8 +290,8 @@ def get_class_name(file_path=None, view=None):
 
 def parse_macro(text, macro_data=None, file_path=None):
     if file_path is not None:
-        text = text.replace("$file_parent", get_path("parent", file_path))
-        text = text.replace("$file_name", get_path("name", file_path))
+        text = text.replace("$file_parent", dirname(file_path))
+        text = text.replace("$file_name", basename(file_path))
         text = text.replace("$file", file_path)
     if macro_data is not None:
         for key in macro_data:
@@ -309,8 +305,8 @@ def get_macro_data(class_name=None):
     from .javatar_java import normalize_package
     from .javatar_validator import is_file
     source_data = {
-        "project_dir": get_path("project_dir"),
-        "source_folder": get_path("source_folder"),
+        "project_dir": get_project_dir(),
+        "source_folder": get_source_folder(),
         "packages_path": sublime.packages_path(),
         "sep": os.sep,
     }
