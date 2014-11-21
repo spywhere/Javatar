@@ -77,7 +77,9 @@ def get_class(classname, window=None, callback=None, allow_manual=True, step=1):
         callback(class_info=None, local=None)
 
 
-def select_classes(index=None, window=None, callback=None, classes=[], allow_manual=True):
+def select_classes(index=None, window=None, callback=None, classes=None, allow_manual=True):
+    classes = classes or []
+
     if callback is None:
         print("No callback")
         return

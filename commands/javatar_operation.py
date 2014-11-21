@@ -329,7 +329,9 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
         elif step == 6:
             self.organize_step_six(edit)
 
-    def selectClasses(self, index=None, classes=[]):
+    def selectClasses(self, index=None, classes=None):
+        classes = classes or []
+
         if index is None:
             self.classes = classes
             if len(classes) > 1:

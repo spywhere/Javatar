@@ -17,7 +17,9 @@ def get_schema_version():
     return PACKAGES_VERSION
 
 
-def send_package_action(params={}):
+def send_package_action(params=None):
+    params = params or {}
+
     params["package"] = "true"
     thread = JavatarPackageUsageThread(params)
     thread.start()

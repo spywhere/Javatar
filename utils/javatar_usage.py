@@ -38,7 +38,9 @@ def get_usage_data():
     }
 
 
-def send_usages(params={}, lasttime=False):
+def send_usages(params=None, lasttime=False):
+    params = params or {}
+
     if get_settings("send_stats_and_usages"):
         params["usage"] = "true"
         thread = JavatarPackageUsageThread(params, lasttime)
@@ -59,9 +61,9 @@ def send_usage_complete(thread):
 
 
 class JavatarPackageUsageThread(threading.Thread):
-    def __init__(self, params={}, lasttime=False):
+    def __init__(self, params=None, lasttime=False):
         self.lasttime = lasttime
-        self.params = params
+        self.params = params or {}
         threading.Thread.__init__(self)
 
     def run(self):
