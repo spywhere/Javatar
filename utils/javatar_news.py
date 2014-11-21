@@ -1,7 +1,7 @@
 import sublime
-from .javatar_actions import *
-from .javatar_updater import *
-from .javatar_usage import send_usages, get_usage_data, start_clock, stop_clock
+from .javatar_actions import add_action
+from .javatar_usage import send_usages, get_usage_data
+from .javatar_utils import start_clock, stop_clock
 
 
 # YY.MM.DD.HH.MM

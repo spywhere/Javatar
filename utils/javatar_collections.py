@@ -3,8 +3,8 @@ from os.path import isdir, exists, basename
 import re
 import sublime
 import threading
-from .javatar_actions import *
-from .javatar_thread import *
+from .javatar_actions import add_action
+from .javatar_thread import ThreadProgress
 from .javatar_utils import to_readable_size, get_project_settings, get_global_settings
 
 

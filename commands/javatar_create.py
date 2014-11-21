@@ -2,7 +2,25 @@ import os
 from os.path import join, relpath, basename
 import sublime
 import sublime_plugin
-from ..utils import *
+from ..utils import (
+    get_snippet,
+    hide_status,
+    add_action,
+    is_stable,
+    get_snippet_name,
+    show_status,
+    to_readable_package,
+    get_class_name_by_regex,
+    get_package_root_dir,
+    to_package,
+    is_project,
+    package_as_directory,
+    is_file,
+    get_package_path,
+    is_package,
+    make_package,
+    get_current_dir
+)
 
 
 def get_info(text, on_change=False):

@@ -3,9 +3,18 @@ import re
 import os
 import threading
 import traceback
-from .javatar_shell import *
-from .javatar_thread import *
-from .javatar_utils import *
+from .javatar_shell import JavatarBlockShell
+from .javatar_thread import ThreadProgress
+from .javatar_utils import (
+    get_package_root_dir, to_package, without_extension,
+    get_settings, merge_path,
+    JavatarMergedDict,
+    get_global_settings,
+    get_project_settings,
+    is_debug,
+    set_settings,
+    del_settings
+)
 
 
 TMP = {}

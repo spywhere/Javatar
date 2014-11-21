@@ -2,7 +2,16 @@ from os.path import join, exists
 
 import sublime
 import sublime_plugin
-from ..utils import *
+from ..utils import (
+    get_javatar_parent,
+    get_settings,
+    get_version,
+    is_project,
+    is_file,
+    is_java,
+    get_action
+)
+
 
 REPORT_TEMPLATE = '''\
 ## Javatar Report

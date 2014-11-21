@@ -1,5 +1,12 @@
+import sublime
 import sublime_plugin
-from ..utils import *
+from ..utils import (
+    add_action,
+    is_java,
+    get_current_package,
+    normalize_package,
+    get_class_name
+)
 
 
 class JavatarCallCommand(sublime_plugin.TextCommand):

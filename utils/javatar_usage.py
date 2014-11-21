@@ -5,9 +5,10 @@ import threading
 import urllib
 import hashlib
 import traceback
-from .javatar_collections import *
-from .javatar_thread import *
-from .javatar_utils import *
+from .javatar_thread import SilentThreadProgress
+from .javatar_utils import (
+    get_startup_time, get_settings, is_debug, set_settings
+)
 
 
 USAGE_VERSION = "0.1"

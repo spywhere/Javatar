@@ -1,5 +1,8 @@
 import sublime
-from .javatar_utils import *
+from .javatar_utils import (
+    get_settings, is_ready, to_readable_package,
+    get_current_package
+)
 
 
 STATUS_NAME = "Javatar"

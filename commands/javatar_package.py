@@ -5,7 +5,24 @@ from os.path import join, dirname, relpath, basename
 import shlex
 import shutil
 import hashlib
-from ..utils import *
+from ..utils import (
+    to_package,
+    get_settings,
+    to_readable_size,
+    is_java,
+    add_action,
+    show_status,
+    hide_status,
+    is_project,
+    is_file,
+    is_package,
+    make_package,
+    package_as_directory,
+    get_package_root_dir,
+    get_project_dir,
+    get_source_folder,
+    get_current_dir
+)
 
 
 class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):

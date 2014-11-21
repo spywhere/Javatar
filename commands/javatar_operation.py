@@ -1,7 +1,27 @@
 import sublime
 import sublime_plugin
 import re
-from ..utils import *
+from os.path import join, exists
+from ..utils import (
+    is_file,
+    add_action,
+    get_class,
+    is_java,
+    get_current_package,
+    get_settings,
+    get_class_name,
+    is_debug,
+    get_package_path,
+    find_class,
+    get_class_name_by_regex,
+    get_packages,
+    show_status,
+    get_package_root_dir,
+    get_all_types,
+    is_package,
+    to_package,
+    get_current_dir
+)
 
 
 class JavatarTestOperationCommand(sublime_plugin.WindowCommand):

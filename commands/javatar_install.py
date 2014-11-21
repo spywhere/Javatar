@@ -1,9 +1,17 @@
 import sublime
 import sublime_plugin
 import threading
+import urllib
+import hashlib
 import traceback
 import os
-from ..utils import *
+from os.path import join
+from ..utils import (
+    add_action, ThreadProgress, get_schema_version,
+    send_package_action,
+    reset_packages,
+    load_packages
+)
 
 
 class JavatarInstallCommand(sublime_plugin.WindowCommand):

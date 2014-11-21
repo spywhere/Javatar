@@ -4,7 +4,7 @@ import sublime
 import os
 from os.path import join, basename, dirname, relpath
 from copy import deepcopy
-from .javatar_actions import *
+from .javatar_actions import add_action
 
 
 SETTINGSBASE = None

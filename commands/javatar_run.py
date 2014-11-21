@@ -3,7 +3,22 @@ from os.path import join, exists, relpath
 
 import sublime
 import sublime_plugin
-from ..utils import *
+from ..utils import (
+    is_project,
+    is_file,
+    get_settings,
+    parse_macro,
+    get_macro_data,
+    without_extension,
+    get_package_root_dir,
+    add_action,
+    get_main_class_name,
+    get_dependencies,
+    get_executable,
+    JavatarShell,
+    ThreadProgress,
+    get_source_folder
+)
 
 
 class JavatarRunMainCommand(sublime_plugin.WindowCommand):

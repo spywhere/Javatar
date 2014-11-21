@@ -7,8 +7,11 @@ import sublime_plugin
 import hashlib
 import urllib.request
 import traceback
-from ..parser import *
-from ..utils import *
+from ..parser import GrammarParser
+from ..utils import (
+    is_stable, JSONPanel, is_debug, add_action, show_status,
+    reset_packages, load_packages
+)
 
 
 class JavatarUtilCommand(sublime_plugin.TextCommand):

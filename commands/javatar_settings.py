@@ -2,7 +2,25 @@ import os
 from os.path import basename, join, dirname
 import sublime
 import sublime_plugin
-from ..utils import *
+from ..utils import (
+    is_java,
+    add_action,
+    JavatarBrowseDialog,
+    parse_macro,
+    get_settings,
+    get_macro_data,
+    get_project_settings,
+    set_settings,
+    get_global_settings,
+    refresh_dependencies,
+    show_status,
+    detect_jdk,
+    JavatarMergedDict,
+    JavatarDict,
+    get_read_version,
+    get_java_version,
+    get_project_dir,
+)
 
 
 # Multiple source folder
