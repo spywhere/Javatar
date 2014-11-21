@@ -2,6 +2,7 @@ from time import clock
 
 import sublime
 import os
+from os.path import join, basename, dirname, relpath
 from copy import deepcopy
 from .javatar_actions import *
 
@@ -322,51 +323,42 @@ def get_macro_data(class_name=None):
     return source_data
 
 
-def get_path(path_type="", dir_path="", dir_path2=""):
-    window = sublime.active_window()
+def get_javatar_parent():
+    return __name__.split('.')[0]
+
+
+def get_current_file():
+    return sublime.active_window().active_view().file_name()
+
+
+def get_source_folder():
+    return get_settings("source_folder") or get_project_dir()
+
+
+def get_project_dir():
     from .javatar_validator import is_file
-    if path_type == "source_folder":
-        path = get_settings("source_folder")
-        if path != "":
-            return path
-        return get_path("project_dir")
-    elif path_type == "project_dir":
-        path = get_path("current_dir")
-        folders = window.folders()
-        if len(folders) == 1:
-            return folders[0]
-        elif len(folders) > 1:
-            if path is None:
-                path = folders[0]
-            for folder in folders:
-                if is_file() and contains_file(folder, get_path("current_file")):
-                    return folder
-        return path
-    elif path_type == "current_dir":
-        if get_path("current_file") is not None:
-            return get_path("parent", get_path("current_file"))
-        else:
-            return None
-    elif path_type == "current_file":
-        return window.active_view().file_name()
-    elif path_type == "parent":
-        return os.path.dirname(dir_path)
-    elif path_type == "relative":
-        if dir_path != "" and dir_path2 != "":
-            return os.path.relpath(dir_path, dir_path2)
-        else:
-            return ""
-    elif path_type == "name":
-        return os.path.basename(dir_path)
-    elif path_type == "join":
-        return os.path.join(dir_path, dir_path2)
-    elif path_type == "exist":
-        return os.path.exists(dir_path)
-    elif path_type == "javatar_parent":
-        name = __name__.split('.')
-        return name[0]
+
+    path = get_current_dir()
+    folders = sublime.active_window().folders()
+
+    if len(folders) == 1:
+        return folders[0]
+
+    elif len(folders) > 1:
+        if path is None:
+            path = folders[0]
+        for folder in folders:
+            if is_file() and contains_file(folder, get_current_file()):
+                return folder
+
+    return path
+
+
+def get_current_dir():
+    if get_current_file() is not None:
+        return dirname(get_current_file())
     else:
-        return ""
+        return None
 
 
 class JavatarMergedDict():
