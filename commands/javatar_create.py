@@ -22,6 +22,18 @@ from ..utils import (
     get_current_dir
 )
 
+MAIN_TEMPLATE = "public static void main(String[] args) {\n\t\t${1}\n\t}"
+visibilityMap = {
+    "public": "public ",
+    "default": "",
+    "private": "private ",
+    "protected": "protected "
+}
+modifierMap = {
+    "abstract": "abstract ",
+    "final": "final "
+}
+
 
 def get_info(text, on_change=False):
     relative = True
@@ -43,17 +55,6 @@ def get_info(text, on_change=False):
         create_directory = join(get_current_dir(), package_as_directory(get_package_path(text)))
     else:
         create_directory = join(get_package_root_dir(), package_as_directory(get_package_path(text)))
-
-    visibilityMap = {
-        "public": "public ",
-        "default": "",
-        "private": "private ",
-        "protected": "protected "
-    }
-    modifierMap = {
-        "abstract": "abstract ",
-        "final": "final "
-    }
 
     body = "${1}"
     visibility_keyword = "public"
@@ -105,10 +106,22 @@ def get_info(text, on_change=False):
     if className.lower().endswith("asmain"):
         asmain = True
         className = className[:-6]
-        body = "public static void main(String[] args) {\n\t\t${1}\n\t}"
+        body = MAIN_TEMPLATE
 
     file_path = join(create_directory, className + ".java")
-    return {"file": file_path, "package": package, "visibility_keyword": visibility_keyword, "visibility": visibility, "modifier_keyword": modifier_keyword, "modifier": modifier, "class": className, "extends": extends, "implements": implements, "body": body, "asmain": asmain}
+    return {
+        "file": file_path,
+        "package": package,
+        "visibility_keyword": visibility_keyword,
+        "visibility": visibility,
+        "modifier_keyword": modifier_keyword,
+        "modifier": modifier,
+        "class": className,
+        "extends": extends,
+        "implements": implements,
+        "body": body,
+        "asmain": asmain
+    }
 
 
 def get_file_contents(classType, info):
@@ -132,15 +145,19 @@ def get_file_contents(classType, info):
     if classType != "Interface" and len(info["implements"]) > 0:
         inheritance += " implements " + ", ".join(info["implements"])
 
-    data = data.replace("%class%", info["class"])
-    data = data.replace("%file%", info["file"])
-    data = data.replace("%file_name%", basename(info["file"]))
-    data = data.replace("%package_path%", info["package"])
-    data = data.replace("%visibility%", info["visibility"])
+    data = (
+        data.replace("%class%", info["class"])
+            .replace("%file%", info["file"])
+            .replace("%file_name%", basename(info["file"]))
+            .replace("%package_path%", info["package"])
+            .replace("%visibility%", info["visibility"])
+            .replace("%inheritance%", inheritance)
+            .replace("%body%", info["body"])
+    )
+
     if classType == "Class":
         data = data.replace("%modifier%", info["modifier"])
-    data = data.replace("%inheritance%", inheritance)
-    data = data.replace("%body%", info["body"])
+
     return data
 
 
