@@ -1,13 +1,14 @@
 import sublime
 import re
 import os
+from os.path import join
 import threading
 import traceback
 from .javatar_shell import JavatarBlockShell
 from .javatar_thread import ThreadProgress
 from .javatar_utils import (
     get_package_root_dir, to_package, without_extension,
-    get_settings, merge_path,
+    get_settings,
     JavatarMergedDict,
     get_global_settings,
     get_project_settings,
@@ -159,7 +160,7 @@ def get_class_name_by_regex(text):
 
 
 def package_as_directory(package):
-    return merge_path(package.split("."))
+    return join(package.split("."))
 
 
 def make_package(package_dir, silent=False):

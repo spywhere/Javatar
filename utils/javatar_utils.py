@@ -173,9 +173,6 @@ def split_path(path):
     return split_path(rest) + (tail,)
 
 
-merge_path = lambda pathlist: join(*pathlist)
-
-
 def show_notification(message, title="Javatar"):
     sublime.run_command("sub_notify", {"title": title, "msg": message, "sound": True})
 
