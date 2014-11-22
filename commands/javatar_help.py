@@ -48,6 +48,14 @@ class JavatarHelpCommand(sublime_plugin.WindowCommand):
         if action == "actions_history":
             self.actions_history(selector, action)
 
+    def get_actions(self, selector):
+        selectors = selector.split('|')
+
+        include = selectors.pop(0).split(',')
+        exclude = selectors[0].split(',') if selectors else []
+
+        return get_action().get_action(include, exclude)
+
     def actions_history(self, selector, action):
         if not get_settings("enable_actions_history"):
             sublime.message_dialog("Actions History is disabled. Please enable them first.")
@@ -58,15 +66,8 @@ class JavatarHelpCommand(sublime_plugin.WindowCommand):
             self.window.show_input_panel("Selector: ", "", self.run, "", "")
             return
 
-        selectors = selector.split("|")
-        if len(selectors) > 1:
-            include = selectors[0].split(",")
-            exclude = selectors[1].split(",")
-        else:
-            include = selectors[0].split(",")
-            exclude = []
+        actions = self.get_actions(selector)
 
-        actions = get_action().get_action(include, exclude)
         actionText = '\n'.join(
             '{}. {}'.format(i, action)
             for i, action in enumerate(actions, 1)

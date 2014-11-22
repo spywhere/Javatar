@@ -29,11 +29,11 @@ expected_output = r'''## Javatar Report
 
 class TestHelp(unittest.TestCase):
     @patch('javatar.commands.javatar_help.get_settings')
-    @patch('javatar.commands.javatar_help.get_action')
+    @patch('javatar.commands.javatar_help.JavatarHelpCommand.get_actions')
     @patch('javatar.commands.javatar_help.is_java')
     @patch('javatar.commands.javatar_help.get_version', return_value='1.0')
     @patch('sublime.packages_path', return_value='')
-    def test_run(self, packages_path, get_version, is_java, get_action,
+    def test_run(self, packages_path, get_version, is_java, get_actions,
                  get_settings):
         is_java.return_value = True
         get_settings.side_effect = {
@@ -41,7 +41,7 @@ class TestHelp(unittest.TestCase):
             'package_channel': 'production',
             'debug_mode': False
         }.get
-        get_action.return_value.get_action.return_value = [
+        get_actions.return_value = [
             'Clicked on blah blah',
             'Typed in blargy blah'
         ]
@@ -61,6 +61,17 @@ class TestHelp(unittest.TestCase):
         text = view.run_command.call_args_list[0][0][1]['text']
 
         self.assertEqual(
-            text,
-            expected_output
+            expected_output,
+            text
+        )
+
+    @patch('javatar.commands.javatar_help.get_action')
+    def test_get_actions(self, get_action):
+        window = MagicMock(spec=sublime.Window)
+        inst = JavatarHelpCommand(window)
+
+        inst.get_actions('One|Two')
+
+        get_action.return_value.get_action.assert_called_with(
+            ['One'], ['Two']
         )
