@@ -1,4 +1,5 @@
 import os
+import re
 from os.path import join, relpath, basename
 import sublime
 import sublime_plugin
@@ -22,6 +23,7 @@ from ..utils import (
     get_current_dir
 )
 
+EXTENDS_IMPLEMENTS_RE = re.compile(r'([:<])')
 MAIN_TEMPLATE = "public static void main(String[] args) {\n\t\t${1}\n\t}"
 visibilityMap = {
     "public": "public ",
@@ -82,25 +84,15 @@ def get_info(text, on_change=False):
             modifier = modifierCode
             break
 
-    extendsComponent = className.split(":")
-    if len(extendsComponent) > 1:
-        className = extendsComponent[0]
-        implementsComponent = extendsComponent[1].split("<")
-        if len(implementsComponent) > 1:
-            extends = implementsComponent[0].split(",")
-            implements = implementsComponent[1].split(",")
-        elif len(implementsComponent) > 0:
-            extends = extendsComponent[1].split(",")
+    parts = EXTENDS_IMPLEMENTS_RE.split(className)
 
-    implementsComponent = className.split("<")
-    if len(implementsComponent) > 1:
-        className = implementsComponent[0]
-        extendsComponent = implementsComponent[1].split(":")
-        if len(extendsComponent) > 1:
-            implements = extendsComponent[0].split(",")
-            extends = extendsComponent[1].split(",")
-        elif len(extendsComponent) > 0:
-            implements = implementsComponent[1].split(",")
+    className = parts.pop(0)
+    while parts:
+        part = parts.pop(0)
+        if part == '<':
+            implements = parts.pop(0).split(',')
+        elif part == ':':
+            extends = parts.pop(0).split(',')
 
     asmain = False
     if className.lower().endswith("asmain"):
