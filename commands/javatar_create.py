@@ -193,37 +193,46 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
             elif os.path.exists(info["file"]):
                 return self.create_type + " \"" + info["class"] + "\" already exists"
             else:
-                prefix = ""
-                additional_text = ""
-                if info["visibility_keyword"] != "":
-                    prefix += info["visibility_keyword"]
-                if info["modifier_keyword"] != "":
-                    prefix += " " + info["modifier_keyword"]
-                if info["asmain"]:
-                    prefix += " main"
-                prefix += " " + self.create_type
-                prefix = prefix[:1].upper() + prefix[1:].lower()
-
-                if len(info["extends"]) > 2:
-                    additional_text += ", extends \"" + "\", \"".join(info["extends"][:2]) + "\" and " + str(len(info["extends"]) - 2) + " more classes"
-                elif len(info["extends"]) > 0:
-                    additional_text += ", extends \"" + "\", \"".join(info["extends"]) + "\""
-                if len(info["implements"]) > 2:
-                    additional_text += ", implements \"" + "\", \"".join(info["implements"][:2]) + "\" and " + str(len(info["implements"]) - 2) + " more classes"
-                elif len(info["implements"]) > 0:
-                    additional_text += ", implements \"" + "\", \"".join(info["implements"]) + "\""
-
-                if self.create_type == "Class" and len(info["extends"]) > 1:
-                    additional_text += " [Warning! Class can be extent only once]"
-                elif self.create_type == "Enumerator" and len(info["extends"]) > 0:
-                    additional_text += " [Warning! Enumerator use \"implements\" instead of \"extends\"]"
-                elif self.create_type == "Interface" and len(info["implements"]) > 0:
-                    additional_text += " [Warning! Interface use \"extends\" instead of \"implements\"]"
+                prefix = self.build_prefix(info)
+                additional_text = self.build_additional_text(info)
                 return prefix + " \"" + info["class"] + "\" will be created within package \"" + to_readable_package(info["package"], True) + "\"" + additional_text
 
         add_action("javatar.command.create.run", "Create [info=" + str(info) + "]")
         create_class_file(info["file"], get_file_contents(self.create_type, info), self.create_type + " \"" + info["class"] + "\" already exists", info)
         sublime.set_timeout(lambda: show_status(self.create_type + " \"" + info["class"] + "\" is created within package \"" + to_readable_package(info["package"], True) + "\""), 500)
+
+    def build_prefix(self, info):
+        prefix = ""
+        if info["visibility_keyword"] != "":
+            prefix += info["visibility_keyword"]
+        if info["modifier_keyword"] != "":
+            prefix += " " + info["modifier_keyword"]
+        if info["asmain"]:
+            prefix += " main"
+        prefix += " " + self.create_type
+
+        return prefix[:1].upper() + prefix[1:].lower()
+
+    def build_additional_text(self, info):
+        additional_text = ""
+
+        if len(info["extends"]) > 2:
+            additional_text += ", extends \"" + "\", \"".join(info["extends"][:2]) + "\" and " + str(len(info["extends"]) - 2) + " more classes"
+        elif len(info["extends"]) > 0:
+            additional_text += ", extends \"" + "\", \"".join(info["extends"]) + "\""
+        if len(info["implements"]) > 2:
+            additional_text += ", implements \"" + "\", \"".join(info["implements"][:2]) + "\" and " + str(len(info["implements"]) - 2) + " more classes"
+        elif len(info["implements"]) > 0:
+            additional_text += ", implements \"" + "\", \"".join(info["implements"]) + "\""
+
+        if self.create_type == "Class" and len(info["extends"]) > 1:
+            additional_text += " [Warning! Class can be extent only once]"
+        elif self.create_type == "Enumerator" and len(info["extends"]) > 0:
+            additional_text += " [Warning! Enumerator use \"implements\" instead of \"extends\"]"
+        elif self.create_type == "Interface" and len(info["implements"]) > 0:
+            additional_text += " [Warning! Interface use \"extends\" instead of \"implements\"]"
+
+        return additional_text
 
     def on_change(self, text):
         show_status(self.run(text, on_change=True), delay=-1, require_java=False)
