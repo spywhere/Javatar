@@ -160,7 +160,7 @@ def get_class_name_by_regex(text):
 
 
 def package_as_directory(package):
-    return join(package.split("."))
+    return join(*package.split("."))
 
 
 def make_package(package_dir, silent=False):
