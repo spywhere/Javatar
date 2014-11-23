@@ -1,9 +1,17 @@
 import sublime
 import sublime_plugin
 import threading
+import urllib
+import hashlib
 import traceback
 import os
-from ..utils import *
+from os.path import join
+from ..utils import (
+    add_action, ThreadProgress, get_schema_version,
+    send_package_action,
+    reset_packages,
+    load_packages
+)
 
 
 class JavatarInstallCommand(sublime_plugin.WindowCommand):
@@ -52,7 +60,7 @@ class JavatarPackageUninstallerThread(threading.Thread):
     def __init__(self, name, filename, on_complete=None):
         self.pkgname = name
         if filename[0:8] == "Packages":
-            self.filename = sublime.packages_path()+filename[8:]
+            self.filename = sublime.packages_path() + filename[8:]
         else:
             self.filename = filename
         self.on_complete = on_complete
@@ -83,12 +91,12 @@ class JavatarRemotePackageInstallerThread(threading.Thread):
         try:
             self.result_message = "Javatar package \"" + self.pkgname + "\" has been corrupted"
             urllib.request.install_opener(urllib.request.build_opener(urllib.request.ProxyHandler()))
-            data = urllib.request.urlopen(self.url+self.filename+".javatar-packages").read()
+            data = urllib.request.urlopen(self.url + self.filename + ".javatar-packages").read()
             datahash = hashlib.sha256(data).hexdigest()
             if self.checksum != datahash:
                 self.result = False
                 return
-            open(get_path("join", get_path("join", sublime.packages_path(), "user"), self.filename+".javatar-packages"), "wb").write(data)
+            open(join(sublime.packages_path(), "user", self.filename + ".javatar-packages"), "wb").write(data)
             self.result = True
             if self.on_complete is not None:
                 sublime.set_timeout(self.on_complete, 3000)

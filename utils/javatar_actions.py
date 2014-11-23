@@ -15,13 +15,40 @@ class ActionList:
         return False
 
     def get_action(self, include=None, exclude=None):
+        """
+        This method returns the contained actions filtered on certain
+        conditions.
+
+        @param include: if provided, filters the contained actions, including \
+        them if they start with any of the provided strings
+        @param exclude: if provided, filters the contained actions, excluding \
+        them if they start with any of the provided strings
+
+        @return: a list of valid actions as per arguments
+
+        The contained actions are in the form;
+        .. code-block::
+
+            [
+                ('module', 'message')
+            ]
+
+        where module is something like `javatar.utils.javatar_shell`
+        this allows the user to filter by the module they wish to see
+        messages from
+
+        """
         include = include or []
         exclude = exclude or []
-        out = []
-        for action in self.actions:
-            if (len(include) <= 0 or self.is_starts_with(action[0], include)) and (len(exclude) <= 0 or not self.is_starts_with(action[0], exclude)):
-                out.append(action[1])
-        return out
+
+        return [
+            action[1]
+            for action in self.actions
+            if (
+                (len(include) <= 0 or self.is_starts_with(action[0], include)) and
+                (len(exclude) <= 0 or not self.is_starts_with(action[0], exclude))
+            )
+        ]
 
     def clear_action(self):
         self.actions = {}

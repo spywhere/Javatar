@@ -4,7 +4,7 @@ import sys
 import threading
 import subprocess
 from time import clock, sleep
-from .javatar_utils import *
+from .javatar_utils import get_settings
 
 
 class JavatarShell(threading.Thread):
@@ -48,9 +48,9 @@ class JavatarShell(threading.Thread):
                 decoded_data = data.decode("utf-8", get_settings("encoding_handle")).replace("\r\n", "\n")
                 self.view.run_command("javatar_util", {"util_type": "add", "text": decoded_data})
                 self.old_data += decoded_data
-                if get_settings("autoscroll_to_bottom") and viewport_posy >= layout_height-viewport_height-get_settings("autoscroll_snap_range"):
+                if get_settings("autoscroll_to_bottom") and viewport_posy >= layout_height - viewport_height - get_settings("autoscroll_snap_range"):
                     _, layout_height = self.view.layout_extent()
-                    self.view.set_viewport_position((viewport_posx, layout_height-viewport_height), False)
+                    self.view.set_viewport_position((viewport_posx, layout_height - viewport_height), False)
                 if self.to_console:
                     print(decoded_data)
             elif self.proc.poll() is not None:
@@ -97,7 +97,7 @@ class JavatarShell(threading.Thread):
             self.kill(self.proc)
         self.result = True
         if self.on_complete is not None:
-            self.on_complete(clock()-start_time, self.return_code, self.params)
+            self.on_complete(clock() - start_time, self.return_code, self.params)
 
 
 class JavatarSilentShell(threading.Thread):
@@ -166,7 +166,7 @@ class JavatarSilentShell(threading.Thread):
             self.kill(self.proc)
         self.result = True
         if self.on_complete is not None:
-            self.on_complete(clock()-start_time, self.data_out, self.return_code, self.params)
+            self.on_complete(clock() - start_time, self.data_out, self.return_code, self.params)
 
 
 class JavatarBlockShell():
@@ -188,7 +188,7 @@ class JavatarBlockShell():
             sleep(get_settings("shell_refresh_interval"))
         if self.return_code is None:
             self.kill(self.proc)
-        return {"elapse_time": clock()-start_time, "data": self.data_out, "return_code": self.return_code}
+        return {"elapse_time": clock() - start_time, "data": self.data_out, "return_code": self.return_code}
 
     def popen(self, cmd, cwd):
         if sys.platform == "win32":

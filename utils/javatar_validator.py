@@ -1,3 +1,5 @@
+import os.path
+
 import sublime
 import re
 
@@ -8,27 +10,31 @@ import re
 
 def is_java(filepath=""):
     from .javatar_utils import get_settings
-    import os.path
+
     view = sublime.active_window().active_view()
+
     if filepath is None or filepath is "":
         if view is None:
             return False
         filepath = view.file_name()
+
     if filepath is not None:
-        filename, ext = os.path.splitext(os.path.basename(filepath))
-        for extension in get_settings("java_extensions"):
-            if ext == extension:
-                return True
-        return False
+        _, ext = os.path.splitext(os.path.basename(filepath))
+
+        return ext in get_settings("java_extensions")
+
     return (view is not None and len(view.find_by_selector(get_settings("java_source_selector"))) > 0)
 
 
 def is_package(package, special=False):
     from .javatar_utils import get_settings
-    if special:
-        return re.match(get_settings("special_package_name_match"), package, re.M) is not None
-    else:
-        return re.match(get_settings("package_name_match"), package, re.M) is not None
+
+    pattern = get_settings(
+        "special_package_name_match" if special
+        else "package_name_match"
+    )
+
+    return re.match(pattern, package, re.M) is not None
 
 
 def is_project(window=None):

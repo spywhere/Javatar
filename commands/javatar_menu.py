@@ -1,6 +1,6 @@
 import sublime_plugin
-from ..QuickMenu import *
-from ..utils.javatar_actions import *
+from ..QuickMenu import QuickMenu
+from ..utils.javatar_actions import add_action
 
 
 class JavatarCommand(sublime_plugin.WindowCommand):
@@ -110,10 +110,15 @@ class JavatarCommand(sublime_plugin.WindowCommand):
         },
         "project_settings": {
             "selected_index": 2,
-            "items": [["Back", "Back to previous menu"], ["Dependencies...", "Manage project dependencies"], ["Set Source Folder", "Set source folder to specified as default package"], ["Set Default JDK", "Set default JDK for builds and runs"]],
+            "items": [["Back", "Back to previous menu"], ["Set Program Arguments", "Set the arguments to pass on main execution"], ["Dependencies...", "Manage project dependencies"], ["Set Source Folder", "Set source folder to specified as default package"], ["Set Default JDK", "Set default JDK for builds and runs"]],
             "actions": [
                 {
                     "name": "main"
+                }, {
+                    "command": "javatar_settings",
+                    "args": {
+                        "actiontype": "set_program_arguments"
+                    }
                 }, {
                     "name": "local_dependencies"
                 }, {
@@ -327,7 +332,7 @@ class JavatarCommand(sublime_plugin.WindowCommand):
             if is_debug():
                 self.qm.insertItem("main", 0, ["Reload Javatar", "Reload Javatar modules (debug only)"], {"command": "javatar_util", "args": {"util_type": "reload"}})
             from ..utils.javatar_news import get_version
-            self.qm.addItems("help", [["Javatar", "v"+get_version()]], [{}])
+            self.qm.addItems("help", [["Javatar", "v" + get_version()]], [{}])
         if replaceMenu is not None:
             self.qm.setMenu(replaceMenu["name"], replaceMenu["menu"])
             return

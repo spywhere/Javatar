@@ -1,7 +1,10 @@
+from time import clock
+
 import sublime
 import os
+from os.path import join, basename, dirname, relpath
 from copy import deepcopy
-from .javatar_actions import *
+from .javatar_actions import add_action
 
 
 SETTINGSBASE = None
@@ -18,17 +21,15 @@ def get_startup_time():
 
 def start_clock():
     global LAST_TIMER
-    from time import clock
     LAST_TIMER = clock()
 
 
 def stop_clock(add=True, notify=True):
     global STARTUP_TIME
-    from time import clock
     if add and STARTUP_TIME is not None:
-        STARTUP_TIME += clock()-LAST_TIMER
+        STARTUP_TIME += clock() - LAST_TIMER
     else:
-        STARTUP_TIME = clock()-LAST_TIMER
+        STARTUP_TIME = clock() - LAST_TIMER
     if notify and not is_stable():
         print("[Javatar] Startup Time: {0:.2f}s".format(STARTUP_TIME))
 
@@ -49,9 +50,10 @@ def is_ready():
 
 def save_project_state(repeat=True):
     if UPDATE_READY and get_settings("allow_project_restoration"):
-        project_data = {}
-        for window in sublime.windows():
-            project_data[str(window.id())] = window.project_data()
+        project_data = {
+            str(window.id()): window.project_data()
+            for window in sublime.windows()
+        }
         set_settings("project_data", project_data)
         if repeat:
             sublime.set_timeout(save_project_state, get_settings("project_update_interval"))
@@ -154,13 +156,13 @@ def is_stable():
 
 
 def normalize_path(path):
-    name = get_path("name", path)
-    parent = get_path("parent", path)
-    if parent != get_path("parent", parent):
+    name = basename(path)
+    parent = dirname(path)
+    if parent != dirname(parent):
         parent = normalize_path(parent)
     for dir_path in os.listdir(parent):
         if dir_path.lower() == name.lower():
-            return get_path("join", parent, dir_path)
+            return join(parent, dir_path)
     return path
 
 
@@ -169,13 +171,6 @@ def split_path(path):
     if len(rest) <= 1:
         return tail,
     return split_path(rest) + (tail,)
-
-
-def merge_path(pathlist):
-    outpath = ""
-    for path in pathlist:
-        outpath = get_path("join", outpath, path)
-    return outpath
 
 
 def show_notification(message, title="Javatar"):
@@ -194,28 +189,28 @@ def hide_status(clear=True):
 
 def to_readable_size(filepath):
     if filepath[0:8] == "Packages":
-        filepath = sublime.packages_path()+filepath[8:]
+        filepath = sublime.packages_path() + filepath[8:]
     scales = [
-        [1000**5, "PB"],
-        [1000**4, "TB"],
-        [1000**3, "GB"],
-        [1000**2, "MB"],
-        [1000**1, "KB"],
-        [1000**0, "B"]
+        [1000 ** 5, "PB"],
+        [1000 ** 4, "TB"],
+        [1000 ** 3, "GB"],
+        [1000 ** 2, "MB"],
+        [1000 ** 1, "KB"],
+        [1000 ** 0, "B"]
     ]
     filesize = os.path.getsize(filepath)
     for scale in scales:
         if filesize >= scale[0]:
             break
-    return str(int(filesize/scale[0]*100)/100)+scale[1]
+    return str(int(filesize / scale[0] * 100) / 100) + scale[1]
 
 
 def get_current_package(relative=True):
     from .javatar_validator import is_project, is_file
-    if is_file() and get_path("current_dir") is not None:
-        return to_package(get_path("current_dir"), relative)
-    elif is_project() and get_path("source_folder") is not None:
-        return to_package(get_path("source_folder"), relative)
+    if is_file() and get_current_dir() is not None:
+        return to_package(get_current_dir(), relative)
+    elif is_project() and get_source_folder() is not None:
+        return to_package(get_source_folder(), relative)
     else:
         return ""
 
@@ -234,7 +229,7 @@ def to_readable_package(package, asPackage=False):
 
 def to_package(path, relative=True):
     if relative:
-        path = get_path("relative", path, get_package_root_dir())
+        path = relpath(path, get_package_root_dir())
     package = ".".join(split_path(path))
     from .javatar_java import normalize_package
     return normalize_package(package)
@@ -243,9 +238,9 @@ def to_package(path, relative=True):
 def get_package_root_dir():
     from .javatar_validator import is_project
     if is_project():
-        return get_path("source_folder")
-    elif get_path("current_dir") is not None:
-        return get_path("current_dir")
+        return get_source_folder()
+    elif get_current_dir() is not None:
+        return get_current_dir()
     else:
         return ""
 
@@ -265,9 +260,9 @@ def without_extension(file_path):
 def get_main_class_name(file_path=None, view=None):
     from .javatar_validator import is_file
     if view is not None:
-        return without_extension(get_path("name", view.file_name()))
+        return without_extension(basename(view.file_name()))
     elif file_path is not None:
-        return without_extension(get_path("name", file_path))
+        return without_extension(basename(file_path))
     else:
         if is_file():
             return get_main_class_name(None, sublime.active_window().active_view())
@@ -281,9 +276,9 @@ def get_class_name(file_path=None, view=None):
         if len(classRegions) > 0:
             return view.substr(classRegions[0])
         else:
-            return without_extension(get_path("name", view.file_name()))
+            return without_extension(basename(view.file_name()))
     elif file_path is not None:
-        return without_extension(get_path("name", file_path))
+        return without_extension(basename(file_path))
     else:
         if is_file():
             return get_class_name(None, sublime.active_window().active_view())
@@ -292,12 +287,12 @@ def get_class_name(file_path=None, view=None):
 
 def parse_macro(text, macro_data=None, file_path=None):
     if file_path is not None:
-        text = text.replace("$file_parent", get_path("parent", file_path))
-        text = text.replace("$file_name", get_path("name", file_path))
+        text = text.replace("$file_parent", dirname(file_path))
+        text = text.replace("$file_name", basename(file_path))
         text = text.replace("$file", file_path)
     if macro_data is not None:
         for key in macro_data:
-            text = text.replace("$"+key, macro_data[key])
+            text = text.replace("$" + key, macro_data[key])
     return text
 
 
@@ -306,63 +301,57 @@ def get_macro_data(class_name=None):
         class_name = get_class_name()
     from .javatar_java import normalize_package
     from .javatar_validator import is_file
-    source_data = {}
-    source_data["project_dir"] = get_path("project_dir")
-    source_data["source_folder"] = get_path("source_folder")
-    source_data["packages_path"] = sublime.packages_path()
-    source_data["sep"] = os.sep
+    source_data = {
+        "project_dir": get_project_dir(),
+        "source_folder": get_source_folder(),
+        "packages_path": sublime.packages_path(),
+        "sep": os.sep,
+    }
     if is_file():
-        source_data["full_class_path"] = normalize_package(get_current_package()+"."+class_name)
-        source_data["class_name"] = get_class_name()
-        source_data["package"] = get_current_package()
+        source_data.update({
+            "full_class_path": normalize_package(get_current_package() + "." + class_name),
+            "class_name": get_class_name(),
+            "package": get_current_package()
+        })
     return source_data
 
 
-def get_path(path_type="", dir_path="", dir_path2=""):
-    window = sublime.active_window()
+def get_javatar_parent():
+    return __name__.split('.')[0]
+
+
+def get_current_file():
+    return sublime.active_window().active_view().file_name()
+
+
+def get_source_folder():
+    return get_settings("source_folder") or get_project_dir()
+
+
+def get_project_dir():
     from .javatar_validator import is_file
-    if path_type == "source_folder":
-        path = get_settings("source_folder")
-        if path != "":
-            return path
-        return get_path("project_dir")
-    elif path_type == "project_dir":
-        path = get_path("current_dir")
-        folders = window.folders()
-        if len(folders) == 1:
-            return folders[0]
-        elif len(folders) > 1:
-            if path is None:
-                path = folders[0]
-            for folder in folders:
-                if is_file() and contains_file(folder, get_path("current_file")):
-                    return folder
-        return path
-    elif path_type == "current_dir":
-        if get_path("current_file") is not None:
-            return get_path("parent", get_path("current_file"))
-        else:
-            return None
-    elif path_type == "current_file":
-        return window.active_view().file_name()
-    elif path_type == "parent":
-        return os.path.dirname(dir_path)
-    elif path_type == "relative":
-        if dir_path != "" and dir_path2 != "":
-            return os.path.relpath(dir_path, dir_path2)
-        else:
-            return ""
-    elif path_type == "name":
-        return os.path.basename(dir_path)
-    elif path_type == "join":
-        return os.path.join(dir_path, dir_path2)
-    elif path_type == "exist":
-        return os.path.exists(dir_path)
-    elif path_type == "javatar_parent":
-        name = __name__.split('.')
-        return name[0]
+
+    path = get_current_dir()
+    folders = sublime.active_window().folders()
+
+    if len(folders) == 1:
+        return folders[0]
+
+    elif len(folders) > 1:
+        if path is None:
+            path = folders[0]
+        for folder in folders:
+            if is_file() and contains_file(folder, get_current_file()):
+                return folder
+
+    return path
+
+
+def get_current_dir():
+    if get_current_file() is not None:
+        return dirname(get_current_file())
     else:
-        return ""
+        return None
 
 
 class JavatarMergedDict():

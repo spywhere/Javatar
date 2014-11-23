@@ -1,6 +1,24 @@
+from os import pathsep
+from os.path import join, exists, relpath
+
 import sublime
 import sublime_plugin
-from ..utils import *
+from ..utils import (
+    is_project,
+    is_file,
+    get_settings,
+    parse_macro,
+    get_macro_data,
+    without_extension,
+    get_package_root_dir,
+    add_action,
+    get_main_class_name,
+    get_dependencies,
+    get_executable,
+    JavatarShell,
+    ThreadProgress,
+    get_source_folder
+)
 
 
 class JavatarRunMainCommand(sublime_plugin.WindowCommand):
@@ -9,7 +27,7 @@ class JavatarRunMainCommand(sublime_plugin.WindowCommand):
             if is_file():
                 found_main = False
                 view = sublime.active_window().active_view()
-                self.output_dir = get_path("source_folder")
+                self.output_dir = get_source_folder()
                 if get_settings("build_output_location") != "":
                     self.output_dir = parse_macro(get_settings("build_output_location"), get_macro_data(), view.file_name())
                 method_regions = view.find_by_selector("entity.name.function.java")
@@ -18,8 +36,8 @@ class JavatarRunMainCommand(sublime_plugin.WindowCommand):
                         found_main = True
                         break
                 if found_main:
-                    file_path = without_extension(get_path("relative", view.file_name(), get_package_root_dir()))+".class"
-                    if not get_path("exist", get_path("join", self.output_dir, file_path)):
+                    file_path = without_extension(relpath(view.file_name(), get_package_root_dir())) + ".class"
+                    if not exists(join(self.output_dir, file_path)):
                         sublime.error_message("File is not compiled")
                         return
                     self.on_run()
@@ -37,11 +55,11 @@ class JavatarRunMainCommand(sublime_plugin.WindowCommand):
         self.class_name = get_main_class_name(file_path, view)
         macro_data = get_macro_data(self.class_name)
         dependencies = get_dependencies()
-        dependencies_param = "-classpath \""+self.output_dir+"\""
+        dependencies_param = "-classpath \"" + self.output_dir + "\""
         for dependency in dependencies:
-            from os import pathsep
-            dependencies_param += pathsep+"\""+dependency[0]+"\""
+            dependencies_param += pathsep + "\"" + dependency[0] + "\""
         macro_data["classpath"] = dependencies_param
+        macro_data["program_arguments"] = get_settings("program_arguments")
         executable = get_executable("run")
         if executable is None:
             return None
@@ -50,7 +68,7 @@ class JavatarRunMainCommand(sublime_plugin.WindowCommand):
         self.view.set_syntax_file("Packages/Javatar/syntax/JavaStackTrace.tmLanguage")
         self.view.set_name("Running " + self.class_name + " ...")
         self.view.set_scratch(True)
-        shell = JavatarShell(executable+" "+run_script, self.view, self.on_complete)
+        shell = JavatarShell(executable + " " + run_script, self.view, self.on_complete)
         shell.set_cwd(parse_macro(get_settings("run_location"), macro_data))
         shell.start()
         ThreadProgress(shell, "Running Javatar Shell", "Javatar Shell has been stopped")

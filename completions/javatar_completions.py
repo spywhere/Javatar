@@ -1,7 +1,7 @@
 import sublime_plugin
 import sublime
 import re
-from ..utils import *
+from ..utils import is_debug, is_stable, get_settings
 
 
 '''
@@ -30,12 +30,12 @@ class JavatarCompletions(sublime_plugin.EventListener):
     def getCallPosition(self, view, pos):
         if pos <= 0:
             return 0
-        if view.substr(sublime.Region(pos-1, pos)) == ")":
-            while view.substr(sublime.Region(pos-1, pos)) != "(":
+        if view.substr(sublime.Region(pos - 1, pos)) == ")":
+            while view.substr(sublime.Region(pos - 1, pos)) != "(":
                 pos -= 1
             return self.getCallPosition(view, pos)
-        elif view.substr(sublime.Region(pos-1, pos)) != " " and view.substr(sublime.Region(pos-1, pos)) != ";":
-            return self.getCallPosition(view, pos-1)
+        elif view.substr(sublime.Region(pos - 1, pos)) != " " and view.substr(sublime.Region(pos - 1, pos)) != ";":
+            return self.getCallPosition(view, pos - 1)
         return pos
 
     def on_query_completions(self, view, prefix, locations):

@@ -29,7 +29,7 @@ class JavatarBrowseDialog():
         for name in os.listdir(path):
             pathname = os.path.join(path, name)
             if not name.startswith(".") and os.path.isdir(pathname) and (self.path_filter or self.path_filter(pathname)):
-                dir_list.append(["["+name+"]", pathname])
+                dir_list.append(["[" + name + "]", pathname])
         for name in os.listdir(path):
             pathname = os.path.join(path, name)
             if not name.startswith(".") and os.path.isfile(pathname) and (self.path_filter or self.path_filter(pathname)):

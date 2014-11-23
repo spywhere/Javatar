@@ -1,95 +1,141 @@
 import os
+import re
+from os.path import join, relpath, basename
 import sublime
 import sublime_plugin
-from ..utils import *
+from ..utils import (
+    get_snippet,
+    hide_status,
+    add_action,
+    is_stable,
+    get_snippet_name,
+    show_status,
+    to_readable_package,
+    get_class_name_by_regex,
+    get_package_root_dir,
+    to_package,
+    is_project,
+    package_as_directory,
+    is_file,
+    get_package_path,
+    is_package,
+    make_package,
+    get_current_dir
+)
+
+EXTENDS_IMPLEMENTS_RE = re.compile(r'([:<])')
+MAIN_TEMPLATE = "public static void main(String[] args) {\n\t\t${1}\n\t}"
+visibilityMap = {
+    "public": "public ",
+    "default": "",
+    "private": "private ",
+    "protected": "protected "
+}
+modifierMap = {
+    "abstract": "abstract ",
+    "final": "final "
+}
 
 
-def get_info(text, on_change=False):
+def find_keyword(className, Map):
+    for keyword, code in Map.items():
+        if className.lower().startswith(keyword):
+            className = className[len(keyword):]
+
+            return className, keyword, code
+
+    return className, None, None
+
+
+def parse_spec(text):
     relative = True
     if text.startswith("~"):
         text = text[1:]
         relative = False
 
-    if not is_project() and not (is_project() and is_file()):
-        if on_change:
-            return "Cannot specify package location"
-        sublime.error_message("Cannot specify package location")
-        return
-    if not is_package(text, True):
-        if on_change:
-            return "Invalid package naming"
-        sublime.error_message("Invalid package naming")
-        return
-    if relative and get_path("current_dir") is not None:
-        create_directory = get_path("join", get_path("current_dir"), package_as_directory(get_package_path(text)))
-    else:
-        create_directory = get_path("join", get_package_root_dir(), package_as_directory(get_package_path(text)))
-
-    visibilityMap = {
-        "public": "public ",
-        "default": "",
-        "private": "private ",
-        "protected": "protected "
-    }
-    modifierMap = {
-        "abstract": "abstract ",
-        "final": "final "
-    }
-
-    body = "${1}"
-    visibility_keyword = "public"
-    visibility = visibilityMap[visibility_keyword]
-    modifier_keyword = ""
-    modifier = ""
-    extends = []
-    implements = []
-    package = to_package(get_path("relative", create_directory, get_package_root_dir()), False)
-    if not on_change:
-        make_package(create_directory, True)
     className = get_class_name_by_regex(text)
 
-    for visibilityKeyword, visibilityCode in visibilityMap.items():
-        if className.lower().startswith(visibilityKeyword):
-            className = className[len(visibilityKeyword):]
-            visibility_keyword = visibilityKeyword
-            visibility = visibilityCode
-            break
+    className, visibility_keyword, visibility = find_keyword(className, visibilityMap)
+    className, modifier_keyword, modifier = find_keyword(className, modifierMap)
+    modifier = modifier or ""
+    modifier_keyword = modifier_keyword or ""
+    visibility_keyword = visibility_keyword or "public"
+    visibility = visibility or visibilityMap[visibility_keyword]
 
-    for modifierKeyword, modifierCode in modifierMap.items():
-        if className.lower().startswith(modifierKeyword):
-            className = className[len(modifierKeyword):]
-            modifier_keyword = modifierKeyword
-            modifier = modifierCode
-            break
+    parts = EXTENDS_IMPLEMENTS_RE.split(className)
 
-    extendsComponent = className.split(":")
-    if len(extendsComponent) > 1:
-        className = extendsComponent[0]
-        implementsComponent = extendsComponent[1].split("<")
-        if len(implementsComponent) > 1:
-            extends = implementsComponent[0].split(",")
-            implements = implementsComponent[1].split(",")
-        elif len(implementsComponent) > 0:
-            extends = extendsComponent[1].split(",")
-
-    implementsComponent = className.split("<")
-    if len(implementsComponent) > 1:
-        className = implementsComponent[0]
-        extendsComponent = implementsComponent[1].split(":")
-        if len(extendsComponent) > 1:
-            implements = extendsComponent[0].split(",")
-            extends = extendsComponent[1].split(",")
-        elif len(extendsComponent) > 0:
-            implements = implementsComponent[1].split(",")
+    extends = []
+    implements = []
+    className = parts.pop(0)
+    while parts:
+        part = parts.pop(0)
+        if part == '<':
+            implements = parts.pop(0).split(',')
+        elif part == ':':
+            extends = parts.pop(0).split(',')
 
     asmain = False
     if className.lower().endswith("asmain"):
         asmain = True
         className = className[:-6]
-        body = "public static void main(String[] args) {\n\t\t${1}\n\t}"
+        body = MAIN_TEMPLATE
+    else:
+        body = "${1}"
 
-    file_path = get_path("join", create_directory, className + ".java")
-    return {"file": file_path, "package": package, "visibility_keyword": visibility_keyword, "visibility": visibility, "modifier_keyword": modifier_keyword, "modifier": modifier, "class": className, "extends": extends, "implements": implements, "body": body, "asmain": asmain}
+    return {
+        'relative': relative,
+        'className': className,
+        'asmain': asmain,
+        'body': body,
+        'implements': implements,
+        'extends': extends,
+        'visibility_keyword': visibility_keyword,
+        'visibility': visibility,
+        'modifier_keyword': modifier_keyword,
+        'modifier': modifier
+    }
+
+
+def get_info(text, on_change=False):
+    if not is_project() and not (is_project() and is_file()):
+        if on_change:
+            return "Cannot specify package location"
+        sublime.error_message("Cannot specify package location")
+        return
+
+    if not is_package(text.strip('~'), True):
+        if on_change:
+            return "Invalid package naming"
+        sublime.error_message("Invalid package naming")
+        return
+
+    spec = parse_spec(text)
+
+    text = text.strip('~')
+
+    if spec['relative'] and get_current_dir() is not None:
+        create_directory = join(get_current_dir(), package_as_directory(get_package_path(text)))
+    else:
+        create_directory = join(get_package_root_dir(), package_as_directory(get_package_path(text)))
+
+    package = to_package(relpath(create_directory, get_package_root_dir()), False)
+    if not on_change:
+        make_package(create_directory, True)
+
+    file_path = join(create_directory, spec['className'] + ".java")
+    return {
+        "file": file_path,
+        "package": package,
+        "visibility_keyword": spec['visibility_keyword'],
+        "visibility": spec['visibility'],
+        "modifier_keyword": spec['modifier_keyword'],
+        "modifier": spec['modifier'],
+        "class": spec['className'],
+        "extends": spec['extends'],
+        "implements": spec['implements'],
+        "body": spec['body'],
+        "asmain": spec['asmain']
+    }
 
 
 def get_file_contents(classType, info):
@@ -107,21 +153,25 @@ def get_file_contents(classType, info):
     # Interface can only extends another interface
     if classType != "Enumerator" and len(info["extends"]) > 0:
         if classType == "Class" and len(info["extends"]) > 1:
-            inheritance = " extends "+info["extends"][0]
+            inheritance = " extends " + info["extends"][0]
         else:
             inheritance = " extends " + ", ".join(info["extends"])
     if classType != "Interface" and len(info["implements"]) > 0:
         inheritance += " implements " + ", ".join(info["implements"])
 
-    data = data.replace("%class%", info["class"])
-    data = data.replace("%file%", info["file"])
-    data = data.replace("%file_name%", get_path("name", info["file"]))
-    data = data.replace("%package_path%", info["package"])
-    data = data.replace("%visibility%", info["visibility"])
+    data = (
+        data.replace("%class%", info["class"])
+            .replace("%file%", info["file"])
+            .replace("%file_name%", basename(info["file"]))
+            .replace("%package_path%", info["package"])
+            .replace("%visibility%", info["visibility"])
+            .replace("%inheritance%", inheritance)
+            .replace("%body%", info["body"])
+    )
+
     if classType == "Class":
         data = data.replace("%modifier%", info["modifier"])
-    data = data.replace("%inheritance%", inheritance)
-    data = data.replace("%body%", info["body"])
+
     return data
 
 
@@ -146,52 +196,76 @@ def create_class_file(file_path, contents, msg, info):
 
 class JavatarCreateCommand(sublime_plugin.WindowCommand):
     def run(self, text="", create_type="", on_change=False):
-        if on_change:
-            if text == "":
-                return get_info(text, on_change)
+        if on_change and text == "":
+            return get_info(text, on_change)
         else:
-            get_action().add_action("javatar.command.create.run", "Create [create_type=" + create_type + "]")
+            add_action("javatar.command.create.run", "Create [create_type=" + create_type + "]")
+
         if create_type != "":
             self.show_input(-1, create_type)
             return
-        if text != "":
-            info = get_info(text, on_change)
-            if on_change:
-                if type(info) is str and info != "":
-                    return info
-                elif os.path.exists(info["file"]):
-                    return self.create_type + " \"" + info["class"] + "\" already exists"
-                else:
-                    prefix = ""
-                    additional_text = ""
-                    if info["visibility_keyword"] != "":
-                        prefix += info["visibility_keyword"]
-                    if info["modifier_keyword"] != "":
-                        prefix += " " + info["modifier_keyword"]
-                    if info["asmain"]:
-                        prefix += " main"
-                    prefix += " " + self.create_type
-                    prefix = prefix[:1].upper() + prefix[1:].lower()
 
-                    if len(info["extends"]) > 2:
-                        additional_text += ", extends \"" + "\", \"".join(info["extends"][:2]) + "\" and " + str(len(info["extends"])-2) + " more classes"
-                    elif len(info["extends"]) > 0:
-                        additional_text += ", extends \"" + "\", \"".join(info["extends"]) + "\""
-                    if len(info["implements"]) > 2:
-                        additional_text += ", implements \"" + "\", \"".join(info["implements"][:2]) + "\" and " + str(len(info["implements"])-2) + " more classes"
-                    elif len(info["implements"]) > 0:
-                        additional_text += ", implements \"" + "\", \"".join(info["implements"]) + "\""
+        if text == "":
+            return
 
-                    if self.create_type == "Class" and len(info["extends"]) > 1:
-                        additional_text += " [Warning! Class can be extent only once]"
-                    elif self.create_type == "Enumerator" and len(info["extends"]) > 0:
-                        additional_text += " [Warning! Enumerator use \"implements\" instead of \"extends\"]"
-                    elif self.create_type == "Interface" and len(info["implements"]) > 0:
-                        additional_text += " [Warning! Interface use \"extends\" instead of \"implements\"]"
-                    return prefix + " \"" + info["class"] + "\" will be created within package \"" + to_readable_package(info["package"], True) + "\"" + additional_text
-            get_action().add_action("javatar.command.create.run", "Create [info=" + str(info) + "]")
-            create_class_file(info["file"], get_file_contents(self.create_type, info), self.create_type + " \"" + info["class"] + "\" already exists", info)
-            sublime.set_timeout(lambda: show_status(self.create_type + " \"" + info["class"] + "\" is created within package \"" + to_readable_package(info["package"], True) + "\""), 500)
+        info = get_info(text, on_change)
+        if on_change:
+            if type(info) is str and info != "":
+                return info
+            elif os.path.exists(info["file"]):
+                return self.create_type + " \"" + info["class"] + "\" already exists"
+            else:
+                prefix = self.build_prefix(info)
+                additional_text = self.build_additional_text(info)
+                return prefix + " \"" + info["class"] + "\" will be created within package \"" + to_readable_package(info["package"], True) + "\"" + additional_text
+
+        add_action("javatar.command.create.run", "Create [info=" + str(info) + "]")
+        create_class_file(info["file"], get_file_contents(self.create_type, info), self.create_type + " \"" + info["class"] + "\" already exists", info)
+        sublime.set_timeout(lambda: show_status(self.create_type + " \"" + info["class"] + "\" is created within package \"" + to_readable_package(info["package"], True) + "\""), 500)
+
+    def build_prefix(self, info):
+        prefix = ""
+        if info["visibility_keyword"] != "":
+            prefix += info["visibility_keyword"]
+        if info["modifier_keyword"] != "":
+            prefix += " " + info["modifier_keyword"]
+        if info["asmain"]:
+            prefix += " main"
+        prefix += " " + self.create_type
+
+        return prefix[:1].upper() + prefix[1:].lower()
+
+    def quote_list(self, lst):
+        return ', '.join(
+            '"{}"'.format(item)
+            for item in lst
+        )
+
+    def build_additional_text(self, info):
+        additional_text = ""
+
+        if info["extends"]:
+            additional_text += ", extends " + self.quote_list(info["extends"][:2])
+
+            if len(info["extends"]) > 2:
+                additional_text += " and {} more classes".format(len(info["extends"]) - 2)
+
+        if info["implements"]:
+            additional_text += ", implements " + self.quote_list(info["implements"][:2])
+
+            if len(info["implements"]) > 2:
+                additional_text += " and {} more classes".format(len(info["implements"]) - 2)
+
+        if self.create_type == "Class" and len(info["extends"]) > 1:
+            additional_text += " [Warning! Class can be extent only once]"
+
+        elif self.create_type == "Enumerator" and info["extends"]:
+            additional_text += ' [Warning! Enumerator use "implements" instead of "extends"]'
+
+        elif self.create_type == "Interface" and info["implements"]:
+            additional_text += ' [Warning! Interface use "extends" instead of "implements"]'
+
+        return additional_text
 
     def on_change(self, text):
         show_status(self.run(text, on_change=True), delay=-1, require_java=False)

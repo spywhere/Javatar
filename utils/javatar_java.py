@@ -1,11 +1,21 @@
 import sublime
 import re
 import os
+from os.path import join
 import threading
 import traceback
-from .javatar_shell import *
-from .javatar_thread import *
-from .javatar_utils import *
+from .javatar_shell import JavatarBlockShell
+from .javatar_thread import ThreadProgress
+from .javatar_utils import (
+    get_package_root_dir, to_package, without_extension,
+    get_settings,
+    JavatarMergedDict,
+    get_global_settings,
+    get_project_settings,
+    is_debug,
+    set_settings,
+    del_settings
+)
 
 
 TMP = {}
@@ -19,9 +29,7 @@ def detect_jdk(silent=False, on_done=None, progress=False):
 
 
 def normalize_package(package):
-    while package.startswith("."):
-        package = package[1:]
-    return re.sub("\\.*$", "", package)
+    return re.sub("\\.*$", "", package.lstrip('.'))
 
 
 def to_class(class_content):
@@ -50,8 +58,10 @@ def get_all_types(packageImports):
                 imports += packageImports[search_type]
             else:
                 # .javatar-packages format
-                for clazz in packageImports[search_type]:
-                    imports.append(clazz["name"])
+                imports.extend(
+                    clazz["name"]
+                    for clazz in packageImports[search_type]
+                )
     return imports
 
 
@@ -70,7 +80,7 @@ def get_class(classname, window=None, callback=None, allow_manual=True, step=1):
 
 def select_classes(index=None, window=None, callback=None, classes=None, allow_manual=True):
     classes = classes or []
-    if callback is None:
+    if callback is None and is_debug():
         print("No callback")
         return
     global TMP
@@ -130,9 +140,9 @@ def find_class(path, classname, with_info=False):
                 if with_info:
                     class_structure, class_type = get_class_structure(classname, package)
                     if class_structure is not None:
-                        classes.append({"classpath": packageName+"."+classname, "class": class_structure, "type": class_type, "local": False})
+                        classes.append({"classpath": packageName + "." + classname, "class": class_structure, "type": class_type, "local": False})
                 elif classname in get_all_types(package):
-                        classes.append(packageName+"."+classname)
+                    classes.append(packageName + "." + classname)
     if with_info:
         classes.sort(key=lambda x: x["classpath"])
     else:
@@ -149,7 +159,7 @@ def get_class_name_by_regex(text):
 
 
 def package_as_directory(package):
-    return merge_path(package.split("."))
+    return join(*package.split("."))
 
 
 def make_package(package_dir, silent=False):
@@ -181,9 +191,9 @@ def get_latest_jdk(jdks=None):
 def get_read_version(version=None):
     if version is None:
         return version
-    v = "JDK"+version["version"]
+    v = "JDK" + version["version"]
     if "update" in version:
-        v += "u"+version["update"]
+        v += "u" + version["update"]
     return v
 
 
@@ -203,7 +213,7 @@ def get_java_version(path="", check_all=False, executable=None):
             executable = get_executable("version", path)
     if executable is None:
         return None
-    output = JavatarBlockShell().run(executable+" -version")
+    output = JavatarBlockShell().run(executable + " -version")
     if output["data"] is not None:
         match = re.search(get_settings("java_version_match"), output["data"])
         if match is not None:
@@ -217,10 +227,7 @@ def get_java_version(path="", check_all=False, executable=None):
 
 
 def dict_to_list(dicto):
-    olist = []
-    for key in dicto:
-        olist.append(dicto[key])
-    return olist
+    return list(dicto.keys())
 
 
 def is_jdk_dir(path):
@@ -330,7 +337,7 @@ def get_executable(name, path=None):
             return jdk
         else:
             path = jdk["path"]
-    return "\""+os.path.join(path, get_settings("java_executables")[name])+"\""
+    return "\"" + os.path.join(path, get_settings("java_executables")[name]) + "\""
 
 
 class JavatarJDKDetectionThread(threading.Thread):

@@ -1,5 +1,7 @@
+import os
+
 import sublime
-from .javatar_event_handler import *
+from .javatar_event_handler import EventHandler
 
 
 class JSONPanel():
@@ -31,6 +33,5 @@ class JSONPanel():
         filepath = self.view.file_name()
         self.window.focus_view(self.view)
         self.window.run_command("close_file")
-        import os
         if self.post_remove and os.path.exists(filepath):
             os.remove(filepath)

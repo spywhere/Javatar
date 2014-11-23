@@ -1,7 +1,28 @@
+import os
+from os import pathsep, makedirs
+from os.path import isdir, basename
+
 import sublime
 import sublime_plugin
 from time import clock, sleep
-from ..utils import *
+from ..utils import (
+    MultiThreadProgress,
+    get_settings,
+    get_dependencies,
+    parse_macro,
+    get_executable,
+    JavatarSilentShell,
+    show_notification,
+    add_action,
+    is_java,
+    is_project,
+    is_file,
+    get_sublime_settings,
+    get_macro_data,
+    get_package_root_dir,
+    get_source_folder,
+    get_current_dir
+)
 
 
 # Create .jar using "jar" command
@@ -22,7 +43,7 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
         self.progress = MultiThreadProgress("Preparing build", None, self.on_build_thread_complete, self.on_all_complete)
         num_thread = 1
 
-        self.source_folder = get_path("source_folder")
+        self.source_folder = get_source_folder()
         self.build_output_location = get_settings("build_output_location")
         self.build_command = get_settings("build_command")
         self.build_location = get_settings("build_location")
@@ -44,29 +65,26 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
             build = self.create_build(file_path)
             if build is None:
                 return
-            self.progress.add(build, get_path("name", file_path))
+            self.progress.add(build, basename(file_path))
             if not self.progress.running:
                 self.progress.run()
             if self.view is not None:
                 self.view.set_name(self.progress.get_message())
-        self.progress.set_message("[" + str(self.build_size-len(self.build_list)) + "/" + str(self.build_size) + "] Building ")
+        self.progress.set_message("[" + str(self.build_size - len(self.build_list)) + "/" + str(self.build_size) + "] Building ")
 
     def create_build(self, file_path):
         self.macro_data["sourcepath"] = "-sourcepath \"" + self.source_folder + "\""
         dependencies = get_dependencies()
         dependencies_param = ""
         for dependency in dependencies:
-            from os import pathsep
             if dependencies_param == "":
-                dependencies_param = "-classpath ."+pathsep+"\""+dependency[0]+"\""
+                dependencies_param = "-classpath ." + pathsep + "\"" + dependency[0] + "\""
             else:
-                dependencies_param += pathsep+"\""+dependency[0]+"\""
+                dependencies_param += pathsep + "\"" + dependency[0] + "\""
         self.macro_data["classpath"] = dependencies_param
         self.macro_data["d"] = ""
         if self.build_output_location != "":
             output_dir = parse_macro(self.build_output_location, self.macro_data, file_path)
-            from os import makedirs
-            from os.path import isdir
             if not isdir(output_dir):
                 makedirs(output_dir)
             self.macro_data["d"] = "-d \"" + output_dir + "\""
@@ -74,7 +92,7 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
         if executable is None:
             return None
         build_script = parse_macro(self.build_command, self.macro_data, file_path)
-        shell = JavatarSilentShell(executable+" "+build_script, self.on_build_done)
+        shell = JavatarSilentShell(executable + " " + build_script, self.on_build_done)
         shell.set_cwd(parse_macro(self.build_location, self.macro_data))
         shell.start()
         return shell
@@ -107,14 +125,14 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
         if self.failed:
             message = "Building Failed [{0:.2f}s]"
 
-        show_notification(message.format(clock()-self.start_time))
+        show_notification(message.format(clock() - self.start_time))
         self.build_size = -1
         if self.view is not None:
-            self.view.set_name(message.format(clock()-self.start_time))
-        sublime.status_message(message.format(clock()-self.start_time))
+            self.view.set_name(message.format(clock() - self.start_time))
+        sublime.status_message(message.format(clock() - self.start_time))
         add_action(
             "javatar.command.build.complete",
-            message.format(clock()-self.start_time)
+            message.format(clock() - self.start_time)
         )
 
     def get_java_files(self, dir_path):
@@ -136,6 +154,79 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
         else:
             return False
 
+    def build_project(self):
+        if is_project():
+            for view in self.window.views():
+                if is_java(view.file_name()):
+                    if view.is_dirty():
+                        if get_settings("automatic_save"):
+                            self.window.run_command("save_all")
+                        else:
+                            sublime.error_message("Some Java files are not saved")
+                            return
+            if not self.build_all(get_package_root_dir()):
+                sublime.error_message("No class to build")
+        else:
+            sublime.error_message("Unknown package location")
+
+    def build_package(self):
+        if is_project():
+            for view in self.window.views():
+                if is_java(view.file_name()):
+                    if view.is_dirty():
+                        if get_settings("automatic_save"):
+                            self.window.run_command("save_all")
+                        else:
+                            sublime.error_message("Some Java files are not saved")
+                            return
+            if not self.build_all(get_current_dir()):
+                sublime.error_message("No class to build")
+        else:
+            sublime.error_message("Unknown package location")
+
+    def build_working(self):
+        if is_project():
+            for view in self.window.views():
+                if is_java(view.file_name()):
+                    self.build_list.append(view.file_name())
+                    if view.is_dirty():
+                        if get_settings("automatic_save"):
+                            self.window.run_command("save_all")
+                        else:
+                            sublime.error_message("Some Java files are not saved")
+                            return
+            if len(self.build_list) > 0:
+                add_action(
+                    "javatar.command.build.build_working",
+                    "Build working files"
+                )
+                self.build()
+            else:
+                sublime.error_message("No class to build")
+        else:
+            sublime.error_message("Unknown package location")
+
+    def build_class(self):
+        view = sublime.active_window().active_view()
+
+        if is_project() and is_file():
+            if is_java(view.file_name()):
+                if self.window.active_view().is_dirty():
+                    if get_settings("automatic_save"):
+                        self.window.run_command("save")
+                    else:
+                        sublime.error_message("Current file is not saved")
+                        return
+                add_action(
+                    "javatar.command.build.build_file", "Build file"
+                )
+                self.build_list.append(view.file_name())
+                self.build()
+            else:
+                sublime.error_message("Current file is not Java")
+        else:
+            sublime.error_message("Unknown class location")
+
     def run(self, build_type=""):
         self.macro_data = get_macro_data()
         self.build_list = []
@@ -143,71 +234,12 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
             "javatar.command.build.run",
             "Build [build_type=" + build_type + "]"
         )
-        view = sublime.active_window().active_view()
+
         if build_type == "project":
-            if is_project():
-                for view in self.window.views():
-                    if is_java(view.file_name()):
-                        if view.is_dirty():
-                            if get_settings("automatic_save"):
-                                self.window.run_command("save_all")
-                            else:
-                                sublime.error_message("Some Java files are not saved")
-                                return
-                if not self.build_all(get_package_root_dir()):
-                    sublime.error_message("No class to build")
-            else:
-                sublime.error_message("Unknown package location")
+            self.build_project()
         elif build_type == "package":
-            if is_project():
-                for view in self.window.views():
-                    if is_java(view.file_name()):
-                        if view.is_dirty():
-                            if get_settings("automatic_save"):
-                                self.window.run_command("save_all")
-                            else:
-                                sublime.error_message("Some Java files are not saved")
-                                return
-                if not self.build_all(get_path("current_dir")):
-                    sublime.error_message("No class to build")
-            else:
-                sublime.error_message("Unknown package location")
+            self.build_package()
         elif build_type == "working":
-            if is_project():
-                for view in self.window.views():
-                    if is_java(view.file_name()):
-                        self.build_list.append(view.file_name())
-                        if view.is_dirty():
-                            if get_settings("automatic_save"):
-                                self.window.run_command("save_all")
-                            else:
-                                sublime.error_message("Some Java files are not saved")
-                                return
-                if len(self.build_list) > 0:
-                    add_action(
-                        "javatar.command.build.build_working",
-                        "Build working files"
-                    )
-                    self.build()
-                else:
-                    sublime.error_message("No class to build")
-            else:
-                sublime.error_message("Unknown package location")
+            self.build_working()
         elif build_type == "class":
-            if is_project() and is_file():
-                if is_java(view.file_name()):
-                    if self.window.active_view().is_dirty():
-                        if get_settings("automatic_save"):
-                            self.window.run_command("save")
-                        else:
-                            sublime.error_message("Current file is not saved")
-                            return
-                    add_action(
-                        "javatar.command.build.build_file", "Build file"
-                    )
-                    self.build_list.append(view.file_name())
-                    self.build()
-                else:
-                    sublime.error_message("Current file is not Java")
-            else:
-                sublime.error_message("Unknown class location")
+            self.build_class()
