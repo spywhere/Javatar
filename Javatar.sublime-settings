@@ -93,8 +93,11 @@
     // Location to run "run" command
     "run_location" : "$project_dir",
 
+    // Program arguments to pass to the main executed on the "run" command
+    "program_arguments" : "",
+
     // Run command
-    "run_command" : "$classpath $full_class_path",
+    "run_command" : "$classpath $full_class_path $program_arguments",
 
     // Amount from bottom to snap into autoscrolling area
     // Increase this number if autoscroll is not working properly
