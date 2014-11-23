@@ -37,55 +37,35 @@ modifierMap = {
 }
 
 
-def get_info(text, on_change=False):
+def find_keyword(className, Map):
+    for keyword, code in Map.items():
+        if className.lower().startswith(keyword):
+            className = className[len(keyword):]
+
+            return className, keyword, code
+
+    return className, None, None
+
+
+def parse_spec(text):
     relative = True
     if text.startswith("~"):
         text = text[1:]
         relative = False
 
-    if not is_project() and not (is_project() and is_file()):
-        if on_change:
-            return "Cannot specify package location"
-        sublime.error_message("Cannot specify package location")
-        return
-    if not is_package(text, True):
-        if on_change:
-            return "Invalid package naming"
-        sublime.error_message("Invalid package naming")
-        return
-    if relative and get_current_dir() is not None:
-        create_directory = join(get_current_dir(), package_as_directory(get_package_path(text)))
-    else:
-        create_directory = join(get_package_root_dir(), package_as_directory(get_package_path(text)))
-
-    body = "${1}"
-    visibility_keyword = "public"
-    visibility = visibilityMap[visibility_keyword]
-    modifier_keyword = ""
-    modifier = ""
-    extends = []
-    implements = []
-    package = to_package(relpath(create_directory, get_package_root_dir()), False)
-    if not on_change:
-        make_package(create_directory, True)
     className = get_class_name_by_regex(text)
 
-    for visibilityKeyword, visibilityCode in visibilityMap.items():
-        if className.lower().startswith(visibilityKeyword):
-            className = className[len(visibilityKeyword):]
-            visibility_keyword = visibilityKeyword
-            visibility = visibilityCode
-            break
-
-    for modifierKeyword, modifierCode in modifierMap.items():
-        if className.lower().startswith(modifierKeyword):
-            className = className[len(modifierKeyword):]
-            modifier_keyword = modifierKeyword
-            modifier = modifierCode
-            break
+    className, visibility_keyword, visibility = find_keyword(className, visibilityMap)
+    className, modifier_keyword, modifier = find_keyword(className, modifierMap)
+    modifier = modifier or ""
+    modifier_keyword = modifier_keyword or ""
+    visibility_keyword = visibility_keyword or "public"
+    visibility = visibility or visibilityMap[visibility_keyword]
 
     parts = EXTENDS_IMPLEMENTS_RE.split(className)
 
+    extends = []
+    implements = []
     className = parts.pop(0)
     while parts:
         part = parts.pop(0)
@@ -99,20 +79,62 @@ def get_info(text, on_change=False):
         asmain = True
         className = className[:-6]
         body = MAIN_TEMPLATE
+    else:
+        body = "${1}"
 
-    file_path = join(create_directory, className + ".java")
+    return {
+        'relative': relative,
+        'className': className,
+        'asmain': asmain,
+        'body': body,
+        'implements': implements,
+        'extends': extends,
+        'visibility_keyword': visibility_keyword,
+        'visibility': visibility,
+        'modifier_keyword': modifier_keyword,
+        'modifier': modifier
+    }
+
+
+def get_info(text, on_change=False):
+    if not is_project() and not (is_project() and is_file()):
+        if on_change:
+            return "Cannot specify package location"
+        sublime.error_message("Cannot specify package location")
+        return
+
+    if not is_package(text.strip('~'), True):
+        if on_change:
+            return "Invalid package naming"
+        sublime.error_message("Invalid package naming")
+        return
+
+    spec = parse_spec(text)
+
+    text = text.strip('~')
+
+    if spec['relative'] and get_current_dir() is not None:
+        create_directory = join(get_current_dir(), package_as_directory(get_package_path(text)))
+    else:
+        create_directory = join(get_package_root_dir(), package_as_directory(get_package_path(text)))
+
+    package = to_package(relpath(create_directory, get_package_root_dir()), False)
+    if not on_change:
+        make_package(create_directory, True)
+
+    file_path = join(create_directory, spec['className'] + ".java")
     return {
         "file": file_path,
         "package": package,
-        "visibility_keyword": visibility_keyword,
-        "visibility": visibility,
-        "modifier_keyword": modifier_keyword,
-        "modifier": modifier,
-        "class": className,
-        "extends": extends,
-        "implements": implements,
-        "body": body,
-        "asmain": asmain
+        "visibility_keyword": spec['visibility_keyword'],
+        "visibility": spec['visibility'],
+        "modifier_keyword": spec['modifier_keyword'],
+        "modifier": spec['modifier'],
+        "class": spec['className'],
+        "extends": spec['extends'],
+        "implements": spec['implements'],
+        "body": spec['body'],
+        "asmain": spec['asmain']
     }
 
 
