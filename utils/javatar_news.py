@@ -30,7 +30,7 @@ def get_version():
 
 
 def show_news(title, prefix=""):
-    news = NEWS_TEMPLATE.format(get_version())
+    news = NEWS_TEMPLATE.format(VERSION=get_version())
 
     view = sublime.active_window().new_file()
     view.set_name(title)
