@@ -213,24 +213,35 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
 
         return prefix[:1].upper() + prefix[1:].lower()
 
+    def quote_list(self, lst):
+        return ', '.join(
+            '"{}"'.format(item)
+            for item in lst
+        )
+
     def build_additional_text(self, info):
         additional_text = ""
 
-        if len(info["extends"]) > 2:
-            additional_text += ", extends \"" + "\", \"".join(info["extends"][:2]) + "\" and " + str(len(info["extends"]) - 2) + " more classes"
-        elif len(info["extends"]) > 0:
-            additional_text += ", extends \"" + "\", \"".join(info["extends"]) + "\""
-        if len(info["implements"]) > 2:
-            additional_text += ", implements \"" + "\", \"".join(info["implements"][:2]) + "\" and " + str(len(info["implements"]) - 2) + " more classes"
-        elif len(info["implements"]) > 0:
-            additional_text += ", implements \"" + "\", \"".join(info["implements"]) + "\""
+        if info["extends"]:
+            additional_text += ", extends " + self.quote_list(info["extends"][:2])
+
+            if len(info["extends"]) > 2:
+                additional_text += " and {} more classes".format(len(info["extends"]) - 2)
+
+        if info["implements"]:
+            additional_text += ", implements " + self.quote_list(info["implements"][:2])
+
+            if len(info["implements"]) > 2:
+                additional_text += " and {} more classes".format(len(info["implements"]) - 2)
 
         if self.create_type == "Class" and len(info["extends"]) > 1:
             additional_text += " [Warning! Class can be extent only once]"
-        elif self.create_type == "Enumerator" and len(info["extends"]) > 0:
-            additional_text += " [Warning! Enumerator use \"implements\" instead of \"extends\"]"
-        elif self.create_type == "Interface" and len(info["implements"]) > 0:
-            additional_text += " [Warning! Interface use \"extends\" instead of \"implements\"]"
+
+        elif self.create_type == "Enumerator" and info["extends"]:
+            additional_text += ' [Warning! Enumerator use "implements" instead of "extends"]'
+
+        elif self.create_type == "Interface" and info["implements"]:
+            additional_text += ' [Warning! Interface use "extends" instead of "implements"]'
 
         return additional_text
 
