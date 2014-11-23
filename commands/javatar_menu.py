@@ -110,10 +110,15 @@ class JavatarCommand(sublime_plugin.WindowCommand):
         },
         "project_settings": {
             "selected_index": 2,
-            "items": [["Back", "Back to previous menu"], ["Dependencies...", "Manage project dependencies"], ["Set Source Folder", "Set source folder to specified as default package"], ["Set Default JDK", "Set default JDK for builds and runs"]],
+            "items": [["Back", "Back to previous menu"], ["Set Program Arguments", "Set the arguments that should be passed to the executed main"], ["Dependencies...", "Manage project dependencies"], ["Set Source Folder", "Set source folder to specified as default package"], ["Set Default JDK", "Set default JDK for builds and runs"]],
             "actions": [
                 {
                     "name": "main"
+                }, {
+                    "command": "javatar_settings",
+                    "args": {
+                        "actiontype": "set_program_arguments"
+                    }
                 }, {
                     "name": "local_dependencies"
                 }, {
