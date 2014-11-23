@@ -68,7 +68,9 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
             "Project Settings [type={}]".format(actiontype)
         )
         self.actiontype = actiontype
-        if actiontype == "set_source_folder":
+        if actiontype == "set_program_arguments":
+            sublime.active_window().show_input_panel("Arguments to pass to main: ", "", self.on_input_done, None, None)
+        elif actiontype == "set_source_folder":
             self.panel_list = self.get_folders()
             if len(self.panel_list) < 1:
                 sublime.error_message("No source folder available")
@@ -127,6 +129,11 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
             sublime.active_window().show_quick_panel(self.panel_list, self.on_panel_complete)
         else:
             sublime.error_message("Javatar cannot find JDK installed in your computer.\n\nPlease install or settings the location of installed JDK.")
+
+    def on_input_done(self, input):
+        if self.actiontype == "set_program_arguments":
+            set_settings("program_arguments", input)
+            sublime.set_timeout(lambda: show_status("Program arguments \"" + input + "\" set", None, False), 500)
 
     def on_panel_cancel(self):
         if self.actiontype == "add_external_jar" or self.actiontype == "add_class_folder":
