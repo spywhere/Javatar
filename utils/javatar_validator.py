@@ -10,17 +10,19 @@ import re
 
 def is_java(filepath=""):
     from .javatar_utils import get_settings
+
     view = sublime.active_window().active_view()
+
     if filepath is None or filepath is "":
         if view is None:
             return False
         filepath = view.file_name()
+
     if filepath is not None:
-        filename, ext = os.path.splitext(os.path.basename(filepath))
-        for extension in get_settings("java_extensions"):
-            if ext == extension:
-                return True
-        return False
+        _, ext = os.path.splitext(os.path.basename(filepath))
+
+        return ext in get_settings("java_extensions")
+
     return (view is not None and len(view.find_by_selector(get_settings("java_source_selector"))) > 0)
 
 
