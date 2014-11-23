@@ -127,6 +127,9 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
         sublime.set_timeout(lambda: sublime.active_window().run_command("javatar", {"action": {"name": menu_name}}), 10)
         sublime.set_timeout(lambda: show_status("Dependency \"" + basename(arg1) + "\" has been removed", None, False), 500)
 
+    def set_program_arguments(self):
+        sublime.active_window().show_input_panel("Arguments to pass to main: ", "", self.on_input_done, None, None)
+
     def set_jdk(self, arg1=None, arg2=None):
         self.local = arg1
         detect_jdk(True, self.detect_jdk_complete, True)
@@ -155,6 +158,11 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
             sublime.active_window().show_quick_panel(self.panel_list, self.on_panel_complete)
         else:
             sublime.error_message("Javatar cannot find JDK installed in your computer.\n\nPlease install or settings the location of installed JDK.")
+
+    def on_input_done(self, input):
+        if self.actiontype == "set_program_arguments":
+            set_settings("program_arguments", input)
+            sublime.set_timeout(lambda: show_status("Program arguments \"" + input + "\" set", None, False), 500)
 
     def on_panel_cancel(self):
         if self.actiontype == "add_external_jar" or self.actiontype == "add_class_folder":

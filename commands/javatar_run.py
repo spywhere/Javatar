@@ -59,6 +59,7 @@ class JavatarRunMainCommand(sublime_plugin.WindowCommand):
         for dependency in dependencies:
             dependencies_param += pathsep + "\"" + dependency[0] + "\""
         macro_data["classpath"] = dependencies_param
+        macro_data["program_arguments"] = get_settings("program_arguments")
         executable = get_executable("run")
         if executable is None:
             return None
