@@ -1,6 +1,6 @@
 import sublime_plugin
-from ..QuickMenu import *
-from ..utils.javatar_actions import *
+from ..QuickMenu import QuickMenu
+from ..utils.javatar_actions import add_action
 
 
 class JavatarCommand(sublime_plugin.WindowCommand):

@@ -1,4 +1,5 @@
 import sys
+from os.path import join, dirname, basename
 from imp import reload
 
 import sublime
@@ -6,8 +7,11 @@ import sublime_plugin
 import hashlib
 import urllib.request
 import traceback
-from ..parser import *
-from ..utils import *
+from ..parser import GrammarParser
+from ..utils import (
+    is_stable, JSONPanel, is_debug, add_action, show_status,
+    reset_packages, load_packages
+)
 
 
 class JavatarUtilCommand(sublime_plugin.TextCommand):
@@ -130,8 +134,8 @@ class JavatarReload_packagesCommand(sublime_plugin.WindowCommand):
 class JavatarConvertCommand(sublime_plugin.WindowCommand):
     def run(self):
         for filepath in sublime.find_resources("*.javatar-imports"):
-            add_action("javatar.command.utils.convert.run", "Converting imports \"" + get_path("name", filepath) + "\"")
-            packages_file = {"name": get_path("name", filepath), "packages": {}}
+            add_action("javatar.command.utils.convert.run", "Converting imports \"" + basename(filepath) + "\"")
+            packages_file = {"name": basename(filepath), "packages": {}}
             imports_file = sublime.decode_value(sublime.load_resource(filepath))
             total_package = 0
             total_class = 0
@@ -163,6 +167,6 @@ class JavatarConvertCommand(sublime_plugin.WindowCommand):
                         for clss in imports[key]
                     ]
 
-            with open(get_path("join", get_path("parent", sublime.packages_path()), filepath.replace(".javatar-imports", "-converted.javatar-packages")), "w") as filew:
+            with open(join(dirname(sublime.packages_path()), filepath.replace(".javatar-imports", "-converted.javatar-packages")), "w") as filew:
                 filew.write(sublime.encode_value(packages_file, True))
                 sublime.message_dialog("Conversion Done\nTotal Packages: " + str(total_package) + "\nTotal Classes: " + str(total_class))

@@ -4,7 +4,7 @@ import sys
 import threading
 import subprocess
 from time import clock, sleep
-from .javatar_utils import *
+from .javatar_utils import get_settings
 
 
 class JavatarShell(threading.Thread):
