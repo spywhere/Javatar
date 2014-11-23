@@ -119,7 +119,7 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
             for region in importedPackagesRegions:
                 package = self.view.substr(region)
                 self.importedPackages.append(package)
-                self.importedTypes.append(get_class_name(self.view.substr(region)))
+                self.importedTypes.append(get_class_name_by_regex(self.view.substr(region)))
                 if get_package_path(package) in self.importedPackagesStat:
                     self.importedPackagesStat[get_package_path(package)] += 1
                 else:
@@ -282,7 +282,8 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
                     className = get_class_name()
                 sublime.set_timeout(lambda: show_status("Imports organized in class \""+className+"\""), 500)
 
-    def selectClasses(self, index=None, classes=[]):
+    def selectClasses(self, index=None, classes=None):
+        classes = classes or []
         if index is None:
             self.classes = classes
             if len(classes) > 1:

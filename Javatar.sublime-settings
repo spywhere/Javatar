@@ -113,7 +113,7 @@
     "build_output_location" : "$project_dir$sepbin",
 
     // Build command
-    "build_command" : "$sourcepath $classpath $d \"$file\"",
+    "build_command" : "$sourcepath $classpath $d \"$file\" -Xlint:all",
 
     // Number of build thread
     //    Increase this value can helps building done faster but also use more performances
@@ -159,7 +159,7 @@
     "package_match" : "^([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*",
 
     // Class in package matching using RegEx
-    "package_class_match" : "([a-zA-Z_$][a-zA-Z\\\\d_$,<:]*)$",
+    "package_class_match" : "([a-zA-Z_$][a-zA-Z\\d_$,<:]*)$",
 
     // Package scope selector (Use in Organize Imports)
     "package_meta_selector" : "meta.package.java",
