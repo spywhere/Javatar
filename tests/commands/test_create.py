@@ -1,8 +1,11 @@
 import sublime
 import unittest
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 
-from javatar.commands.javatar_create import get_info
+from javatar.commands.javatar_create import (
+    get_info,
+    JavatarCreateCommand
+)
 
 side_effect = sublime.load_settings(
     "Javatar.sublime-settings"
@@ -71,3 +74,72 @@ class TestCreateGetInfo(unittest.TestCase):
         self.assertEqual('default', q['visibility_keyword'])
         self.assertEqual(['BattleUnit'], q['extends'])
         self.assertEqual(['Carrier', 'WaterUnit'], q['implements'])
+
+
+class TestCreateMisc(unittest.TestCase):
+    def test_build_prefix(self):
+
+        window = MagicMock(spec=sublime.Window)
+        inst = JavatarCreateCommand(window)
+        inst.create_type = 'Class'
+
+        self.assertEqual(
+            inst.build_prefix({
+                'visibility_keyword': 'private',
+                'modifier_keyword': 'abstract',
+                'asmain': True
+            }),
+            'Private abstract main class'
+        )
+
+    def test_build_additional_text(self):
+        window = MagicMock(spec=sublime.Window)
+        inst = JavatarCreateCommand(window)
+        inst.create_type = 'Class'
+
+        self.assertEqual(
+            inst.build_additional_text({
+                'extends': ['Hello', 'World'],
+                'implements': ['Hello', 'World']
+            }),
+            ', extends "Hello", "World", implements "Hello", "World" '
+            '[Warning! Class can be extent only once]'
+        )
+
+        self.assertEqual(
+            inst.build_additional_text({
+                'extends': ['Hello', 'World', 'String'],
+                'implements': ['Hello', 'World', 'String']
+            }),
+            ', extends "Hello", "World" and 1 more classes'
+            ', implements "Hello", "World" and 1 more classes '
+            '[Warning! Class can be extent only once]'
+        )
+
+    def test_build_additional_text_enumerator(self):
+        window = MagicMock(spec=sublime.Window)
+        inst = JavatarCreateCommand(window)
+        inst.create_type = 'Enumerator'
+
+        self.assertEqual(
+            inst.build_additional_text({
+                'extends': ['World'],
+                'implements': []
+            }),
+            ', extends "World" '
+            '[Warning! Enumerator use "implements" instead of "extends"]'
+        )
+
+    def test_build_additional_text_interface(self):
+        window = MagicMock(spec=sublime.Window)
+        inst = JavatarCreateCommand(window)
+        inst.create_type = 'Interface'
+
+        self.assertEqual(
+            inst.build_additional_text({
+                'extends': [],
+                'implements': ['World']
+            }),
+            ', implements "World" '
+            '[Warning! Interface use "extends" instead of "implements"]'
+        )
