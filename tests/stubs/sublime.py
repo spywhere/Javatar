@@ -8,8 +8,8 @@ class _LogWriter:
     def write(self, s):
         sublime_api.log_message(s)
 
-sys.stdout = _LogWriter()
-sys.stderr = _LogWriter()
+# sys.stdout = _LogWriter()
+# sys.stderr = _LogWriter()
 
 ENCODED_POSITION = 1
 TRANSIENT = 4
