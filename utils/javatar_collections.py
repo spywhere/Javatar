@@ -199,31 +199,32 @@ class JavatarSnippetsLoaderThread(threading.Thread):
         self.on_complete = on_complete
         threading.Thread.__init__(self)
 
-    def analyse_snippet(self, file):
+    def analyse_snippet(self, filename):
         add_action(
             "javatar.util.collection.analyse_snippet",
-            "Analyse snippet [file=" + file + "]"
+            "Analyse snippet [file=" + filename + "]"
         )
-        data = sublime.load_resource(file)
-        classScope = None
-        classRe = re.search("%class:(.*)%(\\s*)", data, re.M)
-        if classRe is not None:
-            classScope = classRe.group(0)
-            data = re.sub("%class:(.*)%(\\s*)", "", data)
-            classScope = re.sub("(\\s*)$", "", classScope)
-            classScope = classScope[7:-1]
+        data = sublime.load_resource(filename)
 
-        if classScope is None or classScope == "":
-            classScope = basename(file)[:-8]
+        attrs = {}
 
-        descriptionScope = ""
-        descriptionRe = re.search("%description:(.*)%(\\s*)", data, re.M)
-        if descriptionRe is not None:
-            descriptionScope = descriptionRe.group(0)
-            data = re.sub("%description:(.*)%(\\s*)", "", data)
-            descriptionScope = re.sub("(\\s*)$", "", descriptionScope)
-            descriptionScope = descriptionScope[13:-1]
-        return {"file": file, "class": classScope, "description": descriptionScope, "data": data}
+        def callback(m):
+            key, val = m.groups()
+
+            if key == 'class':
+                attrs['classScope'] = val
+
+            elif key == 'description':
+                attrs['descriptionScope'] = val
+
+        data = re.sub(r'%(description|class):([^%]+)%\n', callback, data)
+
+        return {
+            "file": filename,
+            "class": attrs['classScope'],
+            "description": attrs['descriptionScope'],
+            "data": data
+        }
 
     def run(self):
         snippets = []
