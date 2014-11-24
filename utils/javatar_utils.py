@@ -63,7 +63,7 @@ def restore_project_state():
     global UPDATE_READY
     if get_settings("allow_project_restoration"):
         project_data = get_global_settings("project_data")
-        if len(project_data) > 0:
+        if project_data:
             for window in sublime.windows():
                 if str(window.id()) in project_data:
                     window.set_project_data(project_data[str(window.id())])

@@ -187,12 +187,14 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
             set_settings("source_folder", join(get_project_dir(), self.panel_list[index][1][1:]), True)
             self.show_delayed_status("Source folder \"" + source_rel_path + "\" is set")
         elif self.actiontype == "set_jdk":
-            if self.local:
-                jdks = get_project_settings("jdk_version")
-            else:
-                jdks = get_global_settings("jdk_version")
-            if jdks is None:
-                jdks = {}
+
+            jdks = (
+                get_project_settings("jdk_version") if self.local
+                else get_global_settings("jdk_version")
+            )
+
+            jdks = jdks or {}
+
             jdks["use"] = self.jdk_list[index]
             set_settings("jdk_version", jdks, self.local)
             if self.local:
@@ -205,21 +207,20 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
                 path = index
             elif self.actiontype == "add_class_folder":
                 path = index[2:-1]
-            if self.local:
-                dependencies = get_project_settings("dependencies")
-            else:
-                dependencies = get_global_settings("dependencies")
-            if dependencies is None:
-                dependencies = []
-            dependencies.append(path)
+
+            dependencies = (
+                get_project_settings("dependencies") if self.local
+                else get_global_settings("dependencies")
+            )
+
+            dependencies = (dependencies or []) + [path]
+
             set_settings("dependencies", dependencies, self.local)
             set_settings("dependencies_path", dirname(path), self.local)
             refresh_dependencies()
-            menu_name = "_dependencies"
-            if self.local:
-                menu_name = "local" + menu_name
-            else:
-                menu_name = "global" + menu_name
+
+            menu_name = ("local" if self.local else "global") + "_dependencies"
+
             sublime.set_timeout(lambda: sublime.active_window().run_command("javatar", {"action": {"name": menu_name}}), 10)
             self.show_delayed_status("Dependency \"" + basename(path) + "\" has been added")
 

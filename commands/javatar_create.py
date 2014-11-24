@@ -151,12 +151,13 @@ def get_file_contents(classType, info):
     inheritance = ""
     # Enum can only implements interfaces
     # Interface can only extends another interface
-    if classType != "Enumerator" and len(info["extends"]) > 0:
+    if classType != "Enumerator" and info["extends"]:
         if classType == "Class" and len(info["extends"]) > 1:
             inheritance = " extends " + info["extends"][0]
         else:
             inheritance = " extends " + ", ".join(info["extends"])
-    if classType != "Interface" and len(info["implements"]) > 0:
+
+    if classType != "Interface" and info["implements"]:
         inheritance += " implements " + ", ".join(info["implements"])
 
     data = (
@@ -210,7 +211,8 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
 
         info = get_info(text, on_change)
         if on_change:
-            if type(info) is str and info != "":
+            if isinstance(info, str) and info:
+                # we got an error message back from get_info
                 return info
             elif os.path.exists(info["file"]):
                 return self.create_type + " \"" + info["class"] + "\" already exists"
