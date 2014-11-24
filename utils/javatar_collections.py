@@ -269,7 +269,8 @@ class JavatarPackagesLoaderThread(threading.Thread):
                 packages += 1
 
                 for key in keys:
-                    classes += len(package[key])
+                    if key in package:
+                        classes += len(package[key])
 
         return [packages, classes]
 
