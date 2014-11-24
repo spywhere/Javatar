@@ -130,7 +130,7 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
     def set_program_arguments(self, arg1=None, arg2=None):
         program_arguments = get_settings("program_arguments")
         panel = sublime.active_window().show_input_panel("Arguments to pass to main: ", program_arguments, self.on_input_done, None, self.on_input_cancel)
-        panel.sel().add(sublime.Region(0, panel.size()))
+        panel.sel().add(sublime.Region(0, panel.size())) # select the current value for fast editing
 
     def set_jdk(self, arg1=None, arg2=None):
         self.local = arg1
