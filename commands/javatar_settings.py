@@ -129,7 +129,8 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
 
     def set_program_arguments(self, arg1=None, arg2=None):
         program_arguments = get_settings("program_arguments")
-        sublime.active_window().show_input_panel("Arguments to pass to main: ", program_arguments, self.on_input_done, None, None)
+        panel = sublime.active_window().show_input_panel("Arguments to pass to main: ", program_arguments, self.on_input_done, None, None)
+        panel.sel().add(sublime.Region(0, panel.size()))
 
     def set_jdk(self, arg1=None, arg2=None):
         self.local = arg1
