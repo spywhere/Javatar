@@ -1,7 +1,7 @@
 import os
 
 import sublime
-from .javatar_event_handler import *
+from .javatar_event_handler import EventHandler
 
 
 class JSONPanel():

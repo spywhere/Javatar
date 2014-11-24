@@ -1,7 +1,7 @@
 import sublime_plugin
 import sublime
 import re
-from ..utils import *
+from ..utils import is_debug, is_stable, get_settings
 
 
 '''

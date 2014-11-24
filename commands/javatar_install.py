@@ -1,9 +1,17 @@
 import sublime
 import sublime_plugin
 import threading
+import urllib
+import hashlib
 import traceback
 import os
-from ..utils import *
+from os.path import join
+from ..utils import (
+    add_action, ThreadProgress, get_schema_version,
+    send_package_action,
+    reset_packages,
+    load_packages
+)
 
 
 class JavatarInstallCommand(sublime_plugin.WindowCommand):
@@ -88,7 +96,7 @@ class JavatarRemotePackageInstallerThread(threading.Thread):
             if self.checksum != datahash:
                 self.result = False
                 return
-            open(get_path("join", get_path("join", sublime.packages_path(), "user"), self.filename + ".javatar-packages"), "wb").write(data)
+            open(join(sublime.packages_path(), "user", self.filename + ".javatar-packages"), "wb").write(data)
             self.result = True
             if self.on_complete is not None:
                 sublime.set_timeout(self.on_complete, 3000)

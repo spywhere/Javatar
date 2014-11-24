@@ -29,18 +29,6 @@ import copy
 import sublime
 
 
-# Memory support, condition
-# Custom function (same key for multiple menu. Ex. open preferences by project, window)
-'''
-{
-    "memory": ["add", "key", "value"]
-              ["set", "key", "value"]
-              ["del", "key"]
-              ["if", "key", "is", "value", "command"]
-}
-'''
-
-
 class QuickMenu:
     settings = {
         "menu": [],
@@ -57,7 +45,8 @@ class QuickMenu:
         "level": 0
     }
 
-    def __init__(self, menu=[], silent=True, save_selected=True, max_level=50):
+    def __init__(self, menu=None, silent=True, save_selected=True, max_level=50):
+        menu = menu or []
         self.settings["menu"] = copy.deepcopy(menu)
         self.settings["max_level"] = max_level
         self.settings["silent"] = silent

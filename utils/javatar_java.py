@@ -1,11 +1,21 @@
 import sublime
 import re
 import os
+from os.path import join
 import threading
 import traceback
-from .javatar_shell import *
-from .javatar_thread import *
-from .javatar_utils import *
+from .javatar_shell import JavatarBlockShell
+from .javatar_thread import ThreadProgress
+from .javatar_utils import (
+    get_package_root_dir, to_package, without_extension,
+    get_settings,
+    JavatarMergedDict,
+    get_global_settings,
+    get_project_settings,
+    is_debug,
+    set_settings,
+    del_settings
+)
 
 
 TMP = {}
@@ -68,8 +78,9 @@ def get_class(classname, window=None, callback=None, allow_manual=True, step=1):
         callback(class_info=None, local=None)
 
 
-def select_classes(index=None, window=None, callback=None, classes=[], allow_manual=True):
-    if callback is None:
+def select_classes(index=None, window=None, callback=None, classes=None, allow_manual=True):
+    classes = classes or []
+    if callback is None and is_debug():
         print("No callback")
         return
     global TMP
@@ -148,7 +159,7 @@ def get_class_name_by_regex(text):
 
 
 def package_as_directory(package):
-    return merge_path(package.split("."))
+    return join(*package.split("."))
 
 
 def make_package(package_dir, silent=False):

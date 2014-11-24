@@ -1,12 +1,12 @@
 import sublime
 import threading
 import urllib
-# import hashlib
 import traceback
-from .javatar_collections import *
-from .javatar_thread import *
+from .javatar_collections import get_installed_package
+from .javatar_thread import SilentThreadProgress, ThreadProgress
 from .javatar_usage import JavatarPackageUsageThread
-from .javatar_utils import *
+from .javatar_utils import is_debug
+from .javatar_actions import add_action
 
 
 PACKAGES_VERSION = "0.3"
@@ -17,7 +17,9 @@ def get_schema_version():
     return PACKAGES_VERSION
 
 
-def send_package_action(params={}):
+def send_package_action(params=None):
+    params = params or {}
+
     params["package"] = "true"
     thread = JavatarPackageUsageThread(params)
     thread.start()

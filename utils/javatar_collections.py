@@ -1,11 +1,11 @@
-from os.path import isdir, exists
+from os.path import isdir, exists, basename
 
 import re
 import sublime
 import threading
-from .javatar_actions import *
-from .javatar_thread import *
-from .javatar_utils import to_readable_size, get_project_settings, get_global_settings, get_path
+from .javatar_actions import add_action
+from .javatar_thread import ThreadProgress
+from .javatar_utils import to_readable_size, get_project_settings, get_global_settings
 
 
 INSTALLED_PACKAGES = []
@@ -170,7 +170,7 @@ def refresh_dependencies(local=None):
 
     dependencies = get_dependencies(local)
     for dependency in dependencies:
-        name = get_path("name", dependency[0])
+        name = basename(dependency[0])
         if dependency[1]:
             dependency_menu["actions"].append({"command": "javatar_settings", "args": {"actiontype": "remove_dependency", "arg1": dependency[0], "arg2": True}})
             if isdir(dependency[0]):
@@ -214,8 +214,7 @@ class JavatarSnippetsLoaderThread(threading.Thread):
             classScope = classScope[7:-1]
 
         if classScope is None or classScope == "":
-            from .javatar_utils import get_path
-            classScope = get_path("name", file)[:-8]
+            classScope = basename(file)[:-8]
 
         descriptionScope = ""
         descriptionRe = re.search("%description:(.*)%(\\s*)", data, re.M)
@@ -229,9 +228,8 @@ class JavatarSnippetsLoaderThread(threading.Thread):
     def run(self):
         snippets = []
 
-        from .javatar_utils import get_path
         for filepath in sublime.find_resources("*.javatar"):
-            filename = get_path("name", filepath)
+            filename = basename(filepath)
             add_action(
                 "javatar.util.collection",
                 "Javatar snippet " + filename + " loaded"
@@ -280,7 +278,6 @@ class JavatarPackagesLoaderThread(threading.Thread):
             "javatar.util.collection.analyse_import",
             "Analyse package [file=" + filepath + "]"
         )
-        from .javatar_utils import get_path
 
         try:
             imports = sublime.decode_value(sublime.load_resource(filepath))
@@ -291,7 +288,7 @@ class JavatarPackagesLoaderThread(threading.Thread):
         else:
             if "experiment" in imports and imports["experiment"]:
                 return None
-            filename = get_path("name", filepath)
+            filename = basename(filepath)
             if "name" in imports:
                 filename = imports["name"]
             count = self.count_classes(imports)
@@ -303,9 +300,8 @@ class JavatarPackagesLoaderThread(threading.Thread):
 
     def run(self):
         default_packages = []
-        from .javatar_utils import get_path
         for filepath in sublime.find_resources("*.javatar-packages"):
-            filename = get_path("name", filepath)
+            filename = basename(filepath)
             add_action(
                 "javatar.util.collection",
                 "Javatar default package " + filename + " loaded"
