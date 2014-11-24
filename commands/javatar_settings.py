@@ -125,10 +125,12 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
         else:
             menu_name = "global" + menu_name
         sublime.set_timeout(lambda: sublime.active_window().run_command("javatar", {"action": {"name": menu_name}}), 10)
-        sublime.set_timeout(lambda: show_status("Dependency \"" + basename(arg1) + "\" has been removed", None, False), 500)
+        self.show_delayed_status("Dependency \"" + basename(arg1) + "\" has been removed")
 
-    def set_program_arguments(self):
-        sublime.active_window().show_input_panel("Arguments to pass to main: ", "", self.on_input_done, None, None)
+    def set_program_arguments(self, arg1=None, arg2=None):
+        program_arguments = get_settings("program_arguments")
+        panel = sublime.active_window().show_input_panel("Arguments to pass to main: ", program_arguments, self.on_input_done, None, self.on_input_cancel)
+        panel.sel().add(sublime.Region(0, panel.size())) # select the current value for fast editing
 
     def set_jdk(self, arg1=None, arg2=None):
         self.local = arg1
@@ -162,7 +164,13 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
     def on_input_done(self, input):
         if self.actiontype == "set_program_arguments":
             set_settings("program_arguments", input)
-            sublime.set_timeout(lambda: show_status("Program arguments \"" + input + "\" set", None, False), 500)
+            self.show_delayed_status("Program arguments \"" + input + "\" set")
+
+    def on_input_cancel(self):
+        if self.actiontype == "set_program_arguments":
+            program_arguments = get_settings("program_arguments")
+            self.show_delayed_status("Program arguments unchanged from \"" + program_arguments + "\"")
+
 
     def on_panel_cancel(self):
         if self.actiontype == "add_external_jar" or self.actiontype == "add_class_folder":
@@ -177,7 +185,7 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
         if self.actiontype == "set_source_folder":
             source_rel_path = join(basename(get_project_dir()), self.panel_list[index][1][1:])
             set_settings("source_folder", join(get_project_dir(), self.panel_list[index][1][1:]), True)
-            sublime.set_timeout(lambda: show_status("Source folder \"" + source_rel_path + "\" is set", None, False), 500)
+            self.show_delayed_status("Source folder \"" + source_rel_path + "\" is set")
         elif self.actiontype == "set_jdk":
             if self.local:
                 jdks = get_project_settings("jdk_version")
@@ -188,9 +196,9 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
             jdks["use"] = self.jdk_list[index]
             set_settings("jdk_version", jdks, self.local)
             if self.local:
-                sublime.set_timeout(lambda: show_status(self.panel_list[index][0] + " has been set for project", None, False), 500)
+                self.show_delayed_status(self.panel_list[index][0] + " has been set for project")
             else:
-                sublime.set_timeout(lambda: show_status(self.panel_list[index][0] + " has been set as default", None, False), 500)
+                self.show_delayed_status(self.panel_list[index][0] + " has been set as default")
             detect_jdk(True)
         elif self.actiontype == "add_external_jar" or self.actiontype == "add_class_folder":
             if self.actiontype == "add_external_jar":
@@ -213,4 +221,8 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
             else:
                 menu_name = "global" + menu_name
             sublime.set_timeout(lambda: sublime.active_window().run_command("javatar", {"action": {"name": menu_name}}), 10)
-            sublime.set_timeout(lambda: show_status("Dependency \"" + basename(path) + "\" has been added", None, False), 500)
+            self.show_delayed_status("Dependency \"" + basename(path) + "\" has been added")
+
+
+    def show_delayed_status(self, message):
+        sublime.set_timeout(lambda: show_status(message, None, False), 500)
