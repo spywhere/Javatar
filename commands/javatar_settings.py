@@ -69,7 +69,8 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
         )
         self.actiontype = actiontype
         if actiontype == "set_program_arguments":
-            sublime.active_window().show_input_panel("Arguments to pass to main: ", "", self.on_input_done, None, None)
+            program_arguments = get_settings("program_arguments")
+            sublime.active_window().show_input_panel("Arguments to pass to main: ", program_arguments, self.on_input_done, None, None)
         elif actiontype == "set_source_folder":
             self.panel_list = self.get_folders()
             if len(self.panel_list) < 1:
