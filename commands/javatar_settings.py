@@ -129,7 +129,7 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
 
     def set_program_arguments(self, arg1=None, arg2=None):
         program_arguments = get_settings("program_arguments")
-        panel = sublime.active_window().show_input_panel("Arguments to pass to main: ", program_arguments, self.on_input_done, None, None)
+        panel = sublime.active_window().show_input_panel("Arguments to pass to main: ", program_arguments, self.on_input_done, None, self.on_input_cancel)
         panel.sel().add(sublime.Region(0, panel.size()))
 
     def set_jdk(self, arg1=None, arg2=None):
@@ -165,6 +165,12 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
         if self.actiontype == "set_program_arguments":
             set_settings("program_arguments", input)
             sublime.set_timeout(lambda: show_status("Program arguments \"" + input + "\" set", None, False), 500)
+
+    def on_input_cancel(self):
+        if self.actiontype == "set_program_arguments":
+            program_arguments = get_settings("program_arguments")
+            sublime.set_timeout(lambda: show_status("Program arguments unchanged from \"" + program_arguments + "\"", None, False), 500)
+
 
     def on_panel_cancel(self):
         if self.actiontype == "add_external_jar" or self.actiontype == "add_class_folder":
