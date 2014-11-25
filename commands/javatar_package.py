@@ -37,11 +37,6 @@ class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):
         view.run_command("javatar_util", {"util_type": "set_read_only"})
 
     def on_complete(self):
-        output = "## Javatar Packages report\n"
-        output += "* Package name: " + self.package_info[0] + "\n"
-        output += "* Package filename: " + self.package_info[1] + "\n"
-        if self.package_info[2] != "":
-            output += "* Package conflicts: " + self.package_info[2] + "\n"
         search_path = dirname(get_project_dir())
         doclet_path = None
         for name in os.listdir(search_path):
@@ -53,24 +48,48 @@ class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):
             sublime.error_message("Javatar doclet not found")
             return
 
-        output += "## Generated Packages\n"
-        # make sure that run in correct directory
-        command = "cd " + shlex.quote(search_path) + ";"
-        command += "echo Generating...;"
-        command += "javadoc -sourcepath " + shlex.quote(os.path.join(get_source_folder(), self.package_info[3][1][1:])) + " -docletpath " + shlex.quote(doclet_path) + " -name " + shlex.quote(self.package_info[0]) + " -doclet me.spywhere.doclet.Javatar -quiet "
-
         rootlen = len(os.path.join(get_project_dir(), self.package_info[3][1][1:]))
         package_dirs = self.get_source_folder(os.path.join(get_project_dir(), self.package_info[3][1][1:]))
-        for package_dir in package_dirs:
-            if self.is_source_folder(package_dir[1], False):
-                package = to_package(package_dir[1][rootlen:], False)
-                output += "* " + package + "\n"
-                command += " " + package
 
-        command += ";echo Done"
+        packages = [
+            to_package(package_dir[1][rootlen:], False)
+            for package_dir in package_dirs
+            if self.is_source_folder(package_dir[1], False)
+        ]
 
-        output += "\n## Package Info\n"
-        output += "\n*Output file: " + os.path.join(search_path, self.package_info[1]) + ".javatar-packages\n"
+        output = (
+            "## Javatar Packages report\n"
+            "* Package name: {}\n"
+            "* Package filename: {}\n"
+            "{}"
+            "## Generated Packages\n"
+            "{}"
+            "\n## Package Info\n"
+            "\n* Output file: {}.javatar-packages\n"
+        ).format(
+            self.package_info[0],
+            self.package_info[1],
+            (
+                "* Package conflicts: {}\n".format(self.package_info[2])
+                if self.package_info[2] else ""
+            ),
+            ''.join(map('* {}\n'.format, packages)),
+            os.path.join(search_path, self.package_info[1])
+        )
+
+        # make sure that run in correct directory
+        command = (
+            "cd {};"
+            "echo Generating...;"
+            "javadoc -sourcepath {} -docletpath {} -name {} -doclet me.spywhere.doclet.Javatar -quiet "
+            "{};echo Done"
+        ).format(
+            shlex.quote(search_path),
+            shlex.quote(os.path.join(get_source_folder(), self.package_info[3][1][1:])),
+            shlex.quote(doclet_path),
+            shlex.quote(self.package_info[0]),
+            ' '.join(packages)
+        )
 
         sublime.active_window().run_command("exec", {"shell_cmd": command})
 
