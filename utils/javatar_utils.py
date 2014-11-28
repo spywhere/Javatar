@@ -286,13 +286,18 @@ def get_class_name(file_path=None, view=None):
 
 
 def parse_macro(text, macro_data=None, file_path=None):
+    macro_data = macro_data or {}
+
     if file_path is not None:
-        text = text.replace("$file_parent", dirname(file_path))
-        text = text.replace("$file_name", basename(file_path))
-        text = text.replace("$file", file_path)
-    if macro_data is not None:
-        for key in macro_data:
-            text = text.replace("$" + key, macro_data[key])
+        macro_data.update({
+            "file_parent": dirname(file_path),
+            "file_name": basename(file_path),
+            "file": file_path,
+        })
+
+    for key in macro_data:
+        text = text.replace("$" + key, macro_data[key])
+
     return text
 
 
