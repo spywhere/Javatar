@@ -141,7 +141,7 @@ def get_info(text, on_change=False):
 def get_file_contents(classType, info):
     data = get_snippet(classType)
     if data is None:
-        sublime.error_message("Snippet \"" + classType + "\" is not found")
+        sublime.error_message('Snippet "{}" is not found'.format(classType))
         return None
     if info["package"] != "":
         data = data.replace("%package%", "package " + info["package"] + ";")
@@ -215,15 +215,35 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
                 # we got an error message back from get_info
                 return info
             elif os.path.exists(info["file"]):
-                return self.create_type + " \"" + info["class"] + "\" already exists"
+                return '{} "{}" already exists'.format(
+                    self.create_type, info["class"]
+                )
+
             else:
                 prefix = self.build_prefix(info)
                 additional_text = self.build_additional_text(info)
-                return prefix + " \"" + info["class"] + "\" will be created within package \"" + to_readable_package(info["package"], True) + "\"" + additional_text
 
+                return '{} "{}" will be created within package "{}" {}'.format(
+                    prefix,
+                    info["class"],
+                    to_readable_package(info["package"], True),
+                    additional_text
+                )
         add_action("javatar.command.create.run", "Create [info=" + str(info) + "]")
-        create_class_file(info["file"], get_file_contents(self.create_type, info), self.create_type + " \"" + info["class"] + "\" already exists", info)
-        sublime.set_timeout(lambda: show_status(self.create_type + " \"" + info["class"] + "\" is created within package \"" + to_readable_package(info["package"], True) + "\""), 500)
+        create_class_file(
+            info["file"],
+            get_file_contents(self.create_type, info),
+            '{} "{}" already exists'.format(self.create_type, info['class']),
+            info
+        )
+        sublime.set_timeout(lambda: show_status(
+            '{} "{}" is created within package "{}"'.format(
+                self.create_type,
+                info["class"],
+                to_readable_package(info["package"], True)
+            )),
+            500
+        )
 
     def build_prefix(self, info):
         prefix = ""

@@ -295,7 +295,14 @@ class JavatarPackagesLoaderThread(threading.Thread):
                 filename = imports["name"]
             count = self.count_classes(imports)
             self.installed_packages.append({"name": filename, "path": filepath})
-            print("Javatar package \"" + filename + "\" loaded with " + str(count[1]) + " classes in " + str(count[0]) + " packages")
+            print(
+                'Javatar package "{}" loaded with {} classes in {} packages'
+                .format(
+                    filename,
+                    count[1],
+                    count[0]
+                )
+            )
             return imports
 
         return None
