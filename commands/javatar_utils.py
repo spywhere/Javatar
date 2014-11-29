@@ -81,7 +81,7 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
                     else:
                         nodes = scope.find_by_selectors(text)
                     if text != "#":
-                        status_text = "Parsing got " + str(len(nodes)) + " tokens"
+                        status_text = "Parsing got {} tokens".format(len(nodes))
                     for node in nodes:
                         if text == "#":
                             if status_text == "":
@@ -89,9 +89,10 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
                             else:
                                 status_text += " " + node["name"]
                         else:
-                            print("#" + str(node["begin"]) + ":" + str(node["end"]) + " => " + node["name"])
-                            print("   => " + node["value"])
-                    print("Total: " + str(len(nodes)) + " tokens")
+                            print("#{begin}:{end} => {name}".format_map(node))
+                            print("   => {value}".format_map(node))
+
+                    print("Total: {} tokens".format(len(nodes)))
                 if not is_stable():
                     if text != "#":
                         if status_text != "" and str(parse_output["end"]) == str(self.view.size()):
