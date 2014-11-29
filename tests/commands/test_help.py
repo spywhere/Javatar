@@ -33,8 +33,10 @@ class TestHelp(unittest.TestCase):
     @patch('javatar.commands.javatar_help.is_java')
     @patch('javatar.commands.javatar_help.get_version', return_value='1.0')
     @patch('sublime.packages_path', return_value='')
-    def test_run(self, packages_path, get_version, is_java, get_actions,
-                 get_settings):
+    @patch('sublime_api.architecture', return_value='64bit')
+    @patch('sublime_api.platform', return_value='win32')
+    def test_run(self, platform, architecture, packages_path, get_version,
+                 is_java, get_actions, get_settings):
         is_java.return_value = True
         get_settings.side_effect = {
             'enable_actions_history': True,
