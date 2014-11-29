@@ -1,5 +1,5 @@
 import sublime_plugin
-from ..QuickMenu import QuickMenu
+from ..QuickMenu.QuickMenu import QuickMenu
 from ..utils.javatar_actions import add_action
 
 
