@@ -227,7 +227,7 @@ def get_java_version(path="", check_all=False, executable=None):
 
 
 def dict_to_list(dicto):
-    return list(dicto.keys())
+    return list(dicto.values())
 
 
 def is_jdk_dir(path):
@@ -374,7 +374,7 @@ class JavatarJDKDetectionThread(threading.Thread):
                 del_settings("jdk_version")
                 del_settings("jdk_version", True)
                 print("[Javatar] No JDK found")
-                sublime.error_message("Javatar cannot find JDK installed in your computer.\n\nPlease install or settings the location of installed JDK.")
+                sublime.error_message("Javatar cannot find JDK installed on your computer.\n\nPlease install or settings the location of installed JDK.")
             if self.on_done is not None:
                 self.on_done()
             self.result = True

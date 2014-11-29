@@ -5,7 +5,7 @@ from .javatar_utils import start_clock, stop_clock
 
 
 # YY.MM.DD.HH.MM
-VERSION = "14.11.12.23.14b"
+VERSION = "14.11.30.00.00b"
 UPDATEFOR = "all"
 NEWSID = 18
 
@@ -14,6 +14,7 @@ Just install Javatar? Checkout JavatarDoc for Javatar information and guides. Li
 
 A small update but got a new improvement on class creation. Be sure to checkout JavaDoc!
 These are updates and fixes for Javatar {VERSION}...
+- Fix Javatar did not detect JDK properly
 - Build notification via SubNotify (more details in JavatarDoc)
 - Fix package/class creation did not show any details
 - Fix Javatar Shell cause Sublime Text crash on output encoding error
