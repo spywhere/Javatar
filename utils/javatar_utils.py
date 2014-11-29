@@ -360,9 +360,9 @@ def get_current_dir():
 
 
 class JavatarMergedDict():
-    def __init__(self, dict1, dict2):
-        self.global_dict = dict1
-        self.local_dict = dict2
+    def __init__(self, global_dict, local_dict):
+        self.global_dict = global_dict
+        self.local_dict = local_dict
 
     def get_dict(self, custom=None):
         if self.global_dict is None:
@@ -422,8 +422,8 @@ class JavatarMergedDict():
 
 
 class JavatarDict():
-    def __init__(self, dict1):
-        self.jdict = dict1
+    def __init__(self, global_dict):
+        self.jdict = global_dict
 
     def get_dict(self, custom=None):
         return self.jdict
