@@ -1,5 +1,5 @@
 from os.path import join
-from unittest.Magicmock import MagicMock, patch
+from unittest.mock import MagicMock, patch
 import os
 import sublime
 import tempfile
