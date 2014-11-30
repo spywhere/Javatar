@@ -8,6 +8,7 @@
 - Code Core
   - Git feature branching
   - Fully pep8 compatible (if possible)
+  - Unit tests - small functions are easier to test
   - Work-based class design
   - Shell Manager
   - Status Manager
