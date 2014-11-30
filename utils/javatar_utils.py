@@ -63,7 +63,7 @@ def restore_project_state():
     global UPDATE_READY
     if get_settings("allow_project_restoration"):
         project_data = get_global_settings("project_data")
-        if len(project_data) > 0:
+        if project_data:
             for window in sublime.windows():
                 if str(window.id()) in project_data:
                     window.set_project_data(project_data[str(window.id())])
@@ -286,13 +286,18 @@ def get_class_name(file_path=None, view=None):
 
 
 def parse_macro(text, macro_data=None, file_path=None):
+    macro_data = macro_data or {}
+
     if file_path is not None:
-        text = text.replace("$file_parent", dirname(file_path))
-        text = text.replace("$file_name", basename(file_path))
-        text = text.replace("$file", file_path)
-    if macro_data is not None:
-        for key in macro_data:
-            text = text.replace("$" + key, macro_data[key])
+        macro_data.update({
+            "file_parent": dirname(file_path),
+            "file_name": basename(file_path),
+            "file": file_path,
+        })
+
+    for key in macro_data:
+        text = text.replace("$" + key, macro_data[key])
+
     return text
 
 
@@ -355,9 +360,9 @@ def get_current_dir():
 
 
 class JavatarMergedDict():
-    def __init__(self, dict1, dict2):
-        self.global_dict = dict1
-        self.local_dict = dict2
+    def __init__(self, global_dict, local_dict):
+        self.global_dict = global_dict
+        self.local_dict = local_dict
 
     def get_dict(self, custom=None):
         if self.global_dict is None:
@@ -417,8 +422,8 @@ class JavatarMergedDict():
 
 
 class JavatarDict():
-    def __init__(self, dict1):
-        self.jdict = dict1
+    def __init__(self, global_dict):
+        self.jdict = global_dict
 
     def get_dict(self, custom=None):
         return self.jdict

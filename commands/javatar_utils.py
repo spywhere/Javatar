@@ -62,7 +62,7 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
     def parse_code(self, text):
         try:
             grammars = sublime.find_resources("Java*.javatar-grammar")
-            if len(grammars) > 0:
+            if grammars:
                 scope = GrammarParser(sublime.decode_value(sublime.load_resource(grammars[0])))
                 parse_output = scope.parse_grammar(self.view.substr(sublime.Region(0, self.view.size())))
                 status_text = ""
@@ -72,7 +72,7 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
                     elif text == "#":
                         selections = self.view.sel()
                         nodes = scope.find_by_region([0, 0])
-                        if len(selections) > 0:
+                        if selections:
                             first_sel = selections[0]
                             if first_sel.empty():
                                 nodes = scope.find_by_region([first_sel.begin(), first_sel.end()])
@@ -81,7 +81,7 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
                     else:
                         nodes = scope.find_by_selectors(text)
                     if text != "#":
-                        status_text = "Parsing got " + str(len(nodes)) + " tokens"
+                        status_text = "Parsing got {} tokens".format(len(nodes))
                     for node in nodes:
                         if text == "#":
                             if status_text == "":
@@ -89,9 +89,10 @@ class JavatarUtilCommand(sublime_plugin.TextCommand):
                             else:
                                 status_text += " " + node["name"]
                         else:
-                            print("#" + str(node["begin"]) + ":" + str(node["end"]) + " => " + node["name"])
-                            print("   => " + node["value"])
-                    print("Total: " + str(len(nodes)) + " tokens")
+                            print("#{begin}:{end} => {name}".format_map(node))
+                            print("   => {value}".format_map(node))
+
+                    print("Total: {} tokens".format(len(nodes)))
                 if not is_stable():
                     if text != "#":
                         if status_text != "" and str(parse_output["end"]) == str(self.view.size()):
