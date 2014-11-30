@@ -1,0 +1,317 @@
+{
+    "separator": {
+        "parse_any": [
+            {
+                "match": "[ \\t\\v]"
+            },
+            {
+                "include": "Comment"
+            },
+            {
+                "include": "LineTerminator"
+            },
+            {
+                "include": "ThisWillBeUnexistsRule"
+            }
+        ],
+        "multiple": true
+    },
+    "compilation_unit": {
+        "parse": [
+            {
+                "include": "MainDeclaration"
+            },
+            {
+                "include": "MethodDeclaration",
+                "multiple": true
+            }
+        ]
+    },
+    "repository": {
+        "ThisWillBeUnusedRule": {},
+        // Lexical Part
+        "Identifier": {
+            "name": "Identifier",
+            "exclude": {
+                "include": "Keyword"
+            },
+            "parse": [
+                {
+                    "match": "[a-zA-Z0-9]+",
+                    "after_separator": false
+                },
+                {
+                    "before_separator": false,
+                    "parse": [
+                        {
+                            "before_separator": false,
+                            "match": " "
+                        },
+                        {
+                            "exclude": {
+                                "include": "Keyword"
+                            },
+                            "match": "[a-zA-Z0-9]+"
+                        }
+                    ],
+                    "multiple": true
+                }
+            ]
+        },
+        "BooleanLiteral": {
+            "name": "BooleanLiteral",
+            "match": "false|true"
+        },
+        "Type": {
+            "name": "Type",
+            "match": "boolean|integer"
+        },
+        "MethodModifier": {
+            "name": "MethodModifier",
+            "match": "private|public"
+        },
+        "Comparator": {
+            "name": "Comparator",
+            "parse": [
+                {
+                    "match": "\\b(am|are|is)\\b"
+                },
+                {
+                    "match": "not",
+                    "optional": true
+                }
+            ]
+        },
+        "Keyword": {
+            "name": "Keyword",
+            "match": "\\b(am|are|as|boolean|continue|else|false|if|integer|is|not|private|public|return|stop|true|while)\\b"
+        },
+        "Comment": {
+            "name": "Comment",
+            "parse": [
+                {
+                    "match": "//"
+                },
+                {
+                    "name": "CommentText",
+                    "match": "[^\r\n]*"
+                }
+            ]
+        },
+        "LineTerminator": {
+            "match": "\\r\\n|[\\r\\n]"
+        },
+        // Syntactic Part
+        "MainDeclaration": {
+            "name": "MainDeclaration",
+            "include": "MethodDeclaration"
+        },
+        "MethodDeclaration": {
+            "name": "MethodDeclaration",
+            "parse": [
+                {
+                    "include": "MethodModifier",
+                    "optional": true
+                },
+                {
+                    "include": "MethodName"
+                },
+                {
+                    "include": "MethodReturn",
+                    "optional": true
+                },
+                {
+                    "include": "MethodBody"
+                }
+            ]
+        },
+        "MethodName": {
+            "name": "MethodName",
+            "parse": [
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "-"
+                        },
+                        {
+                            "name": "Argument",
+                            "include": "Identifier"
+                        }
+                    ],
+                    "multiple": true
+                }
+            ]
+        },
+        "MethodReturn": {
+            "name": "MethodReturn",
+            "parse": [
+                {
+                    "match": "as",
+                    "optional": true
+                },
+                {
+                    "include": "Type"
+                }
+            ]
+        },
+        "MethodBody": {
+            "name": "MethodBody",
+            "include": "Block"
+        },
+        "Statement": {
+            "name": "Statement",
+            "parse_any": [
+                {
+                    "include": "Block"
+                },
+                {
+                    "include": "WhileStatement"
+                },
+                {
+                    "include": "IfStatement"
+                },
+                {
+                    "include": "Expression"
+                },
+                {
+                    "name": "ReturnStatement",
+                    "parse": [
+                        {
+                            "match": "return"
+                        },
+                        {
+                            "include": "Comparison"
+                        }
+                    ]
+                },
+                {
+                    "match": "continue|stop"
+                }
+            ]
+        },
+        "Block": {
+            "name": "Block",
+            "parse": [
+                {
+                    "match": "{"
+                },
+                {
+                    "include": "Statement",
+                    "multiple": true
+                },
+                {
+                    "match": "}"
+                }
+            ]
+        },
+        "WhileStatement": {
+            "name": "WhileStatement",
+            "parse": [
+                {
+                    "match": "while"
+                },
+                {
+                    "include": "Comparison"
+                },
+                {
+                    "match": ":"
+                },
+                {
+                    "include": "Statement"
+                }
+            ]
+        },
+        "IfStatement": {
+            "name": "IfStatement",
+            "parse": [
+                {
+                    "match": "if"
+                },
+                {
+                    "include": "Comparison"
+                },
+                {
+                    "match": ":"
+                },
+                {
+                    "include": "Statement"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "else"
+                        },
+                        {
+                            "match": ":"
+                        },
+                        {
+                            "include": "Statement"
+                        }
+                    ],
+                    "optional": true
+                }
+            ]
+        },
+        "Comparison": {
+            "name": "Comparison",
+            "parse": [
+                {
+                    "include": "Expression"
+                },
+                {
+                    "parse": [
+                        {
+                            "include": "Comparator"
+                        },
+                        {
+                            "include": "Expression"
+                        }
+                    ],
+                    "optional": true
+                }
+            ]
+        },
+        "Expression": {
+            "name": "Expression",
+            "parse_any": [
+                {
+                    "include": "MethodInvocation"
+                },
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "include": "BooleanLiteral"
+                }
+            ]
+        },
+        "MethodInvocation": {
+            "name": "MethodInvocation",
+            "parse": [
+                {
+                    "match": "<"
+                },
+                {
+                    "include": "Identifier"
+                },
+                {
+                    "parse": [
+                        {
+                            "match": "-"
+                        },
+                        {
+                            "include": "Expression"
+                        }
+                    ],
+                    "multiple": true
+                },
+                {
+                    "match": ">"
+                }
+            ]
+        }
+    }
+}
