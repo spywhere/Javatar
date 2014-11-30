@@ -1,6 +1,0 @@
-[submodule "QuickMenu"]
-	path = QuickMenu
-	url = https://spywhere@github.com/spywhere/QuickMenu.git
-[submodule "parser"]
-	path = parser
-	url = https://spywhere@github.com/spywhere/GrammarParser.git
