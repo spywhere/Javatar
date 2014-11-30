@@ -23,9 +23,6 @@ from ..utils import (
 )
 
 
-# Multiple source folder
-
-
 class JavatarSettingsCommand(sublime_plugin.WindowCommand):
     def is_source_folder(self, path, can_empty=True):
         empty = True
@@ -130,7 +127,7 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
     def set_program_arguments(self, arg1=None, arg2=None):
         program_arguments = get_settings("program_arguments")
         panel = sublime.active_window().show_input_panel("Arguments to pass to main: ", program_arguments, self.on_input_done, None, self.on_input_cancel)
-        panel.sel().add(sublime.Region(0, panel.size())) # select the current value for fast editing
+        panel.sel().add(sublime.Region(0, panel.size()))  # select the current value for fast editing
 
     def set_jdk(self, arg1=None, arg2=None):
         self.local = arg1
@@ -161,16 +158,15 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
         else:
             sublime.error_message("Javatar cannot find JDK installed in your computer.\n\nPlease install or settings the location of installed JDK.")
 
-    def on_input_done(self, input):
+    def on_input_done(self, args):
         if self.actiontype == "set_program_arguments":
-            set_settings("program_arguments", input)
-            self.show_delayed_status("Program arguments \"" + input + "\" set")
+            set_settings("program_arguments", args, True)
+            self.show_delayed_status("Program arguments \"" + args + "\" set")
 
     def on_input_cancel(self):
         if self.actiontype == "set_program_arguments":
             program_arguments = get_settings("program_arguments")
             self.show_delayed_status("Program arguments unchanged from \"" + program_arguments + "\"")
-
 
     def on_panel_cancel(self):
         if self.actiontype == "add_external_jar" or self.actiontype == "add_class_folder":
@@ -223,7 +219,6 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
 
             sublime.set_timeout(lambda: sublime.active_window().run_command("javatar", {"action": {"name": menu_name}}), 10)
             self.show_delayed_status("Dependency \"" + basename(path) + "\" has been added")
-
 
     def show_delayed_status(self, message):
         sublime.set_timeout(lambda: show_status(message, None, False), 500)

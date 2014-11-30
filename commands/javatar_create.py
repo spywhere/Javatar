@@ -41,9 +41,7 @@ def find_keyword(className, Map):
     for keyword, code in Map.items():
         if className.lower().startswith(keyword):
             className = className[len(keyword):]
-
             return className, keyword, code
-
     return className, None, None
 
 
@@ -69,10 +67,10 @@ def parse_spec(text):
     className = parts.pop(0)
     while parts:
         part = parts.pop(0)
-        if part == '<':
-            implements = parts.pop(0).split(',')
-        elif part == ':':
-            extends = parts.pop(0).split(',')
+        if part == "<":
+            implements = parts.pop(0).split(",")
+        elif part == ":":
+            extends = parts.pop(0).split(",")
 
     asmain = False
     if className.lower().endswith("asmain"):
@@ -83,16 +81,16 @@ def parse_spec(text):
         body = "${1}"
 
     return {
-        'relative': relative,
-        'className': className,
-        'asmain': asmain,
-        'body': body,
-        'implements': implements,
-        'extends': extends,
-        'visibility_keyword': visibility_keyword,
-        'visibility': visibility,
-        'modifier_keyword': modifier_keyword,
-        'modifier': modifier
+        "relative": relative,
+        "className": className,
+        "asmain": asmain,
+        "body": body,
+        "implements": implements,
+        "extends": extends,
+        "visibility_keyword": visibility_keyword,
+        "visibility": visibility,
+        "modifier_keyword": modifier_keyword,
+        "modifier": modifier
     }
 
 
@@ -103,7 +101,7 @@ def get_info(text, on_change=False):
         sublime.error_message("Cannot specify package location")
         return
 
-    if not is_package(text.strip('~'), True):
+    if not is_package(text.strip("~"), True):
         if on_change:
             return "Invalid package naming"
         sublime.error_message("Invalid package naming")
@@ -111,9 +109,9 @@ def get_info(text, on_change=False):
 
     spec = parse_spec(text)
 
-    text = text.strip('~')
+    text = text.strip("~")
 
-    if spec['relative'] and get_current_dir() is not None:
+    if spec["relative"] and get_current_dir() is not None:
         create_directory = join(get_current_dir(), package_as_directory(get_package_path(text)))
     else:
         create_directory = join(get_package_root_dir(), package_as_directory(get_package_path(text)))
@@ -122,19 +120,19 @@ def get_info(text, on_change=False):
     if not on_change:
         make_package(create_directory, True)
 
-    file_path = join(create_directory, spec['className'] + ".java")
+    file_path = join(create_directory, spec["className"] + ".java")
     return {
         "file": file_path,
         "package": package,
-        "visibility_keyword": spec['visibility_keyword'],
-        "visibility": spec['visibility'],
-        "modifier_keyword": spec['modifier_keyword'],
-        "modifier": spec['modifier'],
-        "class": spec['className'],
-        "extends": spec['extends'],
-        "implements": spec['implements'],
-        "body": spec['body'],
-        "asmain": spec['asmain']
+        "visibility_keyword": spec["visibility_keyword"],
+        "visibility": spec["visibility"],
+        "modifier_keyword": spec["modifier_keyword"],
+        "modifier": spec["modifier"],
+        "class": spec["className"],
+        "extends": spec["extends"],
+        "implements": spec["implements"],
+        "body": spec["body"],
+        "asmain": spec["asmain"]
     }
 
 

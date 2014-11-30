@@ -7,39 +7,6 @@ from .javatar_utils import (
 
 STATUS_NAME = "Javatar"
 STATUS = None
-TAB_NOTIFICATION = None
-
-
-class JavatarTabNotification():
-    running = False
-    views = []
-
-    def notify(self, view, times=None):
-        self.views.append([view, view.name(), times])
-        if not self.running:
-            sublime.set_timeout(lambda: self.run(), 10)
-            self.running = True
-
-    def on_activated(self, view):
-        for view_info in self.views:
-            if view_info[0].id() == view.id():
-                view_info[0].set_name(view_info[1])
-                self.views.remove(view_info)
-                break
-
-    def run(self, i=0):
-        index = 0
-        for view_info in self.views:
-            if view_info[2] is None or view_info[2] > 0:
-                view_info[0].set_name(view_info[1] + ("!" * i))
-                if view_info[2] is not None:
-                    self.views[index][2] -= 1
-            else:
-                view_info[0].set_name(view_info[1] + "!")
-            index += 1
-        self.running = len(self.views) > 0
-        if self.running:
-            sublime.set_timeout(lambda: self.run((i + 1) % 2), 500)
 
 
 class JavatarStatus():
@@ -94,10 +61,3 @@ def get_status():
     if STATUS is None:
         STATUS = JavatarStatus()
     return STATUS
-
-
-def get_tab_notification():
-    global TAB_NOTIFICATION
-    if TAB_NOTIFICATION is None:
-        TAB_NOTIFICATION = JavatarTabNotification()
-    return TAB_NOTIFICATION

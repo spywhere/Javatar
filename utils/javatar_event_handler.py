@@ -1,7 +1,5 @@
 import sublime_plugin
 
-EVENT_HANDLER = None
-
 
 class EventHandler():
     ON_NEW = 0x1

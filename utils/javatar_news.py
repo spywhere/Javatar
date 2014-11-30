@@ -5,22 +5,35 @@ from .javatar_utils import start_clock, stop_clock
 
 
 # YY.MM.DD.HH.MM
-VERSION = "14.11.30.00.00b"
+VERSION = "14.12.01.01.21b"
 UPDATEFOR = "all"
-NEWSID = 18
+NEWSID = 19
 
 NEWS_TEMPLATE = '''\
 Just install Javatar? Checkout JavatarDoc for Javatar information and guides. Link is located in README file.
 
-A small update but got a new improvement on class creation. Be sure to checkout JavaDoc!
+A huge update since last update before Javatar will reach its first release!
+
 These are updates and fixes for Javatar {VERSION}...
-- Fix Javatar did not detect JDK properly
+- Organize Imports now working on stable channel (finally!)
+- Run Main Class can now set program arguments (thanks to @JesseEmond)
 - Build notification via SubNotify (more details in JavatarDoc)
+- Update Java grammar file
+- Fix program arguments save to global settings
+- Fix organise imports is not working properly
+- Fix Javatar did not detect JDK properly
 - Fix package/class creation did not show any details
-- Fix Javatar Shell cause Sublime Text crash on output encoding error
-- Javatar Shell will now scroll to bottom
-- Class creation improvements (See JavaDoc for more information)
-- Remove abstract class snippets since a new class creation improvement can do more!
+- Fix error occurred when checking Java while no view opened
+- Fix some logic that has been invalid for months!
+- Some error messages now available in debug mode only
+- Reorganize menu for easier access to frequent access commands
+- Add Help and Support to command palette
+- Huge code refactor (thanks to @Mause)
+- Build now show more warnings and errors
+- Errors now tell more informations
+- Remove unused files and code
+- Update GrammarParser and QuickMenu
+- Update site to .com domain
 
 You can report/suggest any issue on Javatar repository. Link is already located in README file.
 '''

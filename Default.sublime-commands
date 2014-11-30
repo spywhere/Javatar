@@ -50,6 +50,15 @@
         }
     },
     {
+        "caption": "Javatar: Help and Support",
+        "command": "javatar",
+        "args": {
+            "action": {
+                "name": "help",
+            }
+        }
+    },
+    {
         "caption": "Javatar: Actions History (Custom)",
         "command": "javatar_help",
         "args": {
@@ -62,7 +71,7 @@
         "caption": "Preferences: Javatar's Proto.javatar-packages'",
         "command": "open_file", "args":
         {
-            "file": "${packages}/Javatar/Java/Proto.javatar-packages"
+            "file": "${packages}/Javatar/Developers/Proto.javatar-packages"
         }
     },
     {

@@ -1,11 +1,6 @@
-import os.path
-
 import sublime
+import os.path
 import re
-
-
-# Check if it is a Java or not, by checking current syntax (this help on new view calls)
-# Better unsave file detection (currently, create a untitled Java file within project is somehow save to wrong dir)
 
 
 def is_java(filepath=""):

@@ -25,10 +25,6 @@ from ..utils import (
 )
 
 
-# Create .jar using "jar" command
-# http://docs.oracle.com/javase/7/docs/technotes/tools/windows/jar.html
-
-
 class JavatarBuildCommand(sublime_plugin.WindowCommand):
     build_list = []
     build_size = -1

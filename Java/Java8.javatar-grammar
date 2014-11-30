@@ -2,6 +2,8 @@
     // Java 8 Grammar references from
     //   http://docs.oracle.com/javase/specs/jls/se8/html/index.html
     //   https://github.com/antlr/grammars-v4/tree/master/java8
+    // Modified for Javatar by Sirisak Lueangsaksri
+    // Latest Modified: 30 November 2014 21:37
     "separator": {
         "parse_any": [
             {
@@ -909,10 +911,38 @@
                 }
             ]
         },
+        "StaticClassOrInterfaceType": {
+            "exclude": {
+                "parse_any": [
+                    {
+                        "include": "Keyword"
+                    },
+                    {
+                        "include": "BooleanLiteral"
+                    },
+                    {
+                        "include": "NullLiteral"
+                    },
+                    {
+                        "match": "[a-z_$][a-zA-Z_$0-9]*|[A-Z][A-Z0-9]+"
+                    }
+                ]
+            },
+            "parse": [
+                {
+                    "name": "StaticClassOrInterfaceType",
+                    "include": "Identifier"
+                },
+                {
+                    "match": "(?=\\.)"
+                }
+            ]
+        },
         "ClassOrInterfaceType": {
             "name": "ClassOrInterfaceType",
             "parse": [
                 {
+                    "name": "VariableType",
                     "include": "Identifier"
                 },
                 {
@@ -2116,7 +2146,7 @@
                 },
                 {
                     "include": "ExpressionFollow",
-                    "optional": true
+                    "multiple": true
                 }
             ]
         },
@@ -2313,7 +2343,7 @@
                 {
                     "parse": [
                         {
-                            "match": "(>>>?|<<)=|[<>=!+\\-*/&|^%]=|&&|\\|\\||[*/%+-<>&^|=]"
+                            "match": "(>>>?|<<)=|[<>=!+\\-*/&|^%]=|&&?|\\|\\|?|[*/%+-<>^=]"
                         },
                         {
                             "include": "Expression"
@@ -2444,6 +2474,9 @@
                     ]
                 },
                 {
+                    "include": "StaticClassOrInterfaceType"
+                },
+                {
                     "include": "Literal"
                 },
                 {
@@ -2517,8 +2550,10 @@
             "name": "CreatedName",
             "parse_any": [
                 {
+                    "name": "ClassOrInterfaceType",
                     "parse": [
                         {
+                            "name": "VariableType",
                             "include": "Identifier"
                         },
                         {
@@ -2768,9 +2803,6 @@
             "name": "IntegerLiteral",
             "parse_any": [
                 {
-                    "include": "DecimalIntegerLiteral"
-                },
-                {
                     "include": "HexIntegerLiteral"
                 },
                 {
@@ -2778,6 +2810,9 @@
                 },
                 {
                     "include": "BinaryIntegerLiteral"
+                },
+                {
+                    "include": "DecimalIntegerLiteral"
                 }
             ]
         },
@@ -2831,7 +2866,10 @@
         },
         "IntegerTypeSuffix": {
             "name": "IntegerTypeSuffix",
-            "match": "[lL]"
+            // This is just a workaround to fix floating point problem
+            // Will match #d or #D (while floating point will be #.#d or #.#D)
+            // "match": "[lL]"
+            "match": "[lLfFdD]"
         },
         "DecimalNumeral": {
             "name": "DecimalNumeral",
@@ -2843,7 +2881,7 @@
             "match": "\\r\\n|[\\r\\n]"
         },
         "WhiteSpace": {
-            //"name": "WhiteSpace",
+            // "name": "WhiteSpace",
             "parse_any": [
                 {
                     "match": "[ \\t\\v]"

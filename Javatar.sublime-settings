@@ -164,26 +164,26 @@
     // Class in package matching using RegEx
     "package_class_match" : "([a-zA-Z_$][a-zA-Z\\d_$,<:]*)$",
 
-    // Package scope selector (Use in Organize Imports)
-    "package_meta_selector" : "meta.package.java",
-
-    // Import scope selector (Use in Organize Imports)
-    "import_meta_selector" : "meta.import.java",
-
-    // Package in package keyword scope selector (Use in Organize Imports)
+    // Package in package keyword scope selector (Use in Correct Class)
     "package_name_selector" : "storage.modifier.package.java",
 
-    // Class name scope selector (Use in Organize Imports)
+    // Class name scope selector (Use in Correct Class)
     "class_name_selector" : "entity.name.type.class.java",
 
-    // Package in import keyword scope selector (Use in Organize Imports)
-    "package_import_selector" : "storage.modifier.import.java",
+    // Types and classes selector (Use in Organize Imports)
+    "type_selectors" : "@VariableType|@StaticClassOrInterfaceType|@CatchType",
 
-    // Types and classes scope selector (Use in Organize Imports)
-    "type_selector" : "storage.type.java|storage.type.generic.java|storage.type.annotation.java|entity.other.inherited-class",
+    // Declarations with children selector (Use in Organize Imports)
+    "declarations_selector" : "@PackageDeclaration|>ImportDeclaration>|>ImportDeclaration",
 
-    // Primitive types fallback (default Java syntax is not 100% syntax perfect)
-    "primitive_type" : ["void", "boolean", "byte", "char", "short", "int", "float", "long", "double"],
+    // Package declaration selector (Use in Organize Imports)
+    "package_declaration_selector" : "@PackageDeclaration",
+
+    // Import declaration selector (Use in Organize Imports)
+    "import_declaration_selector" : "@ImportDeclaration",
+
+    // Package name in import declaration selector (Use in Organize Imports)
+    "import_package_name_selector" : ">ImportDeclaration>QualifiedName",
 
     //////////////////////////////////
     // Javatar Temporary Key/Value  //

@@ -74,14 +74,16 @@ def get_class(classname, window=None, callback=None, allow_manual=True, step=1):
     if len(classes) > 0:
         select_classes(window=window, classes=classes, callback=callback, allow_manual=allow_manual)
     else:
-        print("No class")
+        if is_debug():
+            print("No class")
         callback(class_info=None, local=None)
 
 
 def select_classes(index=None, window=None, callback=None, classes=None, allow_manual=True):
     classes = classes or []
-    if callback is None and is_debug():
-        print("No callback")
+    if callback is None:
+        if is_debug():
+            print("No callback")
         return
     global TMP
     if index is None:
@@ -98,10 +100,12 @@ def select_classes(index=None, window=None, callback=None, classes=None, allow_m
         elif len(classes) > 0:
             callback(class_info=classes[0]["class"], local=classes[0]["local"])
         else:
-            print("No class2")
+            if is_debug():
+                print("No class2")
             callback(class_info=None, local=None)
     elif index < 0:
-        print("Cancel")
+        if is_debug():
+            print("Cancel")
         callback = TMP["callback"]
         callback(class_info=None, local=None)
     elif index >= len(TMP["classes"]):

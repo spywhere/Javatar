@@ -1,11 +1,12 @@
 import sublime
 import sublime_plugin
+import traceback
 import re
 from os.path import join, exists
+from ..parser.GrammarParser import GrammarParser
 from ..utils import (
     is_file,
     add_action,
-    get_class,
     is_java,
     get_current_package,
     get_settings,
@@ -19,21 +20,8 @@ from ..utils import (
     get_package_root_dir,
     get_all_types,
     is_package,
-    to_package,
     get_current_dir
 )
-
-
-class JavatarTestOperationCommand(sublime_plugin.WindowCommand):
-    def run(self, class_name=None):
-        if class_name is None:
-            self.window.show_input_panel("Class Name:", "", self.run, None, None)
-        else:
-            get_class(class_name, self.window, self.class_callback)
-
-    def class_callback(self, class_info, local):
-        print("Local: " + str(local))
-        print(str(class_info))
 
 
 class JavatarCorrectClassCommand(sublime_plugin.TextCommand):
@@ -63,30 +51,9 @@ class JavatarCorrectClassCommand(sublime_plugin.TextCommand):
 
 
 class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
-    # import annotation
-    # import classes, generic classes
-    # import interfaces, superclasses
-    #
-    # if test on Bukkit Plugin passed then it should work perfectly
-    #
-    # TODO:
-    #     Performance!
-    #     Option to create a new class or enter it manually when no class is found
-
-    classes = []
-    ctype = None
-    selectedPackage = None
-    importedPackages = []
-    importedPackagesStat = {}
-    alwaysImportedPackages = []
-    importedTypes = []
-    useTypes = []
-    needImportTypes = []
-    askTypes = []
-    postAskTypes = []
-    index = 0
-
     def reset(self):
+        self.scope = None
+        self.parse_output = None
         self.classes = []
         self.ctype = None
         self.selectedPackage = None
@@ -120,38 +87,57 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
                     classes.append(textScope)
         return classes
 
+    def not_in_one_of(self, search, searchList):
+        for item in searchList:
+            if item.endswith(search):
+                return False
+        return True
+
     def organize_step_zero(self, edit):
-        # gathering info
+        # Gathering old imports info
         self.reset()
         add_action("javatar.command.operation.organize_imports.step0", "Organize Imports [step=0] Gathering info")
-        importedPackagesRegions = self.view.find_by_selector(get_settings("package_import_selector"))
-        useTypesRegions = self.view.find_by_selector(get_settings("type_selector"))
-        primitiveTypes = get_settings("primitive_type")
 
-        for region in useTypesRegions:
-            if self.view.substr(region) not in primitiveTypes:
-                self.useTypes += self.getClasses(self.view.substr(region))
-            elif is_debug():
-                print("useType: " + self.view.substr(region))
+        try:
+            grammars = sublime.find_resources("Java*.javatar-grammar")
+            if grammars:
+                self.scope = GrammarParser(sublime.decode_value(sublime.load_resource(grammars[0])))
+                self.parse_output = self.scope.parse_grammar(self.view.substr(sublime.Region(0, self.view.size())))
+            else:
+                print("[Javatar] No grammar file found")
+        except Exception:
+            print("[Javatar] Error occurred while parsing")
+            traceback.print_exc()
 
-        for region in importedPackagesRegions:
-            package = self.view.substr(region)
+        if self.scope is None or self.parse_output is None:
+            return
+
+        if self.parse_output["success"]:
+            useTypesNodes = self.scope.find_by_selectors(get_settings("type_selectors"))
+            for node in useTypesNodes:
+                self.useTypes.append(node["value"])
+
+        self.declarationNodes = self.scope.find_by_selectors(get_settings("declarations_selector"))
+
+        packageNodes = self.scope.find_by_selectors(get_settings("import_package_name_selector"), self.declarationNodes)
+        for packageNode in packageNodes:
+            package = packageNode["value"]
             self.importedPackages.append(package)
-            self.importedTypes.append(get_class_name(self.view.substr(region)))
+            self.importedTypes.append(get_class_name(package))
             if get_package_path(package) in self.importedPackagesStat:
                 self.importedPackagesStat[get_package_path(package)] += 1
             else:
                 self.importedPackagesStat[get_package_path(package)] = 1
 
         for useType in self.useTypes:
-            if useType not in self.importedTypes and useType not in self.needImportTypes and (not is_file() or (is_file() and not exists(join(get_current_dir(), useType + ".java")))):
+            if self.not_in_one_of(useType, self.importedTypes) and useType not in self.needImportTypes and (not is_file() or (is_file() and not exists(join(get_current_dir(), useType + ".java")))):
                 self.needImportTypes.append(useType)
 
         self.index = 0
         self.run(edit, 1)
 
     def organize_step_one(self, edit):
-        # select classes
+        # Select classes
         add_action("javatar.command.operation.organize_imports.step1", "Organize Imports [step=1] Select classes")
         if len(self.needImportTypes) > 0 and self.index < len(self.needImportTypes):
             classes = find_class(get_package_root_dir(), self.needImportTypes[self.index])
@@ -167,7 +153,7 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
             self.run(edit, 3)
 
     def organize_step_two(self, edit):
-        # select classes callback
+        # Select classes callback
         add_action(
             "javatar.command.operation.organize_imports.step2",
             "Organize Imports [step=2] Select classes callback"
@@ -191,7 +177,7 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
             self.run(edit, 1)
 
     def organize_step_three(self, edit):
-        # add default imports
+        # Add default imports
         add_action(
             "javatar.command.operation.organize_imports.step3",
             "Organize Imports [step=3] Add default imports"
@@ -219,7 +205,7 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
         self.run(edit, 4)
 
     def organize_step_four(self, edit):
-        # ask package
+        # Ask for package
         add_action(
             "javatar.command.operation.organize_imports.step4",
             "Organize Imports [step=4] Ask package"
@@ -231,7 +217,7 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
             self.run(edit, 6)
 
     def organize_step_five(self, edit):
-        # ask package callback
+        # Ask for package callback
         add_action(
             "javatar.command.operation.organize_imports.step5",
             "Organize Imports [step=5] Ask package callback"
@@ -250,29 +236,30 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
             self.run(edit, 4)
 
     def organize_step_six(self, edit):
-        # import
+        # Import necessary packages
         add_action(
             "javatar.command.operation.organize_imports.step6",
             "Organize Imports [step=6] Import"
         )
         importCode = ""
 
-        #clear old imports
-        packageRegions = self.view.find_by_selector(get_settings("package_meta_selector"))
-        if len(packageRegions) > 0:
-            importCode += self.view.substr(packageRegions[0]) + "\n\n"
-            self.view.replace(edit, packageRegions[0], "")
+        # Keep package declaration
+        packageDeclarationNodes = self.scope.find_by_selectors(get_settings("package_declaration_selector"), self.declarationNodes)
+        if len(packageDeclarationNodes) > 0:
+            importCode += packageDeclarationNodes[0]["value"] + "\n\n"
         else:
             importCode += "\n\n"
 
-        importsRegions = self.view.find_by_selector(get_settings("import_meta_selector"))
-        while len(importsRegions) > 0:
-            regionWithNewLine = sublime.Region(importsRegions[0].begin(), importsRegions[0].end() + 1)
-            while self.view.substr(regionWithNewLine)[-1] == "\n":
-                regionWithNewLine = sublime.Region(regionWithNewLine.begin(), regionWithNewLine.end() + 1)
-            regionWithNewLine = sublime.Region(regionWithNewLine.begin(), regionWithNewLine.end() - 1)
-            self.view.replace(edit, regionWithNewLine, "")
-            importsRegions = self.view.find_by_selector(get_settings("import_meta_selector"))
+        # Clear old imports
+        importDeclarationNodes = self.scope.find_by_selectors(get_settings("import_declaration_selector"), self.declarationNodes)
+        startPosition = 0
+        endPosition = 0
+        if len(packageDeclarationNodes) > 0:
+            startPosition = packageDeclarationNodes[0]["begin"]
+            endPosition = packageDeclarationNodes[0]["end"]
+        if len(importDeclarationNodes) > 0:
+            endPosition = importDeclarationNodes[-1]["end"]
+        self.view.replace(edit, sublime.Region(startPosition, endPosition), "")
 
         importedPackages = []
 
@@ -296,7 +283,7 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 
         if importCode != "":
             importCode += "\n"
-            #Remove whitespace at start of file
+            # Remove whitespace at start of file
             while re.search("\\s+$", self.view.substr(sublime.Region(0, 1))) is not None:
                 self.view.replace(edit, sublime.Region(0, 1), "")
             self.view.run_command("javatar_util", {"util_type": "insert", "text": importCode, "dest": "Organize Imports"})
@@ -308,23 +295,20 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 
     def run(self, edit, step=0):
         if step == 0:
+            if not is_java():
+                sublime.error_message("Current file is not Java")
+                return
             self.organize_step_zero(edit)
-
         elif step == 1:
             self.organize_step_one(edit)
-
         elif step == 2:
             self.organize_step_two(edit)
-
         elif step == 3:
             self.organize_step_three(edit)
-
         elif step == 4:
             self.organize_step_four(edit)
-
         elif step == 5:
             self.organize_step_five(edit)
-
         elif step == 6:
             self.organize_step_six(edit)
 
@@ -375,30 +359,3 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
 
     def description(self):
         return "Organize Imports"
-
-
-class JavatarRenameOperationCommand(sublime_plugin.WindowCommand):
-    def run(self, text="", rename_type=""):
-        add_action(
-            "javatar.command.operation.rename.run",
-            "Rename [rename_type={}]"
-            .format(rename_type)
-        )
-        if rename_type == "class":
-            if is_file() and is_java():
-                classRegion = sublime.active_window().active_view().find(get_settings("class_name_prefix") + get_settings("class_name_scope") + get_settings("class_name_suffix"), 0)
-                classCode = sublime.active_window().active_view().substr(classRegion)
-                classCode = re.sub(get_settings("class_name_prefix"), "", classCode)
-                classCode = re.sub(get_settings("class_name_suffix"), "", classCode)
-                if text is None or text == "":
-                    sublime.active_window().show_input_panel("New Class Name:", classCode, self.run, "", "")
-                sublime.message_dialog("Work in progress...\nPlease check back later...")
-            else:
-                if not is_file():
-                    sublime.error_message("Cannot specify package path because file is not store on the disk")
-                elif not is_java():
-                    sublime.error_message("Current file is not Java")
-        elif rename_type == "package":
-            currentPackage = to_package(get_current_dir())
-            if text is None or text == "":
-                sublime.active_window().show_input_panel("New Package Name:", currentPackage, self.run, "", "")

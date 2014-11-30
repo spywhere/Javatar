@@ -99,10 +99,12 @@ class JavatarCommand(sublime_plugin.WindowCommand):
         },
         "operations": {
             "selected_index": 2,
-            "items": [["Back", "Back to previous menu"], ["Correct Class", "Correct package and class name in current file"]],
+            "items": [["Back", "Back to previous menu"], ["Organize Imports", "Correct class imports in current file"], ["Correct Class", "Correct package and class name in current file"]],
             "actions": [
                 {
                     "name": "main"
+                }, {
+                    "command": "javatar_organize_imports"
                 }, {
                     "command": "javatar_correct_class"
                 }
@@ -110,7 +112,7 @@ class JavatarCommand(sublime_plugin.WindowCommand):
         },
         "project_settings": {
             "selected_index": 2,
-            "items": [["Back", "Back to previous menu"], ["Set Program Arguments", "Set the arguments to pass on main execution"], ["Dependencies...", "Manage project dependencies"], ["Set Source Folder", "Set source folder to specified as default package"], ["Set Default JDK", "Set default JDK for builds and runs"]],
+            "items": [["Back", "Back to previous menu"], ["Set Program Arguments", "Set the arguments to pass on main execution"], ["Set Source Folder", "Set source folder to specified as default package"], ["Dependencies...", "Manage project dependencies"], ["Set Default JDK", "Set default JDK for builds and runs"]],
             "actions": [
                 {
                     "name": "main"
@@ -120,12 +122,12 @@ class JavatarCommand(sublime_plugin.WindowCommand):
                         "actiontype": "set_program_arguments"
                     }
                 }, {
-                    "name": "local_dependencies"
-                }, {
                     "command": "javatar_settings",
                     "args": {
                         "actiontype": "set_source_folder"
                     }
+                }, {
+                    "name": "local_dependencies"
                 }, {
                     "command": "javatar_settings",
                     "args": {
@@ -255,22 +257,10 @@ class JavatarCommand(sublime_plugin.WindowCommand):
             ]
         },
         "dev": {
-            "items": [["Back", "Back to previous menu"], ["Operations: Organize Imports", "Correct class imports in current file"], ["Operations: Rename Class", "Rename current class"], ["Operations: Rename Package", "Rename current package"], ["Parse Document", "Parse Java grammar on current document (may slow Sublime Text)"], ["Prettify JSON", "Reformat current document as pretty JSON"], ["Testing", "For testing and experimenting new feature"]],
+            "items": [["Back", "Back to previous menu"], ["Parse Document", "Parse Java grammar on current document (may slow Sublime Text)"], ["Prettify JSON", "Reformat current document as pretty JSON"], ["Testing", "For testing and experimenting new feature"]],
             "actions": [
                 {
                     "name": "main"
-                }, {
-                    "command": "javatar_organize_imports"
-                }, {
-                    "command": "javatar_rename_operation",
-                    "args": {
-                        "rename_type": "class"
-                    }
-                }, {
-                    "command": "javatar_rename_operation",
-                    "args": {
-                        "rename_type": "package"
-                    }
                 }, {
                     "command": "javatar_util",
                     "args": {

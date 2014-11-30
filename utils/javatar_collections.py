@@ -12,11 +12,6 @@ INSTALLED_PACKAGES = []
 SNIPPETS = []
 DEFAULT_PACKAGES = []
 
-'''
-Allow to include a javatar-packages files into project (atleast easier for bukkit autocomplete)
-Allow a new javatar format for packaging a custom jar file (atleast easier for bukkit plugin jar file)
-'''
-
 
 def reset_snippets_and_packages():
     add_action(

@@ -23,7 +23,7 @@
                             { "caption": "-" },
                             {
                                 "command": "open_file",
-                                "args": {"file": "${packages}/Javatar/Java/Proto.javatar-packages"},
+                                "args": {"file": "${packages}/Javatar/Developers/Proto.javatar-packages"},
                                 "caption": "Proto.javatar-packages"
                             },
                             { "caption": "-" },
