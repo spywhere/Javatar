@@ -1,7 +1,7 @@
 import sublime
 import re
 import os
-from os.path import join
+from os.path import join, splitext, isfile
 import threading
 import traceback
 from .javatar_shell import JavatarBlockShell
@@ -231,14 +231,21 @@ def dict_to_list(dicto):
 
 
 def is_jdk_dir(path):
-    required_files = dict_to_list(get_settings("java_executables"))
-    for name in os.listdir(path):
-        pathname = os.path.join(path, name)
-        if os.path.isfile(pathname):
-            filename, ext = os.path.splitext(name)
-            while filename in required_files and (ext == "" or ext == ".exe"):
-                required_files.remove(filename)
-    return len(required_files) <= 0
+    required_files = set(get_settings("java_executables").values())
+
+    existing_files = (
+        splitext(name)
+        for name in os.listdir(path)
+        if isfile(join(path, name))
+    )
+
+    existing_files = (
+        name
+        for name, ext in existing_files
+        if ext in {'', '.exe'}
+    )
+
+    return required_files.issubset(existing_files)
 
 
 def get_jdk_dirs(path):
