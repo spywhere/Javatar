@@ -9,7 +9,7 @@
   - New JavatarDoc
   - Code Comment
 - Code Core
-  - Maven support
+  - Travis support
   - Git feature branching
   - Fully pep8 compatible (if possible)
   - Unit tests - small functions are easier to test
