@@ -2,7 +2,7 @@ import unittest
 import sublime
 from unittest.mock import MagicMock, patch
 
-from javatar.commands.javatar_help import JavatarHelpCommand
+from Javatar.commands.javatar_help import JavatarHelpCommand
 
 expected_output = r'''## Javatar Report
 ### System Informations
@@ -28,15 +28,23 @@ expected_output = r'''## Javatar Report
 
 
 class TestHelp(unittest.TestCase):
-    @patch('javatar.commands.javatar_help.get_settings')
-    @patch('javatar.commands.javatar_help.JavatarHelpCommand.get_actions')
-    @patch('javatar.commands.javatar_help.is_java')
-    @patch('javatar.commands.javatar_help.get_version', return_value='1.0')
+    @patch('Javatar.commands.javatar_help.get_settings')
+    @patch('Javatar.commands.javatar_help.JavatarHelpCommand.get_actions')
+    @patch('Javatar.commands.javatar_help.is_java')
+    @patch('Javatar.commands.javatar_help.is_file')
+    @patch('Javatar.commands.javatar_help.is_project')
+    @patch('Javatar.commands.javatar_help.get_version', return_value='1.0')
+    @patch('Javatar.commands.javatar_help.get_javatar_parent', return_value='javatar')
     @patch('sublime.packages_path', return_value='')
+    @patch('sublime.installed_packages_path', return_value='')
     @patch('sublime_api.architecture', return_value='64bit')
     @patch('sublime_api.platform', return_value='win32')
-    def test_run(self, platform, architecture, packages_path, get_version,
-                 is_java, get_actions, get_settings):
+    @patch('sublime_api.channel', return_value='3dev')
+    @patch('sublime_api.version', return_value='0')
+    def test_run_help(self, version, channel, platform, architecture, installed_packages_path, packages_path, get_javatar_parent,
+                      get_version, is_project, is_file, is_java, get_actions, get_settings):
+        is_project.return_value = False
+        is_file.return_value = False
         is_java.return_value = True
         get_settings.side_effect = {
             'enable_actions_history': True,
@@ -67,7 +75,7 @@ class TestHelp(unittest.TestCase):
             text
         )
 
-    @patch('javatar.commands.javatar_help.get_action')
+    @patch('Javatar.commands.javatar_help.get_action')
     def test_get_actions(self, get_action):
         window = MagicMock(spec=sublime.Window)
         inst = JavatarHelpCommand(window)

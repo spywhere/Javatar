@@ -1,6 +1,6 @@
 import unittest
 
-from javatar.utils.javatar_actions import ActionList
+from Javatar.utils.javatar_actions import ActionList
 
 
 class TestActionList(unittest.TestCase):

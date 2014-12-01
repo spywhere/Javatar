@@ -2,7 +2,7 @@ import sublime
 import unittest
 from unittest.mock import patch, MagicMock
 
-from javatar.commands.javatar_create import (
+from Javatar.commands.javatar_create import (
     get_info,
     JavatarCreateCommand
 )
@@ -12,11 +12,11 @@ side_effect = sublime.load_settings(
 ).get
 
 
-@patch('javatar.utils.javatar_utils.get_settings', side_effect=side_effect)
-@patch('javatar.utils.javatar_java.get_settings', side_effect=side_effect)
-@patch('javatar.commands.javatar_create.make_package')
-@patch('javatar.commands.javatar_create.is_project', return_value=True)
-@patch('javatar.commands.javatar_create.is_file', return_value=True)
+@patch('Javatar.utils.javatar_utils.get_settings', side_effect=side_effect)
+@patch('Javatar.utils.javatar_java.get_settings', side_effect=side_effect)
+@patch('Javatar.commands.javatar_create.make_package')
+@patch('Javatar.commands.javatar_create.is_project', return_value=True)
+@patch('Javatar.commands.javatar_create.is_file', return_value=True)
 class TestCreateGetInfo(unittest.TestCase):
     def test_private_visibility(self, *_):
         q = get_info('~here.privateBattleShip')

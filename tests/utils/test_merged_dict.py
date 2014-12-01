@@ -1,5 +1,5 @@
 import unittest
-from javatar.utils.javatar_utils import JavatarMergedDict as MergedDict
+from Javatar.utils.javatar_utils import JavatarMergedDict as MergedDict
 
 
 class TestMergedDict(unittest.TestCase):

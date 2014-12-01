@@ -5,10 +5,10 @@ from os.path import dirname, join, abspath
 from_here = lambda *parts: abspath(join(HERE, *parts))
 
 HERE = dirname(__file__)
-sys.path = [
+sys.path += [
     from_here('..', '..'),
     from_here('stubs')
-] + sys.path
+]
 
 
 def main():

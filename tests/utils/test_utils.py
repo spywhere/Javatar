@@ -8,7 +8,7 @@ class TestUtils(unittest.TestCase):
 
     # @patch('')
     def test_to_package(self):
-        from javatar.utils.javatar_utils import to_package
+        from Javatar.utils.javatar_utils import to_package
 
         self.assertEquals(
             to_package('org/google/search', False),

@@ -2,7 +2,8 @@ import sublime
 import unittest
 from unittest.mock import patch, MagicMock
 
-from javatar.commands.javatar_call import JavatarCallCommand
+from Javatar.commands.javatar_call import JavatarCallCommand
+
 
 MockView = MagicMock(spec=sublime.View)
 MockRegion = MagicMock(spec=sublime.Region, a=MagicMock(), b=MagicMock())
@@ -13,7 +14,7 @@ class TestCallCommand(unittest.TestCase):
         MockView.reset_mock()
         MockRegion.reset_mock()
 
-    @patch('javatar.commands.javatar_call.is_java', return_value=False)
+    @patch('Javatar.commands.javatar_call.is_java', return_value=False)
     @patch('sublime.error_message')
     def test_run_error(self, error_message, is_java):
         # check error conditon
@@ -23,8 +24,8 @@ class TestCallCommand(unittest.TestCase):
             "Current file is not Java"
         )
 
-    @patch('javatar.commands.javatar_call.is_java', return_value=True)
-    @patch('javatar.commands.javatar_call.get_current_package')
+    @patch('Javatar.commands.javatar_call.is_java', return_value=True)
+    @patch('Javatar.commands.javatar_call.get_current_package')
     def test_run_package_name(self, get_current_package, is_java):
         selection = MockRegion
         view = MockView
@@ -36,8 +37,8 @@ class TestCallCommand(unittest.TestCase):
             edit, selection.a, get_current_package.return_value
         )
 
-    @patch('javatar.commands.javatar_call.is_java', return_value=True)
-    @patch('javatar.commands.javatar_call.get_current_package')
+    @patch('Javatar.commands.javatar_call.is_java', return_value=True)
+    @patch('Javatar.commands.javatar_call.get_current_package')
     def test_run_subpackage_name(self, get_current_package, is_java):
         selection = MockRegion
         view = MockView
@@ -51,9 +52,9 @@ class TestCallCommand(unittest.TestCase):
             edit, selection.a, 'search'
         )
 
-    @patch('javatar.commands.javatar_call.is_java', return_value=True)
-    @patch('javatar.commands.javatar_call.get_class_name')
-    @patch('javatar.commands.javatar_call.get_current_package')
+    @patch('Javatar.commands.javatar_call.is_java', return_value=True)
+    @patch('Javatar.commands.javatar_call.get_class_name')
+    @patch('Javatar.commands.javatar_call.get_current_package')
     def test_run_full_class_name(self, get_current_package, get_class_name,
                                  is_java):
         selection = MockRegion
@@ -69,8 +70,8 @@ class TestCallCommand(unittest.TestCase):
             edit, selection.a, 'org.google.search.Searcher'
         )
 
-    @patch('javatar.commands.javatar_call.is_java', return_value=True)
-    @patch('javatar.commands.javatar_call.get_class_name')
+    @patch('Javatar.commands.javatar_call.is_java', return_value=True)
+    @patch('Javatar.commands.javatar_call.get_class_name')
     def test_run_class_name(self, get_class_name, is_java):
         selection = MockRegion
         view = MockView

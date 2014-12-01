@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-from javatar.utils.javatar_collections import JavatarSnippetsLoaderThread
+from Javatar.utils.javatar_collections import JavatarSnippetsLoaderThread
 
 SAMPLE_SNIPPET = '''\
 %class:Class%
@@ -35,5 +35,5 @@ class TestSnippetsLoaderThread(unittest.TestCase):
             inst.analyse_snippet('hello/world.txt')
         )
 
-    def test_analyse_package(self):
-        ...
+    # def test_analyse_package(self):
+    #     ...

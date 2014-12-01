@@ -1,11 +1,12 @@
 from os.path import join
 from unittest.mock import MagicMock, patch
 import os
+import re
 import sublime
 import tempfile
 import unittest
 
-from javatar.commands.javatar_package import JavatarCreateJavatarPackageCommand
+from Javatar.commands.javatar_package import JavatarCreateJavatarPackageCommand
 
 
 class TestPackageFolderTests(unittest.TestCase):
@@ -61,10 +62,10 @@ class TestPackageCommand(unittest.TestCase):
             'Bukkit-1.7.2-R0.3-BB'
         )
 
-    @patch('javatar.commands.javatar_package.JavatarCreateJavatarPackageCommand.finalize_package')
-    @patch('javatar.commands.javatar_package.JavatarCreateJavatarPackageCommand.is_doclet_folder')
-    @patch('javatar.commands.javatar_package.get_project_dir')
-    @patch('javatar.commands.javatar_package.get_source_folder')
+    @patch('Javatar.commands.javatar_package.JavatarCreateJavatarPackageCommand.finalize_package')
+    @patch('Javatar.commands.javatar_package.JavatarCreateJavatarPackageCommand.is_doclet_folder')
+    @patch('Javatar.commands.javatar_package.get_project_dir')
+    @patch('Javatar.commands.javatar_package.get_source_folder')
     @patch('sublime_api.window_run_command')
     @patch('sublime.active_window')
     def test_on_complete(self, active_window, window_run_command, get_source_folder, get_project_dir, is_doclet_folder, finalize_package):
@@ -90,31 +91,47 @@ class TestPackageCommand(unittest.TestCase):
 
         output = finalize_package.mock_calls[0][1][0]
 
+        # Different platform generate different file name
+        # so use regular expression to match the file name
+        # expected regular expressions (per line)
         expected = (
-            "## Javatar Packages report\n"
-            "* Package name: Name\n"
-            "* Package filename: Filename\n"
-            "* Package conflicts: Conflicts\n"
-            "## Generated Packages\n"
-            "\n"
-            "## Package Info\n"
-            "\n"
-            "* Output file: C:\\Users\\Mause\\AppData\\Local\\Temp\\Filename.javatar-packages\n"
+            r'## Javatar Packages report',
+            r'\* Package name: Name',
+            r'\* Package filename: Filename',
+            r'\* Package conflicts: Conflicts',
+            r'## Generated Packages',
+            r'',
+            r'## Package Info',
+            r'',
+            r'\* Output file: .*',
+            r''
         )
-        self.assertEqual(output, expected)
+
+        outputs = output.split('\n')
+        self.assertEqual(len(outputs), len(expected))
+        for i in range(len(expected)):
+            output = outputs[i]
+            expect = expected[i]
+            self.assertIsNotNone(re.match(expect, output))
 
         cmd = active_window.return_value.run_command.mock_calls[0][1][1]['shell_cmd']
 
+        # expected regular expressions (per command)
         expected = (
-            "cd 'C:\\Users\\Mause\\AppData\\Local\\Temp';"
-            "echo Generating...;"
-            "javadoc -sourcepath blah -docletpath "
-            "'C:\\Users\\Mause\\AppData\\Local\\Temp\\000A27001E98E7FC' "
-            "-name Name -doclet me.spywhere.doclet.Javatar -quiet ;"
-            "echo Done"
+            r'cd .+',
+            r'echo Generating\.\.\.',
+            r'javadoc -sourcepath blah -docletpath .+ '
+            r'-name Name -doclet me\.spywhere\.doclet\.Javatar -quiet ',
+            r'echo Done'
         )
 
-        self.assertEqual(cmd, expected)
+        cmds = cmd.split(";")
+        self.assertEqual(len(cmds), len(expected))
+        # check them one by one
+        for i in range(len(expected)):
+            cmd = cmds[i]
+            expect = expected[i]
+            self.assertIsNotNone(re.match(expect, cmd))
 
         os.rmdir(join(get_project_dir.return_value, 'blah'))
         os.removedirs(get_project_dir.return_value)
