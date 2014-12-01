@@ -31,15 +31,18 @@ class TestPackageFolderTests(unittest.TestCase):
         window = MagicMock()
         inst = JavatarCreateJavatarPackageCommand(window)
 
+        source_folders = inst.get_source_folder(self.folders[-1])
+        expected = [
+            ['derpy_derp', join(self.folders[-1], 'derpy_derp')],
+            ['world', join(self.folders[-1], 'derpy_derp', 'world')],
+            ['hello', join(self.folders[-1], 'hello')]
+        ]
+        # different platform may got sorted differently
+        source_folders.sort()
+        expected.sort()
+
         # test directories created, run test
-        self.assertEqual(
-            inst.get_source_folder(self.folders[-1]),
-            [
-                ['derpy_derp', join(self.folders[-1], 'derpy_derp')],
-                ['world', join(self.folders[-1], 'derpy_derp', 'world')],
-                ['hello', join(self.folders[-1], 'hello')]
-            ]
-        )
+        self.assertEqual(source_folders, expected)
 
     # def test_is_source_folder_not_can_empty(self):
     #     ...

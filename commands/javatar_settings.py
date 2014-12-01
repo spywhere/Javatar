@@ -39,13 +39,11 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
 
     def get_source_folder(self, path):
         folder_list = []
-
         for name in os.listdir(path):
             pathname = os.path.join(path, name)
             if os.path.isdir(pathname) and not name.startswith("."):
                 folder_list.append([name, pathname])
                 folder_list += self.get_source_folder(pathname)
-
         return folder_list
 
     def get_folders(self):

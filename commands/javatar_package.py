@@ -169,15 +169,17 @@ class JavatarCreateJavatarPackageCommand(sublime_plugin.WindowCommand):
         return filename
 
     def is_source_folder(self, path, can_empty=True):
+        empty = True
         for name in os.listdir(path):
+            empty = False
             pathname = os.path.join(path, name)
             if can_empty:
                 if os.path.isdir(pathname):
-                    if self.is_source_folder(pathname):
+                    if self.is_source_folder(pathname, can_empty):
                         return True
             if os.path.isfile(pathname) and is_java(pathname):
                 return True
-        return False
+        return can_empty and empty
 
     def get_source_folder(self, path):
         folder_list = []
