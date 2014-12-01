@@ -1,4 +1,11 @@
 ## Javatar
+[![Release](https://img.shields.io/github/release/spywhere/Javatar.svg)](https://github.com/spywhere/Javatar/releases)
+[![Issue](https://img.shields.io/github/issues/spywhere/Javatar.svg)](https://github.com/spywhere/Javatar/issues)
+
+Branch|Build Status
+:----:|:----:
+master|[![Build Status](https://img.shields.io/travis/spywhere/Javatar/master.svg)](https://travis-ci.org/spywhere/Javatar)
+dev|[![Build Status](https://img.shields.io/travis/spywhere/Javatar/dev.svg)](https://travis-ci.org/spywhere/Javatar)
 
 ### Status: Beta
 
