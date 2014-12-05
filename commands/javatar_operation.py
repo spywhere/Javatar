@@ -244,13 +244,14 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
         importCode = ""
 
         # Keep package declaration
-        packageDeclarationNodes = self.scope.find_by_selectors(get_settings("package_declaration_selector"), self.declarationNodes)
-        if len(packageDeclarationNodes) > 0:
-            importCode += packageDeclarationNodes[0]["value"] + "\n\n"
+        current_package = get_current_package()
+        if len(current_package) > 0:
+            importCode += "package " + current_package + ";\n\n"
         else:
             importCode += "\n\n"
 
         # Clear old imports
+        packageDeclarationNodes = self.scope.find_by_selectors(get_settings("package_declaration_selector"), self.declarationNodes)
         importDeclarationNodes = self.scope.find_by_selectors(get_settings("import_declaration_selector"), self.declarationNodes)
         startPosition = 0
         endPosition = 0
