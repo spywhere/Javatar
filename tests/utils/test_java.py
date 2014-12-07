@@ -12,7 +12,7 @@ create_file = lambda filename: open(filename, 'w').write('')
 class TestJava(unittest.TestCase):
     @patch('Javatar.utils.javatar_java.get_settings',
            return_value={'run': 'java', 'compile': 'javac'})
-    def test_is_jdk_dir(self):
+    def test_is_jdk_dir(self, get_settings):
         direct = tempfile.mkdtemp()
 
         self.assertFalse(is_jdk_dir(direct))
