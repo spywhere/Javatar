@@ -26,14 +26,10 @@ from ..utils import (
 
 
 class JavatarBuildCommand(sublime_plugin.WindowCommand):
-    build_list = []
-    build_size = -1
-    failed = False
-    view = None
-
     def build(self):
         self.start_time = clock()
         self.view = None
+        self.has_log_message = False
         self.failed = False
         self.build_size = len(self.build_list)
         self.progress = MultiThreadProgress("Preparing build", None, self.on_build_thread_complete, self.on_all_complete)
@@ -97,10 +93,12 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
         if self.build_size > 0 and self.view is not None and self.view.window() is None:
             self.build_size = -1
             return
+        if return_code != 0:
+            self.failed = True
         if data is not None:
             if self.view is None:
                 self.view = self.window.new_file()
-                self.failed = True
+                self.has_log_message = True
                 self.view.set_name("Preparing build log...")
                 self.view.set_syntax_file("Packages/Javatar/syntax/JavaCompilationError.tmLanguage")
                 # Prevent view access while creating which cause double view to create
@@ -117,9 +115,12 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
             )
             return
 
-        message = "Building Finished [{0:.2f}s]"
         if self.failed:
             message = "Building Failed [{0:.2f}s]"
+        elif self.has_log_message:
+            message = "Building Finished with Warning [{0:.2f}s]"
+        else:
+            message = "Building Finished [{0:.2f}s]"
 
         show_notification(message.format(clock() - self.start_time))
         self.build_size = -1

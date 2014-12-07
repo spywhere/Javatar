@@ -3,9 +3,6 @@
 ### First release remaining features
 - Selectable Output Console View
 
-### Fixes
-- [Bug] Warning are considered as error in build log
-
 ### New Features:
 - Documentation
   - Coding Guideline
@@ -34,11 +31,7 @@
 
 ### Feature Description
 ##### Git feature branching
-- `master` for production release
-- `hotfix` for bug fixes
-- `dev` for next release
-- `feature` for new features that will be added to `dev`
-- `experiment` for an experiment that might be added to `feature`
+See ***Coding Guideline*** for more informations
 
 ##### Logging Utilities
 Debug, Error, Warning, Info logging class. Amount is based on settings.

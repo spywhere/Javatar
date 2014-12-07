@@ -1,12 +1,8 @@
 *.class
+.DS_Store
+*.pyc
 
 # Package Files #
 *.jar
 *.war
 *.ear
-
-.DS_Store
-
-*.pyc
-
-JavatarDevNote.txt
