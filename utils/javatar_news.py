@@ -5,7 +5,7 @@ from .javatar_utils import start_clock, stop_clock
 
 
 # YY.MM.DD.HH.MM
-VERSION = "14.12.01.01.21b"
+VERSION = "14.12.07.18.41b"
 UPDATEFOR = "all"
 NEWSID = 19
 
@@ -18,6 +18,7 @@ These are updates and fixes for Javatar {VERSION}...
 - Organize Imports now working on stable channel (finally!)
 - Run Main Class can now set program arguments (thanks to @JesseEmond)
 - Build notification via SubNotify (more details in JavatarDoc)
+- Build logs and output consoles can be show in different groups
 - Update Java grammar file
 - Fix program arguments save to global settings
 - Fix organise imports is not working properly
