@@ -3,6 +3,9 @@
 ### First release remaining features
 - Selectable Output Console View
 
+### Fixes
+- [Bug] Warning are considered as error in build log
+
 ### New Features:
 - Documentation
   - Coding Guideline

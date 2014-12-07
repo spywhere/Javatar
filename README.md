@@ -1,18 +1,13 @@
-## Javatar
-[![Release](https://img.shields.io/github/release/spywhere/Javatar.svg?style=flat)](https://github.com/spywhere/Javatar/releases)
-[![Issue](https://img.shields.io/github/issues/spywhere/Javatar.svg?style=flat)](https://github.com/spywhere/Javatar/issues)
-
-Branch|Build Status
-:----:|:----:
-master|[![Build Status](https://img.shields.io/travis/spywhere/Javatar/master.svg?style=flat)](https://travis-ci.org/spywhere/Javatar)
-develop|[![Build Status](https://img.shields.io/travis/spywhere/Javatar/develop.svg?style=flat)](https://travis-ci.org/spywhere/Javatar)
-
-### Status: Beta
-
+## Javatar: Beta
 A Sublime Text 3 Plugin for Java Development
 
 JavatarDoc: [https://javatar.readthedocs.org/](https://javatar.readthedocs.org/)<br \>
 Report Issue: [http://github.com/spywhere/Javatar/issues](http://github.com/spywhere/Javatar/issues)
+
+[![Release](https://img.shields.io/github/release/spywhere/Javatar.svg?style=flat)](https://github.com/spywhere/Javatar/releases)|[![Issue](https://img.shields.io/github/issues/spywhere/Javatar.svg?style=flat)](https://github.com/spywhere/Javatar/issues)
+:----:|:----:
+[![Build Status](https://img.shields.io/travis/spywhere/Javatar/master.svg?style=flat)](https://travis-ci.org/spywhere/Javatar)|[![Build Status](https://img.shields.io/travis/spywhere/Javatar/develop.svg?style=flat)](https://travis-ci.org/spywhere/Javatar)
+master|develop
 
 ### License
     ::Javatar::
