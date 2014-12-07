@@ -276,7 +276,7 @@ class JavatarOrganizeImportsCommand(sublime_plugin.TextCommand):
             importedPackages.append(importPackage + ".*")
 
         if is_debug():
-            print(str(self.importedPackagesStat))
+            print("ImportedPackages: " + str(self.importedPackagesStat))
         importedPackages.sort()
 
         for importPackage in importedPackages:

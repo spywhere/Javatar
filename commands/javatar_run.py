@@ -17,7 +17,8 @@ from ..utils import (
     get_executable,
     JavatarShell,
     ThreadProgress,
-    get_source_folder
+    get_source_folder,
+    get_target_view_index
 )
 
 
@@ -64,7 +65,9 @@ class JavatarRunMainCommand(sublime_plugin.WindowCommand):
         if executable is None:
             return None
         run_script = parse_macro(get_settings("run_command"), macro_data, file_path)
+        target_group, target_index = get_target_view_index("output_console_target_group")
         self.view = self.window.new_file()
+        self.window.set_view_index(self.view, target_group, target_index)
         self.view.set_syntax_file("Packages/Javatar/syntax/JavaStackTrace.tmLanguage")
         self.view.set_name("Running " + self.class_name + " ...")
         self.view.set_scratch(True)

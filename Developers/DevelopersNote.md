@@ -1,8 +1,5 @@
 ## Javatar Developers' Note
 
-### First release remaining features
-- Selectable Output Console View
-
 ### New Features:
 - Documentation
   - Coding Guideline
@@ -19,6 +16,7 @@
   - Status Manager
 - Features
   - Language Localization
+  - Better Build System
   - Multiple Source Folders
   - Organize Imports with static imports
   - Rename/Move packages or classes [*1*]
@@ -53,19 +51,8 @@ Manage shell instances and show proper status bar text (# Javatar Shell(s) is ru
 Manage multiple status text by cycle it properly
 Might add [#/#] before status text to indicate multiple statuses
 
-##### Selectable Output Console View
-Output console in another view settings
-
-```
-"output_console_group": [
-    //In [Group:View] or [Group] format
-    //Prioritize from top to bottom
-    0:0
-    0
-    1:1
-    2:2
-]
-```
+##### Better Build System
+Current build system compile Java file one at a time on a parallel thread. A new one should be able to compile multiple files at once and also possible to compile on a parallel thread. This will decrease time to compile and also improve performance while compiling files.
 
 ##### Organize Imports
 TODO:

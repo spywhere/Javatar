@@ -21,7 +21,8 @@ from ..utils import (
     get_macro_data,
     get_package_root_dir,
     get_source_folder,
-    get_current_dir
+    get_current_dir,
+    get_target_view_index
 )
 
 
@@ -97,8 +98,10 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
             self.failed = True
         if data is not None:
             if self.view is None:
+                target_group, target_index = get_target_view_index("build_log_target_group")
                 self.view = self.window.new_file()
                 self.has_log_message = True
+                self.window.set_view_index(self.view, target_group, target_index)
                 self.view.set_name("Preparing build log...")
                 self.view.set_syntax_file("Packages/Javatar/syntax/JavaCompilationError.tmLanguage")
                 # Prevent view access while creating which cause double view to create

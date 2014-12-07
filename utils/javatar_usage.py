@@ -12,8 +12,7 @@ from .javatar_utils import (
 
 
 USAGE_VERSION = "0.1"
-# If you are going to visit the site, sorry for the crap design...
-PACKAGES_STATS = "http://digitalparticle.com/javatar/"
+PACKAGES_STATS = "http://javatar.digitalparticle.com/"
 
 
 def get_usage_version():

@@ -126,6 +126,23 @@
     //    Increase this value can helps prevent double view from showing but also freeze computer for a specified time
     "build_log_delay" : 0.05,
 
+    // Show build logs in specified group and index (prioritize from top to bottom)
+    //    Specified a number view will move the build logs to target group
+    //    Specified a list of one number will move the build logs to target group
+    //    Specified a list of two numbers will move the build logs to target group and target index
+    //    If specified target group is not found, the next group index is used.
+    //        Otherwise, the build logs will show on current group instead
+    //    If specified target index is not found, the build logs will show on target group as a new view
+    //    If both target group and index is not found, the build logs will show on current group instead
+    //    All groups and indices are zero-based
+    //    Run -- window.run_command("javatar_view") -- in console to show view group and index
+    "build_log_target_group": [
+    ],
+
+    // Show running console in specified group and index (same format as build_log_delay)
+    "output_console_target_group": [
+    ],
+
     // Refresh rate for Javatar shell (in second)
     //    Increase this value can helps shell output to print more smoothly but it's also affect the system performances
     "shell_refresh_interval": 0.01,

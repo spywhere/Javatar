@@ -9,3 +9,4 @@ from .javatar_package import *
 from .javatar_run import *
 from .javatar_settings import *
 from .javatar_utils import *
+from .javatar_view import *

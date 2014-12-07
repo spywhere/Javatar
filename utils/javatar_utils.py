@@ -359,6 +359,37 @@ def get_current_dir():
         return None
 
 
+def get_target_view_index(settings):
+    groups = get_settings(settings)
+    view_group = -1
+    view_index = -1
+    current_group, current_index = sublime.active_window().get_view_index(sublime.active_window().active_view())
+
+    for group in groups:
+        if isinstance(group, int):
+            view_group = group
+            view_index = len(sublime.active_window().views_in_group(view_group))
+        elif isinstance(group, list) or isinstance(group, tuple):
+            if len(group) > 0:
+                view_group = group[0]
+                view_index = len(sublime.active_window().views_in_group(view_group))
+                if len(group) > 1:
+                    view_index = group[1]
+        if view_group >= sublime.active_window().num_groups() or view_group < 0:
+            view_index = -1
+            continue
+        elif view_index > len(sublime.active_window().views_in_group(view_group)) or view_index < 0:
+            continue
+        break
+
+    if view_group >= sublime.active_window().num_groups() or view_group < 0:
+        view_group = current_group
+        view_index = len(sublime.active_window().views_in_group(view_group))
+    elif view_index >= len(sublime.active_window().views_in_group(view_group)) or view_index < 0:
+        view_index = len(sublime.active_window().views_in_group(view_group))
+    return (view_group, view_index)
+
+
 class JavatarMergedDict():
     def __init__(self, global_dict, local_dict):
         self.global_dict = global_dict
