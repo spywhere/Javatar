@@ -15,16 +15,19 @@
   - Shell Manager
   - Status Manager
 - Features
-  - Language Localization
+  - [Remove] Javatar calls (not so useful)
+  - [Remove] Package channel
   - Better Build System
   - Multiple Source Folders
   - Organize Imports with static imports
+  - QuickMenu collect user selections (for stats)
   - Rename/Move packages or classes [*1*]
   - .jar file export (includes executable .jar) [*2*]
   - Dynamic method call auto-complete
   - Generate all interfaces method when create an inherited class
   - Class Finding (`Ctrl+H` in eclipse)
   - JUnit support
+  - Language Localization (not soon except requested)
   - JVM Language compatible (not soon)
 
 ### Feature Description
