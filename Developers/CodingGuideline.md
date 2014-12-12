@@ -13,6 +13,7 @@
   - Use 4 spaces as 1 indent
   - Preferred 80x80 code size per method/function or smaller
   - Preferred `{` on the same line as assignment and `}` aligned with the assignment *[1]*
+  - Preferred `Dict` over `Tuple` or `List` to make code more readable and also support localization (if any)
 
 #### Version Control (git)
 

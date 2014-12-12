@@ -2,7 +2,6 @@
 
 ### New Features:
 - Documentation
-  - Coding Guideline
   - New JavatarDoc
   - Code Comment
 - Code Core
