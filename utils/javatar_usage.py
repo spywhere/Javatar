@@ -11,7 +11,7 @@ from .javatar_utils import (
 )
 
 
-USAGE_VERSION = "0.1"
+USAGE_VERSION = "1.0"
 PACKAGES_STATS = "http://javatar.digitalparticle.com/"
 
 

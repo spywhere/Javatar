@@ -9,7 +9,7 @@ from .javatar_utils import is_debug
 from .javatar_actions import add_action
 
 
-PACKAGES_VERSION = "0.3"
+PACKAGES_VERSION = "1.0"
 PACKAGES_REPO = "https://raw.github.com/spywhere/JavatarPackages/master/javatar_packages.json"
 
 

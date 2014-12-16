@@ -1,8 +1,8 @@
-## Javatar: Beta
+## Javatar
 A Sublime Text 3 Plugin for Java Development
 
 JavatarDoc: [https://javatar.readthedocs.org/](https://javatar.readthedocs.org/)<br \>
-Report Issue: [http://github.com/spywhere/Javatar/issues](http://github.com/spywhere/Javatar/issues)
+Report Issue: [https://github.com/spywhere/Javatar/issues](https://github.com/spywhere/Javatar/issues)
 
 [![Release](https://img.shields.io/github/release/spywhere/Javatar.svg?style=flat)](https://github.com/spywhere/Javatar/releases)|[![Issue](https://img.shields.io/github/issues/spywhere/Javatar.svg?style=flat)](https://github.com/spywhere/Javatar/issues)
 :----:|:----:

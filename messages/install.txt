@@ -1,0 +1,11 @@
+Javatar has been installed. Please wait while Javatar download necessary packages...
+
+For informations and guides, please checkout JavatarDoc below.
+
+JavatarDoc:
+https://javatar.readthedocs.org/
+
+You can report/suggest any issue related to Javatar using link below.
+
+Report/Seggest Issue:
+https://github.com/spywhere/Javatar/issues
