@@ -55,6 +55,22 @@
             }
         }
     },{
+        "keys": ["super+shift+k","super+shift+,"],
+        "command": "javatar",
+        "args": {
+            "action": {
+                "name": "project_settings"
+            }
+        }
+    },{
+        "keys": ["super+shift+k","super+shift+."],
+        "command": "javatar",
+        "args": {
+            "action": {
+                "name": "global_settings"
+            }
+        }
+    },{
         "keys": ["super+shift+k","super+shift+p"],
         "command": "javatar_create_package"
     },{
