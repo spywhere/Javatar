@@ -144,6 +144,7 @@ class JavatarPackageUpdaterThread(threading.Thread):
                 self.result = False
         except Exception as e:
             self.result_message = "Javatar packages update has failed: " + str(e)
-            traceback.print_exc()
+            if is_debug():
+                traceback.print_exc()
             add_action("javatar.util.updater", self.result_message)
             self.result = False
