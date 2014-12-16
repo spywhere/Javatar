@@ -4,37 +4,20 @@ from .javatar_usage import send_usages, get_usage_data
 from .javatar_utils import start_clock, stop_clock
 
 
-# YY.MM.DD.HH.MM
-VERSION = "14.12.07.18.41b"
+# Major.Minor.Patch
+VERSION = "1.0.0"
 UPDATEFOR = "all"
-NEWSID = 19
+NEWSID = 20
 
 NEWS_TEMPLATE = '''\
 Just install Javatar? Checkout JavatarDoc for Javatar information and guides. Link is located in README file.
 
-A huge update since last update before Javatar will reach its first release!
+Javatar 1.0.0 has been released!
 
 These are updates and fixes for Javatar {VERSION}...
-- Organize Imports now working on stable channel (finally!)
-- Run Main Class can now set program arguments (thanks to @JesseEmond)
-- Build notification via SubNotify (more details in JavatarDoc)
 - Build logs and output consoles can be show in different groups
-- Update Java grammar file
-- Fix program arguments save to global settings
-- Fix organise imports is not working properly
-- Fix Javatar did not detect JDK properly
-- Fix package/class creation did not show any details
-- Fix error occurred when checking Java while no view opened
-- Fix some logic that has been invalid for months!
-- Some error messages now available in debug mode only
-- Reorganize menu for easier access to frequent access commands
-- Add Help and Support to command palette
-- Huge code refactor (thanks to @Mause)
-- Build now show more warnings and errors
-- Errors now tell more informations
-- Remove unused files and code
-- Update GrammarParser and QuickMenu
-- Update site to .com domain
+- Create section now select "Class" as default
+- Fix invalid logic and proper traceback display
 
 You can report/suggest any issue on Javatar repository. Link is already located in README file.
 '''
