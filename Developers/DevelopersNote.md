@@ -17,6 +17,7 @@
 - Features
   - [Remove] Javatar calls (not so useful)
   - [Remove] Package channel
+  - Action History capture all exception (so it can helps with issues)
   - Better Build System
   - Multiple Source Folders
   - Organize Imports with static imports
@@ -37,6 +38,12 @@ See ***Coding Guideline*** for more informations
 ##### Logging Utilities
 Debug, Error, Warning, Info logging class. Amount is based on settings.
 
+Errors should be show sequentially after all messages has been show.
+Idea:
+
+- Message weight (eg. show error a bit longer than normal message)
+- Log all exceptions
+
 ##### Work-based class design
 Create a class based on its work.
 
@@ -51,7 +58,10 @@ Allows user to use multiple folders as source folders
 Manage shell instances and show proper status bar text (# Javatar Shell(s) is running...)
 
 ##### Status Manager
+Must work synchronizely with logging system
+
 Manage multiple status text by cycle it properly
+
 Might add [#/#] before status text to indicate multiple statuses
 
 ##### Better Build System

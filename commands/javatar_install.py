@@ -10,7 +10,8 @@ from ..utils import (
     add_action, ThreadProgress, get_schema_version,
     send_package_action,
     reset_packages,
-    load_packages
+    load_packages,
+    is_debug
 )
 
 
@@ -74,7 +75,8 @@ class JavatarPackageUninstallerThread(threading.Thread):
                 sublime.set_timeout(self.on_complete, 3000)
         except Exception as e:
             self.result_message = "Javatar package \"" + self.pkgname + "\" uninstallation has failed: " + str(e)
-            traceback.print_exc()
+            if is_debug():
+                traceback.print_exc()
             self.result = False
 
 
@@ -102,5 +104,6 @@ class JavatarRemotePackageInstallerThread(threading.Thread):
                 sublime.set_timeout(self.on_complete, 3000)
         except Exception as e:
             self.result_message = "Javatar package \"" + self.pkgname + "\" installation has failed: " + str(e)
-            traceback.print_exc()
+            if is_debug():
+                traceback.print_exc()
             self.result = False

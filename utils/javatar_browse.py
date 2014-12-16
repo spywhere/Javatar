@@ -28,11 +28,11 @@ class JavatarBrowseDialog():
             dir_list += self.prelist(path)
         for name in os.listdir(path):
             pathname = os.path.join(path, name)
-            if not name.startswith(".") and os.path.isdir(pathname) and (self.path_filter or self.path_filter(pathname)):
+            if not name.startswith(".") and os.path.isdir(pathname) and (self.path_filter is None or self.path_filter is not None and self.path_filter(pathname)):
                 dir_list.append(["[" + name + "]", pathname])
         for name in os.listdir(path):
             pathname = os.path.join(path, name)
-            if not name.startswith(".") and os.path.isfile(pathname) and (self.path_filter or self.path_filter(pathname)):
+            if not name.startswith(".") and os.path.isfile(pathname) and (self.path_filter is None or self.path_filter is not None and self.path_filter(pathname)):
                 dir_list.append([name, pathname])
         if self.postlist is not None:
             dir_list += self.postlist(path)
