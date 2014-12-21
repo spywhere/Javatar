@@ -4,14 +4,8 @@ import os
 
 class JavatarBrowseDialog():
     def __init__(self, initial_dir, path_filter=None, selector=None, window=None, on_done=None, on_cancel=None):
-        if window is None:
-            self.window = sublime.active_window()
-        else:
-            self.window = window
-        if selector is None:
-            self.selector = self.default_selector
-        else:
-            self.selector = selector
+        self.window = window or sublime.active_window()
+        self.selector = selector or self.default_selector
         self.path_filter = path_filter
         self.on_done = on_done
         self.on_cancel = on_cancel
