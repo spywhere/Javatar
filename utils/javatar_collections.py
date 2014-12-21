@@ -132,14 +132,21 @@ def get_dependencies(local=True):
         dependencies = get_project_settings("dependencies")
     else:
         dependencies = get_global_settings("dependencies")
+
     if dependencies is not None:
-        for dependency in dependencies:
-            if exists(dependency):
-                out_dependencies.append([dependency, local])
+        out_dependencies.extend(
+            [dependency, local]
+            for dependency in dependencies
+            if exists(dependency)
+        )
+
     if local:
-        for dependency in get_global_settings("dependencies"):
-            if exists(dependency):
-                out_dependencies.append([dependency, not local])
+        out_dependencies.extend(
+            [dependency, not local]
+            for dependency in get_global_settings("dependencies")
+            if exists(dependency)
+        )
+
     return out_dependencies
 
 
