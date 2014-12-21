@@ -40,13 +40,13 @@ class JavatarInstallCommand(sublime_plugin.WindowCommand):
                 ThreadProgress(thread, "Uninstalling Javatar package \"" + name + "\"", "Javatar package \"" + name + "\" has been successfully uninstalled")
 
     def getPackageData(self):
-        data = {}
-        data["SchemaVersion"] = get_schema_version()
-        data["PackageAction"] = self.action
-        data["PackageName"] = self.pname
-        data["SublimeVersion"] = str(sublime.version())
-        data["Platform"] = sublime.platform()
-        return data
+        return {
+            "SchemaVersion": get_schema_version(),
+            "PackageAction": self.action,
+            "PackageName": self.pname,
+            "SublimeVersion": str(sublime.version()),
+            "Platform": sublime.platform()
+        }
 
     def on_complete(self):
         send_package_action(self.getPackageData())

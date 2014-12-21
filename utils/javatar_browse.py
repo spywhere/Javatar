@@ -1,50 +1,56 @@
 import sublime
 import os
+from os.path import isdir, isfile, join
 
 
 class JavatarBrowseDialog():
     def __init__(self, initial_dir, path_filter=None, selector=None, window=None, on_done=None, on_cancel=None):
-        if window is None:
-            self.window = sublime.active_window()
-        else:
-            self.window = window
-        if selector is None:
-            self.selector = self.default_selector
-        else:
-            self.selector = selector
-        self.path_filter = path_filter
+        self.window = window or sublime.active_window()
+        self.selector = selector or self.default_selector
+        self.path_filter = path_filter or self.default_path_filter
         self.on_done = on_done
         self.on_cancel = on_cancel
         self.initial_dir = initial_dir
-        self.prelist = None
-        self.postlist = None
+        self.prelist = self.default_prelist
+        self.postlist = self.default_postlist
+
+    def default_path_filter(self, pathname):
+        return True
+
+    def default_prelist(self, path):
+        return []
+
+    def default_postlist(self, path):
+        return []
 
     def default_selector(self, path):
         return os.path.isfile(path)
 
     def get_list(self, path):
         dir_list = []
-        if self.prelist is not None:
-            dir_list += self.prelist(path)
+
         for name in os.listdir(path):
-            pathname = os.path.join(path, name)
-            if not name.startswith(".") and os.path.isdir(pathname) and (self.path_filter is None or self.path_filter is not None and self.path_filter(pathname)):
-                dir_list.append(["[" + name + "]", pathname])
-        for name in os.listdir(path):
-            pathname = os.path.join(path, name)
-            if not name.startswith(".") and os.path.isfile(pathname) and (self.path_filter is None or self.path_filter is not None and self.path_filter(pathname)):
-                dir_list.append([name, pathname])
-        if self.postlist is not None:
-            dir_list += self.postlist(path)
-        return dir_list
+            pathname = join(path, name)
+
+            if not name.startswith(".") and self.path_filter(pathname):
+                if isdir(pathname):
+                    dir_list.append(["[" + name + "]", pathname])
+
+                elif isfile(pathname):
+                    dir_list.append([name, pathname])
+
+        return self.prelist(path) + dir_list + self.postlist(path)
 
     def browse(self, current_dir=None, prelist=None, postlist=None):
         if current_dir is None:
             current_dir = self.initial_dir
-        if prelist is not None and self.prelist is None:
+
+        if prelist and self.prelist is self.default_prelist:
             self.prelist = prelist
-        if postlist is not None and self.postlist is None:
+
+        if postlist and self.postlist is self.default_postlist:
             self.postlist = postlist
+
         self.dir_list = self.get_list(current_dir)
         selected = 0
         if len(self.dir_list) > 1:
