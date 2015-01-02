@@ -18,6 +18,7 @@
   - [Remove] Package channel
   - Action History capture all exception (so it can helps with issues)
   - Better Build System
+  - Code Linting
   - Multiple Source Folders
   - Organize Imports with static imports
   - QuickMenu collect user selections (for stats)
@@ -65,6 +66,9 @@ Might add [#/#] before status text to indicate multiple statuses
 
 ##### Better Build System
 Current build system compile Java file one at a time on a parallel thread. A new one should be able to compile multiple files at once and also possible to compile on a parallel thread. This will decrease time to compile and also improve performance while compiling files.
+
+##### Code Linting
+SublimeLinter's JavaC linting treat the Java source code as one, separated, no dependencies file. This make complex source code that involved import external libraries linting error.
 
 ##### Organize Imports
 TODO:

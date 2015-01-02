@@ -17,6 +17,7 @@
 
 #### Version Control (git)
 
+- **Do not** commit any *developers' notes* outside `develop` and `experiment`
 - Branches
   - `master` is for public deployments. This branch **should not** contains any error or any uncomplete feature
   - `hotfix-*` is for `master` bug fixes. This branch should contains **only** bug fixes for `master`
