@@ -13,15 +13,6 @@
         }
     },
     {
-        "caption": "Javatar: Calls...",
-        "command": "javatar",
-        "args": {
-            "action": {
-                "name": "calls"
-            }
-        }
-    },
-    {
         "caption": "Javatar: Create new...",
         "command": "javatar",
         "args": {
@@ -50,15 +41,6 @@
         }
     },
     {
-        "caption": "Javatar: Help and Support",
-        "command": "javatar",
-        "args": {
-            "action": {
-                "name": "help",
-            }
-        }
-    },
-    {
         "caption": "Javatar: Actions History (Custom)",
         "command": "javatar_help",
         "args": {
@@ -68,10 +50,12 @@
         }
     },
     {
-        "caption": "Preferences: Javatar's Proto.javatar-packages'",
-        "command": "open_file", "args":
-        {
-            "file": "${packages}/Javatar/Developers/Proto.javatar-packages"
+        "caption": "Javatar: Help and Support",
+        "command": "javatar",
+        "args": {
+            "action": {
+                "name": "help",
+            }
         }
     },
     {

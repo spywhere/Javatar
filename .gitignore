@@ -6,3 +6,5 @@
 *.jar
 *.war
 *.ear
+*.sublime-project
+*.sublime-workspace

@@ -1,0 +1,14 @@
+#################
+TEMPORARY MESSAGE
+#################
+
+Just install Javatar? Checkout JavatarDoc for Javatar information and guides. Link is located in README file.
+
+Javatar 1.0.0 has been released!
+
+These are updates and fixes for Javatar {VERSION}...
+- Build logs and output consoles can be show in different groups
+- Create section now select "Class" as default
+- Fix invalid logic and proper traceback display
+
+You can report/suggest any issue on Javatar repository. Link is already located in README file.

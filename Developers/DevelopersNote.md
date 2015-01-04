@@ -27,7 +27,7 @@
   - Dynamic method call auto-complete
   - Generate all interfaces method when create an inherited class
   - Class Finding (`Ctrl+H` in eclipse)
-  - JUnit support
+  - JUnit support [FAQ](http://junit.org/faq.html)
   - Language Localization (not soon except requested)
   - JVM Language compatible (not soon)
 

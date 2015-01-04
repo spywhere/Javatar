@@ -1,7 +1,12 @@
 import sublime_plugin
 
 
-class EventHandler():
+class EventHandler:
+
+    """
+    A multiple event listener wrapper to simplify the event handlings
+    """
+
     ON_NEW = 0x1
     ON_NEW_ASYNC = 0x2
     ON_CLONE = 0x4
