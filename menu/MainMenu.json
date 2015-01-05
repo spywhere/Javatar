@@ -321,12 +321,12 @@
       }, {
         "command": "javatar_create_javatar_package"
       }, {
-        "command": "javatar_util",
+        "command": "javatar_utils",
         "args": {
           "util_type": "hash"
         }
       }, {
-        "command": "javatar_util",
+        "command": "javatar_utils",
         "args": {
           "util_type": "remote_hash"
         }
@@ -389,17 +389,17 @@
       {
         "name": "main"
       }, {
-        "command": "javatar_util",
+        "command": "javatar_utils",
         "args": {
           "util_type": "parse"
         }
       }, {
-        "command": "javatar_util",
+        "command": "javatar_utils",
         "args": {
           "util_type": "tojson"
         }
       }, {
-        "command": "javatar_util",
+        "command": "javatar_utils",
         "args": {
           "util_type": "json_test"
         }

@@ -1,7 +1,7 @@
 [
     {
         "keys": ["super+shift+k","super+shift+m"],
-        "command": "javatar_util",
+        "command": "javatar_utils",
         "args": {
             "util_type": "parse",
             "text": "#"

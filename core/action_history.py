@@ -25,7 +25,9 @@ class ActionHistory:
 
         @param name: an action name in following format (if possible)
 
-            javatar.[code module].[code class].[code method].[code action]
+            javatar.[code module].[code file].[code method].[code action]
+
+        if a class is a command, code method will be the command name instead
 
         @param message: an action summary that is short but clear
 

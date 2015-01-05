@@ -18,7 +18,12 @@
     "enable_action_history" : true,
 
     // Default delay before hide a status text (in milliseconds)
+    // Must more than 100 milliseconds
     "status_delay" : 5000,
+
+    // Default delay before cycle to another status text (in milliseconds)
+    // Must more than 100 milliseconds
+    "status_cycle_delay" : 1000,
 
     // Show package path in status bar
     "show_package_path" : true,
