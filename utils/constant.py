@@ -1,7 +1,10 @@
 import sublime
 from ..core import (
     ActionHistory,
+    PackagesLoader,
+    ProjectRestoration,
     Settings,
+    SnippetsLoader,
     StatusManager
 )
 from .timer import Timer
@@ -37,21 +40,33 @@ class Constant:
         return "https://raw.github.com/spywhere/JavatarPackages/master/javatar_packages.json"
 
     @staticmethod
-    def ready():
+    def settings_ready():
         return Settings.ready()
+
+    @staticmethod
+    def ready():
+        return SnippetsLoader.ready() and PackagesLoader.ready()
 
     @staticmethod
     def startup():
         StatusManager.reset()
         ActionHistory.reset()
         Settings.reset()
-        # Reset snippets and packages
+        SnippetsLoader.reset()
+        PackagesLoader.reset()
 
         ActionHistory.add_action("javatar", "Startup")
-        Settings.read_settings()
+        Settings.startup()
+        ProjectRestoration.load_state()
+        SnippetsLoader.startup()
+        PackagesLoader.startup()
 
         Timer.timer(reset=True)
-        Constant.check_startup()
+        Constant.check_settings()
+
+    @staticmethod
+    def post_settings():
+        StatusManager.pre_startup()
 
     @staticmethod
     def post_startup():
@@ -67,6 +82,14 @@ class Constant:
             Constant.post_startup()
         else:
             sublime.set_timeout(Constant.check_startup, 100)
+
+    @staticmethod
+    def check_settings():
+        if Constant.settings_ready():
+            Constant.post_settings()
+            Constant.check_startup()
+        else:
+            sublime.set_timeout(Constant.check_settings, 100)
 
     @staticmethod
     def is_debug():

@@ -1,3 +1,4 @@
+import traceback
 from .settings import Settings
 
 
@@ -19,7 +20,7 @@ class ActionHistory:
         ActionHistory.actions = []
 
     @staticmethod
-    def add_action(name, message):
+    def add_action(name, message, exception=None):
         """
         Add action to the action history except specified not to (in settings)
 
@@ -30,9 +31,13 @@ class ActionHistory:
         if a class is a command, code method will be the command name instead
 
         @param message: an action summary that is short but clear
+        @param exception: if provided, add traceback stack to the end
+            of message
 
         """
         if not Settings.ready() or Settings.get("enable_action_history"):
+            if exception:
+                message += ":\n" + traceback.format_exec()
             ActionHistory.actions.append((name, message))
 
     @staticmethod
@@ -52,7 +57,8 @@ class ActionHistory:
     @staticmethod
     def get_action(include=None, exclude=None):
         """
-        Returns a list of actions filtered by specified inclusions or exclusions
+        Returns a list of actions filtered by specified inclusions
+            or exclusions
 
         @param include: if provided, will use to filter the actions by
             including them if they starts with any of the provided strings

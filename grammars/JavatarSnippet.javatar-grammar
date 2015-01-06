@@ -78,7 +78,7 @@
                     "after_separator": false
                 },
                 {
-                    "name": "Data",
+                    "name": "DataValue",
                     "parse": [
                         {
                             "match": "[^<]+|<[^\\$]|<\\$[^>]",

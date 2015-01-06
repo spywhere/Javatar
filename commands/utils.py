@@ -88,46 +88,44 @@ class JavatarUtilsCommand(sublime_plugin.TextCommand):
         @param selector: scope selector (refer to GrammarParser's selector)
         """
         try:
-            grammars = sublime.find_resources("Java*.javatar-grammar")
-            if grammars:
-                scope = GrammarParser(sublime.decode_value(sublime.load_resource(grammars[0])))
-                parse_output = scope.parse_grammar(self.view.substr(sublime.Region(0, self.view.size())))
-                status_text = ""
-                if parse_output["success"]:
-                    if selector == "":
-                        nodes = scope.find_all()
-                    elif selector == "#":
-                        selections = self.view.sel()
-                        nodes = scope.find_by_region([0, 0])
-                        if selections:
-                            first_sel = selections[0]
-                            if first_sel.empty():
-                                nodes = scope.find_by_region([first_sel.begin(), first_sel.end()])
-                            else:
-                                nodes = scope.find_inside_region([first_sel.begin(), first_sel.end()])
-                    else:
-                        nodes = scope.find_by_selectors(selector)
-                    if selector != "#":
-                        status_text = "Parsing got {} tokens".format(len(nodes))
-                    for node in nodes:
-                        if selector == "#":
-                            if status_text == "":
-                                status_text += node["name"]
-                            else:
-                                status_text += " " + node["name"]
+            scope = GrammarParser(sublime.decode_value(sublime.load_resource("Packages/Javatar/grammars/Java8.javatar-grammar")))
+            parse_output = scope.parse_grammar(self.view.substr(sublime.Region(0, self.view.size())))
+            status_text = ""
+            if parse_output["success"]:
+                if selector == "":
+                    nodes = scope.find_all()
+                elif selector == "#":
+                    selections = self.view.sel()
+                    nodes = scope.find_by_region([0, 0])
+                    if selections:
+                        first_sel = selections[0]
+                        if first_sel.empty():
+                            nodes = scope.find_by_region([first_sel.begin(), first_sel.end()])
                         else:
-                            print("#{begin}:{end} => {name}".format_map(node))
-                            print("   => {value}".format_map(node))
-
-                    print("Total: {} tokens".format(len(nodes)))
+                            nodes = scope.find_inside_region([first_sel.begin(), first_sel.end()])
+                else:
+                    nodes = scope.find_by_selectors(selector)
                 if selector != "#":
-                    if status_text != "" and str(parse_output["end"]) == str(self.view.size()):
-                        status_text += " in {elapse_time:.2f}s".format(elapse_time=scope.get_elapse_time())
+                    status_text = "Parsing got {} tokens".format(len(nodes))
+                for node in nodes:
+                    if selector == "#":
+                        if status_text == "":
+                            status_text += node["name"]
+                        else:
+                            status_text += " " + node["name"]
                     else:
-                        status_text = "Parsing failed [" + str(parse_output["end"]) + "/" + str(self.view.size()) + "] in {elapse_time:.2f}s".format(elapse_time=scope.get_elapse_time())
-                print("Ending: " + str(parse_output["end"]) + "/" + str(self.view.size()))
-                print("Parsing Time: {elapse_time:.2f}s".format(elapse_time=scope.get_elapse_time()))
-                StatusManager.show_status(status_text)
+                        print("#{begin}:{end} => {name}".format_map(node))
+                        print("   => {value}".format_map(node))
+
+                print("Total: {} tokens".format(len(nodes)))
+            if selector != "#":
+                if status_text != "" and str(parse_output["end"]) == str(self.view.size()):
+                    status_text += " in {elapse_time:.2f}s".format(elapse_time=scope.get_elapse_time())
+                else:
+                    status_text = "Parsing failed [" + str(parse_output["end"]) + "/" + str(self.view.size()) + "] in {elapse_time:.2f}s".format(elapse_time=scope.get_elapse_time())
+            print("Ending: " + str(parse_output["end"]) + "/" + str(self.view.size()))
+            print("Parsing Time: {elapse_time:.2f}s".format(elapse_time=scope.get_elapse_time()))
+            StatusManager.show_status(status_text)
         except Exception:
             print("Error occurred while parsing")
             traceback.print_exc()

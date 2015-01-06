@@ -1,6 +1,7 @@
 from .commands import *
 from .core import (
-    EventHandler
+    EventHandler,
+    ProjectRestoration
 )
 from .utils import (
     Constant
@@ -14,11 +15,9 @@ def plugin_loaded():
 
 
 def on_project_stable(view_or_window=None, command_name=None, args=None):
-    pass
-    # save_project_state(repeat=False)
+    ProjectRestoration.save_state()
 
 
 def on_change(view):
     pass
     # refresh_dependencies()
-    # hide_status()

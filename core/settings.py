@@ -18,7 +18,7 @@ class Settings:
         Settings.sublime_base = "Preferences.sublime-settings"
 
     @staticmethod
-    def read_settings():
+    def startup():
         """
         Read all settings from files
         """
@@ -73,7 +73,7 @@ class Settings:
         return Settings.sublime_settings.get(key, default)
 
     @staticmethod
-    def get(key, default=None, as_tuple=False):
+    def get(key, default=None, from_global=None, as_tuple=False):
         """
         Returns a value in settings
 
@@ -85,10 +85,15 @@ class Settings:
 
         This method must return in local-default prioritize order
         """
-        value = Settings.get_local(key, None, as_tuple)
-        if value is None:
-            value = Settings.get_global(key, default, as_tuple)
-        return value
+        if from_global is None:
+            value = Settings.get(key, default=None, from_global=False, as_tuple=as_tuple)
+            if value is None:
+                value = Settings.get(key, default=default, from_global=True, as_tuple=as_tuple)
+            return value
+        elif from_global:
+            return Settings.get_global(key, default, as_tuple)
+        else:
+            return Settings.get_local(key, default, as_tuple)
 
     @staticmethod
     def set(key, val, to_global=False):

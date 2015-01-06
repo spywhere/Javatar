@@ -14,6 +14,27 @@ class StatusManager:
     """
 
     @staticmethod
+    def animated_startup_text(status=None, animated=True):
+        """
+        Returns animated startup message
+
+        @param status: status instance
+        @param animated: if provided as True, will return message that
+            will changed over time
+        """
+        if animated:
+            status = status or {}
+            if "time" in status:
+                status["time"] += 1
+                status["time"] %= 10
+            else:
+                status["time"] = 0
+            frame = int(status["time"] * 3 / 10)
+        else:
+            frame = 3
+        return "Javatar is starting up" + ("." * frame)
+
+    @staticmethod
     def reset(show_message=True):
         """
         Reset status manager (used on restart)
@@ -23,15 +44,25 @@ class StatusManager:
         StatusManager.status = {}
         if show_message:
             view = sublime.active_window().active_view()
-            view.set_status(STATUS_NAME, "Javatar is starting...")
+            view.set_status(STATUS_NAME, StatusManager.animated_startup_text(animated=False))
+
+    @staticmethod
+    def pre_startup():
+        """
+        Loads settings and run status manager in basic mode
+            (just to show single animated status text)
+        """
+        StatusManager.cycle_time = Settings.get("status_cycle_delay")
+        StatusManager.run()
+        StatusManager.show_status(StatusManager.animated_startup_text, delay=-1)
 
     @staticmethod
     def startup():
         """
-        Loads settings and run status manager
+        Loads settings and run status manager on Javatar fully ready
         """
-        StatusManager.cycle_time = Settings.get("status_cycle_delay")
-        StatusManager.run()
+        StatusManager.hide_status("")
+        StatusManager.ready = True
 
     @staticmethod
     def ref_is_exists(ref):
@@ -118,6 +149,7 @@ class StatusManager:
                                for status in
                                status_list
                                if status["ref"].lower() != ref.lower()]
+                StatusManager.status[status_name]["status"] = status_list
 
     @staticmethod
     def default_status():
@@ -156,8 +188,9 @@ class StatusManager:
                            for status in
                            status_list
                            if StatusManager.update_status(status, False)]
+            StatusManager.status[status_name]["status"] = status_list
             if not status_list:
-                if status_name == STATUS_NAME and Settings.get("show_package_path"):
+                if StatusManager.ready and status_name == STATUS_NAME and Settings.get("show_package_path"):
                     view.set_status(status_name, StatusManager.default_status())
                 else:
                     del StatusManager.status[status_name]
