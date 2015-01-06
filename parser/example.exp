@@ -1,0 +1,27 @@
+///////////////////////////
+//  Example Source File  //
+// Using Example Grammar //
+///////////////////////////
+
+main{
+    while <reading this file>:{
+        if <finish at-<get current line from-this book>>:
+            stop
+    }
+}
+
+private reading this file as boolean
+{
+    if you are not reading:
+        return false
+    else:
+        return true
+}
+
+public finish at-line number boolean{
+    return line number is end
+}
+
+get current line from-book integer{
+    return current line number
+}
