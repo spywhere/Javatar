@@ -37,7 +37,7 @@ class ActionHistory:
         """
         if not Settings.ready() or Settings.get("enable_action_history"):
             if exception:
-                message += ":\n" + traceback.format_exec()
+                message += ":\n" + traceback.format_exc()
             ActionHistory.actions.append((name, message))
 
     @staticmethod

@@ -1,10 +1,10 @@
 import sublime
 from ..core import (
     ActionHistory,
-    PackagesLoader,
+    PackagesManager,
     ProjectRestoration,
     Settings,
-    SnippetsLoader,
+    SnippetsManager,
     StatusManager
 )
 from .timer import Timer
@@ -45,21 +45,18 @@ class Constant:
 
     @staticmethod
     def ready():
-        return SnippetsLoader.ready() and PackagesLoader.ready()
+        return SnippetsManager.ready() and PackagesManager.ready()
 
     @staticmethod
     def startup():
         StatusManager.reset()
         ActionHistory.reset()
         Settings.reset()
-        SnippetsLoader.reset()
-        PackagesLoader.reset()
+        SnippetsManager.reset()
+        PackagesManager.reset()
 
         ActionHistory.add_action("javatar", "Startup")
         Settings.startup()
-        ProjectRestoration.load_state()
-        SnippetsLoader.startup()
-        PackagesLoader.startup()
 
         Timer.timer(reset=True)
         Constant.check_settings()
@@ -67,6 +64,8 @@ class Constant:
     @staticmethod
     def post_settings():
         StatusManager.pre_startup()
+        ProjectRestoration.load_state()
+        SnippetsManager.startup(on_done=PackagesManager.startup)
 
     @staticmethod
     def post_startup():

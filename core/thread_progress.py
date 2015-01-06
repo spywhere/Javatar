@@ -3,30 +3,52 @@ from .status_manager import StatusManager
 
 
 class MultiThreadProgress():
+
+    """
+    Multi-threading progress listener
+    """
+
     thread_list = []
 
-    def __init__(self, message="", target=None, success_message=None, on_complete=None, on_all_complete=None, anim_fx=None):
+    def __init__(self, message="", success_message=None, on_complete=None,
+                 on_all_complete=None, anim_fx=None,
+                 target=None):
         self.message = message
-        self.target = target
+        self.target = target or "ThreadProgress"
         self.success_message = success_message
         self.on_complete = on_complete
         self.on_all_complete = on_all_complete
         self.all_success = True
-        self.running = False
-        self.outmsg = ""
         if anim_fx is not None:
             self.anim_fx = anim_fx
+        StatusManager.show_status(
+            lambda status: self.anim_fx(status, self.get_message()),
+            ref="ThreadProgress",
+            target=self.target
+        )
+        self.run()
 
     def add(self, thread, message):
+        """
+        Add thread to the list
+
+        @param thread: thread to be added
+        @param message: message to be show
+        """
         self.thread_list.append([thread, message])
 
     def set_message(self, message):
+        """
+        Sets main message
+
+        @param message: message to be set
+        """
         self.message = message
 
     def get_message(self):
-        return self.outmsg
-
-    def anim_fx(self, i):
+        """
+        Returns processed message
+        """
         index = len(self.thread_list)
         multiple = index > 1
         msg = self.message
@@ -40,10 +62,33 @@ class MultiThreadProgress():
             if hasattr(thread, "message"):
                 msg += thread.message
             index -= 1
-        return {"i": (i + 1) % 3, "message": msg + ("." * (i + 1)), "delay": 300}
+        return msg
 
-    def run(self, i=0):
-        self.running = True
+    def anim_fx(self, status, message):
+        """
+        Returns message that changed over time
+
+        @param status: status instance
+        @param message: processed message
+        """
+        if "frame" not in status:
+            status["frame"] = 0
+            status["up"] = True
+
+        if status["up"]:
+            status["frame"] += 1
+        else:
+            status["frame"] -= 1
+        if status["frame"] == 4 or status["frame"] == 0:
+            status["up"] = not status["up"]
+
+        frame = status["frame"]
+        return "%s [%s=%s]" % (message, " " * frame, " " * (4-frame))
+
+    def run(self):
+        """
+        Check for thread progress
+        """
         alive = False
         index = 0
         for thread, message in self.thread_list:
@@ -60,61 +105,122 @@ class MultiThreadProgress():
             if self.on_all_complete is not None:
                 self.on_all_complete()
             if self.success_message is not None:
-                StatusManager.show_status(self.success_message, target=self.target)
+                StatusManager.show_status(self.success_message,
+                                          ref="ThreadProgress",
+                                          target=self.target)
+            else:
+                StatusManager.hide_status("ThreadProgress")
             return
 
-        info = self.anim_fx(i)
-        self.outmsg = info["message"]
-        StatusManager.show_status(info["message"], target=self.target)
-        sublime.set_timeout(lambda: self.run(info["i"]), info["delay"])
+        sublime.set_timeout(self.run, 100)
 
 
 class ThreadProgress():
-    def __init__(self, thread, message, target=None, success_message=None, anim_fx=None):
+
+    """
+    Single thread progress listener
+    """
+
+    def __init__(self, thread, message, success_message=None, on_done=None,
+                 anim_fx=None, target=None):
         self.thread = thread
         self.message = message
-        self.target = target
+        self.target = target or "ThreadProgress"
         self.success_message = success_message
+        self.on_done = on_done
         if anim_fx is not None:
             self.anim_fx = anim_fx
-        sublime.set_timeout(lambda: self.run(0), 100)
+        StatusManager.show_status(
+            lambda status: self.anim_fx(status, self.get_message()),
+            ref="ThreadProgress",
+            target=self.target
+        )
+        self.run()
+        thread.start()
 
-    def anim_fx(self, i, message, thread):
-        return {"i": (i + 1) % 3, "message": "%s %s" % (self.message, "." * (i + 1)), "delay": 300}
-
-    def run(self, i):
-        if not self.thread.is_alive():
-            if hasattr(self.thread, "result") and not self.thread.result:
-                if hasattr(self.thread, "result_message"):
-                    StatusManager.show_status(self.thread.result_message, target=self.target)
-                else:
-                    StatusManager.show_status("", target=self.target)
-                return
-            if self.success_message is not None:
-                StatusManager.show_status(self.success_message, target=self.target)
-            return
-        info = self.anim_fx(i, self.message, self.thread)
+    def get_message(self):
+        """
+        Returns processed message
+        """
         tmsg = ""
         if hasattr(self.thread, "msg"):
             tmsg = self.thread.msg
-        StatusManager.show_status(info["message"] + tmsg, target=self.target)
-        sublime.set_timeout(lambda: self.run(info["i"]), info["delay"])
+        return self.message + tmsg
+
+    def anim_fx(self, status, message):
+        """
+        Returns message that changed over time
+
+        @param status: status instance
+        @param message: processed message
+        """
+        if "frame" not in status:
+            status["frame"] = 0
+            status["up"] = True
+
+        if status["up"]:
+            status["frame"] += 1
+        else:
+            status["frame"] -= 1
+        if status["frame"] == 4 or status["frame"] == 0:
+            status["up"] = not status["up"]
+
+        frame = status["frame"]
+        return "%s [%s=%s]" % (message, " " * frame, " " * (4-frame))
+
+    def run(self):
+        """
+        Check for thread progress
+        """
+        if not self.thread.is_alive():
+            if self.on_done is not None:
+                self.on_done()
+            if hasattr(self.thread, "result") and not self.thread.result:
+                if hasattr(self.thread, "result_message"):
+                    StatusManager.show_status(
+                        self.thread.result_message,
+                        ref="ThreadProgress",
+                        target=self.target
+                    )
+                else:
+                    StatusManager.hide_status("ThreadProgress")
+                return
+            if self.success_message is not None:
+                StatusManager.show_status(
+                    self.success_message,
+                    ref="ThreadProgress",
+                    target=self.target
+                )
+            else:
+                StatusManager.hide_status("ThreadProgress")
+            return
+        sublime.set_timeout(self.run, 100)
 
 
 class SilentThreadProgress():
+
+    """
+    Single thread progress listener without progression
+    """
+
     def __init__(self, thread, on_complete, target=None):
         self.thread = thread
         self.on_complete = on_complete
-        self.target = target
+        self.target = target or "ThreadProgress"
         sublime.set_timeout(lambda: self.run(), 100)
 
     def run(self):
+        """
+        Check for thread progress
+        """
         if not self.thread.is_alive():
             self.on_complete(self.thread)
             if hasattr(self.thread, "result") and not self.thread.result:
                 if hasattr(self.thread, "result_message"):
-                    StatusManager.show_status(self.thread.result_message, target=self.target)
-                else:
-                    StatusManager.show_status("", target=self.target)
+                    StatusManager.show_status(
+                        self.thread.result_message,
+                        ref="ThreadProgress",
+                        target=self.target
+                    )
             return
         sublime.set_timeout(lambda: self.run(), 100)

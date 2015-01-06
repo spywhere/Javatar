@@ -4,12 +4,26 @@ from .settings import Settings
 
 
 class DependencyManager:
+
+    """
+    Load and store all dependencies
+    """
+
     @staticmethod
     def startup():
+        """
+        Refresh dependencies list after start up
+        """
         DependencyManager.refresh_dependencies()
 
     @staticmethod
     def get_dependencies(from_global=True):
+        """
+        Returns dependency list
+
+        @param from_global: if provided as True, will returns a dependency
+            list from global settings
+        """
         out_dependencies = []
         dependencies = Settings.get("dependencies", from_global=from_global)
 
@@ -31,6 +45,13 @@ class DependencyManager:
 
     @staticmethod
     def refresh_dependencies(from_global=None):
+        """
+        Refresh dependency list
+
+        @param from_global: if provided as None, will refresh all dependencies
+            if provided as True, will refresh only global dependencies settings
+            if provided as False, will refresh only local dependencies settings
+        """
         if from_global is None:
             DependencyManager.refresh_dependencies(False)
             DependencyManager.refresh_dependencies(True)

@@ -9,6 +9,7 @@ from ..parser.GrammarParser import GrammarParser
 from ..core import (
     ActionHistory,
     JSONPanel,
+    PackagesManager,
     StatusManager
 )
 from ..utils import (
@@ -170,5 +171,5 @@ class JavatarReloadPackagesCommand(sublime_plugin.WindowCommand):
         ActionHistory.add_action(
             "javatar.commands.utils.reload_packages", "Reload Packages"
         )
-        # reset_packages()
-        # load_packages()
+        PackagesManager.reset()
+        PackagesManager.startup()

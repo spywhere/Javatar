@@ -13,6 +13,8 @@ class StatusManager:
     Status Text manager for complex status text usages
     """
 
+    ready = False
+
     @staticmethod
     def animated_startup_text(status=None, animated=True):
         """
@@ -24,15 +26,22 @@ class StatusManager:
         """
         if animated:
             status = status or {}
-            if "time" in status:
-                status["time"] += 1
-                status["time"] %= 10
+            if "frame" not in status:
+                status["frame"] = 0
+                status["up"] = True
+
+            if status["up"]:
+                status["frame"] += 1
             else:
-                status["time"] = 0
-            frame = int(status["time"] * 3 / 10)
+                status["frame"] -= 1
+            if status["frame"] == 4 or status["frame"] == 0:
+                status["up"] = not status["up"]
+
+            frame = status["frame"]
         else:
             frame = 3
-        return "Javatar is starting up" + ("." * frame)
+        return "Javatar is starting up [%s=%s]" % (" " * frame,
+                                                   " " * (4-frame))
 
     @staticmethod
     def reset(show_message=True):
@@ -44,7 +53,8 @@ class StatusManager:
         StatusManager.status = {}
         if show_message:
             view = sublime.active_window().active_view()
-            view.set_status(STATUS_NAME, StatusManager.animated_startup_text(animated=False))
+            view.set_status(STATUS_NAME,
+                            StatusManager.animated_startup_text(animated=False))
 
     @staticmethod
     def pre_startup():
@@ -54,14 +64,14 @@ class StatusManager:
         """
         StatusManager.cycle_time = Settings.get("status_cycle_delay")
         StatusManager.run()
-        StatusManager.show_status(StatusManager.animated_startup_text, delay=-1)
+        StatusManager.startup_status = StatusManager.show_status(StatusManager.animated_startup_text, delay=-1)
 
     @staticmethod
     def startup():
         """
         Loads settings and run status manager on Javatar fully ready
         """
-        StatusManager.hide_status("")
+        StatusManager.hide_status(StatusManager.startup_status)
         StatusManager.ready = True
 
     @staticmethod
@@ -77,6 +87,21 @@ class StatusManager:
                 if ref.lower() == status["ref"].lower():
                     return True
         return False
+
+    @staticmethod
+    def remove_ref(ref):
+        """
+        Remove any reference key from status texts
+
+        @param ref: reference key
+        """
+        for status_name in StatusManager.status:
+                status_list = StatusManager.status[status_name]["status"]
+                status_list = [status
+                               for status in
+                               status_list
+                               if status["ref"].lower() != ref.lower()]
+                StatusManager.status[status_name]["status"] = status_list
 
     @staticmethod
     def show_status(text, delay=None, ref=None, must_see=False, target=None):
@@ -112,6 +137,8 @@ class StatusManager:
                     random.choice(string.ascii_letters + string.digits)
                     for _ in range(8)
                 ])
+        else:
+            StatusManager.remove_ref(ref)
         if isinstance(text, str):
             status["text"] = text
         else:
@@ -141,7 +168,8 @@ class StatusManager:
         if ref is None:
             return
         if ref == "":
-            StatusManager.reset(False)
+            for status_name in StatusManager.status:
+                StatusManager.status[status_name]["status"] = []
         else:
             for status_name in StatusManager.status:
                 status_list = StatusManager.status[status_name]["status"]
@@ -188,18 +216,18 @@ class StatusManager:
                            for status in
                            status_list
                            if StatusManager.update_status(status, False)]
-            StatusManager.status[status_name]["status"] = status_list
+            status_section["status"] = status_list
+            StatusManager.status[status_name] = status_section
             if not status_list:
                 if StatusManager.ready and status_name == STATUS_NAME and Settings.get("show_package_path"):
                     view.set_status(status_name, StatusManager.default_status())
                 else:
-                    del StatusManager.status[status_name]
                     view.erase_status(status_name)
                 continue
 
             status_section["current_cycle"] += 100
             if status_section["current_cycle"] >= StatusManager.cycle_time:
-                status_section["current_cycle"] -= StatusManager.cycle_time
+                status_section["current_cycle"] = 0
                 if status_list:
                     status_list = status_list[1:] + [status_list[0]]
 
