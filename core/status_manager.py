@@ -1,6 +1,7 @@
 import sublime
 import random
 import string
+from .logger import Logger
 from .settings import Settings
 
 
@@ -14,6 +15,7 @@ class StatusManager:
     """
 
     ready = False
+    cycle_time = 1000
 
     @staticmethod
     def animated_startup_text(status=None, animated=True):
@@ -62,9 +64,15 @@ class StatusManager:
         Loads settings and run status manager in basic mode
             (just to show single animated status text)
         """
-        StatusManager.cycle_time = Settings.get("status_cycle_delay")
+        StatusManager.cycle_time = Settings.get(
+            "status_cycle_delay",
+            StatusManager.cycle_time
+        )
         StatusManager.run()
-        StatusManager.startup_status = StatusManager.show_status(StatusManager.animated_startup_text, delay=-1)
+        StatusManager.startup_status = StatusManager.show_status(
+            StatusManager.animated_startup_text,
+            delay=-1
+        )
 
     @staticmethod
     def startup():
@@ -199,6 +207,9 @@ class StatusManager:
         """
         if status["permanent"]:
             return True
+        if "delay" not in status or status["delay"] is None:
+            Logger.debug(status)
+            return False
         if not status["must_see"] or force:
             status["delay"] -= 100
         return status["delay"] > 0
@@ -215,12 +226,18 @@ class StatusManager:
             status_list = [status
                            for status in
                            status_list
-                           if StatusManager.update_status(status, False)]
+                           if (status is not None and
+                               StatusManager.update_status(status, False))]
             status_section["status"] = status_list
             StatusManager.status[status_name] = status_section
             if not status_list:
-                if StatusManager.ready and status_name == STATUS_NAME and Settings.get("show_package_path"):
-                    view.set_status(status_name, StatusManager.default_status())
+                if (StatusManager.ready and
+                    status_name == STATUS_NAME and
+                        Settings.get("show_package_path")):
+                    view.set_status(
+                        status_name,
+                        StatusManager.default_status()
+                    )
                 else:
                     view.erase_status(status_name)
                 continue

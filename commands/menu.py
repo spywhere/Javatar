@@ -35,9 +35,15 @@ class JavatarCommand(sublime_plugin.WindowCommand):
         """
         if not Constant.ready():
             if self.ready_retry > 2:
-                sublime.message_dialog("Javatar is starting up... Please wait a few seconds and try again.")
+                sublime.message_dialog(
+                    "Javatar is starting up..." +
+                    "Please wait a few seconds and try again."
+                )
             else:
-                sublime.status_message("Javatar is starting up... Please wait a few seconds and try again...")
+                sublime.status_message(
+                    "Javatar is starting up..." +
+                    "Please wait a few seconds and try again..."
+                )
             self.ready_retry += 1
             return
         if self.qm is None:
@@ -45,7 +51,10 @@ class JavatarCommand(sublime_plugin.WindowCommand):
             self.qm = QuickMenu(self.main_menu)
             # Create a menu for development channel
             if Constant.is_debug():
-                self.qm.addItems("main", [["Development Section...", "All testing tools"]], [{"name": "dev"}])
+                self.qm.addItems(
+                    "main",
+                    [["Development Section...", "All testing tools"]],
+                    [{"name": "dev"}])
 
             # Generate action for Create menu
             # actions = []
@@ -55,12 +64,31 @@ class JavatarCommand(sublime_plugin.WindowCommand):
             # self.qm.setSelectedIndex("creates", 3 if len(actions) > 0 else 2)
 
             # Always add Help and Support at the end
-            self.qm.addItems("main", [["Help and Support...", "Utilities for Help and Support on Javatar"]], [{"name": "help"}])
+            self.qm.addItems(
+                "main",
+                [[
+                    "Help and Support...",
+                    "Utilities for Help and Support on Javatar"
+                ]],
+                [{"name": "help"}]
+            )
 
             # Quick reload menu
             if Constant.is_debug():
-                self.qm.insertItem("main", 0, ["Reload Javatar", "Reload Javatar modules (debug only)"], {"command": "javatar_utils", "args": {"util_type": "reload"}})
-            self.qm.addItems("help", [["Javatar", "v" + Constant.get_version()]], [{}])
+                self.qm.insertItem(
+                    "main",
+                    0,
+                    ["Reload Javatar", "Reload Javatar modules (debug only)"],
+                    {
+                        "command": "javatar_utils",
+                        "args": {"util_type": "reload"}
+                    }
+                )
+            self.qm.addItems(
+                "help",
+                [["Javatar", "v" + Constant.get_version()]],
+                [{}]
+            )
         if replaceMenu is not None:
             self.qm.setMenu(replaceMenu["name"], replaceMenu["menu"])
             return

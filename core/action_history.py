@@ -1,4 +1,5 @@
 import traceback
+from .logger import Logger
 from .settings import Settings
 
 
@@ -38,6 +39,9 @@ class ActionHistory:
         if not Settings.ready() or Settings.get("enable_action_history"):
             if exception:
                 message += ":\n" + traceback.format_exc()
+                Logger.error(
+                    "%s\n%s" % (message, traceback.format_exc())
+                )
             ActionHistory.actions.append((name, message))
 
     @staticmethod

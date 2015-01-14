@@ -9,8 +9,24 @@ from .utils import (
 
 
 def plugin_loaded():
-    EventHandler.register_handler(on_change, EventHandler.ON_NEW | EventHandler.ON_ACTIVATED | EventHandler.ON_LOAD | EventHandler.ON_POST_SAVE | EventHandler.ON_CLONE)
-    EventHandler.register_handler(on_project_stable, EventHandler.ON_CLOSE | EventHandler.ON_NEW | EventHandler.ON_POST_WINDOW_COMMAND)
+    EventHandler.register_handler(
+        on_change,
+        (
+            EventHandler.ON_NEW |
+            EventHandler.ON_ACTIVATED |
+            EventHandler.ON_LOAD |
+            EventHandler.ON_POST_SAVE |
+            EventHandler.ON_CLONE
+        )
+    )
+    EventHandler.register_handler(
+        on_project_stable,
+        (
+            EventHandler.ON_CLOSE |
+            EventHandler.ON_NEW |
+            EventHandler.ON_POST_WINDOW_COMMAND
+        )
+    )
     Constant.startup()
 
 

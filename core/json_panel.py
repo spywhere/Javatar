@@ -35,7 +35,10 @@ class JSONPanel():
         """
         self.post_remove = post_remove
         self.view = self.window.open_file(file_name)
-        EventHandler.register_handler(self, EventHandler.ON_CLOSE | EventHandler.ON_POST_SAVE)
+        EventHandler.register_handler(
+            self,
+            EventHandler.ON_CLOSE | EventHandler.ON_POST_SAVE
+        )
         return self.view
 
     def on_close(self, view):
@@ -51,7 +54,9 @@ class JSONPanel():
         Saving event handler
         """
         if self.view.id() == view.id() and self.on_done is not None:
-            self.on_done(sublime.decode_value(self.view.substr(sublime.Region(0, self.view.size()))))
+            self.on_done(sublime.decode_value(self.view.substr(
+                sublime.Region(0, self.view.size()))
+            ))
             self.cleanup()
 
     def cleanup(self):

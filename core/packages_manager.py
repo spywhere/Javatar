@@ -3,6 +3,7 @@ import threading
 import urllib
 from os.path import basename
 from .action_history import ActionHistory
+from .logger import Logger
 from .thread_progress import ThreadProgress
 
 
@@ -65,21 +66,30 @@ class PackagesManager:
         from ..utils import Utils
         for package in PackagesManager.installed_packages:
             install_update = True
-            installed_menu["actions"] += [{"command": "javatar_install",
-                                           "args": {
-                                               "installtype": "uninstall_package",
-                                               "name": package["name"],
-                                               "filename": package["path"]}}]
-            installed_menu["items"] += [[package["name"], "Installed (" +
-                                         Utils.to_readable_size(
-                                             package["path"])
-                                         + ")."]]
+            installed_menu["actions"] += [{
+                "command": "javatar_install",
+                "args": {
+                    "installtype": "uninstall_package",
+                    "name": package["name"],
+                    "filename": package["path"]
+                }
+            }]
+            installed_menu["items"] += [[
+                package["name"],
+                "Installed (" + Utils.to_readable_size(
+                    package["path"]
+                ) + ")."
+            ]]
         if install_update:
             installed_menu["selected_index"] = 2
-            sublime.active_window().run_command("javatar", {"replaceMenu": {
-                "name": "uninstall_packages",
-                "menu": installed_menu
-            }})
+            sublime.active_window().run_command(
+                "javatar", {
+                    "replaceMenu": {
+                        "name": "uninstall_packages",
+                        "menu": installed_menu
+                    }
+                }
+            )
 
     @staticmethod
     def startup(on_done=None):
@@ -235,8 +245,8 @@ class PackagesManagerThread(threading.Thread):
             count = self.count_classes(packages)
             self.installed_packages.append({"name": filename,
                                             "path": filepath})
-            print(
-                'Javatar package "{}" loaded with {} classes in {} packages'
+            Logger.log(
+                'Package "{}" loaded with {} classes in {} packages'
                 .format(
                     filename,
                     count[1],
@@ -376,9 +386,9 @@ class PackagesUpdaterThread(threading.Thread):
             require_package_name = None
 
             remote_update = False
-            if Constant.is_debug():
-                print("[Javatar] Install required package: "
-                      + str(self.no_install))
+            Logger.debug(
+                "Install required package: " + str(self.no_install)
+            )
             if not self.no_install and "install" in packages:
                 require_package_name = packages["install"]
 
@@ -400,7 +410,8 @@ class PackagesUpdaterThread(threading.Thread):
                     conflict_with = None
                     for conflict in package_conflict:
                         conflict_package = PackagesManager.get_installed_packages(
-                            conflict)
+                            conflict
+                        )
                         if conflict_package is not None:
                             # Conflict package was already installed
                             conflict_with = conflict_package["name"]
@@ -444,12 +455,15 @@ class PackagesUpdaterThread(threading.Thread):
             self.result = True
             if self.on_complete is not None:
                 sublime.set_timeout(
-                    lambda: self.on_complete(package_url,
-                                             require_package), 3000)
+                    lambda: self.on_complete(
+                        package_url,
+                        require_package
+                    ), 3000)
 
         except Exception as e:
-            self.result_message = ("Javatar packages update has failed: " +
-                                   str(e))
+            self.result_message = (
+                "Javatar packages update has failed: " + str(e)
+            )
             ActionHistory.add_action(
                 "javatar.core.packages_updater",
                 "Javatar packages update has failed", e

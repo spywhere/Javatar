@@ -1,5 +1,7 @@
 ## Javatar Developers' Note
 
+### TODO:
+
 ### New Features:
 - Documentation
   - New JavatarDoc

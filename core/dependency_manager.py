@@ -58,7 +58,11 @@ class DependencyManager:
             return
         dependency_menu = {
             "selected_index": 2,
-            "items": [["Back", "Back to previous menu"], ["Add External .jar", "Add dependency .jar file"], ["Add Class Folder", "Add dependency class folder"]],
+            "items": [
+                ["Back", "Back to previous menu"],
+                ["Add External .jar", "Add dependency .jar file"],
+                ["Add Class Folder", "Add dependency class folder"]
+            ],
             "actions": [
                 {
                     "name": "project_settings"
@@ -67,25 +71,61 @@ class DependencyManager:
         }
 
         dependency_menu["actions"].extend([
-            {"command": "javatar_settings", "args": {"actiontype": "add_external_jar", "arg1": from_global}},
-            {"command": "javatar_settings", "args": {"actiontype": "add_class_folder", "arg1": from_global}}
+            {
+                "command": "javatar_settings",
+                "args": {"actiontype": "add_external_jar", "arg1": from_global}
+            },
+            {
+                "command": "javatar_settings",
+                "args": {"actiontype": "add_class_folder", "arg1": from_global}
+            }
         ])
 
         dependencies = DependencyManager.get_dependencies(from_global)
         for dependency in dependencies:
             name = basename(dependency[0])
             if dependency[1]:
-                dependency_menu["actions"].append({"command": "javatar_settings", "args": {"actiontype": "remove_dependency", "arg1": dependency[0], "arg2": False}})
+                dependency_menu["actions"].append(
+                    {
+                        "command": "javatar_settings",
+                        "args": {
+                            "actiontype": "remove_dependency",
+                            "arg1": dependency[0],
+                            "arg2": False
+                        }
+                    }
+                )
                 if isdir(dependency[0]):
-                    dependency_menu["items"].append(["[" + name + "]", "Global dependency. Select to remove from the list"])
+                    dependency_menu["items"].append([
+                        "[" + name + "]",
+                        "Global dependency. Select to remove from the list"
+                    ])
                 else:
-                    dependency_menu["items"].append([name, "Global dependency. Select to remove from the list"])
+                    dependency_menu["items"].append([
+                        name,
+                        "Global dependency. Select to remove from the list"
+                    ])
             else:
-                dependency_menu["actions"].append({"command": "javatar_settings", "args": {"actiontype": "remove_dependency", "arg1": dependency[0], "arg2": True}})
+                dependency_menu["actions"].append(
+                    {
+                        "command": "javatar_settings",
+                        "args": {
+                            "actiontype": "remove_dependency",
+                            "arg1": dependency[0],
+                            "arg2": True
+                        }
+                    }
+                )
                 if isdir(dependency[0]):
-                    dependency_menu["items"].append(["[" + name + "]", "Project dependency. Select to remove from the list"])
+                    dependency_menu["items"].append([
+                        "[" + name + "]",
+                        "Project dependency. Select to remove from the list"
+                    ])
                 else:
-                    dependency_menu["items"].append([name, "Project dependency. Select to remove from the list"])
+                    dependency_menu["items"].append([
+                        name,
+                        "Project dependency. Select to remove from the list"
+                    ])
         menu_name = "_dependencies"
         if from_global:
             menu_name = "global" + menu_name

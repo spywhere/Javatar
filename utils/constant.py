@@ -1,6 +1,7 @@
 import sublime
 from ..core import (
     ActionHistory,
+    Logger,
     PackagesManager,
     ProjectRestoration,
     Settings,
@@ -49,6 +50,7 @@ class Constant:
 
     @staticmethod
     def startup():
+        Logger.reset()
         StatusManager.reset()
         ActionHistory.reset()
         Settings.reset()
@@ -63,6 +65,7 @@ class Constant:
 
     @staticmethod
     def post_settings():
+        Logger.startup()
         StatusManager.pre_startup()
         ProjectRestoration.load_state()
         SnippetsManager.startup(on_done=PackagesManager.startup)
@@ -71,8 +74,11 @@ class Constant:
     def post_startup():
         StatusManager.startup()
         StatusManager.show_status("Javatar is ready")
-        print("[Javatar] Startup Time: {0:.2f}s".format(Constant.startup_time))
-        ActionHistory.add_action("javatar", "Ready within {0:.2f}s".format(Constant.startup_time))
+        Logger.info("Startup Time: {0:.2f}s".format(Constant.startup_time))
+        ActionHistory.add_action(
+            "javatar",
+            "Ready within {0:.2f}s".format(Constant.startup_time)
+        )
 
     @staticmethod
     def check_startup():

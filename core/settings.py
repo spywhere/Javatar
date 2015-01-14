@@ -86,9 +86,19 @@ class Settings:
         This method must return in local-default prioritize order
         """
         if from_global is None:
-            value = Settings.get(key, default=None, from_global=False, as_tuple=as_tuple)
+            value = Settings.get(
+                key,
+                default=None,
+                from_global=False,
+                as_tuple=as_tuple
+            )
             if value is None:
-                value = Settings.get(key, default=default, from_global=True, as_tuple=as_tuple)
+                value = Settings.get(
+                    key,
+                    default=default,
+                    from_global=True,
+                    as_tuple=as_tuple
+                )
             return value
         elif from_global:
             return Settings.get_global(key, default, as_tuple)

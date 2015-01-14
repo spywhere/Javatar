@@ -9,6 +9,7 @@ from ..parser.GrammarParser import GrammarParser
 from ..core import (
     ActionHistory,
     JSONPanel,
+    Logger,
     PackagesManager,
     StatusManager
 )
@@ -27,13 +28,13 @@ class JavatarUtilsCommand(sublime_plugin.TextCommand):
         """
         JSONPanel's on_done
         """
-        print(str(sublime.encode_value(obj)))
+        Logger.none(str(sublime.encode_value(obj)))
 
     def on_cancel(self):
         """
         JSONPanel's on_cancel
         """
-        print("Cancel")
+        Logger.none("Cancel")
 
     def run(self, edit, util_type="", text="", region=None, dest=None):
         """
@@ -60,24 +61,51 @@ class JavatarUtilsCommand(sublime_plugin.TextCommand):
         elif util_type == "test" and Constant.is_debug():
             self.view.show_popup_menu(["A", "B"], self.nothing)
         elif util_type == "remote_hash":
-            sublime.active_window().show_input_panel("URL:", "", self.remote_hash, None, None)
+            sublime.active_window().show_input_panel(
+                "URL:", "", self.remote_hash, None, None
+            )
         elif util_type == "hash":
-            print(hashlib.sha256(self.view.substr(sublime.Region(0, self.view.size())).encode("utf-8")).hexdigest())
+            Logger.none(
+                hashlib.sha256(
+                    self.view.substr(
+                        sublime.Region(0, self.view.size())
+                    ).encode("utf-8")
+                ).hexdigest()
+            )
         elif util_type == "tojson":
-            jsonObj = sublime.decode_value(self.view.substr(sublime.Region(0, self.view.size())))
-            self.view.replace(edit, sublime.Region(0, self.view.size()), sublime.encode_value(jsonObj, True))
+            jsonObj = sublime.decode_value(
+                self.view.substr(sublime.Region(0, self.view.size()))
+            )
+            self.view.replace(
+                edit,
+                sublime.Region(0, self.view.size()),
+                sublime.encode_value(jsonObj, True)
+            )
         elif util_type == "json_test" and Constant.is_debug():
-            panel = JSONPanel(window=self.view.window(), on_done=self.on_done, on_cancel=self.on_cancel)
+            panel = JSONPanel(
+                window=self.view.window(),
+                on_done=self.on_done,
+                on_cancel=self.on_cancel
+            )
             view = panel.open("JSONTest.json")
-            sublime.set_timeout(lambda: view.run_command("javatar_utils", {"util_type": "insert", "text": "{\n}"}), 50)
+            sublime.set_timeout(
+                lambda: view.run_command(
+                    "javatar_utils", {"util_type": "insert", "text": "{\n}"}
+                ),
+                50
+            )
         elif util_type == "parse":
-            sublime.active_window().show_input_panel("Parse Parameter:", "", self.parse_code, None, None)
+            sublime.active_window().show_input_panel(
+                "Parse Parameter:", "", self.parse_code, None, None
+            )
         elif util_type == "reload" and Constant.is_debug():
-            ActionHistory.add_action("javatar.commands.utils.utils.reload", "Reload Javatar")
-            print("Reloading Javatar...")
+            ActionHistory.add_action(
+                "javatar.commands.utils.utils.reload", "Reload Javatar"
+            )
+            Logger.info("Reloading Javatar...")
             for mod in tuple(sys.modules.keys()):
                 if mod.lower().startswith("javatar"):
-                    print("Reloading module " + mod + "...")
+                    Logger.info("Reloading module " + mod + "...")
                     reload(sys.modules[mod])
             from ..Javatar import plugin_loaded
             plugin_loaded()
@@ -89,8 +117,12 @@ class JavatarUtilsCommand(sublime_plugin.TextCommand):
         @param selector: scope selector (refer to GrammarParser's selector)
         """
         try:
-            scope = GrammarParser(sublime.decode_value(sublime.load_resource("Packages/Javatar/grammars/Java8.javatar-grammar")))
-            parse_output = scope.parse_grammar(self.view.substr(sublime.Region(0, self.view.size())))
+            scope = GrammarParser(sublime.decode_value(sublime.load_resource(
+                "Packages/Javatar/grammars/Java8.javatar-grammar"
+            )))
+            parse_output = scope.parse_grammar(self.view.substr(
+                sublime.Region(0, self.view.size())
+            ))
             status_text = ""
             if parse_output["success"]:
                 if selector == "":
@@ -101,9 +133,13 @@ class JavatarUtilsCommand(sublime_plugin.TextCommand):
                     if selections:
                         first_sel = selections[0]
                         if first_sel.empty():
-                            nodes = scope.find_by_region([first_sel.begin(), first_sel.end()])
+                            nodes = scope.find_by_region(
+                                [first_sel.begin(), first_sel.end()]
+                            )
                         else:
-                            nodes = scope.find_inside_region([first_sel.begin(), first_sel.end()])
+                            nodes = scope.find_inside_region(
+                                [first_sel.begin(), first_sel.end()]
+                            )
                 else:
                     nodes = scope.find_by_selectors(selector)
                 if selector != "#":
@@ -115,21 +151,39 @@ class JavatarUtilsCommand(sublime_plugin.TextCommand):
                         else:
                             status_text += " " + node["name"]
                     else:
-                        print("#{begin}:{end} => {name}".format_map(node))
-                        print("   => {value}".format_map(node))
+                        Logger.none(
+                            "#{begin}:{end} => {name}".format_map(node)
+                        )
+                        Logger.none(
+                            "   => {value}".format_map(node)
+                        )
 
-                print("Total: {} tokens".format(len(nodes)))
+                Logger.none("Total: {} tokens".format(len(nodes)))
             if selector != "#":
-                if status_text != "" and str(parse_output["end"]) == str(self.view.size()):
-                    status_text += " in {elapse_time:.2f}s".format(elapse_time=scope.get_elapse_time())
+                if (status_text != "" and
+                        str(parse_output["end"]) == str(self.view.size())):
+                    status_text += " in {elapse_time:.2f}s".format(
+                        elapse_time=scope.get_elapse_time()
+                    )
                 else:
-                    status_text = "Parsing failed [" + str(parse_output["end"]) + "/" + str(self.view.size()) + "] in {elapse_time:.2f}s".format(elapse_time=scope.get_elapse_time())
-            print("Ending: " + str(parse_output["end"]) + "/" + str(self.view.size()))
-            print("Parsing Time: {elapse_time:.2f}s".format(elapse_time=scope.get_elapse_time()))
+                    status_text = "Parsing failed [%s/%s] in {%.2f}s" % (
+                        parse_output["end"],
+                        self.view.size(),
+                        scope.get_elapse_time()
+                    )
+            Logger.none(
+                "Ending: %s/%s" % (parse_output["end"], self.view.size())
+            )
+            Logger.none(
+                "Parsing Time: {elapse_time:.2f}s".format(
+                    elapse_time=scope.get_elapse_time()
+                )
+            )
             StatusManager.show_status(status_text)
         except Exception:
-            print("Error occurred while parsing")
-            traceback.print_exc()
+            Logger.error(
+                "Error while parsing\n%s" % (traceback.format_exc())
+            )
 
     def remote_hash(self, url):
         """
@@ -138,13 +192,16 @@ class JavatarUtilsCommand(sublime_plugin.TextCommand):
         @param url: URL to fetch data
         """
         try:
-            urllib.request.install_opener(urllib.request.build_opener(urllib.request.ProxyHandler()))
+            urllib.request.install_opener(urllib.request.build_opener(
+                urllib.request.ProxyHandler()
+            ))
             data = urllib.request.urlopen(url).read()
             datahash = hashlib.sha256(data).hexdigest()
-            print("Hash: " + datahash)
+            Logger.none("Hash: " + datahash)
         except Exception:
-            print("Error occurred while remote_hash")
-            traceback.print_exc()
+            Logger.error(
+                "Error while remote hash\n%s" % (traceback.format_exc())
+            )
 
     def nothing(self, index=-1):
         """

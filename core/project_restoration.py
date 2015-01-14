@@ -1,4 +1,5 @@
 import sublime
+from .logger import Logger
 from .settings import Settings
 
 
@@ -27,7 +28,10 @@ class ProjectRestoration:
             }
             Settings.set("project_data", project_data, to_global=True)
             if repeat:
-                sublime.set_timeout(ProjectRestoration.save_state, Settings.get("project_update_interval"))
+                sublime.set_timeout(
+                    ProjectRestoration.save_state,
+                    Settings.get("project_update_interval")
+                )
 
     @staticmethod
     def load_state():
@@ -42,8 +46,9 @@ class ProjectRestoration:
                 for window in sublime.windows():
                     if str(window.id()) in project_data:
                         window.set_project_data(project_data[str(window.id())])
-                        from ..utils import Constant
-                        if Constant.is_debug():
-                            print("[Javatar] Restore project data on window " + str(window.id()))
+                        Logger.debug(
+                            "Restore project data on window %s" %
+                            (str(window.id()))
+                        )
             ProjectRestoration.loaded = True
             ProjectRestoration.save_state(repeat=True)

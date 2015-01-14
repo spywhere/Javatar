@@ -2,6 +2,7 @@ import sublime
 import threading
 from os.path import basename
 from .action_history import ActionHistory
+from .logger import Logger
 from .thread_progress import ThreadProgress
 from ..parser.GrammarParser import GrammarParser
 
@@ -141,7 +142,7 @@ class SnippetsManagerThread(threading.Thread):
                     "Javatar snippet " + snippet["title"] + " loaded [file=" +
                     filepath + "]"
                 )
-                print("[Javatar] Snippet " + basename(filepath) + " loaded")
+                Logger.info("Snippet " + basename(filepath) + " loaded")
                 snippets.append(snippet)
             else:
                 ActionHistory.add_action(
