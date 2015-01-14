@@ -78,8 +78,7 @@ class ActionHistory:
             for action in ActionHistory.actions
             if (
                 (len(include) <= 0 or
-                 ActionHistory.is_starts_with(action[0], include))
-                and
+                 ActionHistory.is_starts_with(action[0], include)) and
                 (len(include) <= 0 or
                  not ActionHistory.is_starts_with(action[0], exclude))
             )

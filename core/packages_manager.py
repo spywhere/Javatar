@@ -1,6 +1,5 @@
 import sublime
 import threading
-import urllib
 from os.path import basename
 from .action_history import ActionHistory
 from .logger import Logger
@@ -33,7 +32,7 @@ class PackagesManager:
             otherwise, will returns package starts by specified name (if any)
         """
         if name is None:
-            return PackagesManager.installed_packages
+            return PackagesManager.installed_packages or []
         else:
             for package in PackagesManager.get_installed_packages():
                 if package["name"].startswith(name):
@@ -99,7 +98,7 @@ class PackagesManager:
         @param on_done: callback after loaded
         """
         PackagesManager.load_packages(
-            on_done=lambda: PackagesManager.update_packages(on_done=on_done)
+            on_done=lambda: PackagesManager.update_packages_list(on_done=on_done)
         )
 
     @staticmethod
@@ -120,9 +119,9 @@ class PackagesManager:
         )
 
     @staticmethod
-    def on_packages_updated(package_url, require_package):
+    def on_packages_list_updated(package_url, require_package):
         """
-        Callback after packages are updated
+        Callback after packages list is updated
 
         This method will install required package (if specified)
 
@@ -157,25 +156,31 @@ class PackagesManager:
         )
 
     @staticmethod
-    def update_packages(no_install=False, on_done=None):
+    def update_packages_list(no_install=False, on_done=None):
         """
-        Update packages
+        Update packages list
 
         @param no_install: if provided as True, will not install required
             packages after update a packages list
         @param on_done: callback after loaded
         """
         ActionHistory.add_action(
-            "javatar.core.packages_manager.update_packages",
+            "javatar.core.packages_manager.update_packages_list",
             "Update packages list"
         )
-        thread = PackagesUpdaterThread(no_install,
-                                       PackagesManager.on_packages_updated)
+        thread = PackagesUpdaterThread(
+            no_install,
+            PackagesManager.on_packages_list_updated
+        )
         ThreadProgress(
             thread, "Updating Javatar packages",
             "Javatar packages has been successfully updated",
             on_done=on_done
         )
+
+    @staticmethod
+    def install_package(package):
+        pass
 
     @staticmethod
     def ready():
@@ -311,11 +316,12 @@ class PackagesUpdaterThread(threading.Thread):
         """
         Returns raw data from Javatar packages repository
         """
-        from ..utils import Constant
-        urllib.request.install_opener(
-            urllib.request.build_opener(urllib.request.ProxyHandler()))
-        rawdata = urllib.request.urlopen(Constant.get_packages_repo()).read()
-        return sublime.decode_value(rawdata.decode("utf-8"))
+        from ..utils import Constant, Downloader
+        return sublime.decode_value(
+            Downloader.download(
+                Constant.get_packages_repo()
+            ).decode("utf-8")
+        )
 
     def validate_packages(self, data):
         """
