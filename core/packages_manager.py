@@ -173,12 +173,28 @@ class PackagesManager:
         )
 
     @staticmethod
+    def on_package_installed(package, on_done=None):
+        PackagesManager.reset()
+        PackagesManager.load_packages(
+            on_done=lambda: PackagesManager.update_packages_list(
+                no_install=True,
+                on_done=on_done
+            )
+        )
+
+        if on_done:
+            on_done()
+
+    @staticmethod
     def install_package(package, on_done=None):
         ActionHistory.add_action(
             "javatar.core.packages_manager.install_package",
             "Install package [name=%s]" % (package["name"])
         )
-        thread = PackageInstallerThread(package, on_done)
+        thread = PackageInstallerThread(
+            package,
+            lambda pkg: PackagesManager.on_package_installed(pkg, on_done)
+        )
         ThreadProgress(
             thread,
             "Installing Javatar package \"%s\"" % (package["name"]),
@@ -213,18 +229,23 @@ class PackageInstallerThread(threading.Thread):
             return
         self.result = True
         if self.on_complete is not None:
-            sublime.set_timeout(self.on_complete, 3000)
+            sublime.set_timeout(
+                lambda: self.on_complete(self.package),
+                3000
+            )
 
     def run(self):
         try:
             from ..utils import Downloader
+            local_path = join(
+                sublime.packages_path(),
+                "user",
+                "%s.javatar-packages" % (self.package["filename"])
+            )
+            self.package["local_path"] = local_path
             Downloader.download_file(
                 url="%s.javatar-packages" % (self.package["url"]),
-                path=join(
-                    sublime.packages_path(),
-                    "user",
-                    "%s.javatar-packages" % (self.package["filename"])
-                ),
+                path=local_path,
                 checksum=self.package["hash"],
                 on_complete=self.on_downloaded
             )
@@ -469,7 +490,7 @@ class PackagesUpdaterThread(threading.Thread):
                         if conflict_package is not None:
                             # Conflict package was already installed
                             conflict_with = conflict_package["name"]
-                            break
+                            continue
                     package["url"] = package_url+package["filename"]
                     if (require_package_name is not None and
                             package["name"] == require_package_name):

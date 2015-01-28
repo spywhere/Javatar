@@ -5,20 +5,19 @@
 ### New Features:
 - Documentation
   - New JavatarDoc
-  - Code Comment
+  - [WIP] Code Comment
 - Code Core
-  - Travis support
-  - Git feature branching
-  - Fully pep8 compatible (if possible)
-  - Unit tests - small functions are easier to test
-  - Logging Utilities
-  - Work-based class design
-  - Shell Manager
-  - Status Manager
+  - [Added-See UnitTests] Travis support
+  - [TODO] UnitTests - small functions are easier to test
+  - [TODO] Shell Manager
+  - [Done] Work-based class design
+  - [Done] Git feature branching
+  - [Done] Fully pep8 compatible (if possible)
+  - [Done] Logging Utilities
+  - [Done] Status Manager
 - Features
-  - [Remove] Javatar calls (not so useful)
-  - [Remove] Package channel
-  - Action History capture all exception (so it can helps with issues)
+  - *Remove* Javatar calls (not so useful)
+  - *Remove* Package channel
   - Better Build System
   - Code Linting
   - Multiple Source Folders
@@ -32,6 +31,7 @@
   - JUnit support [FAQ](http://junit.org/faq.html)
   - Language Localization (not soon except requested)
   - JVM Language compatible (not soon)
+  - [Done] Action History capture all exception (so it can helps with issues)
 
 ### Feature Description
 ##### Git feature branching
