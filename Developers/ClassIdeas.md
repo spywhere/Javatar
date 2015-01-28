@@ -6,7 +6,7 @@ TODO:
 
 - Must create an abstract class
 
-#### Settings
+#### Settings [Implemented]
 ##### Settings(key=None, global=None, local=None)
 Get the settings by default (`key` selector), global settings (`global` selector) or local settings (`local` selector)
 
@@ -32,23 +32,23 @@ Get any parser-related informations (like class name, package)
 ##### Parser()
 Parse current document (if not yet) and pass document info
 
-#### Timer
+#### Timer [Implemented]
 For startup time counting and future use
 
 #### Project
 For store/retrieve project data (such as source folders, root package)
 
-#### Status
+#### Status [Implemented as StatusManager]
 ##### Status(key, value, delay)
 Set the value to key and cycle status from all keys
 
 #### Validator
 Get current state of Sublime Text (such as is project, is view opened)
 
-#### ThreadProgress
+#### ThreadProgress [Refactored but require rewrite for more suitable]
 TODO:
 
-- Create an abstract class
+- Create an abstract class for each type
 
 #### News
 Check and show news
@@ -61,7 +61,7 @@ TODO:
 #### Snippets
 Add more field data %handler:[HandlerFunction]% to allows custom action on each snippets
 
-#### Macro
+#### Macro [See Terminality implementation]
 ##### Macro(key="")
 Get macro output
 
@@ -70,8 +70,8 @@ Macro(key="test %project_dir%")
 # test /user/spywhere/...
 ```
 
-#### Logger
+#### Logger [Implemented]
 Log messages in proper situation (debug, info, error, warning)
 
-#### Constant
+#### Constant [Implemented]
 Provides all constants throughout the Javatar (such as version, news, etc.)
