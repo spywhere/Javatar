@@ -1,6 +1,6 @@
 import sublime
 import threading
-from os.path import basename
+from os.path import basename, join
 from .action_history import ActionHistory
 from .logger import Logger
 from .thread_progress import ThreadProgress
@@ -111,7 +111,7 @@ class PackagesManager:
         ActionHistory.add_action(
             "javatar.core.packages_manager.load_packages", "Load packages"
         )
-        thread = PackagesManagerThread(PackagesManager.on_packages_loaded)
+        thread = PackagesLoaderThread(PackagesManager.on_packages_loaded)
         ThreadProgress(
             thread, "Loading Javatar packages",
             "Javatar packages has been successfully loaded",
@@ -119,22 +119,23 @@ class PackagesManager:
         )
 
     @staticmethod
-    def on_packages_list_updated(package_url, require_package):
+    def on_packages_list_updated(require_package):
         """
         Callback after packages list is updated
 
         This method will install required package (if specified)
 
-        @param package_url: url to download package file
         @param require_package: required package informations
         """
         if require_package is None:
+            Logger.debug("Skip required package installation")
             return
         package_conflict = []
         if "conflict" in require_package:
             package_conflict = require_package["conflict"]
         for conflict in package_conflict:
             if PackagesManager.get_installed_packages(conflict) is not None:
+                Logger.debug("Conflict package was already installed")
                 ActionHistory.add_action(
                     "javatar.core.packages_manager.update_status",
                     "Conflict package was already installed"
@@ -144,16 +145,9 @@ class PackagesManager:
             "javatar.core.packages_manager.update_status",
             "Install required package"
         )
-        sublime.active_window().run_command(
-            "javatar_install",
-            {
-                "installtype": "remote_package",
-                "name": require_package["name"],
-                "filename": require_package["filename"],
-                "url": package_url,
-                "checksum": require_package["hash"]
-            }
-        )
+
+        Logger.debug("Starting required package installation")
+        PackagesManager.install_package(require_package)
 
     @staticmethod
     def update_packages_list(no_install=False, on_done=None):
@@ -179,8 +173,20 @@ class PackagesManager:
         )
 
     @staticmethod
-    def install_package(package):
-        pass
+    def install_package(package, on_done=None):
+        ActionHistory.add_action(
+            "javatar.core.packages_manager.install_package",
+            "Install package [name=%s]" % (package["name"])
+        )
+        thread = PackageInstallerThread(package, on_done)
+        ThreadProgress(
+            thread,
+            "Installing Javatar package \"%s\"" % (package["name"]),
+            (
+                "Javatar package \"%s\" has been " % (package["name"]) +
+                "successfully installed"
+            )
+        )
 
     @staticmethod
     def ready():
@@ -191,7 +197,50 @@ class PackagesManager:
                 PackagesManager.default_packages is not None)
 
 
-class PackagesManagerThread(threading.Thread):
+class PackageInstallerThread(threading.Thread):
+    def __init__(self, package, on_complete=None):
+        self.package = package
+        self.on_complete = on_complete
+        threading.Thread.__init__(self)
+
+    def on_downloaded(self, data):
+        if data is None:
+            self.result_message = (
+                "Javatar package \"%s\" " % (self.package["name"]) +
+                "has been corrupted"
+            )
+            self.result = False
+            return
+        self.result = True
+        if self.on_complete is not None:
+            sublime.set_timeout(self.on_complete, 3000)
+
+    def run(self):
+        try:
+            from ..utils import Downloader
+            Downloader.download_file(
+                url="%s.javatar-packages" % (self.package["url"]),
+                path=join(
+                    sublime.packages_path(),
+                    "user",
+                    "%s.javatar-packages" % (self.package["filename"])
+                ),
+                checksum=self.package["hash"],
+                on_complete=self.on_downloaded
+            )
+        except Exception as e:
+            self.result_message = (
+                "Javatar package \"%s\" " % (self.package["name"]) +
+                "installation has failed: %s" % (str(e))
+            )
+            ActionHistory.add_action(
+                "javatar.core.package_installer",
+                "Javatar package installation has failed", e
+            )
+            self.result = False
+
+
+class PackagesLoaderThread(threading.Thread):
     def __init__(self, on_complete=None):
         self.installed_packages = []
         self.on_complete = on_complete
@@ -237,7 +286,7 @@ class PackagesManagerThread(threading.Thread):
             packages = sublime.decode_value(sublime.load_resource(filepath))
         except ValueError as e:
             ActionHistory.add_action(
-                "javatar.core.packages_manager_thread.analyse_package",
+                "javatar.core.packages_loader_thread.analyse_package",
                 "Invalid JSON package [file=" + filepath + "]",
                 e
             )
@@ -270,20 +319,20 @@ class PackagesManagerThread(threading.Thread):
         for filepath in sublime.find_resources("*.javatar-packages"):
             filename = basename(filepath)
             ActionHistory.add_action(
-                "javatar.core.packages_manager_thread.analyse_package",
+                "javatar.core.packages_loader_thread.analyse_package",
                 "Analyse package [file=" + filepath + "]"
             )
             packages = self.analyse_package(filepath)
             if packages:
                 ActionHistory.add_action(
-                    "javatar.core.packages_manager_thread.load_status",
+                    "javatar.core.packages_loader_thread.load_status",
                     "Javatar package " + filename + " loaded [file=" +
                     filepath + "]"
                 )
                 default_packages.append(packages)
             else:
                 ActionHistory.add_action(
-                    "javatar.core.packages_manager_thread.load_status",
+                    "javatar.core.packages_loader_thread.load_status",
                     "Javatar package load failed [file=" + filepath + "]"
                 )
 
@@ -297,7 +346,6 @@ class PackagesManagerThread(threading.Thread):
 
 
 class PackagesUpdaterThread(threading.Thread):
-
     def __init__(self, no_install=False, on_complete=None):
         self.no_install = no_install
         self.on_complete = on_complete
@@ -319,7 +367,7 @@ class PackagesUpdaterThread(threading.Thread):
         from ..utils import Constant, Downloader
         return sublime.decode_value(
             Downloader.download(
-                Constant.get_packages_repo()
+                url=Constant.get_packages_repo()
             ).decode("utf-8")
         )
 
@@ -393,7 +441,7 @@ class PackagesUpdaterThread(threading.Thread):
 
             remote_update = False
             Logger.debug(
-                "Install required package: " + str(self.no_install)
+                "Bypass required package: " + str(self.no_install)
             )
             if not self.no_install and "install" in packages:
                 require_package_name = packages["install"]
@@ -422,6 +470,7 @@ class PackagesUpdaterThread(threading.Thread):
                             # Conflict package was already installed
                             conflict_with = conflict_package["name"]
                             break
+                    package["url"] = package_url+package["filename"]
                     if (require_package_name is not None and
                             package["name"] == require_package_name):
                         require_package = package
@@ -434,7 +483,7 @@ class PackagesUpdaterThread(threading.Thread):
                                     "installtype": "remote_package",
                                     "name": package["name"],
                                     "filename": package["filename"],
-                                    "url": package_url,
+                                    "url": package["url"],
                                     "checksum": package["hash"]
                                 }
                             }
@@ -461,10 +510,9 @@ class PackagesUpdaterThread(threading.Thread):
             self.result = True
             if self.on_complete is not None:
                 sublime.set_timeout(
-                    lambda: self.on_complete(
-                        package_url,
-                        require_package
-                    ), 3000)
+                    lambda: self.on_complete(require_package),
+                    3000
+                )
 
         except Exception as e:
             self.result_message = (

@@ -24,7 +24,8 @@ class MultiThreadProgress():
         StatusManager.show_status(
             lambda status: self.anim_fx(status, self.get_message()),
             ref="ThreadProgress",
-            target=self.target
+            target=self.target,
+            delay=-1
         )
         self.run()
 
@@ -133,7 +134,8 @@ class ThreadProgress():
         StatusManager.show_status(
             lambda status: self.anim_fx(status, self.get_message()),
             ref="ThreadProgress",
-            target=self.target
+            target=self.target,
+            delay=-1
         )
         self.run()
         thread.start()
@@ -172,28 +174,28 @@ class ThreadProgress():
         """
         Check for thread progress
         """
-        if not self.thread.is_alive():
-            if self.on_done is not None:
-                self.on_done()
-            if hasattr(self.thread, "result") and not self.thread.result:
-                if hasattr(self.thread, "result_message"):
-                    StatusManager.show_status(
-                        self.thread.result_message,
-                        ref="ThreadProgress",
-                        target=self.target
-                    )
+        if not self.thread.is_alive() and hasattr(self.thread, "result"):
+                if self.thread.result:
+                    if self.on_done is not None:
+                        self.on_done()
+                    if self.success_message is not None:
+                        StatusManager.show_status(
+                            self.success_message,
+                            ref="ThreadProgress",
+                            target=self.target
+                        )
+                    else:
+                        StatusManager.hide_status("ThreadProgress")
                 else:
-                    StatusManager.hide_status("ThreadProgress")
+                    if hasattr(self.thread, "result_message"):
+                        StatusManager.show_status(
+                            self.thread.result_message,
+                            ref="ThreadProgress",
+                            target=self.target
+                        )
+                    else:
+                        StatusManager.hide_status("ThreadProgress")
                 return
-            if self.success_message is not None:
-                StatusManager.show_status(
-                    self.success_message,
-                    ref="ThreadProgress",
-                    target=self.target
-                )
-            else:
-                StatusManager.hide_status("ThreadProgress")
-            return
         sublime.set_timeout(self.run, 100)
 
 

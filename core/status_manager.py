@@ -208,7 +208,10 @@ class StatusManager:
         if status["permanent"]:
             return True
         if "delay" not in status or status["delay"] is None:
-            Logger.debug(status)
+            Logger.debug(
+                "If you see this, please send the whole console " +
+                "log to developer [StatusManager]: %s" % (str(status))
+            )
             return False
         if not status["must_see"] or force:
             status["delay"] -= 100
