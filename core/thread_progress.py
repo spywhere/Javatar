@@ -72,19 +72,13 @@ class MultiThreadProgress():
         @param status: status instance
         @param message: processed message
         """
+        chars = "⢁⡈⠔⠢"
         if "frame" not in status:
             status["frame"] = 0
-            status["up"] = True
 
-        if status["up"]:
-            status["frame"] += 1
-        else:
-            status["frame"] -= 1
-        if status["frame"] == 4 or status["frame"] == 0:
-            status["up"] = not status["up"]
-
-        frame = status["frame"]
-        return "%s [%s=%s]" % (message, " " * frame, " " * (4-frame))
+        status["frame"] += 1
+        status["frame"] %= len(chars)
+        return "%s [%s]" % (message, chars[status["frame"]])
 
     def run(self):
         """
@@ -156,19 +150,13 @@ class ThreadProgress():
         @param status: status instance
         @param message: processed message
         """
+        chars = "⢁⡈⠔⠢"
         if "frame" not in status:
             status["frame"] = 0
-            status["up"] = True
 
-        if status["up"]:
-            status["frame"] += 1
-        else:
-            status["frame"] -= 1
-        if status["frame"] == 4 or status["frame"] == 0:
-            status["up"] = not status["up"]
-
-        frame = status["frame"]
-        return "%s [%s=%s]" % (message, " " * frame, " " * (4-frame))
+        status["frame"] += 1
+        status["frame"] %= len(chars)
+        return "%s [%s]" % (message, chars[status["frame"]])
 
     def run(self):
         """

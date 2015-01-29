@@ -47,7 +47,7 @@ class JavatarCommand(sublime_plugin.WindowCommand):
             self.ready_retry += 1
             return
         if self.qm is None:
-            # from ..utils import get_snippet_list
+            from ..core import SnippetsManager
             self.qm = QuickMenu(self.main_menu)
             # Create a menu for development channel
             if Constant.is_debug():
@@ -57,11 +57,11 @@ class JavatarCommand(sublime_plugin.WindowCommand):
                     [{"name": "dev"}])
 
             # Generate action for Create menu
-            # actions = []
-            # for snippet in get_snippet_list():
-            #     actions += [{"command": "javatar_create", "args": {"create_type": snippet[0]}}]
-            # self.qm.addItems("creates", get_snippet_list(), actions)
-            # self.qm.setSelectedIndex("creates", 3 if len(actions) > 0 else 2)
+            actions = []
+            for snippet in SnippetsManager.get_snippet_list():
+                actions += [{"command": "javatar_create", "args": {"create_type": snippet[0]}}]
+            self.qm.addItems("creates", SnippetsManager.get_snippet_list(), actions)
+            self.qm.setSelectedIndex("creates", 3 if len(actions) > 0 else 2)
 
             # Always add Help and Support at the end
             self.qm.addItems(
@@ -95,6 +95,9 @@ class JavatarCommand(sublime_plugin.WindowCommand):
         self.qm.show(self.window, self.select, menu, action)
 
     def select(self, info):
+        """
+        Logging method for menu
+        """
         if info["index"] < 0:
             ActionHistory.add_action(
                 "javatar.commands.menu.select",

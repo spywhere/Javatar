@@ -3,7 +3,6 @@ import sublime_plugin
 import sys
 from imp import reload
 import hashlib
-import urllib.request
 import traceback
 from ..parser.GrammarParser import GrammarParser
 from ..core import (
@@ -14,7 +13,8 @@ from ..core import (
     StatusManager
 )
 from ..utils import (
-    Constant
+    Constant,
+    Downloader
 )
 
 
@@ -192,10 +192,7 @@ class JavatarUtilsCommand(sublime_plugin.TextCommand):
         @param url: URL to fetch data
         """
         try:
-            urllib.request.install_opener(urllib.request.build_opener(
-                urllib.request.ProxyHandler()
-            ))
-            data = urllib.request.urlopen(url).read()
+            data = Downloader.download(url)
             datahash = hashlib.sha256(data).hexdigest()
             Logger.none("Hash: " + datahash)
         except Exception:

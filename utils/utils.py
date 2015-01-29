@@ -1,22 +1,38 @@
 import sublime
-from os.path import getsize
+import os.path
 
 
 class Utils:
+
+    """
+    A collection of small functions
+    """
+
     @staticmethod
-    def to_readable_size(filepath):
-        if filepath[0:8] == "Packages":
-            filepath = sublime.packages_path() + filepath[8:]
+    def to_readable_size(filesize, base=1000):
+        """
+        Convert a number into a readable file size
+
+        @param filesize: a value to convert, if provided as a number
+            if provided as a string, will thread as a file and
+            will gather a file size for calculation
+        @param base: a base value for calculation
+            Decimal use 1000
+            Binary use 1024
+        """
+        if isinstance(filesize, str):
+            if filesize[:8] == "Packages":
+                filesize = sublime.packages_path() + filesize[8:]
+            return Utils.to_readable_size(os.path.getsize(filesize), base)
         scales = [
-            [1000 ** 5, "PB"],
-            [1000 ** 4, "TB"],
-            [1000 ** 3, "GB"],
-            [1000 ** 2, "MB"],
-            [1000 ** 1, "KB"],
-            [1000 ** 0, "B"]
+            [base ** 5, "PB"],
+            [base ** 4, "TB"],
+            [base ** 3, "GB"],
+            [base ** 2, "MB"],
+            [base ** 1, "kB"],
+            [base ** 0, "B"]
         ]
-        filesize = getsize(filepath)
         for scale in scales:
             if filesize >= scale[0]:
                 break
-        return str(int(filesize / scale[0] * 100) / 100) + scale[1]
+        return "%.2f%s" % (filesize / scale[0], scale[1])

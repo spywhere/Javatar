@@ -34,10 +34,16 @@ class EventHandler:
 
     @staticmethod
     def register_handler(handler, events=0):
+        """
+        Add event listener to event handler
+        """
         EventHandler.handlers.append([handler, events])
 
     @staticmethod
     def unregister_handler(handler):
+        """
+        Remove event listener from event handler
+        """
         for hdr in EventHandler.handlers:
             if hdr[0] == handler:
                 EventHandler.handlers.remove(hdr)

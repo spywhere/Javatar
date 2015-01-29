@@ -26,24 +26,16 @@ class StatusManager:
         @param animated: if provided as True, will return message that
             will changed over time
         """
+        chars = "⢁⡈⠔⠢"
+        frame = 0
         if animated:
             status = status or {}
             if "frame" not in status:
                 status["frame"] = 0
-                status["up"] = True
-
-            if status["up"]:
-                status["frame"] += 1
-            else:
-                status["frame"] -= 1
-            if status["frame"] == 4 or status["frame"] == 0:
-                status["up"] = not status["up"]
-
+            status["frame"] += 1
+            status["frame"] %= len(chars)
             frame = status["frame"]
-        else:
-            frame = 3
-        return "Javatar is starting up [%s=%s]" % (" " * frame,
-                                                   " " * (4-frame))
+        return "Javatar is starting up [%s]" % (chars[frame])
 
     @staticmethod
     def reset(show_message=True):

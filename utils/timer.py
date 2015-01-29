@@ -24,8 +24,8 @@ class Timer:
         """
         Reset the clock to current time and returns time duration since start
 
-        @param reset: if provided, will reset accumulate time duration which
-            use in multi-stage timer to zero
+        @param reset: if provided as True, will reset accumulate time duration
+            which use in multi-stage timer to zero
         """
         duration = Timer.get_duration()
         Timer.last_timer = clock()
