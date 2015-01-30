@@ -45,18 +45,20 @@ class JSONPanel():
         """
         Closing event handler
         """
-        if self.view.id() == view.id() and self.on_cancel is not None:
-            self.on_cancel()
+        if self.view.id() == view.id():
+            if self.on_cancel is not None:
+                self.on_cancel()
             self.cleanup()
 
     def on_post_save(self, view):
         """
         Saving event handler
         """
-        if self.view.id() == view.id() and self.on_done is not None:
-            self.on_done(sublime.decode_value(self.view.substr(
-                sublime.Region(0, self.view.size()))
-            ))
+        if self.view.id() == view.id():
+            if self.on_done is not None:
+                self.on_done(sublime.decode_value(self.view.substr(
+                    sublime.Region(0, self.view.size()))
+                ))
             self.cleanup()
 
     def cleanup(self):
