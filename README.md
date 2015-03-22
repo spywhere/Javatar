@@ -6,8 +6,8 @@ Report Issue: [https://github.com/spywhere/Javatar/issues](https://github.com/sp
 
 [![Release](https://img.shields.io/github/release/spywhere/Javatar.svg?style=flat)](https://github.com/spywhere/Javatar/releases)|[![Issue](https://img.shields.io/github/issues/spywhere/Javatar.svg?style=flat)](https://github.com/spywhere/Javatar/issues)
 :----:|:----:
-[![Build Status](https://img.shields.io/travis/spywhere/Javatar/master.svg?style=flat)](https://travis-ci.org/spywhere/Javatar)|[![Build Status](https://img.shields.io/travis/spywhere/Javatar/develop.svg?style=flat)](https://travis-ci.org/spywhere/Javatar)
-master|develop
+[![Build Status](https://img.shields.io/travis/spywhere/Javatar/release.svg?style=flat)](https://travis-ci.org/spywhere/Javatar)|[![Build Status](https://img.shields.io/travis/spywhere/Javatar/master.svg?style=flat)](https://travis-ci.org/spywhere/Javatar)
+release|master (develop)
 
 ### License
     ::Javatar::
