@@ -81,6 +81,7 @@ class GrammarParser():
     def parse_grammar(self, data):
         if self.data is None or self.data != data:
             self.data = data
+            self.regions = []
         else:
             if self.printer is not None:
                 self.printer(0, "Already parse")

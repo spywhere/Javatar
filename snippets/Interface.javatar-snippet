@@ -1,0 +1,9 @@
+title: Interface
+description: Create a new empty interface
+<$>
+%package%
+
+%visibility%interface %class%%inheritance% {
+    ${1}
+}
+<$>

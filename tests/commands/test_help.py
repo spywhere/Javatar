@@ -66,7 +66,7 @@ class TestHelp(unittest.TestCase):
         view.set_scratch.assert_was_called()
         view.set_name.assert_was_called_with('Javatar Actions History Report')
         view.run_command.assert_was_called(
-            "javatar_util", {'util_type': 'set_read_only'}
+            "javatar_utils", {'util_type': 'set_read_only'}
         )
         text = view.run_command.call_args_list[0][0][1]['text']
 

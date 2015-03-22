@@ -1,0 +1,101 @@
+{
+    // Javatar snippet grammar
+    // Latest Modified: 16 December 2014 03:34
+    "separator": {
+        "parse_any": [
+            {
+                "include": "Comment"
+            },
+            {
+                "include": "WhiteSpace"
+            }
+        ],
+        "multiple": true
+    },
+    "compilation_unit": {
+        "name": "CompilationUnit",
+        "parse": [
+            {
+                "parse_any": [
+                    {
+                        "include": "MenuTitle"
+                    },
+                    {
+                        "include": "MenuDescription"
+                    },
+                    {
+                        "include": "SnippetData"
+                    }
+                ],
+                "multiple": true
+            }
+        ]
+    },
+    "repository": {
+        "Comment": {
+            "match": "//.*$"
+        },
+        "WhiteSpace": {
+            "match": "\\s+"
+        },
+        "MenuTitle": {
+            "name": "MenuTitle",
+            "parse": [
+                {
+                    "name": "TitleKey",
+                    "match": "title:"
+                },
+                {
+                    "name": "TitleValue",
+                    "match": ".+\\b"
+                }
+            ]
+        },
+        "MenuDescription": {
+            "name": "MenuDescription",
+            "parse": [
+                {
+                    "name": "DescriptionKey",
+                    "match": "(description|dest):"
+                },
+                {
+                    "name": "DescriptionValue",
+                    "match": ".+\\b"
+                }
+            ]
+        },
+        "SnippetData": {
+            "name": "SnippetData",
+            "parse": [
+                {
+                    "name": "DataOpenTag",
+                    "match": "<\\$>",
+                    "after_separator": false
+                },
+                {
+                    "match": "(\\r)?(\\n)?",
+                    "before_separator": false,
+                    "after_separator": false
+                },
+                {
+                    "name": "DataValue",
+                    "parse": [
+                        {
+                            "match": "[^<]+|<[^\\$]|<\\$[^>]",
+                            "multiple": true,
+                            "before_separator": false,
+                            "after_separator": false
+                        }
+                    ],
+                    "before_separator": false,
+                    "after_separator": false
+                },
+                {
+                    "name": "DataCloseTag",
+                    "match": "<\\$>",
+                    "before_separator": false
+                }
+            ]
+        }
+    }
+}

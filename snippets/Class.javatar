@@ -1,7 +1,0 @@
-%class:Class%
-%description:Create a new empty class%
-%package%
-
-%visibility%%modifier%class %class%%inheritance% {
-    %body%
-}

@@ -13,8 +13,11 @@ def run():
     parser = argparse.ArgumentParser(description="GrammarParser demo program.", usage="%(prog)s [options] source [grammar]")
     parser.add_argument("-v", "--validate", dest="validate", action="store_true", default=False, help="validate all rule in the grammar")
     parser.add_argument("-p", "--print", dest="print_call", action="store_true", default=False, help="print rule calls")
+    parser.add_argument("-m", "--multiple", dest="multiple", action="store_true", default=False, help="enable multiple selector")
+    parser.add_argument("-g", "--grammar", dest="grammar", nargs="?", default="example.json", type=str, help="grammar file to use (default is example.json)")
+    parser.add_argument("-r", "--regex", dest="regex", nargs="?", type=str, help="RegEx selector")
+    parser.add_argument("-s", "--selector", dest="selector", nargs="?", type=str, help="node selectors")
     parser.add_argument("source", nargs="?", type=str, help="source file to parse with grammar")
-    parser.add_argument("grammar", nargs="?", default="example.json", type=str, help="grammar file to use (default is example.json)")
     options = parser.parse_args()
 
     # Show help if nothing is provided
@@ -74,42 +77,32 @@ def run():
     parse_output = parser.parse_grammar(source_data)
     # Parsing success?
     if parse_output["success"]:
-        ##################################################
-        # Uncomment line below to narrow down the output #
-        ##################################################
-        ## Show method name by searching from node name ##
-        # nodes = parser.find_by_selector("@MethodName")
-
-        ## Show all nodes that have Comment as their parent ##
-        # nodes = parser.find_by_selectors("Comment>")
-
-        ## Show Comment nodes and also their childs ##
-        # nodes = parser.find_by_selectors("Comment|Comment>")
-
-        ## Show only block that inside method body using RegEx ##
-        # nodes = parser.find_by_regex(".*MethodBody>Block$")
-
-        ## Show all nodes contains specified region ##
-        # nodes = parser.find_by_region([120, 145])
-
-        ## Show all nodes inside specified region ##
-        # nodes = parser.find_inside_region([120, 145])
-
-        ## Show all tokens ##
-        nodes = parser.find_all()
-        #######################
-        # Selection filtering #
-        #######################
-        ## Show all method declarations within selected nodes ##
-        nodes = parser.find_by_selector("@MethodDeclaration", nodes)
-
-        # Print it out
+        if options.selector is not None:
+            nodes = parser.find_by_selectors(options.selector)
+        elif options.regex is not None:
+            nodes = parser.find_by_regex(options.regex)
+        else:
+            nodes = parser.find_all()
         index = 1
         for node in nodes:
             print("#{0}, {1}-{2} => {3}".format(index, node["begin"], node["end"], node["name"]))
             print("   => " + node["value"])
             index += 1
         print("Total: " + str(len(nodes)) + " tokens")
+        while True:
+            selectors = raw_input("Selectors> ")
+            if selectors == "":
+                break
+            nodes = parser.find_by_selectors(selectors, nodes)
+            # Print it out
+            index = 1
+            for node in nodes:
+                print("#{0}, {1}-{2} => {3}".format(index, node["begin"], node["end"], node["name"]))
+                print("   => " + node["value"])
+                index += 1
+            print("Total: " + str(len(nodes)) + " tokens")
+            if not options.multiple:
+                break
     # Parsing position compare to data size
     print("Ending: " + str(parse_output["end"]) + "/" + str(len(source_data)))
     # Parsing time (filtering is not included)

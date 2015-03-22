@@ -11,33 +11,19 @@
     // Javatar general purpose value
     "javatar_gp": 0,
 
-    // Package Subscription:
-    //    dev = Developer release (contains new features, bugs and also debugging messages enabled)
-    //    otherwise = Stable release (safe to use, only stable features enabled)
-    "package_channel" : "stable",
-
     // Automatically send statistics and usages informations
     "send_stats_and_usages" : true,
 
-    // Update message id
-    //    -1 = Unsubscribe to important Javatar updates notification (you should check out the JavatarDoc for any update information)
-    //    any other number = Assigned by Javatar to show you a proper update message
-    "message_id" : 0,
-
     // Enable Actions History to helps developer solve the issue
-    "enable_actions_history" : true,
-
-    // Maximum waiting time for Javatar packages creation (in seconds)
-    "maximum_waiting_time": 15,
+    "enable_action_history" : true,
 
     // Default delay before hide a status text (in milliseconds)
+    // Must more than 100 milliseconds
     "status_delay" : 5000,
 
-    // Allow Javatar to update project data for restoration
-    "allow_project_restoration": true,
-
-    // Time interval to update project data for restoration (in milliseconds)
-    "project_update_interval": 60000,
+    // Default delay before cycle to another status text (in milliseconds)
+    // Must more than 100 milliseconds
+    "status_cycle_delay" : 1000,
 
     // Show package path in status bar
     "show_package_path" : true,
@@ -54,6 +40,20 @@
 
     // Initial directory for finding dependencies
     "dependencies_path" : "$project_dir",
+
+    //////////////////////////////
+    // Project Data Restoration //
+    //////////////////////////////
+
+    // Allow Javatar to update project data for restoration
+    "allow_project_restoration": true,
+
+    // Time interval to update project data for restoration (in milliseconds)
+    "project_update_interval": 60000,
+
+    // Project data to store/restore
+    // Used by Javatar **DO NOT EDIT**
+    "project_data": {},
 
     ///////////////////
     // Java Settings //
@@ -73,7 +73,7 @@
     },
 
     // List of JDK path that Javatar detected and currently use
-    // This should be READ-ONLY unless you know what you are doing
+    // Used by Javatar **DO NOT EDIT**
     "jdk_version" : {},
 
     // Executables that Javatar use to build and run
@@ -200,11 +200,5 @@
     "import_declaration_selector" : "@ImportDeclaration",
 
     // Package name in import declaration selector (Use in Organize Imports)
-    "import_package_name_selector" : ">ImportDeclaration>QualifiedName",
-
-    //////////////////////////////////
-    // Javatar Temporary Key/Value  //
-    // For project data restoration //
-    //////////////////////////////////
-    "project_data": {}
+    "import_package_name_selector" : ">ImportDeclaration>QualifiedName"
 }
