@@ -2,6 +2,7 @@
 
 #### MergeDict
 Merge 2 dictionaries together and use as a single dictionary
+
 TODO:
 
 - Must create an abstract class
