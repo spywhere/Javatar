@@ -59,8 +59,17 @@ class JavatarCommand(sublime_plugin.WindowCommand):
             # Generate action for Create menu
             actions = []
             for snippet in SnippetsManager.get_snippet_list():
-                actions += [{"command": "javatar_create", "args": {"create_type": snippet[0]}}]
-            self.qm.addItems("creates", SnippetsManager.get_snippet_list(), actions)
+                actions += [
+                    {
+                        "command": "javatar_create",
+                        "args": {"create_type": snippet[0]}
+                    }
+                ]
+            self.qm.addItems(
+                "creates",
+                SnippetsManager.get_snippet_list(),
+                actions
+            )
             self.qm.setSelectedIndex("creates", 3 if len(actions) > 0 else 2)
 
             # Always add Help and Support at the end

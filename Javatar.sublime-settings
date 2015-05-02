@@ -179,7 +179,7 @@
     "package_match" : "^([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*",
 
     // Class in package matching using RegEx
-    "package_class_match" : "([a-zA-Z_$][a-zA-Z\\d_$,<:]*)$",
+    "package_class_match" : "((([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*)\\.)*)([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*)",
 
     // Package in package keyword scope selector (Use in Correct Class)
     "package_name_selector" : "storage.modifier.package.java",

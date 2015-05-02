@@ -8,10 +8,10 @@
 	],
 	"terminality": {
 		"run_if_only_one_available": false,
-		"additional_execution_units": {
+		"execution_units": {
 			"source.python": {
-				"Run $file_name": 0,
-				"Run $file_name in python3": 0
+				"python2run": 0,
+				"python3run": 0
 			},
 			"*": {
 				"terminal": 0,

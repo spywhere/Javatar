@@ -1,6 +1,7 @@
-#################
-TEMPORARY MESSAGE
-#################
+##########################
+    TEMPORARY MESSAGE
+YOU SHOULD NOT SEEING THIS
+##########################
 
 Just install Javatar? Checkout JavatarDoc for Javatar information and guides. Link is located in README file.
 

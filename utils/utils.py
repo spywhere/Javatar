@@ -36,3 +36,10 @@ class Utils:
             if filesize >= scale[0]:
                 break
         return "%.2f%s" % (filesize / scale[0], scale[1])
+
+    @staticmethod
+    def split_path(path):
+        rest, tail = os.path.split(path)
+        if len(rest) == 0:
+            return (tail,)
+        return Utils.split_path(rest) + (tail,)
