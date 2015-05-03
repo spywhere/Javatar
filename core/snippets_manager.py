@@ -55,7 +55,23 @@ class SnippetsManager:
         )
 
     @staticmethod
-    def get_snippet_list():
+    def get_snippet(title=None):
+        """
+        Returns a specified snippet, if found
+            otherwise, return None
+
+        @param title: a snipet title
+        """
+        for snippet in SnippetsManager.snippets:
+            if snippet["title"] == title:
+                return snippet
+        return None
+
+    @staticmethod
+    def get_snippet_info_list():
+        """
+        Returns snippet informations as a list
+        """
         snippets = []
         for snippet in SnippetsManager.snippets:
             snippets.append([snippet["title"], snippet["description"]])

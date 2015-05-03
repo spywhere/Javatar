@@ -1,14 +1,15 @@
 import sublime
 import sublime_plugin
 import os.path
-from ..core import (
+from ...core import (
     JavaClass,
     JavaClassPath,
     JavaUtils,
     RE,
+    SnippetsManager,
     StateProperty
 )
-from ..utils import (
+from ...utils import (
     ActionHistory,
     StatusManager
 )
@@ -119,7 +120,7 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
 
         @param text: text to be analysed
         """
-        if not StateProperty.is_project() or not StateProperty.is_file():
+        if not StateProperty.is_project() and not StateProperty.is_file():
             return "Cannot specify package location"
         if not JavaUtils.is_class_path(text.strip("~"), special=True):
             return "Invalid class naming"
@@ -139,7 +140,7 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
             )
 
         class_info["package"] = JavaUtils.to_package(create_directory)
-        # JavaUtils.create_package_path(create_directory, True)
+        class_info["directory"] = create_directory
         class_info["file"] = os.path.join(
             create_directory,
             class_info["class_name"] + ".java"
@@ -219,13 +220,136 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
 
         return additional_text
 
+    def get_file_contents(self, info):
+        """
+        Returns a snippet contents, if found,
+            otherwise, returns None
+
+        @param info: class informations
+        """
+        class_type = self.args["create_type"]
+        snippet = SnippetsManager.get_snippet(class_type)
+        if snippet is None:
+            sublime.error_message(
+                "Snippet \"{snippet_name}\" is not found".format_map(
+                    {
+                        "snippet_name": class_type
+                    }
+                )
+            )
+            return None
+        data = snippet["data"]
+        data = data.replace(
+            "%package%",
+            (
+                "package " + info["package"].as_class_path() + ";"
+                if info["package"].as_class_path()
+                else ""
+            )
+        )
+
+        inheritance = ""
+        # Enum can only implements interfaces
+        # Interface can only extends another interface
+        if class_type != "Enumerator" and info["extends"]:
+            if class_type == "Class" and len(info["extends"]) > 1:
+                inheritance = " extends " + info["extends"][0]
+            else:
+                inheritance = " extends " + ", ".join(info["extends"])
+
+        if class_type != "Interface" and info["implements"]:
+            inheritance += " implements " + ", ".join(info["implements"])
+
+        data = (
+            data.replace("%class%", info["class_name"])
+                .replace("%file%", info["file"])
+                .replace("%file_name%", os.path.basename(info["file"]))
+                .replace("%package_path%", info["package"].as_class_path())
+                .replace("%visibility%", info["visibility"])
+                .replace("%inheritance%", inheritance)
+                .replace("%body%", info["body"])
+        )
+
+        if class_type == "Class":
+            data = data.replace("%modifier%", info["modifier"])
+
+        return data
+
+    def insert_and_save(self, view, contents, info):
+        """
+        Insert contents into the specified view and save it, also organize
+            the imports if required
+
+        @param view: a target view
+        @param contents: contents to add into the view
+        @param info: class informations
+        """
+        view.run_command("insert_snippet", {"contents": contents})
+        if info["extends"] or info["implements"]:
+            view.run_command("javatar_organize_imports")
+        view.run_command("save")
+
+    def create_class_file(self, info):
+        """
+        Create a specified Java class and returns the status
+
+        @param info: class informations
+        """
+        contents = self.get_file_contents(info)
+        if contents is None:
+            return False
+        if os.path.exists(info["file"]):
+            sublime.error_message(
+                "{class_type} \"{class_name}\" already exists".format_map({
+                    "class_type": self.args["create_type"],
+                    "class_name": info["class_name"]
+                })
+            )
+            return False
+        open(info["file"], "w").close()
+        view = sublime.active_window().open_file(info["file"])
+        view.set_syntax_file("Packages/Java/Java.tmLanguage")
+        # File Header override
+        view.settings().set("enable_add_template_to_empty_file", False)
+        sublime.set_timeout(
+            lambda: self.insert_and_save(view, contents, info),
+            100
+        )
+        return True
+
     def on_done(self, text=""):
         """
         Create a class with informations from the input text
 
         @param text: text from input panel
         """
-        pass
+        self.hide_status()
+        info = self.parse_create(text)
+        if isinstance(info, str):
+            sublime.error_message(info)
+            return
+        ActionHistory.add_action(
+            "javatar.commands.create.create_class.on_done",
+            "Create [info={info}]".format_map({
+                "info": info
+            })
+        )
+        if JavaUtils.create_package_path(
+                info["directory"], True) == JavaUtils.CREATE_ERROR:
+            return
+
+        if self.create_class_file(info):
+            sublime.set_timeout(lambda: StatusManager.show_status(
+                "{class_type} \"{class_name}\" is created within".format_map({
+                    "class_type": self.args["create_type"],
+                    "class_name": info["class_name"]
+                }) + " package \"{readable_package_path}\"".format_map({
+                    "readable_package_path": JavaUtils.to_readable_class_path(
+                        info["package"].as_class_path(),
+                        as_package=True
+                    )
+                })
+            ), 500)
 
     def on_change(self, text=""):
         """
@@ -238,12 +362,10 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
         if isinstance(info, str):
             status = info
         elif os.path.exists(info["file"]):
-            status = "{create_type} \"{class_name}\" already exists".format_map(
-                {
-                    "create_type": self.args["create_type"],
-                    "class_name": info["class_name"]
-                }
-            )
+            status = "{class_type} \"{class_name}\" already exists".format_map({
+                "class_type": self.args["create_type"],
+                "class_name": info["class_name"]
+            })
         else:
             prefix = self.build_prefix(info)
             status = "{prefix} \"{class_name}\" will be created".format_map({
@@ -265,7 +387,7 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
             ref="create_description"
         )
 
-    def on_cancel(self):
+    def hide_status(self):
         """
         Hides the text that is showed by on_change
         """
@@ -281,7 +403,7 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
             "create_type": create_type
         }
         ActionHistory.add_action(
-            "javatar.commands.create.run",
+            "javatar.commands.create.create_class.run",
             "Create [create_type={create_type}]".format_map(self.args)
         )
 
@@ -290,5 +412,5 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
             "",
             self.on_done,
             self.on_change,
-            self.on_cancel
+            self.hide_status
         )

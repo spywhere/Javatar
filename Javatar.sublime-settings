@@ -169,18 +169,6 @@
     // Method call replacement pattern using RegEx (Use in completions)
     "method_replacement" : "\\(.*?\\)(?![,\\)])",
 
-    // Package validation using RegEx
-    "package_name_match" : "^([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*$",
-
-    // Package (with special characters) validation using RegEx
-    "special_package_name_match" : "^([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$,<:]*$",
-
-    // Package matching using RegEx
-    "package_match" : "^([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*",
-
-    // Class in package matching using RegEx
-    "package_class_match" : "((([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*)\\.)*)([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*)",
-
     // Package in package keyword scope selector (Use in Correct Class)
     "package_name_selector" : "storage.modifier.package.java",
 
@@ -200,5 +188,17 @@
     "import_declaration_selector" : "@ImportDeclaration",
 
     // Package name in import declaration selector (Use in Organize Imports)
-    "import_package_name_selector" : ">ImportDeclaration>QualifiedName"
+    "import_package_name_selector" : ">ImportDeclaration>QualifiedName",
+
+    // Class path validation using RegEx
+    "class_path_match" : "^([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*$",
+
+    // Class path (with special characters) validation using RegEx
+    "special_class_path_match" : "^([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$,<:]*$",
+
+    // Package path matching using RegEx
+    "package_path_match" : "^([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.?)*",
+
+    // Package and Class matching using RegEx
+    "package_class_match" : "((([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*)\\.)*)([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*)",
 }

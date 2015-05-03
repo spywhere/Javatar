@@ -35,10 +35,10 @@ class JavaPackage:
     def __init__(self, jpackage):
         self.package_paths = []
         if isinstance(jpackage, str):
-            match = RE.search("package_class_match", jpackage)
+            match = RE.search("package_path_match", jpackage)
             if match:
                 self.package_paths = JavaUtils.normalize_package_path(
-                    match.group(1)
+                    match.group(0)
                 ).split(".")
         elif isinstance(jpackage, list):
             self.package_paths = jpackage
@@ -122,6 +122,10 @@ class JavaUtils:
     Java-related utilities
     """
 
+    CREATE_SUCCESS = 0
+    CREATE_EXISTS = 1
+    CREATE_ERROR = 2
+
     @staticmethod
     def to_readable_class_path(class_path, as_package=False):
         """
@@ -149,10 +153,11 @@ class JavaUtils:
         @param special: a boolean indicated if the class path is a special case
             (contains inheritance selectors) or not
         """
-        return RE.match(
-            "special_package_name_match" if special else "package_name_math",
+        match = RE.match(
+            "special_class_path_match" if special else "class_path_match",
             class_path
-        ) is not None
+        )
+        return match is not None
 
     @staticmethod
     def normalize_package_path(class_path):
@@ -194,13 +199,15 @@ class JavaUtils:
                 os.makedirs(path)
             except BaseException as e:
                 sublime.error_message(
-                    "Error while create a package: {exception}".format_map({
+                    "Error while create a package" +
+                    " \"{package}\": {exception}".format_map({
+                        "package": path,
                         "exception": e
                     })
                 )
-                return False
+                return JavaUtils.CREATE_ERROR
         else:
             if not silent:
                 sublime.message_dialog("Package is already exists")
-            return False
-        return True
+            return JavaUtils.CREATE_EXISTS
+        return JavaUtils.CREATE_SUCCESS
