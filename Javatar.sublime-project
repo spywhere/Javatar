@@ -21,7 +21,7 @@
 					"window_command": "unit_testing",
 					"args": {
 						"package": "<current>",
-						"output": "panel"
+						"output": "<panel>"
 					}
 				}
 			}

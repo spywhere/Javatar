@@ -62,7 +62,11 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
             text = text[1:]
             relative_path = False
 
-        class_path = JavaClassPath(text)
+        parts = RE.get(
+            "extends_implements",
+            EXTENDS_IMPLEMENTS_RE
+        ).split(text)
+        class_path = JavaClassPath(parts.pop(0))
         jclass = class_path.get_class()
         jclass, visibility_keyword, visibility = self.find_keyword(
             jclass,
@@ -76,20 +80,18 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
         )
 
         class_name = jclass.get()
-        parts = RE.get(
-            "extends_implements",
-            EXTENDS_IMPLEMENTS_RE
-        ).split(class_name)
-
         extends = []
         implements = []
-        class_name = parts.pop(0)
         while parts:
             part = parts.pop(0)
             if part == "<":
-                implements = parts.pop(0).split(",")
+                implements = [
+                    cl.strip() for cl in parts.pop(0).split(",") if cl.strip()
+                ]
             elif part == ":":
-                extends = parts.pop(0).split(",")
+                extends = [
+                    cl.strip() for cl in parts.pop(0).split(",") if cl.strip()
+                ]
 
         as_main = False
         if class_name.lower().endswith("asmain"):
@@ -161,6 +163,7 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
         if info["as_main"]:
             prefix += " main"
         prefix += " " + self.args["create_type"]
+        prefix = prefix.strip()
         return prefix[:1].upper() + prefix[1:].lower()
 
     def quote_list(self, lst):
