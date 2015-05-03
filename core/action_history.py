@@ -3,7 +3,7 @@ from .logger import Logger
 from .settings import Settings
 
 
-class ActionHistory:
+class _ActionHistory:
 
     """
     Store logs and exceptions occurred while running
@@ -11,17 +11,22 @@ class ActionHistory:
     This will be useful when solving the issue
     """
 
-    actions = []
+    @classmethod
+    def instance(cls):
+        if not hasattr(cls, "_instance"):
+            cls._instance = cls()
+        return cls._instance
 
-    @staticmethod
-    def reset():
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
         """
         Reset all changes (used on restart)
         """
-        ActionHistory.actions = []
+        self.actions = []
 
-    @staticmethod
-    def add_action(name, message, exception=None):
+    def add_action(self, name, message, exception=None):
         """
         Add action to the action history except specified not to (in settings)
 
@@ -36,16 +41,15 @@ class ActionHistory:
             of message
 
         """
-        if not Settings.ready() or Settings.get("enable_action_history"):
+        if not Settings().ready() or Settings().get("enable_action_history"):
             if exception:
                 message += ":\n" + traceback.format_exc()
-                Logger.error(
+                Logger().error(
                     "%s\n%s" % (message, traceback.format_exc())
                 )
-            ActionHistory.actions.append((name, message))
+            self.actions.append((name, message))
 
-    @staticmethod
-    def is_starts_with(string, values):
+    def is_starts_with(self, string, values):
         """
         Returns whether string starts with one of value in value list
 
@@ -58,8 +62,7 @@ class ActionHistory:
                 return True
         return False
 
-    @staticmethod
-    def get_action(include=None, exclude=None):
+    def get_action(self, include=None, exclude=None):
         """
         Returns a list of actions filtered by specified inclusions
             or exclusions
@@ -75,11 +78,18 @@ class ActionHistory:
         exclude = exclude or ()
         return [
             action[1]
-            for action in ActionHistory.actions
+            for action in self.actions
             if (
-                (len(include) <= 0 or
-                 ActionHistory.is_starts_with(action[0], include)) and
-                (len(include) <= 0 or
-                 not ActionHistory.is_starts_with(action[0], exclude))
+                (
+                    len(include) <= 0 or
+                    self.is_starts_with(action[0], include)
+                ) and (
+                    len(exclude) <= 0 or
+                    not self.is_starts_with(action[0], exclude)
+                )
             )
         ]
+
+
+def ActionHistory():
+    return _ActionHistory.instance()

@@ -58,7 +58,7 @@ class JavatarCommand(sublime_plugin.WindowCommand):
 
             # Generate action for Create menu
             actions = []
-            for snippet in SnippetsManager.get_snippet_info_list():
+            for snippet in SnippetsManager().get_snippet_info_list():
                 actions += [
                     {
                         "command": "javatar_create",
@@ -67,7 +67,7 @@ class JavatarCommand(sublime_plugin.WindowCommand):
                 ]
             self.qm.addItems(
                 "creates",
-                SnippetsManager.get_snippet_info_list(),
+                SnippetsManager().get_snippet_info_list(),
                 actions
             )
             self.qm.setSelectedIndex("creates", 3 if len(actions) > 0 else 2)
@@ -108,12 +108,12 @@ class JavatarCommand(sublime_plugin.WindowCommand):
         Logging method for menu
         """
         if info["index"] < 0:
-            ActionHistory.add_action(
+            ActionHistory().add_action(
                 "javatar.commands.menu.select",
                 "Exit menu [from_sublime={from_sublime}]".format_map(info)
             )
         else:
-            ActionHistory.add_action(
+            ActionHistory().add_action(
                 "javatar.commands.menu.select",
                 "Select item {index} [from_sublime={from_sublime}]".format_map(
                     {

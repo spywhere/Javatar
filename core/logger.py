@@ -1,12 +1,17 @@
-class Logger:
+class _Logger:
     NONE = 0
     INFO = 1
     WARNING = 2
     ERROR = 3
     DEBUG = 4
 
-    @staticmethod
-    def reset():
+    @classmethod
+    def instance(cls):
+        if not hasattr(cls, "_instance"):
+            cls._instance = cls()
+        return cls._instance
+
+    def reset(self):
         """
         Reset all changes (used on restart)
 
@@ -15,23 +20,20 @@ class Logger:
         """
         pass
 
-    @staticmethod
-    def startup():
+    def startup(self):
         """
         Initialize required variables (if any)
         """
         from ..utils import Constant
         print("[Javatar] v%s" % (Constant.get_version()))
 
-    @staticmethod
-    def none(message):
+    def none(self, message):
         """
         Print a message
         """
         print("%s" % (str(message)))
 
-    @staticmethod
-    def debug(message):
+    def debug(self, message):
         """
         Print a debug message
         """
@@ -39,40 +41,40 @@ class Logger:
         if Constant.is_debug():
             print("[Javatar Debug] %s" % (str(message)))
 
-    @staticmethod
-    def info(message):
+    def info(self, message):
         """
         Print an informative message
         """
         print("[Javatar] %s" % (str(message)))
 
-    @staticmethod
-    def warning(message):
+    def warning(self, message):
         """
         Print a warning message
         """
         print("[Javatar] Warning! %s" % (str(message)))
 
-    @staticmethod
-    def error(message):
+    def error(self, message):
         """
         Print an error message
         """
         print("[Javatar] Error! %s" % (str(message)))
 
-    @staticmethod
-    def log(message, level=None):
+    def log(self, message, level=None):
         """
         Print a message to console based on logging level
         """
-        level = level or Logger.INFO
-        if level == Logger.DEBUG:
-            Logger.debug(message)
-        elif level == Logger.INFO:
-            Logger.info(message)
-        elif level == Logger.WARNING:
-            Logger.warning(message)
-        elif level == Logger.ERROR:
-            Logger.error(message)
+        level = level or self.INFO
+        if level == self.DEBUG:
+            self.debug(message)
+        elif level == self.INFO:
+            self.info(message)
+        elif level == self.WARNING:
+            self.warning(message)
+        elif level == self.ERROR:
+            self.error(message)
         else:
-            Logger.none(message)
+            self.none(message)
+
+
+def Logger():
+    return _Logger.instance()

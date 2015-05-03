@@ -1,32 +1,38 @@
 import sublime
 
 
-class Settings:
+class _Settings:
 
     """
     Settings collections for easier access and managements
     """
 
-    @staticmethod
-    def reset():
+    @classmethod
+    def instance(cls):
+        if not hasattr(cls, "_instance"):
+            cls._instance = cls()
+        return cls._instance
+
+    def __init__(self):
+        self.reset()
+
+    def reset(self):
         """
         Reset all changes (used on restart)
         """
-        Settings.settings = None
-        Settings.sublime_settings = None
-        Settings.settings_base = "Javatar.sublime-settings"
-        Settings.sublime_base = "Preferences.sublime-settings"
+        self.settings = None
+        self.sublime_settings = None
+        self.settings_base = "Javatar.sublime-settings"
+        self.sublime_base = "Preferences.sublime-settings"
 
-    @staticmethod
-    def startup():
+    def startup(self):
         """
         Read all settings from files
         """
-        Settings.settings = sublime.load_settings(Settings.settings_base)
-        Settings.sublime_settings = sublime.load_settings(Settings.sublime_base)
+        self.settings = sublime.load_settings(self.settings_base)
+        self.sublime_settings = sublime.load_settings(self.sublime_base)
 
-    @staticmethod
-    def get_global(key, default=None, as_tuple=False):
+    def get_global(self, key, default=None, as_tuple=False):
         """
         Returns a value in default settings file
 
@@ -37,12 +43,11 @@ class Settings:
             settings or not
         """
         if as_tuple:
-            return (Settings.get_global(key, default, as_tuple=False), False)
+            return (self.get_global(key, default, as_tuple=False), False)
         else:
-            return Settings.settings.get(key, default)
+            return self.settings.get(key, default)
 
-    @staticmethod
-    def get_local(key, default=None, as_tuple=False):
+    def get_local(self, key, default=None, as_tuple=False):
         """
         Returns a value in project settings file
 
@@ -53,7 +58,7 @@ class Settings:
             settings or not
         """
         if as_tuple:
-            return (Settings.get_local(key, default, as_tuple=False), True)
+            return (self.get_local(key, default, as_tuple=False), True)
         else:
             project_data = sublime.active_window().project_data()
             if (project_data is not None and
@@ -62,18 +67,16 @@ class Settings:
                 return project_data["javatar"][key]
         return default
 
-    @staticmethod
-    def get_sublime(key, default=None):
+    def get_sublime(self, key, default=None):
         """
         Returns a value in Sublime Text's settings file
 
         @param key: a key to get value
         @param default: a return value if specified key is not exists
         """
-        return Settings.sublime_settings.get(key, default)
+        return self.sublime_settings.get(key, default)
 
-    @staticmethod
-    def get(key, default=None, from_global=None, as_tuple=False):
+    def get(self, key, default=None, from_global=None, as_tuple=False):
         """
         Returns a value in settings
 
@@ -86,14 +89,14 @@ class Settings:
         This method must return in local-default prioritize order
         """
         if from_global is None:
-            value = Settings.get(
+            value = self.get(
                 key,
                 default=None,
                 from_global=False,
                 as_tuple=as_tuple
             )
             if value is None:
-                value = Settings.get(
+                value = self.get(
                     key,
                     default=default,
                     from_global=True,
@@ -101,12 +104,11 @@ class Settings:
                 )
             return value
         elif from_global:
-            return Settings.get_global(key, default, as_tuple)
+            return self.get_global(key, default, as_tuple)
         else:
-            return Settings.get_local(key, default, as_tuple)
+            return self.get_local(key, default, as_tuple)
 
-    @staticmethod
-    def set(key, val, to_global=False):
+    def set(self, key, val, to_global=False):
         """
         Set a value to specified key in settings
 
@@ -118,14 +120,14 @@ class Settings:
         """
         if to_global:
             if val is None:
-                if Settings.settings.has(key):
-                    Settings.settings.erase(key)
+                if self.settings.has(key):
+                    self.settings.erase(key)
                 else:
                     # Return here so it won't wasting time saving old settings
                     return
             else:
-                Settings.settings.set(key, val)
-            sublime.save_settings(Settings.settings_base)
+                self.settings.set(key, val)
+            sublime.save_settings(self.settings_base)
         else:
             window = sublime.active_window()
             project_data = window.project_data()
@@ -146,9 +148,12 @@ class Settings:
                 project_data["javatar"] = data
             window.set_project_data(project_data)
 
-    @staticmethod
-    def ready():
+    def ready(self):
         """
         Returns whether settings are ready to be used
         """
-        return Settings.settings is not None
+        return self.settings is not None
+
+
+def Settings():
+    return _Settings.instance()

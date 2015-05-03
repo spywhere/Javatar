@@ -37,11 +37,11 @@ class TestCreateClass(unittest.TestCase):
             )
 
     @patch(
-        "Javatar.core.state_property.StateProperty.get_root_dir",
+        "Javatar.core.state_property._StateProperty.get_root_dir",
         return_value="alpha"
     )
     @patch(
-        "Javatar.core.state_property.StateProperty.get_dir",
+        "Javatar.core.state_property._StateProperty.get_dir",
         return_value="alpha/bravo"
     )
     def test_parse_create_invalid_name(self, get_dir, get_root_dir):
@@ -65,11 +65,11 @@ class TestCreateClass(unittest.TestCase):
             )
 
     @patch(
-        "Javatar.core.state_property.StateProperty.get_root_dir",
+        "Javatar.core.state_property._StateProperty.get_root_dir",
         return_value="alpha"
     )
     @patch(
-        "Javatar.core.state_property.StateProperty.get_dir",
+        "Javatar.core.state_property._StateProperty.get_dir",
         return_value="alpha/bravo"
     )
     def test_parse_create(self, get_dir, get_root_dir):
@@ -582,11 +582,11 @@ class TestCreatePackage(unittest.TestCase):
             )
 
     @patch(
-        "Javatar.core.state_property.StateProperty.get_root_dir",
+        "Javatar.core.state_property._StateProperty.get_root_dir",
         return_value="alpha"
     )
     @patch(
-        "Javatar.core.state_property.StateProperty.get_dir",
+        "Javatar.core.state_property._StateProperty.get_dir",
         return_value="alpha/bravo"
     )
     def test_parse_create_invalid_name(self, get_dir, get_root_dir):
@@ -611,11 +611,11 @@ class TestCreatePackage(unittest.TestCase):
             )
 
     @patch(
-        "Javatar.core.state_property.StateProperty.get_root_dir",
+        "Javatar.core.state_property._StateProperty.get_root_dir",
         return_value="alpha"
     )
     @patch(
-        "Javatar.core.state_property.StateProperty.get_dir",
+        "Javatar.core.state_property._StateProperty.get_dir",
         return_value="alpha/bravo"
     )
     def test_parse_create(self, get_dir, get_root_dir):

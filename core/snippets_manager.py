@@ -3,83 +3,90 @@ from .thread_progress import ThreadProgress
 from ..threads import SnippetsLoaderThread
 
 
-class SnippetsManager:
+class _SnippetsManager:
 
     """
     Load and store all snippets
     """
 
-    @staticmethod
-    def reset():
+    @classmethod
+    def instance(cls):
+        if not hasattr(cls, "_instance"):
+            cls._instance = cls()
+        return cls._instance
+
+    def __init__(self):
+        self.reset(silent=True)
+
+    def reset(self, silent=False):
         """
         Resets all stored data
         """
-        ActionHistory.add_action(
-            "javatar.core.snippets_manager.reset", "Reset all snippets"
-        )
-        SnippetsManager.snippets = None
+        if not silent:
+            ActionHistory().add_action(
+                "javatar.core.snippets_manager.reset", "Reset all snippets"
+            )
+        self.snippets = None
 
-    @staticmethod
-    def on_snippets_loaded(snippets):
+    def on_snippets_loaded(self, snippets):
         """
         Callback after snippets are loaded
 
         @param snippets: snippets list
         """
-        SnippetsManager.snippets = snippets
+        self.snippets = snippets
 
-    @staticmethod
-    def startup(on_done=None):
+    def startup(self, on_done=None):
         """
         Loads snippets
 
         @param on_done: callback after loaded
         """
-        SnippetsManager.load_snippets(on_done=on_done)
+        self.load_snippets(on_done=on_done)
 
-    @staticmethod
-    def load_snippets(on_done=None):
+    def load_snippets(self, on_done=None):
         """
         Loads snippets
 
         @param on_done: callback after loaded
         """
-        ActionHistory.add_action(
+        ActionHistory().add_action(
             "javatar.core.snippets_manager.startup", "Load snippets"
         )
-        thread = SnippetsLoaderThread(SnippetsManager.on_snippets_loaded)
+        thread = SnippetsLoaderThread(self.on_snippets_loaded)
         ThreadProgress(
             thread, "Loading Javatar snippets",
             "Javatar snippets has been successfully loaded",
             on_done=on_done
         )
 
-    @staticmethod
-    def get_snippet(title=None):
+    def get_snippet(self, title=None):
         """
         Returns a specified snippet, if found
             otherwise, return None
 
         @param title: a snipet title
         """
-        for snippet in SnippetsManager.snippets:
+        for snippet in self.snippets:
             if snippet["title"] == title:
                 return snippet
         return None
 
-    @staticmethod
-    def get_snippet_info_list():
+    def get_snippet_info_list(self):
         """
         Returns snippet informations as a list
         """
         snippets = []
-        for snippet in SnippetsManager.snippets:
+        for snippet in self.snippets:
             snippets.append([snippet["title"], snippet["description"]])
         return snippets
 
-    @staticmethod
-    def ready():
+    def ready(self):
         """
         Returns whether manager ready to be used
         """
-        return SnippetsManager.snippets is not None
+        return self.snippets is not None
+
+
+def SnippetsManager():
+    return _SnippetsManager.instance()

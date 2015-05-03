@@ -28,13 +28,13 @@ class JavatarUtilsCommand(sublime_plugin.TextCommand):
         """
         JSONPanel's on_done
         """
-        Logger.none(str(sublime.encode_value(obj)))
+        Logger().none(str(sublime.encode_value(obj)))
 
     def on_cancel(self):
         """
         JSONPanel's on_cancel
         """
-        Logger.none("Cancel")
+        Logger().none("Cancel")
 
     def run(self, edit, util_type="", text="", region=None, dest=None):
         """
@@ -65,7 +65,7 @@ class JavatarUtilsCommand(sublime_plugin.TextCommand):
                 "URL:", "", self.remote_hash, None, None
             )
         elif util_type == "hash":
-            Logger.none(
+            Logger().none(
                 hashlib.sha256(
                     self.view.substr(
                         sublime.Region(0, self.view.size())
@@ -99,13 +99,13 @@ class JavatarUtilsCommand(sublime_plugin.TextCommand):
                 "Parse Parameter:", "", self.parse_code, None, None
             )
         elif util_type == "reload" and Constant.is_debug():
-            ActionHistory.add_action(
+            ActionHistory().add_action(
                 "javatar.commands.utils.utils.reload", "Reload Javatar"
             )
-            Logger.info("Reloading Javatar...")
+            Logger().info("Reloading Javatar...")
             for mod in tuple(sys.modules.keys()):
                 if mod.lower().startswith("javatar"):
-                    Logger.info("Reloading module " + mod + "...")
+                    Logger().info("Reloading module " + mod + "...")
                     reload(sys.modules[mod])
             from ..Javatar import plugin_loaded
             plugin_loaded()
@@ -151,14 +151,14 @@ class JavatarUtilsCommand(sublime_plugin.TextCommand):
                         else:
                             status_text += " " + node["name"]
                     else:
-                        Logger.none(
+                        Logger().none(
                             "#{begin}:{end} => {name}".format_map(node)
                         )
-                        Logger.none(
+                        Logger().none(
                             "   => {value}".format_map(node)
                         )
 
-                Logger.none("Total: {} tokens".format(len(nodes)))
+                Logger().none("Total: {} tokens".format(len(nodes)))
             if selector != "#":
                 if (status_text != "" and
                         str(parse_output["end"]) == str(self.view.size())):
@@ -171,17 +171,17 @@ class JavatarUtilsCommand(sublime_plugin.TextCommand):
                         self.view.size(),
                         scope.get_elapse_time()
                     )
-            Logger.none(
+            Logger().none(
                 "Ending: %s/%s" % (parse_output["end"], self.view.size())
             )
-            Logger.none(
+            Logger().none(
                 "Parsing Time: {elapse_time:.2f}s".format(
                     elapse_time=scope.get_elapse_time()
                 )
             )
-            StatusManager.show_status(status_text)
+            StatusManager().show_status(status_text)
         except Exception:
-            Logger.error(
+            Logger().error(
                 "Error while parsing\n%s" % (traceback.format_exc())
             )
 
@@ -194,9 +194,9 @@ class JavatarUtilsCommand(sublime_plugin.TextCommand):
         try:
             data = Downloader.download(url)
             datahash = hashlib.sha256(data).hexdigest()
-            Logger.none("Hash: " + datahash)
+            Logger().none("Hash: " + datahash)
         except Exception:
-            Logger.error(
+            Logger().error(
                 "Error while remote hash\n%s" % (traceback.format_exc())
             )
 
@@ -222,8 +222,8 @@ class JavatarReloadPackagesCommand(sublime_plugin.WindowCommand):
     """
 
     def run(self):
-        ActionHistory.add_action(
+        ActionHistory().add_action(
             "javatar.commands.utils.reload_packages", "Reload Packages"
         )
-        PackagesManager.reset()
-        PackagesManager.startup()
+        PackagesManager().reset()
+        PackagesManager().startup()

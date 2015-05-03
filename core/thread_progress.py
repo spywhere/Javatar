@@ -2,17 +2,16 @@ import sublime
 from .status_manager import StatusManager
 
 
-class MultiThreadProgress():
+class MultiThreadProgress:
 
     """
     Multi-threading progress listener
     """
 
-    thread_list = []
-
     def __init__(self, message="", success_message=None, on_complete=None,
                  on_all_complete=None, anim_fx=None,
                  target=None):
+        self.thread_list = []
         self.message = message
         self.target = target or "ThreadProgress"
         self.success_message = success_message
@@ -21,7 +20,7 @@ class MultiThreadProgress():
         self.all_success = True
         if anim_fx is not None:
             self.anim_fx = anim_fx
-        StatusManager.show_status(
+        StatusManager().show_status(
             lambda status: self.anim_fx(status, self.get_message()),
             ref="ThreadProgress",
             target=self.target,
@@ -100,17 +99,19 @@ class MultiThreadProgress():
             if self.on_all_complete is not None:
                 self.on_all_complete()
             if self.success_message is not None:
-                StatusManager.show_status(self.success_message,
-                                          ref="ThreadProgress",
-                                          target=self.target)
+                StatusManager().show_status(
+                    self.success_message,
+                    ref="ThreadProgress",
+                    target=self.target
+                )
             else:
-                StatusManager.hide_status("ThreadProgress")
+                StatusManager().hide_status("ThreadProgress")
             return
 
         sublime.set_timeout(self.run, 100)
 
 
-class ThreadProgress():
+class ThreadProgress:
 
     """
     Single thread progress listener
@@ -125,7 +126,7 @@ class ThreadProgress():
         self.on_done = on_done
         if anim_fx is not None:
             self.anim_fx = anim_fx
-        StatusManager.show_status(
+        StatusManager().show_status(
             lambda status: self.anim_fx(status, self.get_message()),
             ref="ThreadProgress",
             target=self.target,
@@ -167,27 +168,27 @@ class ThreadProgress():
                     if self.on_done is not None:
                         self.on_done()
                     if self.success_message is not None:
-                        StatusManager.show_status(
+                        StatusManager().show_status(
                             self.success_message,
                             ref="ThreadProgress",
                             target=self.target
                         )
                     else:
-                        StatusManager.hide_status("ThreadProgress")
+                        StatusManager().hide_status("ThreadProgress")
                 else:
                     if hasattr(self.thread, "result_message"):
-                        StatusManager.show_status(
+                        StatusManager().show_status(
                             self.thread.result_message,
                             ref="ThreadProgress",
                             target=self.target
                         )
                     else:
-                        StatusManager.hide_status("ThreadProgress")
+                        StatusManager().hide_status("ThreadProgress")
                 return
         sublime.set_timeout(self.run, 100)
 
 
-class SilentThreadProgress():
+class SilentThreadProgress:
 
     """
     Single thread progress listener without progression
@@ -207,7 +208,7 @@ class SilentThreadProgress():
             self.on_complete(self.thread)
             if hasattr(self.thread, "result") and not self.thread.result:
                 if hasattr(self.thread, "result_message"):
-                    StatusManager.show_status(
+                    StatusManager().show_status(
                         self.thread.result_message,
                         ref="ThreadProgress",
                         target=self.target

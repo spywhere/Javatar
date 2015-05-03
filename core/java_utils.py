@@ -35,9 +35,9 @@ class JavaPackage:
     def __init__(self, jpackage):
         self.package_paths = []
         if isinstance(jpackage, str):
-            match = RE.search("package_path_match", jpackage)
+            match = RE().search("package_path_match", jpackage)
             if match:
-                self.package_paths = JavaUtils.normalize_package_path(
+                self.package_paths = JavaUtils().normalize_package_path(
                     match.group(0)
                 ).split(".")
         elif isinstance(jpackage, list):
@@ -82,13 +82,13 @@ class JavaClassPath:
         self.package = None
         self.jclass = None
         if isinstance(path, str):
-            match = RE.search("package_class_match", path)
+            match = RE().search("package_class_match", path)
             if match:
                 self.package = JavaPackage(
-                    JavaUtils.normalize_package_path(match.group(1)).split(".")
+                    JavaUtils().normalize_package_path(match.group(1)).split(".")
                 )
                 self.jclass = JavaClass(
-                    JavaUtils.normalize_package_path(match.group(4))
+                    JavaUtils().normalize_package_path(match.group(4))
                 )
 
     def get_package(self):
@@ -116,7 +116,7 @@ class JavaClassPath:
         return ".".join([self.package.as_class_path(), self.jclass.get()])
 
 
-class JavaUtils:
+class _JavaUtils:
 
     """
     Java-related utilities
@@ -126,8 +126,13 @@ class JavaUtils:
     CREATE_EXISTS = 1
     CREATE_ERROR = 2
 
-    @staticmethod
-    def to_readable_class_path(class_path, as_package=False):
+    @classmethod
+    def instance(cls):
+        if not hasattr(cls, "_instance"):
+            cls._instance = cls()
+        return cls._instance
+
+    def to_readable_class_path(self, class_path, as_package=False):
         """
         Returns a class path that can be read easily by human
 
@@ -136,16 +141,15 @@ class JavaUtils:
             a package path or not
         """
         if not as_package:
-            class_path = JavaUtils.to_package(class_path).as_class_path()
+            class_path = self.to_package(class_path).as_class_path()
         if not class_path:
-            if StateProperty.is_project():
+            if StateProperty().is_project():
                 class_path = "(Default Package)"
             else:
                 class_path = "(Unknown Package)"
         return class_path
 
-    @staticmethod
-    def is_class_path(class_path, special=False):
+    def is_class_path(self, class_path, special=False):
         """
         Returns whether specified class path is a valid class path
 
@@ -153,23 +157,21 @@ class JavaUtils:
         @param special: a boolean indicated if the class path is a special case
             (contains inheritance selectors) or not
         """
-        match = RE.match(
+        match = RE().match(
             "special_class_path_match" if special else "class_path_match",
             class_path
         )
         return match is not None
 
-    @staticmethod
-    def normalize_package_path(class_path):
+    def normalize_package_path(self, class_path):
         """
         Returns a dot-trimmed class path
 
         @param class_path: a class path to be trimmed
         """
-        return RE.get("normalize_package_path", "^\\.*|\\.*$").sub("", class_path)
+        return RE().get("normalize_package_path", "^\\.*|\\.*$").sub("", class_path)
 
-    @staticmethod
-    def to_package(path, relative=True):
+    def to_package(self, path, relative=True):
         """
         Returns a Java package from specified path
 
@@ -179,14 +181,13 @@ class JavaUtils:
         """
         from ..utils import Utils
         if relative:
-            path = os.path.relpath(path, StateProperty.get_root_dir())
+            path = os.path.relpath(path, StateProperty().get_root_dir())
         class_path = ".".join(Utils.split_path(path))
         return JavaPackage(
-            JavaUtils.normalize_package_path(class_path).split(".")
+            self.normalize_package_path(class_path).split(".")
         )
 
-    @staticmethod
-    def create_package_path(path, silent=False):
+    def create_package_path(self, path, silent=False):
         """
         Creates a directory for specified path and returns the status
 
@@ -205,9 +206,13 @@ class JavaUtils:
                         "exception": e
                     })
                 )
-                return JavaUtils.CREATE_ERROR
+                return self.CREATE_ERROR
         else:
             if not silent:
                 sublime.message_dialog("Package is already exists")
-            return JavaUtils.CREATE_EXISTS
-        return JavaUtils.CREATE_SUCCESS
+            return self.CREATE_EXISTS
+        return self.CREATE_SUCCESS
+
+
+def JavaUtils():
+    return _JavaUtils.instance()

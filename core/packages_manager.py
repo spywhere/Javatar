@@ -9,25 +9,33 @@ from ..threads import (
 )
 
 
-class PackagesManager:
+class _PackagesManager:
 
     """
     Load, store and install Javatar packages
     """
 
-    @staticmethod
-    def reset():
+    @classmethod
+    def instance(cls):
+        if not hasattr(cls, "_instance"):
+            cls._instance = cls()
+        return cls._instance
+
+    def __init__(self):
+        self.reset(silent=True)
+
+    def reset(self, silent=False):
         """
         Resets all stored data
         """
-        ActionHistory.add_action(
-            "javatar.core.packages_manager.reset", "Reset all packages"
-        )
-        PackagesManager.installed_packages = None
-        PackagesManager.default_packages = None
+        if not silent:
+            ActionHistory().add_action(
+                "javatar.core.packages_manager.reset", "Reset all packages"
+            )
+        self.installed_packages = None
+        self.default_packages = None
 
-    @staticmethod
-    def get_installed_packages(name=None):
+    def get_installed_packages(self, name=None):
         """
         Returns installed packages list or just one installed package
 
@@ -35,15 +43,14 @@ class PackagesManager:
             otherwise, will returns package starts by specified name (if any)
         """
         if name is None:
-            return PackagesManager.installed_packages or []
+            return self.installed_packages or []
         else:
-            for package in PackagesManager.get_installed_packages():
+            for package in self.get_installed_packages():
                 if package["name"].startswith(name):
                     return package
             return None
 
-    @staticmethod
-    def on_packages_loaded(packages):
+    def on_packages_loaded(self, packages):
         """
         Callback after packages are loaded
 
@@ -51,8 +58,8 @@ class PackagesManager:
 
         @param packages: packages list informations
         """
-        PackagesManager.installed_packages = packages["installed_packages"]
-        PackagesManager.default_packages = packages["default_packages"]
+        self.installed_packages = packages["installed_packages"]
+        self.default_packages = packages["default_packages"]
 
         installed_menu = {
             "selected_index": 1,
@@ -66,7 +73,7 @@ class PackagesManager:
         # Installed packages
         install_update = False
         from ..utils import Utils
-        for package in PackagesManager.installed_packages:
+        for package in self.installed_packages:
             install_update = True
             installed_menu["actions"] += [{
                 "command": "javatar_install",
@@ -93,38 +100,35 @@ class PackagesManager:
                 }
             )
 
-    @staticmethod
-    def startup(on_done=None):
+    def startup(self, on_done=None):
         """
         Load packages
 
         @param on_done: callback after loaded
         """
-        PackagesManager.load_packages(
-            on_done=lambda: PackagesManager.update_packages_list(
+        self.load_packages(
+            on_done=lambda: self.update_packages_list(
                 on_done=on_done
             )
         )
 
-    @staticmethod
-    def load_packages(on_done=None):
+    def load_packages(self, on_done=None):
         """
         Load packages
 
         @param on_done: callback after loaded
         """
-        ActionHistory.add_action(
+        ActionHistory().add_action(
             "javatar.core.packages_manager.load_packages", "Load packages"
         )
-        thread = PackagesLoaderThread(PackagesManager.on_packages_loaded)
+        thread = PackagesLoaderThread(self.on_packages_loaded)
         ThreadProgress(
             thread, "Loading Javatar packages",
             "Javatar packages has been successfully loaded",
             on_done=on_done
         )
 
-    @staticmethod
-    def on_packages_list_updated(require_package):
+    def on_packages_list_updated(self, require_package):
         """
         Callback after packages list is updated
 
@@ -133,29 +137,28 @@ class PackagesManager:
         @param require_package: required package informations
         """
         if require_package is None:
-            Logger.debug("Skip required package installation")
+            Logger().debug("Skip required package installation")
             return
         package_conflict = []
         if "conflict" in require_package:
             package_conflict = require_package["conflict"]
         for conflict in package_conflict:
-            if PackagesManager.get_installed_packages(conflict) is not None:
-                Logger.debug("Conflict package was already installed")
-                ActionHistory.add_action(
+            if self.get_installed_packages(conflict) is not None:
+                Logger().debug("Conflict package was already installed")
+                ActionHistory().add_action(
                     "javatar.core.packages_manager.update_status",
                     "Conflict package was already installed"
                 )
                 return
-        ActionHistory.add_action(
+        ActionHistory().add_action(
             "javatar.core.packages_manager.update_status",
             "Install required package"
         )
 
-        Logger.debug("Starting required package installation")
-        PackagesManager.install_package(require_package)
+        Logger().debug("Starting required package installation")
+        self.install_package(require_package)
 
-    @staticmethod
-    def update_packages_list(no_install=False, on_done=None):
+    def update_packages_list(self, no_install=False, on_done=None):
         """
         Update packages list
 
@@ -163,13 +166,13 @@ class PackagesManager:
             packages after update a packages list
         @param on_done: callback after loaded
         """
-        ActionHistory.add_action(
+        ActionHistory().add_action(
             "javatar.core.packages_manager.update_packages_list",
             "Update packages list"
         )
         thread = PackagesUpdaterThread(
             no_install,
-            PackagesManager.on_packages_list_updated
+            self.on_packages_list_updated
         )
         ThreadProgress(
             thread, "Updating Javatar packages",
@@ -177,8 +180,7 @@ class PackagesManager:
             on_done=on_done
         )
 
-    @staticmethod
-    def on_package_installed(package, on_done=None):
+    def on_package_installed(self, package, on_done=None):
         """
         Callback after package has been installed
 
@@ -187,29 +189,28 @@ class PackagesManager:
         @param package: an installed package informations
         @param on_done: callback after refreshed
         """
-        PackagesManager.reset()
-        PackagesManager.load_packages(
-            on_done=lambda: PackagesManager.update_packages_list(
+        self.reset()
+        self.load_packages(
+            on_done=lambda: self.update_packages_list(
                 no_install=True,
                 on_done=on_done
             )
         )
 
-    @staticmethod
-    def install_package(package, on_done=None):
+    def install_package(self, package, on_done=None):
         """
         Install specified Javatar's package
 
         @param package: a package informations
         @param on_done: callback after installed
         """
-        ActionHistory.add_action(
+        ActionHistory().add_action(
             "javatar.core.packages_manager.install_package",
             "Install package [name=%s]" % (package["name"])
         )
         thread = PackageInstallerThread(
             package,
-            lambda pkg: PackagesManager.on_package_installed(pkg, on_done)
+            lambda pkg: self.on_package_installed(pkg, on_done)
         )
         ThreadProgress(
             thread,
@@ -220,10 +221,13 @@ class PackagesManager:
             )
         )
 
-    @staticmethod
-    def ready():
+    def ready(self):
         """
         Returns whether manager ready to be used
         """
-        return (PackagesManager.installed_packages is not None and
-                PackagesManager.default_packages is not None)
+        return (self.installed_packages is not None and
+                self.default_packages is not None)
+
+
+def PackagesManager():
+    return _PackagesManager.instance()

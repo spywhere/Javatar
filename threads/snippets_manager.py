@@ -39,7 +39,7 @@ class SnippetsLoaderThread(threading.Thread):
                 if title:
                     snippet["title"] = title[0]["value"]
                 else:
-                    ActionHistory.add_action(
+                    ActionHistory().add_action(
                         "javatar.core.snippets_loader_thread.analyse_snippet",
                         "Snippet has no title [file=" + filename + "]"
                     )
@@ -48,7 +48,7 @@ class SnippetsLoaderThread(threading.Thread):
                 if dest:
                     snippet["description"] = dest[0]["value"]
                 else:
-                    ActionHistory.add_action(
+                    ActionHistory().add_action(
                         "javatar.core.snippets_loader_thread.analyse_snippet",
                         "Snippet has no description [file=" + filename + "]"
                     )
@@ -57,14 +57,14 @@ class SnippetsLoaderThread(threading.Thread):
                 if data:
                     snippet["data"] = data[0]["value"]
                 else:
-                    ActionHistory.add_action(
+                    ActionHistory().add_action(
                         "javatar.core.snippets_loader_thread.analyse_snippet",
                         "Snippet has no data [file=" + filename + "]"
                     )
                     return None
                 return snippet
         except Exception as e:
-            ActionHistory.add_action(
+            ActionHistory().add_action(
                 "javatar.core.snippets_loader_thread.analyse_snippet",
                 "Error occurred while parsing snippet [file=" + filename + "]",
                 e
@@ -78,21 +78,21 @@ class SnippetsLoaderThread(threading.Thread):
         snippets = []
 
         for filepath in sublime.find_resources("*.javatar-snippet"):
-            ActionHistory.add_action(
+            ActionHistory().add_action(
                 "javatar.core.snippets_loader_thread.analyse_snippet",
                 "Analyse snippet [file=" + filepath + "]"
             )
             snippet = self.analyse_snippet(filepath)
             if snippet:
-                ActionHistory.add_action(
+                ActionHistory().add_action(
                     "javatar.core.snippets_loader_thread.load_status",
                     "Javatar snippet " + snippet["title"] + " loaded [file=" +
                     filepath + "]"
                 )
-                Logger.info("Snippet " + basename(filepath) + " loaded")
+                Logger().info("Snippet " + basename(filepath) + " loaded")
                 snippets.append(snippet)
             else:
-                ActionHistory.add_action(
+                ActionHistory().add_action(
                     "javatar.core.snippets_loader_thread.load_status",
                     "Javatar snippet load failed [file=" + filepath + "]"
                 )

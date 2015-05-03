@@ -53,7 +53,7 @@ class PackageInstallerThread(threading.Thread):
                 "Javatar package \"%s\" " % (self.package["name"]) +
                 "installation has failed: %s" % (str(e))
             )
-            ActionHistory.add_action(
+            ActionHistory().add_action(
                 "javatar.core.package_installer",
                 "Javatar package installation has failed", e
             )
@@ -73,7 +73,8 @@ class PackagesLoaderThread(threading.Thread):
 
     def count_classes(self, packages):
         """
-        Returns total amount of Java packages and classes from Javatar packages
+        Returns a total amount of Java packages and classes from Javatar
+            packages
 
         @param packages: Javatar packages informations
         """
@@ -105,12 +106,12 @@ class PackagesLoaderThread(threading.Thread):
         """
         Analyse package source and returns package informations
 
-        @param filename: path to package file
+        @param filename: a path to package file
         """
         try:
             packages = sublime.decode_value(sublime.load_resource(filepath))
         except ValueError as e:
-            ActionHistory.add_action(
+            ActionHistory().add_action(
                 "javatar.core.packages_loader_thread.analyse_package",
                 "Invalid JSON package [file=" + filepath + "]",
                 e
@@ -124,7 +125,7 @@ class PackagesLoaderThread(threading.Thread):
             count = self.count_classes(packages)
             self.installed_packages.append({"name": filename,
                                             "path": filepath})
-            Logger.log(
+            Logger().log(
                 'Package "{}" loaded with {} classes in {} packages'
                 .format(
                     filename,
@@ -143,20 +144,20 @@ class PackagesLoaderThread(threading.Thread):
         default_packages = []
         for filepath in sublime.find_resources("*.javatar-packages"):
             filename = basename(filepath)
-            ActionHistory.add_action(
+            ActionHistory().add_action(
                 "javatar.core.packages_loader_thread.analyse_package",
                 "Analyse package [file=" + filepath + "]"
             )
             packages = self.analyse_package(filepath)
             if packages:
-                ActionHistory.add_action(
+                ActionHistory().add_action(
                     "javatar.core.packages_loader_thread.load_status",
                     "Javatar package " + filename + " loaded [file=" +
                     filepath + "]"
                 )
                 default_packages.append(packages)
             else:
-                ActionHistory.add_action(
+                ActionHistory().add_action(
                     "javatar.core.packages_loader_thread.load_status",
                     "Javatar package load failed [file=" + filepath + "]"
                 )
@@ -183,16 +184,16 @@ class PackagesUpdaterThread(threading.Thread):
 
     def contains_keys(self, obj, keys):
         """
-        Returns whether object contains specified keys
+        Returns whether an object contains specified keys
 
-        @param obj: object to be checked
+        @param obj: an object to be checked
         @param keys: a list of keys
         """
         return [x for x in obj if x in keys]
 
     def fetch_packages_data(self):
         """
-        Returns raw data from Javatar packages repository
+        Returns a raw data from a Javatar packages repository
         """
         from ..utils import Constant, Downloader
         return sublime.decode_value(
@@ -203,13 +204,13 @@ class PackagesUpdaterThread(threading.Thread):
 
     def validate_packages(self, data):
         """
-        Returns packages url if data is valid Javatar packages repository
+        Returns a package url if data is a valid Javatar package repository
         """
         from ..utils import Constant
         if Constant.get_packages_schema_version() not in data:
             self.result_message = ("Javatar packages are incompatible"
                                    + " with current version")
-            ActionHistory.add_action(
+            ActionHistory().add_action(
                 "javatar.core.packages_updater.validate_packages",
                 self.result_message
             )
@@ -221,7 +222,7 @@ class PackagesUpdaterThread(threading.Thread):
             package_url = packages["url"]
         else:
             self.result_message = "No URL to packages channel"
-            ActionHistory.add_action(
+            ActionHistory().add_action(
                 "javatar.core.packages_updater.validate_packages",
                 self.result_message
             )
@@ -235,7 +236,7 @@ class PackagesUpdaterThread(threading.Thread):
 
         if "packages" not in packages:
             self.result_message = "No Javatar packages available"
-            ActionHistory.add_action(
+            ActionHistory().add_action(
                 "javatar.core.packages_updater.validate_packages",
                 self.result_message
             )
@@ -270,7 +271,7 @@ class PackagesUpdaterThread(threading.Thread):
             require_package_name = None
 
             remote_update = False
-            Logger.debug(
+            Logger().debug(
                 "Bypass required package: " + str(self.no_install)
             )
             if not self.no_install and "install" in packages:
@@ -282,7 +283,7 @@ class PackagesUpdaterThread(threading.Thread):
                 if (self.contains_keys(package,
                                        ["name", "filesize",
                                        "filename", "hash"]) and
-                    PackagesManager.get_installed_packages(
+                    PackagesManager().get_installed_packages(
                         package["name"]
                     ) is None and
                         ("available" not in package or package["available"])):
@@ -294,7 +295,7 @@ class PackagesUpdaterThread(threading.Thread):
                         package_conflict = package["conflict"]
                     conflict_with = None
                     for conflict in package_conflict:
-                        conflict_package = PackagesManager.get_installed_packages(
+                        conflict_package = PackagesManager().get_installed_packages(
                             conflict
                         )
                         if conflict_package is not None:
@@ -349,7 +350,7 @@ class PackagesUpdaterThread(threading.Thread):
             self.result_message = (
                 "Javatar packages update has failed: " + str(e)
             )
-            ActionHistory.add_action(
+            ActionHistory().add_action(
                 "javatar.core.packages_updater",
                 "Javatar packages update has failed", e
             )

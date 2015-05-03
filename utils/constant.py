@@ -38,44 +38,47 @@ class Constant:
 
     @staticmethod
     def get_packages_repo():
-        return "https://raw.github.com/spywhere/JavatarPackages/master/javatar_packages.json"
+        return (
+            "https://raw.github.com/spywhere/JavatarPackages/" +
+            "master/javatar_packages.json"
+        )
 
     @staticmethod
     def settings_ready():
-        return Settings.ready()
+        return Settings().ready()
 
     @staticmethod
     def ready():
-        return SnippetsManager.ready() and PackagesManager.ready()
+        return SnippetsManager().ready() and PackagesManager().ready()
 
     @staticmethod
     def startup():
-        Logger.reset()
-        StatusManager.reset()
-        ActionHistory.reset()
-        Settings.reset()
-        SnippetsManager.reset()
-        PackagesManager.reset()
+        Logger().reset()
+        StatusManager().reset()
+        ActionHistory().reset()
+        Settings().reset()
+        SnippetsManager().reset()
+        PackagesManager().reset()
 
-        ActionHistory.add_action("javatar", "Startup")
-        Settings.startup()
+        ActionHistory().add_action("javatar", "Startup")
+        Settings().startup()
 
         Timer.timer(reset=True)
         Constant.check_settings()
 
     @staticmethod
     def post_settings():
-        Logger.startup()
-        StatusManager.pre_startup()
-        ProjectRestoration.load_state()
-        SnippetsManager.startup(on_done=PackagesManager.startup)
+        Logger().startup()
+        StatusManager().pre_startup()
+        ProjectRestoration().load_state()
+        SnippetsManager().startup(on_done=PackagesManager().startup)
 
     @staticmethod
     def post_startup():
-        StatusManager.startup()
-        StatusManager.show_status("Javatar is ready")
-        Logger.info("Startup Time: {0:.2f}s".format(Constant.startup_time))
-        ActionHistory.add_action(
+        StatusManager().startup()
+        StatusManager().show_status("Javatar is ready")
+        Logger().info("Startup Time: {0:.2f}s".format(Constant.startup_time))
+        ActionHistory().add_action(
             "javatar",
             "Ready within {0:.2f}s".format(Constant.startup_time)
         )
@@ -98,4 +101,4 @@ class Constant:
 
     @staticmethod
     def is_debug():
-        return Settings.get("debug_mode", False)
+        return Settings().get("debug_mode", False)

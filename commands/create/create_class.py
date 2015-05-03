@@ -62,7 +62,7 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
             text = text[1:]
             relative_path = False
 
-        parts = RE.get(
+        parts = RE().get(
             "extends_implements",
             EXTENDS_IMPLEMENTS_RE
         ).split(text)
@@ -122,26 +122,26 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
 
         @param text: text to be analysed
         """
-        if not StateProperty.is_project() and not StateProperty.is_file():
+        if not StateProperty().is_project() and not StateProperty().is_file():
             return "Cannot specify package location"
-        if not JavaUtils.is_class_path(text.strip("~"), special=True):
+        if not JavaUtils().is_class_path(text.strip("~"), special=True):
             return "Invalid class naming"
         class_info = self.parse_class_info(text)
         if not class_info["class_name"]:
             return "Invalid class naming"
 
-        if class_info["relative_path"] and StateProperty.get_dir():
+        if class_info["relative_path"] and StateProperty().get_dir():
             create_directory = os.path.join(
-                StateProperty.get_dir(),
+                StateProperty().get_dir(),
                 class_info["package"].as_path()
             )
         else:
             create_directory = os.path.join(
-                StateProperty.get_root_dir(),
+                StateProperty().get_root_dir(),
                 class_info["package"].as_path()
             )
 
-        class_info["package"] = JavaUtils.to_package(create_directory)
+        class_info["package"] = JavaUtils().to_package(create_directory)
         class_info["directory"] = create_directory
         class_info["file"] = os.path.join(
             create_directory,
@@ -231,7 +231,7 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
         @param info: class informations
         """
         class_type = self.args["create_type"]
-        snippet = SnippetsManager.get_snippet(class_type)
+        snippet = SnippetsManager().get_snippet(class_type)
         if snippet is None:
             sublime.error_message(
                 "Snippet \"{snippet_name}\" is not found".format_map(
@@ -331,23 +331,23 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
         if isinstance(info, str):
             sublime.error_message(info)
             return
-        ActionHistory.add_action(
+        ActionHistory().add_action(
             "javatar.commands.create.create_class.on_done",
             "Create [info={info}]".format_map({
                 "info": info
             })
         )
-        if JavaUtils.create_package_path(
-                info["directory"], True) == JavaUtils.CREATE_ERROR:
+        if JavaUtils().create_package_path(
+                info["directory"], True) == JavaUtils().CREATE_ERROR:
             return
 
         if self.create_class_file(info):
-            sublime.set_timeout(lambda: StatusManager.show_status(
+            sublime.set_timeout(lambda: StatusManager().show_status(
                 "{class_type} \"{class_name}\" is created within".format_map({
                     "class_type": self.args["create_type"],
                     "class_name": info["class_name"]
                 }) + " package \"{readable_package_path}\"".format_map({
-                    "readable_package_path": JavaUtils.to_readable_class_path(
+                    "readable_package_path": JavaUtils().to_readable_class_path(
                         info["package"].as_class_path(),
                         as_package=True
                     )
@@ -376,7 +376,7 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
                 "class_name": info["class_name"]
             })
             status += " within package \"{readable_package_path}\"".format_map({
-                "readable_package_path": JavaUtils.to_readable_class_path(
+                "readable_package_path": JavaUtils().to_readable_class_path(
                     info["package"].as_class_path(),
                     as_package=True
                 )
@@ -384,7 +384,7 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
             status += " {additional_text}".format_map({
                 "additional_text": self.build_additional_text(info)
             })
-        StatusManager.show_status(
+        StatusManager().show_status(
             status,
             delay=-1,
             ref="create_description"
@@ -394,7 +394,7 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
         """
         Hides the text that is showed by on_change
         """
-        StatusManager.hide_status("create_description")
+        StatusManager().hide_status("create_description")
 
     def run(self, create_type=None):
         """
@@ -405,7 +405,7 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
         self.args = {
             "create_type": create_type
         }
-        ActionHistory.add_action(
+        ActionHistory().add_action(
             "javatar.commands.create.create_class.run",
             "Create [create_type={create_type}]".format_map(self.args)
         )

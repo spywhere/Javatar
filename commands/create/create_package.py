@@ -30,24 +30,24 @@ class JavatarCreatePackageCommand(sublime_plugin.WindowCommand):
             text = text[1:]
             relative_path = False
 
-        if not StateProperty.is_project() and not StateProperty.is_file():
+        if not StateProperty().is_project() and not StateProperty().is_file():
             return "Cannot specify package location"
-        if not JavaUtils.is_class_path(text):
+        if not JavaUtils().is_class_path(text):
             return "Invalid package naming"
 
-        if relative_path and StateProperty.get_dir():
+        if relative_path and StateProperty().get_dir():
             create_directory = os.path.join(
-                StateProperty.get_dir(),
+                StateProperty().get_dir(),
                 JavaPackage(text).as_path()
             )
         else:
             create_directory = os.path.join(
-                StateProperty.get_root_dir(),
+                StateProperty().get_root_dir(),
                 JavaPackage(text).as_path()
             )
 
         return {
-            "package": JavaUtils.to_package(create_directory),
+            "package": JavaUtils().to_package(create_directory),
             "directory": create_directory
         }
 
@@ -62,17 +62,17 @@ class JavatarCreatePackageCommand(sublime_plugin.WindowCommand):
         if isinstance(info, str):
             sublime.error_message(info)
             return
-        ActionHistory.add_action(
+        ActionHistory().add_action(
             "javatar.commands.create.create_package.on_done",
             "Create [info={info}]".format_map({
                 "info": info
             })
         )
-        if JavaUtils.create_package_path(
-                info["directory"]) != JavaUtils.CREATE_SUCCESS:
+        if JavaUtils().create_package_path(
+                info["directory"]) != JavaUtils().CREATE_SUCCESS:
             return
 
-        sublime.set_timeout(lambda: StatusManager.show_status(
+        sublime.set_timeout(lambda: StatusManager().show_status(
             "Package \"{package_path}\" is created".format_map({
                 "package_path": info["package"].as_class_path()
             })
@@ -96,7 +96,7 @@ class JavatarCreatePackageCommand(sublime_plugin.WindowCommand):
             status = "Package \"{package_path}\" will be created".format_map({
                 "package_path": info["package"].as_class_path()
             })
-        StatusManager.show_status(
+        StatusManager().show_status(
             status,
             delay=-1,
             ref="create_description"
@@ -106,7 +106,7 @@ class JavatarCreatePackageCommand(sublime_plugin.WindowCommand):
         """
         Hides the text that is showed by on_change
         """
-        StatusManager.hide_status("create_description")
+        StatusManager().hide_status("create_description")
 
     def run(self):
         """

@@ -5,8 +5,22 @@ import urllib
 
 
 class Downloader:
+
+    """
+    A general purpose downloader
+    """
+
     @staticmethod
     def download(url, checksum=None, on_complete=None):
+        """
+        Download and returns data from specified url
+
+        @param url: url to download
+        @param checksum: if provided, will check the checksum of data with
+            specified checksum
+        @param on_complete: if provided, method will become an async task and
+            will callback when download is complete
+        """
         try:
             if on_complete:
                 return DownloaderThread(
@@ -27,6 +41,16 @@ class Downloader:
 
     @staticmethod
     def download_file(url, path=None, checksum=None, on_complete=None):
+        """
+        Download and store data to file from specified url
+
+        @param url: url to download
+        @param path: file path to store data
+        @param checksum: if provided, will check the checksum of data with
+            specified checksum
+        @param on_complete: if provided, method will become an async task and
+            will callback when download is complete
+        """
         try:
             if on_complete:
                 return DownloaderThread(
@@ -48,6 +72,11 @@ class Downloader:
 
 
 class DownloaderThread(threading.Thread):
+
+    """
+    A downloader background thread
+    """
+
     def __init__(self, func, args, on_complete):
         self.func = func
         self.args = args

@@ -9,29 +9,29 @@ from .utils import (
 
 
 def plugin_loaded():
-    EventHandler.register_handler(
+    EventHandler().register_handler(
         on_change,
         (
-            EventHandler.ON_NEW |
-            EventHandler.ON_ACTIVATED |
-            EventHandler.ON_LOAD |
-            EventHandler.ON_POST_SAVE |
-            EventHandler.ON_CLONE
+            EventHandler().ON_NEW |
+            EventHandler().ON_ACTIVATED |
+            EventHandler().ON_LOAD |
+            EventHandler().ON_POST_SAVE |
+            EventHandler().ON_CLONE
         )
     )
-    EventHandler.register_handler(
+    EventHandler().register_handler(
         on_project_stable,
         (
-            EventHandler.ON_CLOSE |
-            EventHandler.ON_NEW |
-            EventHandler.ON_POST_WINDOW_COMMAND
+            EventHandler().ON_CLOSE |
+            EventHandler().ON_NEW |
+            EventHandler().ON_POST_WINDOW_COMMAND
         )
     )
     Constant.startup()
 
 
 def on_project_stable(view_or_window=None, command_name=None, args=None):
-    ProjectRestoration.save_state()
+    ProjectRestoration().save_state()
 
 
 def on_change(view):

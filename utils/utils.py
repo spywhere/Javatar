@@ -11,7 +11,7 @@ class Utils:
     @staticmethod
     def to_readable_size(filesize, base=1000):
         """
-        Convert a number into a readable file size
+        Converts a number into a readable file size
 
         @param filesize: a value to convert, if provided as a number
             if provided as a string, will thread as a file and
@@ -39,6 +39,11 @@ class Utils:
 
     @staticmethod
     def split_path(path):
+        """
+        Splits a path into path components
+
+        @param path: path to split
+        """
         rest, tail = os.path.split(path)
         if len(rest) == 0:
             return (tail,)

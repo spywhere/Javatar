@@ -3,7 +3,7 @@ import os
 from ..core import EventHandler
 
 
-class JSONPanel():
+class JSONPanel:
 
     """
     A custom buffer for JSON editing which its data will be used on save
@@ -35,9 +35,9 @@ class JSONPanel():
         """
         self.post_remove = post_remove
         self.view = self.window.open_file(file_name)
-        EventHandler.register_handler(
+        EventHandler().register_handler(
             self,
-            EventHandler.ON_CLOSE | EventHandler.ON_POST_SAVE
+            EventHandler().ON_CLOSE | EventHandler().ON_POST_SAVE
         )
         return self.view
 
@@ -65,7 +65,7 @@ class JSONPanel():
         """
         Cleanup after callback is called
         """
-        EventHandler.unregister_handler(self)
+        EventHandler().unregister_handler(self)
         filepath = self.view.file_name()
         self.window.focus_view(self.view)
         self.window.run_command("close_file")

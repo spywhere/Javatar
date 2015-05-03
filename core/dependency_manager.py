@@ -3,21 +3,25 @@ from os.path import basename, isdir, exists
 from .settings import Settings
 
 
-class DependencyManager:
+class _DependencyManager:
 
     """
     Load and store all dependencies
     """
 
-    @staticmethod
-    def startup():
+    @classmethod
+    def instance(cls):
+        if not hasattr(cls, "_instance"):
+            cls._instance = cls()
+        return cls._instance
+
+    def startup(self):
         """
         Refresh dependencies list after start up
         """
-        DependencyManager.refresh_dependencies()
+        self.refresh_dependencies()
 
-    @staticmethod
-    def get_dependencies(from_global=True):
+    def get_dependencies(self, from_global=True):
         """
         Returns dependency list
 
@@ -25,7 +29,7 @@ class DependencyManager:
             list from global settings
         """
         out_dependencies = []
-        dependencies = Settings.get("dependencies", from_global=from_global)
+        dependencies = Settings().get("dependencies", from_global=from_global)
 
         if dependencies is not None:
             out_dependencies.extend(
@@ -37,14 +41,13 @@ class DependencyManager:
         if not from_global:
             out_dependencies.extend(
                 [dependency, True]
-                for dependency in Settings.get("dependencies", from_global=True)
+                for dependency in Settings().get("dependencies", from_global=True)
                 if exists(dependency)
             )
 
         return out_dependencies
 
-    @staticmethod
-    def refresh_dependencies(from_global=None):
+    def refresh_dependencies(self, from_global=None):
         """
         Refresh dependency list
 
@@ -53,8 +56,8 @@ class DependencyManager:
             if provided as False, will refresh only local dependencies settings
         """
         if from_global is None:
-            DependencyManager.refresh_dependencies(False)
-            DependencyManager.refresh_dependencies(True)
+            self.refresh_dependencies(False)
+            self.refresh_dependencies(True)
             return
         dependency_menu = {
             "selected_index": 2,
@@ -81,7 +84,7 @@ class DependencyManager:
             }
         ])
 
-        dependencies = DependencyManager.get_dependencies(from_global)
+        dependencies = self.get_dependencies(from_global)
         for dependency in dependencies:
             name = basename(dependency[0])
             if dependency[1]:
@@ -135,3 +138,7 @@ class DependencyManager:
             "name": menu_name,
             "menu": dependency_menu
         }})
+
+
+def DependencyManager():
+    return _DependencyManager.instance()
