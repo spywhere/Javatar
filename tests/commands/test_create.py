@@ -16,7 +16,7 @@ class TestCreateClass(unittest.TestCase):
         "sublime.Window.active_view",
         return_value=None
     )
-    def test_parse_create_invalid_location(self, folders, active_view):
+    def test_parse_create_invalid_location(self, *_):
         window = MagicMock(spec=sublime.Window)
         cmd = JavatarCreateCommand(window)
 
@@ -37,6 +37,10 @@ class TestCreateClass(unittest.TestCase):
             )
 
     @patch(
+        "Javatar.core.state_property._StateProperty.is_project",
+        return_value=True
+    )
+    @patch(
         "Javatar.core.state_property._StateProperty.get_root_dir",
         return_value="alpha"
     )
@@ -44,7 +48,7 @@ class TestCreateClass(unittest.TestCase):
         "Javatar.core.state_property._StateProperty.get_dir",
         return_value="alpha/bravo"
     )
-    def test_parse_create_invalid_name(self, get_dir, get_root_dir):
+    def test_parse_create_invalid_name(self, *_):
         window = MagicMock(spec=sublime.Window)
         cmd = JavatarCreateCommand(window)
 
@@ -65,6 +69,10 @@ class TestCreateClass(unittest.TestCase):
             )
 
     @patch(
+        "Javatar.core.state_property._StateProperty.is_project",
+        return_value=True
+    )
+    @patch(
         "Javatar.core.state_property._StateProperty.get_root_dir",
         return_value="alpha"
     )
@@ -72,7 +80,7 @@ class TestCreateClass(unittest.TestCase):
         "Javatar.core.state_property._StateProperty.get_dir",
         return_value="alpha/bravo"
     )
-    def test_parse_create(self, get_dir, get_root_dir):
+    def test_parse_create(self, *_):
         window = MagicMock(spec=sublime.Window)
         cmd = JavatarCreateCommand(window)
 
@@ -560,7 +568,7 @@ class TestCreatePackage(unittest.TestCase):
         "sublime.Window.active_view",
         return_value=None
     )
-    def test_parse_create_invalid_location(self, folders, active_view):
+    def test_parse_create_invalid_location(self, *_):
         window = MagicMock(spec=sublime.Window)
         cmd = JavatarCreatePackageCommand(window)
 
@@ -582,6 +590,10 @@ class TestCreatePackage(unittest.TestCase):
             )
 
     @patch(
+        "Javatar.core.state_property._StateProperty.is_project",
+        return_value=True
+    )
+    @patch(
         "Javatar.core.state_property._StateProperty.get_root_dir",
         return_value="alpha"
     )
@@ -589,7 +601,7 @@ class TestCreatePackage(unittest.TestCase):
         "Javatar.core.state_property._StateProperty.get_dir",
         return_value="alpha/bravo"
     )
-    def test_parse_create_invalid_name(self, get_dir, get_root_dir):
+    def test_parse_create_invalid_name(self, *_):
         window = MagicMock(spec=sublime.Window)
         cmd = JavatarCreatePackageCommand(window)
 
@@ -611,6 +623,10 @@ class TestCreatePackage(unittest.TestCase):
             )
 
     @patch(
+        "Javatar.core.state_property._StateProperty.is_project",
+        return_value=True
+    )
+    @patch(
         "Javatar.core.state_property._StateProperty.get_root_dir",
         return_value="alpha"
     )
@@ -618,7 +634,7 @@ class TestCreatePackage(unittest.TestCase):
         "Javatar.core.state_property._StateProperty.get_dir",
         return_value="alpha/bravo"
     )
-    def test_parse_create(self, get_dir, get_root_dir):
+    def test_parse_create(self, *_):
         window = MagicMock(spec=sublime.Window)
         cmd = JavatarCreatePackageCommand(window)
 
