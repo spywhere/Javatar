@@ -39,10 +39,11 @@ class JavatarDict:
         @param in_local: if provided as True, will check against local
             dictionary
         """
-        return (in_global and
-                key in self.global_dict
-                ) or (in_local and
-                      key in self.local_dict)
+        return (
+            in_global and key in self.global_dict
+        ) or (
+            in_local and key in self.local_dict
+        )
 
     def get(self, key, default=None):
         """

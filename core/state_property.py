@@ -36,6 +36,19 @@ class _StateProperty:
         """
         return self.get_file(view) is not None
 
+    def is_java(self, file_path=None, view=None):
+        if not file_path and not view:
+            view = sublime.active_window().active_view()
+            if view.file_name():
+                return self.is_file(view) and self.is_java(file_path=view.file_name())
+        elif file_path:
+            _, ext = os.path.splitext(os.path.basename(file_path))
+            return ext in Settings().get("java_extensions")
+        return (
+            view and
+            view.find_by_selector(Settings().get("java_source_selector"))
+        )
+
     def get_file(self, view=None):
         """
         Returns a file within specified view
@@ -78,11 +91,15 @@ class _StateProperty:
         Root folder will be used to create a new Java file and another tasks
             this should be adapt with current state of the project
         """
+        from ..utils import Utils
         if self.is_project():
             source_folders = self.get_source_folders()
             if source_folders:
-                # TODO: Use the one that contains current file
-                return source_folders[0]
+                if not self.get_file():
+                    return source_folders[0]
+                for source_folder in source_folders:
+                    if Utils.contains_file(source_folder, self.get_file()):
+                        return source_folder
         if self.get_dir():
             return self.get_dir()
         return None

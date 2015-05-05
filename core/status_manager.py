@@ -3,7 +3,8 @@ import random
 import string
 from .logger import Logger
 from .settings import Settings
-
+from .state_property import StateProperty
+from .java_utils import JavaUtils
 
 STATUS_NAME = "Javatar"
 
@@ -186,7 +187,13 @@ class _StatusManager:
 
         Returns relative package path for current view
         """
-        return "Javatar Default Status"
+        if StateProperty().is_java():
+            return "Package: {readable_class_path}".format_map({
+                "readable_class_path": JavaUtils().to_readable_class_path(
+                    StateProperty().get_dir()
+                )
+            })
+        return ""
 
     def update_status(self, status, force=False):
         """

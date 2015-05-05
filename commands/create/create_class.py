@@ -349,7 +349,7 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
                 }) + " package \"{readable_package_path}\"".format_map({
                     "readable_package_path": JavaUtils().to_readable_class_path(
                         info["package"].as_class_path(),
-                        as_package=True
+                        as_class_path=True
                     )
                 })
             ), 500)
@@ -378,7 +378,7 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
             status += " within package \"{readable_package_path}\"".format_map({
                 "readable_package_path": JavaUtils().to_readable_class_path(
                     info["package"].as_class_path(),
-                    as_package=True
+                    as_class_path=True
                 )
             })
             status += " {additional_text}".format_map({

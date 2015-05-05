@@ -10,12 +10,12 @@ class JavaClass:
     A class represents a Java class
     """
 
-    def __init__(self, jclass):
+    def __init__(self, jclass=None):
         self.jclass = jclass or ""
 
     def is_empty(self):
         """
-        Returns whether class is empty
+        Returns whether a class is empty
         """
         return not self.jclass
 
@@ -32,18 +32,16 @@ class JavaPackage:
     A class represents a Java package
     """
 
-    def __init__(self, jpackage):
+    def __init__(self, jpackage=None):
         self.package_paths = []
-        if isinstance(jpackage, str):
+        if isinstance(jpackage, str) and jpackage:
             match = RE().search("package_path_match", jpackage)
             if match:
                 self.package_paths = JavaUtils().normalize_package_path(
                     match.group(0)
                 ).split(".")
-        elif isinstance(jpackage, list):
-            self.package_paths = jpackage
-        elif isinstance(jpackage, tuple):
-            self.package_paths = list(jpackage)
+        elif isinstance(jpackage, list) or isinstance(jpackage, tuple):
+            self.package_paths = [com for com in jpackage if com]
 
     def join(self, package):
         """
@@ -55,7 +53,7 @@ class JavaPackage:
 
     def is_empty(self):
         """
-        Returns whether package is empty
+        Returns whether a package is empty
         """
         return not self.package_paths
 
@@ -63,6 +61,8 @@ class JavaPackage:
         """
         Returns package as a file path
         """
+        if self.is_empty():
+            return ""
         return os.path.join(*self.package_paths)
 
     def as_class_path(self):
@@ -78,17 +78,17 @@ class JavaClassPath:
     A class represents a Java class path
     """
 
-    def __init__(self, path):
-        self.package = None
-        self.jclass = None
-        if isinstance(path, str):
-            match = RE().search("package_class_match", path)
+    def __init__(self, path=None):
+        self.package = JavaPackage()
+        self.jclass = JavaClass()
+        if isinstance(path, str) and path:
+            match = RE().match("class_path_match", path)
             if match:
                 self.package = JavaPackage(
                     JavaUtils().normalize_package_path(match.group(1)).split(".")
                 )
                 self.jclass = JavaClass(
-                    JavaUtils().normalize_package_path(match.group(4))
+                    JavaUtils().normalize_package_path(match.group(3))
                 )
 
     def get_package(self):
@@ -113,6 +113,10 @@ class JavaClassPath:
         """
         Returns a proper class path
         """
+        if self.package.is_empty():
+            return self.jclass.get()
+        elif self.jclass.is_empty():
+            return self.package.as_class_path()
         return ".".join([self.package.as_class_path(), self.jclass.get()])
 
 
@@ -132,22 +136,22 @@ class _JavaUtils:
             cls._instance = cls()
         return cls._instance
 
-    def to_readable_class_path(self, class_path, as_package=False):
+    def to_readable_class_path(self, path, as_class_path=False):
         """
         Returns a class path that can be read easily by human
 
-        @param class_path: an original class path to be parsed
-        @param as_package: a boolean indicated if the class path is already
-            a package path or not
+        @param path: an original path to be parsed
+        @param as_class_path: a boolean indicated if the path is already
+            a class path or not
         """
-        if not as_package:
-            class_path = self.to_package(class_path).as_class_path()
-        if not class_path:
+        if not as_class_path:
+            path = self.to_package(path).as_class_path()
+        if not path:
             if StateProperty().is_project():
-                class_path = "(Default Package)"
+                return "(Default Package)"
             else:
-                class_path = "(Unknown Package)"
-        return class_path
+                return "(Unknown Package)"
+        return path
 
     def is_class_path(self, class_path, special=False):
         """

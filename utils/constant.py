@@ -1,4 +1,5 @@
 import sublime
+import sys
 from ..core import (
     ActionHistory,
     Logger,
@@ -22,7 +23,7 @@ class Constant:
 
     @staticmethod
     def get_version():
-        return "1.0.0dev"
+        return "2.0.0-pre-alpha"
 
     @staticmethod
     def get_usages_schema_version():
@@ -76,12 +77,30 @@ class Constant:
     @staticmethod
     def post_startup():
         StatusManager().startup()
-        StatusManager().show_status("Javatar is ready")
+        Constant.check_conflicts(
+            StatusManager().show_status("Javatar is ready")
+        )
         Logger().info("Startup Time: {0:.2f}s".format(Constant.startup_time))
         ActionHistory().add_action(
             "javatar",
             "Ready within {0:.2f}s".format(Constant.startup_time)
         )
+
+    @staticmethod
+    def check_conflicts(old_ref=None):
+        file_header = [
+            mod
+            for mod in sys.modules.keys()
+            if mod.lower().startswith("fileheader")
+        ]
+        if file_header:
+            msg = (
+                "FileHeader is installed. Javatar might conflicts with" +
+                " FileHeader when create a new file"
+            )
+            StatusManager().hide_status(old_ref)
+            Logger().warning(msg)
+            StatusManager().show_status(msg, ref=old_ref, must_see=True)
 
     @staticmethod
     def check_startup():

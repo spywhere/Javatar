@@ -1,5 +1,5 @@
 import sublime
-from os.path import basename, isdir, exists
+import os.path
 from .settings import Settings
 
 
@@ -35,14 +35,14 @@ class _DependencyManager:
             out_dependencies.extend(
                 [dependency, from_global]
                 for dependency in dependencies
-                if exists(dependency)
+                if os.path.exists(dependency)
             )
 
         if not from_global:
             out_dependencies.extend(
                 [dependency, True]
                 for dependency in Settings().get("dependencies", from_global=True)
-                if exists(dependency)
+                if os.path.exists(dependency)
             )
 
         return out_dependencies
@@ -86,7 +86,7 @@ class _DependencyManager:
 
         dependencies = self.get_dependencies(from_global)
         for dependency in dependencies:
-            name = basename(dependency[0])
+            name = os.path.basename(dependency[0])
             if dependency[1]:
                 dependency_menu["actions"].append(
                     {
@@ -98,7 +98,7 @@ class _DependencyManager:
                         }
                     }
                 )
-                if isdir(dependency[0]):
+                if os.path.isdir(dependency[0]):
                     dependency_menu["items"].append([
                         "[" + name + "]",
                         "Global dependency. Select to remove from the list"
@@ -119,7 +119,7 @@ class _DependencyManager:
                         }
                     }
                 )
-                if isdir(dependency[0]):
+                if os.path.isdir(dependency[0]):
                     dependency_menu["items"].append([
                         "[" + name + "]",
                         "Project dependency. Select to remove from the list"

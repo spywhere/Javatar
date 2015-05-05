@@ -48,3 +48,15 @@ class Utils:
         if len(rest) == 0:
             return (tail,)
         return Utils.split_path(rest) + (tail,)
+
+    @staticmethod
+    def contains_file(directory, file_path):
+        """
+        Checks if a directory contains specified file
+
+        @param directory: a directory path to be checked
+        @param file_path: a file path
+        """
+        return os.path.normcase(os.path.normpath(file_path)).startswith(
+            os.path.normcase(os.path.normpath(directory))
+        )
