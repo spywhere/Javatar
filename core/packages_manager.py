@@ -39,7 +39,9 @@ class _PackagesManager:
         """
         Returns installed packages list or just one installed package
 
-        @param name: if provided as None, will returns all installed packages
+        @param name: a package name filter
+            if provided as None, will returns all installed packages
+
             otherwise, will returns package starts by specified name (if any)
         """
         if name is None:
@@ -162,8 +164,8 @@ class _PackagesManager:
         """
         Update packages list
 
-        @param no_install: if provided as True, will not install required
-            packages after update a packages list
+        @param no_install: a boolean specified whether not install required
+            packages after update a packages list or not
         @param on_done: callback after loaded
         """
         ActionHistory().add_action(

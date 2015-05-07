@@ -18,8 +18,7 @@ class MultiThreadProgress:
         self.on_complete = on_complete
         self.on_all_complete = on_all_complete
         self.all_success = True
-        if anim_fx is not None:
-            self.anim_fx = anim_fx
+        self.anim_fx = anim_fx or self.animation
         StatusManager().show_status(
             lambda status: self.anim_fx(status, self.get_message()),
             ref="ThreadProgress",
@@ -64,7 +63,7 @@ class MultiThreadProgress:
             index -= 1
         return msg
 
-    def anim_fx(self, status, message):
+    def animation(self, status, message):
         """
         Returns message that changed over time
 
@@ -124,8 +123,7 @@ class ThreadProgress:
         self.target = target or "ThreadProgress"
         self.success_message = success_message
         self.on_done = on_done
-        if anim_fx is not None:
-            self.anim_fx = anim_fx
+        self.anim_fx = anim_fx or self.animation
         StatusManager().show_status(
             lambda status: self.anim_fx(status, self.get_message()),
             ref="ThreadProgress",
@@ -144,7 +142,7 @@ class ThreadProgress:
             tmsg = self.thread.msg
         return self.message + tmsg
 
-    def anim_fx(self, status, message):
+    def animation(self, status, message):
         """
         Returns message that changed over time
 

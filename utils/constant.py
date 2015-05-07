@@ -94,13 +94,19 @@ class Constant:
             if mod.lower().startswith("fileheader")
         ]
         if file_header:
-            msg = (
+            message = (
                 "FileHeader is installed. Javatar might conflicts with" +
                 " FileHeader when create a new file"
             )
             StatusManager().hide_status(old_ref)
-            Logger().warning(msg)
-            StatusManager().show_status(msg, ref=old_ref, must_see=True)
+            Logger().warning(message)
+            StatusManager().show_status(
+                message,
+                ref=old_ref,
+                scrolling=StatusManager().SCROLL,
+                delay=25000,
+                must_see=True
+            )
 
     @staticmethod
     def check_startup():

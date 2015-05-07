@@ -25,8 +25,8 @@ class _DependencyManager:
         """
         Returns dependency list
 
-        @param from_global: if provided as True, will returns a dependency
-            list from global settings
+        @param from_global: a boolean specified whether returns a dependency
+            list from global settings or local settings
         """
         out_dependencies = []
         dependencies = Settings().get("dependencies", from_global=from_global)
@@ -51,7 +51,8 @@ class _DependencyManager:
         """
         Refresh dependency list
 
-        @param from_global: if provided as None, will refresh all dependencies
+        @param from_global: a settings scope
+            if provided as None, will refresh all dependencies
             if provided as True, will refresh only global dependencies settings
             if provided as False, will refresh only local dependencies settings
         """

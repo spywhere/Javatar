@@ -22,10 +22,11 @@ class _RE:
         Returns a compiled regular expression pattern, if not compiled,
             otherwise, a cached pattern
 
-        @param pattern_key: regular expression pattern key to search in
+        @param pattern_key: a regular expression pattern key to search in
             the settings
-        @param pattern: if provided, will be used as a pattern instead of
-            searching from settings
+        @param pattern: a regular expression pattern
+            if provided, will be used as a pattern instead of searching from
+                settings
         """
         if pattern_key not in RE().patterns:
             pattern = pattern or Settings().get(pattern_key, default=None)

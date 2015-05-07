@@ -30,8 +30,8 @@ class JSONPanel:
         Open panel with specified settings
 
         @param file_name: file path to store JSON data
-        @param post_remove: if provided as True, file_name will be removed
-            after callback is called
+        @param post_remove: a boolean specified whether a file path will be
+            removed after callback is called or not
         """
         self.post_remove = post_remove
         self.view = self.window.open_file(file_name)

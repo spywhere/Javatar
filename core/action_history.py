@@ -37,8 +37,8 @@ class _ActionHistory:
         if a class is a command, code method will be the command name instead
 
         @param message: an action summary that is short but clear
-        @param exception: if provided, add traceback stack to the end
-            of message
+        @param exception: a caught error exception
+            if provided, this will add a traceback stack to the end of a message
 
         """
         if not Settings().ready() or Settings().get("enable_action_history"):
@@ -67,10 +67,13 @@ class _ActionHistory:
         Returns a list of actions filtered by specified inclusions
             or exclusions
 
-        @param include: if provided, will use to filter the actions by
-            including them if they starts with any of the provided strings
-        @param exclude: if provided, will use to filter the actions by
-            excluding them if they starts with any of the provided strings
+        @param include: selectors to included
+            if provided, filters the contained actions, including
+                them if they start with any of the provided strings
+
+        @param exclude: selectors to excluded
+            if provided, filters the contained actions, excluding
+                them if they start with any of the provided strings
 
         """
 

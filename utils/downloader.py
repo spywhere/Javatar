@@ -16,10 +16,11 @@ class Downloader:
         Download and returns data from specified url
 
         @param url: url to download
-        @param checksum: if provided, will check the checksum of data with
-            specified checksum
-        @param on_complete: if provided, method will become an async task and
-            will callback when download is complete
+        @param checksum: a checksum of data
+            if provided, will check the checksum of data with specified checksum
+        @param on_complete: a callback function
+            if provided, method will become an async task and will callback when
+                download is complete
         """
         try:
             if on_complete:
@@ -46,10 +47,11 @@ class Downloader:
 
         @param url: url to download
         @param path: file path to store data
-        @param checksum: if provided, will check the checksum of data with
-            specified checksum
-        @param on_complete: if provided, method will become an async task and
-            will callback when download is complete
+        @param checksum: a data checksum
+            if provided, will check the checksum of data with specified checksum
+        @param on_complete: a callback function
+            if provided, method will become an async task and will callback when
+                download is complete
         """
         try:
             if on_complete:

@@ -38,7 +38,7 @@ class _Settings:
 
         @param key: a key to get value
         @param default: a return value if specified key is not exists
-        @param as_tuple: if provided as True, will returns as a tuple contains
+        @param as_tuple: a boolean specified whether returns as a tuple contains
             value and a boolean specified if value gather from project
             settings or not
         """
@@ -53,7 +53,7 @@ class _Settings:
 
         @param key: a key to get value
         @param default: a return value if specified key is not exists
-        @param as_tuple: if provided as True, will returns as a tuple contains
+        @param as_tuple: a boolean specified whether returns as a tuple contains
             value and a boolean specified if value gather from project
             settings or not
         """
@@ -82,7 +82,7 @@ class _Settings:
 
         @param key: a key to get value
         @param default: a return value if specified key is not exists
-        @param as_tuple: if provided as True, will returns as a tuple contains
+        @param as_tuple: a boolean specified whether returns as a tuple contains
             value and a boolean specified if value gather from project
             settings or not
 
@@ -113,10 +113,10 @@ class _Settings:
         Set a value to specified key in settings
 
         @param key: a key to set value
-        @param val: a value to be set, if provided as not None,
+        @param val: a value to be set, if provided as not None
             otherwise key will be deleted instead
-        @param to_global: if provided as True, will set the value to
-            default settings
+        @param to_global: a boolean specified whether set the value to
+            default settings or not
         """
         if to_global:
             if val is None:

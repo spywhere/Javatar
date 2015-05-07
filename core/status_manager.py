@@ -5,6 +5,8 @@ from .logger import Logger
 from .settings import Settings
 from .state_property import StateProperty
 from .java_utils import JavaUtils
+import math
+import types
 
 STATUS_NAME = "Javatar"
 
@@ -14,6 +16,9 @@ class _StatusManager:
     """
     Status Text manager for complex status text usages
     """
+
+    SCROLL = "scroll"
+    CYCLE = "cycle"
 
     @classmethod
     def instance(cls):
@@ -25,14 +30,16 @@ class _StatusManager:
         self.reset(show_message=False)
         self.ready = False
         self.cycle_time = 1000
+        self.offset = 0
+        self.scroll_size = 50
 
     def animated_startup_text(self, status=None, animated=True):
         """
         Returns animated startup message
 
         @param status: status instance
-        @param animated: if provided as True, will return message that
-            will changed over time
+        @param animated: a boolean specified whether returns message that
+            will changed over time or not
         """
         chars = "⢁⡈⠔⠢"
         frame = 0
@@ -65,6 +72,10 @@ class _StatusManager:
         self.cycle_time = Settings().get(
             "status_cycle_delay",
             self.cycle_time
+        )
+        self.scroll_size = Settings().get(
+            "status_scrolling_size",
+            self.scroll_size
         )
         self.run()
         self.startup_status = self.show_status(
@@ -106,22 +117,44 @@ class _StatusManager:
                                if status["ref"].lower() != ref.lower()]
                 self.status[status_name]["status"] = status_list
 
-    def show_status(self, text, delay=None, ref=None, must_see=False, target=None):
+    def show_status(self, text, delay=None, scrolling=None,
+                    ref=None, must_see=False, target=None):
         """
         Add status text to status bar and returns reference name
 
-        @param text: if provided as string, will use as status message
+        @param text: a text to show
+            if provided as string, will use as status message
+
             if provided as not string, will use as a callback which
             receives status instance and returns a string to be used
-        @param delay: if provided more than 0, will use as message delay
+        @param delay: a status delay (showing duration)
+            if provided more than 0, will use as message delay
+
             if provided less than 0, status message will be permanent
+
             otherwise, default value will be used
-        @param ref: if provided, will use as reference name
+        @param scrolling: scrolling style
+            if provided as string, this will use the default scroller style
+                with default offset and size
+
+            if provided as function, this value must receives a status text,
+                status info and return a scrolled status
+
+            if provided as list, tuple, this value should be 1 to 3-tuple/list
+                (scroller, size, offset) format when scroller is either a string
+                or a function, size and offset must be an int
+
+            any invalid value will result in no scrolling
+        @param ref: a reference name
+            if provided, will use as reference name
+
             otherwise, this will randomly generated
-        @param must_see: if provided as True, will update status on show only,
+        @param must_see: a boolean specified whether update status on show only,
             this will ensure status text to been seen such as error messages
-        @param target: if provided, will show status text on specified target
-            status bar, otherwise, default status bar is used
+        @param target: a status bar target name
+            if provided, will show status text on specified target status bar
+
+            otherwise, default status bar is used
 
         Reference key is case-insensitive
         """
@@ -131,6 +164,26 @@ class _StatusManager:
             status["permanent"] = False
         else:
             status["permanent"] = delay < 0
+        status["scroller"] = None
+        status["scroll_offset"] = 0
+        status["scroll_size"] = self.scroll_size
+        if isinstance(scrolling, str):
+            if scrolling.lower() == self.SCROLL:
+                status["scroller"] = self.text_scroller
+            elif scrolling.lower() == self.CYCLE:
+                status["scroller"] = self.text_cycler
+        elif isinstance(scrolling, list) or isinstance(scrolling, tuple):
+            if len(scrolling) > 2 and isinstance(scrolling[2], int):
+                status["scroll_offset"] = scrolling[2]
+            if len(scrolling) > 1 and isinstance(scrolling[1], int):
+                status["scroll_size"] = scrolling[1]
+            if len(scrolling) > 0 and isinstance(scrolling[0], str):
+                if scrolling[0].lower() == self.SCROLL:
+                    status["scroller"] = self.text_scroller
+                elif scrolling[0].lower() == self.CYCLE:
+                    status["scroller"] = self.text_cycler
+        elif isinstance(scrolling, types.FunctionType):
+            status["scroller"] = scrolling
         status["delay"] = delay
         status["must_see"] = must_see
         if ref is None:
@@ -161,7 +214,9 @@ class _StatusManager:
         """
         Remove status text from status bar
 
-        @param ref: if provided as empty string, will remove all status texts
+        @param ref: a reference name
+            if provided as empty string, will remove all status texts
+
             if provided, will use as reference key to remove all matched
             status texts
 
@@ -200,7 +255,7 @@ class _StatusManager:
         Update status and returns whether to keep the status or not
 
         @param status: status to be updated
-        @param force: if provided as True, must see status texts will be
+        @param force: a boolean specified whether must-see-status should be
             updated
         """
         if status["permanent"]:
@@ -214,6 +269,44 @@ class _StatusManager:
         if not status["must_see"] or force:
             status["delay"] -= 100
         return status["delay"] > 0
+
+    def text_no_scroll(self, text, status=None):
+        return text
+
+    def text_scroller(self, text, status=None):
+        scroll_size = self.scroll_size
+        if len(text) <= scroll_size:
+            return text
+
+        if status:
+            status["scroll_offset"] += (scroll_size / len(text)) * 0.1
+            status["scroll_offset"] %= 2 * math.pi
+            offset = status["scroll_offset"]
+        else:
+            self.offset += 0.1
+            self.offset %= 2 * math.pi
+            offset = self.offset
+
+        size = (len(text) - scroll_size) + 1
+        offset = int(size / 2 + math.sin(offset) * size / 2)
+
+        return text[offset:][:scroll_size]
+
+    def text_cycler(self, text, status=None):
+        scroll_size = self.scroll_size
+        if len(text) <= scroll_size:
+            return text
+
+        if status:
+            status["scroll_offset"] += 0.5
+            status["scroll_offset"] %= len(text)
+            offset = int(status["scroll_offset"])
+        else:
+            self.offset += 0.5
+            self.offset %= len(text)
+            offset = int(self.offset)
+
+        return (text[offset:]+text[:offset])[:scroll_size]
 
     def run(self):
         """
@@ -256,8 +349,9 @@ class _StatusManager:
                     status_text = status["text"]
                 elif "custom" in status:
                     status_text = status["custom"](status)
+                scroller = status["scroller"] or self.text_no_scroll
                 if status_text is not None:
-                    view.set_status(status_name, status_text)
+                    view.set_status(status_name, scroller(status_text, status))
 
         sublime.set_timeout(self.run, 100)
 

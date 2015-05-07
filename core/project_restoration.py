@@ -22,8 +22,8 @@ class _ProjectRestoration:
         """
         Save project state into global settings file
 
-        @param repeat: if provided as True, will re-save the project state
-            again after specified time period
+        @param repeat: a boolean specified whether re-save the project state
+            again after specified time period or not
         """
         if not self.loaded:
             return

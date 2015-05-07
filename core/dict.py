@@ -19,8 +19,8 @@ class JavatarDict:
         """
         Returns a merged dictionary to be used
 
-        @param customMerger: if provided, both dictionaries will be passed to
-            that merger
+        @param customMerger: a custom merge function
+            if provided, both dictionaries will be passed to that merger
         """
         global_dict = deepcopy(self.global_dict)
         if customMerger is not None:
@@ -34,10 +34,10 @@ class JavatarDict:
         Returns whether specified key is exists or not
 
         @param key: a key to check
-        @param in_global: if provided as True, will check against global
-            dictionary
-        @param in_local: if provided as True, will check against local
-            dictionary
+        @param in_global: a boolean specified whether checking against global
+            dictionary or not
+        @param in_local: a boolean specified whether checking against local
+            dictionary or not
         """
         return (
             in_global and key in self.global_dict
@@ -67,10 +67,10 @@ class JavatarDict:
         Set a value to specified key in dictionary
 
         @param key: a key to set value
-        @param val: a value to be set, if provided as not None,
+        @param val: a value to be set, if provided as not None
             otherwise key will be deleted instead
-        @param to_global: if provided as True, will set the value to
-            global dictionary
+        @param to_global: a boolean specified whether set the value to
+            global dictionary or local dictionary
         """
         if val is None:
             if self.has(key, in_global=False, in_local=True):

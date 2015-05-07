@@ -19,7 +19,9 @@ class _StateProperty:
         """
         Returns whether specified window is a project or not
 
-        @param window: if provided, will use as a target window,
+        @param window: a target window
+            if provided, will use as a target window
+
             otherwise, active window will be used
         """
         window = window or sublime.active_window()
@@ -31,7 +33,9 @@ class _StateProperty:
         """
         Returns whether specified view is a file or not
 
-        @param view: if provided, will use as a target view,
+        @param view: a target view
+            if provided, will use as a target view
+
             otherwise, active view will be used
         """
         return self.get_file(view) is not None
@@ -53,7 +57,9 @@ class _StateProperty:
         """
         Returns a file within specified view
 
-        @param view: if provided, will use as a target view,
+        @param view: a target view
+            if provided, will use as a target view
+
             otherwise, active view will be used
         """
         view = view or sublime.active_window().active_view()
@@ -66,7 +72,9 @@ class _StateProperty:
         Returns a list of folders opened in the project,
             otherwise, return a list of a current directory
 
-        @param window: if provided, will use as a target window,
+        @param window: a target window
+            if provided, will use as a target window
+
             otherwise, active window will be used
         """
         window = window or sublime.active_window()
@@ -108,7 +116,9 @@ class _StateProperty:
         """
         Returns a directory contains file within specified view
 
-        @param view: if provided, will use as a target view,
+        @param view: a target view
+            if provided, will use as a target view
+
             otherwise, active view will be used
         """
         current_file = self.get_file(view)

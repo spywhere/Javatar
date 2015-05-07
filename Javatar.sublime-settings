@@ -25,6 +25,10 @@
     // Must more than 100 milliseconds
     "status_cycle_delay" : 1000,
 
+    // Maximum text size when scrolling
+    // Any messages longer than this value will be scrolled
+    "status_scrolling_size" : 50,
+
     // Show package path in status bar
     "show_package_path" : true,
 
