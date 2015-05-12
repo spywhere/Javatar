@@ -5,10 +5,12 @@
 ### New Features:
 - Documentation
   - New JavatarDoc
+  - Javatar Tutorial Videos (if free to do so)
   - [WIP] Code Comment
 - Code Core
-  - [Added-See UnitTests] Travis support
-  - [TODO] UnitTests - small functions are easier to test
+  - [Done] Travis support
+  - [Done] Code Quality (Static Analysis)
+  - [WIP] UnitTests - small functions are easier to test
   - [TODO] Shell Manager
   - [Done] Work-based class design
   - [Done] Git feature branching
@@ -22,11 +24,12 @@
   - Code Linting
   - Multiple Source Folders
   - Organize Imports with static imports
+  - Run main class without open the main class
   - QuickMenu collect user selections (for stats)
   - Rename/Move packages or classes [*1*]
   - .jar file export (includes executable .jar) [*2*]
   - Dynamic method call auto-complete
-  - Generate all interfaces method when create an inherited class
+  - Generate all interface methods when create an inherited class
   - Class Finding (`Ctrl+H` in eclipse)
   - JUnit support [FAQ](http://junit.org/faq.html)
   - Language Localization (not soon except requested)
@@ -98,6 +101,6 @@ Using "javap" to decompile .class file and get some informations about it
 Exclude package - Exclude all classes inside (increase searching speed and performance)
 
 <hr>
-*1*: Auto-refactor is not included<br>
-*2*: Export as executable JAR may delay after normal JAR export feature is finished<br>
+*1*: Auto-refactor (references update) is not included  
+*2*: Export as executable JAR may delay after normal JAR export feature is finished  
 *3*: Import from external .jar/classes is not supported

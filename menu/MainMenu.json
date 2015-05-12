@@ -424,16 +424,12 @@
       {
         "name": "main"
       }, {
-        "command": "javatar_help",
+        "command": "javatar_action_history",
         "args": {
-          "action": "actions_history",
           "selector": ""
         }
       }, {
-        "command": "javatar_help",
-        "args": {
-          "action": "actions_history"
-        }
+        "command": "javatar_action_history"
       }
     ]
   }

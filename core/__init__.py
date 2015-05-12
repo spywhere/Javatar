@@ -2,6 +2,7 @@ from .action_history import *
 from .dependency_manager import *
 from .dict import *
 from .event_handler import *
+from .generic_shell import *
 from .java_utils import *
 from .json_panel import *
 from .logger import *

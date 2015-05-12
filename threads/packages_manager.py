@@ -1,5 +1,6 @@
 import sublime
 import threading
+import traceback
 from os.path import basename, join
 from ..core import (
     ActionHistory,
@@ -196,11 +197,19 @@ class PackagesUpdaterThread(threading.Thread):
         Returns a raw data from a Javatar packages repository
         """
         from ..utils import Constant, Downloader
-        return sublime.decode_value(
-            Downloader.download(
-                url=Constant.get_packages_repo()
-            ).decode("utf-8")
-        )
+        try:
+            return sublime.decode_value(
+                Downloader.download(
+                    url=Constant.get_packages_repo()
+                ).decode("utf-8")
+            )
+        except Exception:
+            Logger().error(
+                "Error while fetching packages data\n%s" % (
+                    traceback.format_exc()
+                )
+            )
+            return None
 
     def validate_packages(self, data):
         """
@@ -261,6 +270,29 @@ class PackagesUpdaterThread(threading.Thread):
             }
 
             data = self.fetch_packages_data()
+            if not data:
+                self.result_message = (
+                    "Javatar packages update has failed:" +
+                    " Cannot fetch packages data"
+                )
+                ActionHistory().add_action(
+                    "javatar.core.packages_updater",
+                    "Javatar packages update has failed"
+                )
+                self.result = False
+                return
+            if Constant.get_packages_schema_version() not in data:
+                self.result_message = (
+                    "Javatar packages update has failed: No schema %s" % (
+                        Constant.get_packages_schema_version()
+                    )
+                )
+                ActionHistory().add_action(
+                    "javatar.core.packages_updater",
+                    "Javatar packages update has failed"
+                )
+                self.result = False
+                return
             packages = data[Constant.get_packages_schema_version()]
             package_url = self.validate_packages(data)
             if package_url is None:

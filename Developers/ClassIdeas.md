@@ -1,6 +1,6 @@
 ## Javatar Class ideas
 
-#### MergeDict
+#### MergeDict [Implemented but without abstract class]
 Merge 2 dictionaries together and use as a single dictionary
 
 TODO:
@@ -36,14 +36,14 @@ Parse current document (if not yet) and pass document info
 #### Timer [Implemented]
 For startup time counting and future use
 
-#### Project
+#### Project [Implemented as StateProperty]
 For store/retrieve project data (such as source folders, root package)
 
 #### Status [Implemented as StatusManager]
 ##### Status(key, value, delay)
 Set the value to key and cycle status from all keys
 
-#### Validator
+#### Validator [Implemented as StateProperty]
 Get current state of Sublime Text (such as is project, is view opened)
 
 #### ThreadProgress [Refactored but require rewrite for more suitable]

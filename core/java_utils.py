@@ -2,6 +2,7 @@ import sublime
 import os
 from .regex import RE
 from .state_property import StateProperty
+from .settings import Settings
 
 
 class JavaClass:
@@ -152,6 +153,25 @@ class _JavaUtils:
             else:
                 return "(Unknown Package)"
         return path
+
+    def is_java(self, view=None):
+        view = view or sublime.active_window().active_view()
+        if not view:
+            return False
+        if view.file_name():
+            return self.is_java_file(view.file_name())
+        return view.find_by_selector(Settings().get("java_source_selector"))
+
+    def is_java_file(self, file_path):
+        """
+        Returns whether specified file path is a Java file
+
+        @param file_path: a file path to be validated
+        """
+        if file_path is None:
+            return False
+        _, ext = os.path.splitext(os.path.basename(file_path))
+        return ext in Settings().get("java_extensions")
 
     def is_class_path(self, class_path, special=False):
         """

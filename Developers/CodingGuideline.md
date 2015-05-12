@@ -8,7 +8,7 @@
 - UnitTesting
    - For test the UnitTest test cases before push to remote
 - Terminality
-   - For running UnitTest easier by just pressing key
+   - For running UnitTest easier by just pressing a key
 
 #### Coding
 
@@ -16,14 +16,15 @@
 
 - Conventions
   - Commands start with `Javatar`
-   - Use `QuickMenu` as much as possible (except make the changes hard to edit in the future)
+  - Use `QuickMenu` as much as possible (except make the changes hard to edit in the future)
+  - Threads must be inside a `threads` directory in which all related threads combine into one class with their responder as a file name *[1]*
   - Variable, function/method, and source code file names in `underscore_case`
   - Class names in `TitleCase`
   - Sublime Text's imports on top, follows by standard Python's imports and then required imports (sequence is required but sorting is optional)
    - Use 4 spaces as 1 indent
    - Preferred 80x80 code size per method/function or smaller
-   - Preferred `{` on the same line as assignment and `}` aligned with the assignment *[1]*
-   - Preferred `Dict` over `Tuple` or `List` when work with strings to make code more readable and also support localization (if any)
+   - Preferred `{` on the same line as assignment and `}` aligned with the assignment *[2]*
+   - Preferred `dict` over `tuple` or `list` when work with strings to make code more readable and also support localization (if any)
    - Comment the code as a summarize of functionality of that method/class (if that method/class contains parameters, each parameter should be described too)
 
 - Project Structure
@@ -37,9 +38,9 @@
      - This folder structure intend for developers' use only
      - **Beware!** That this folder must not push to `master` or `release` branch
    - `grammars`
-     - A collection of language grammars that required within plugin
+     - A collection of language grammars that required within a plugin
    - `menu`
-     - A collection of menus that will be used within plugin
+     - A collection of menus that are used within a plugin
    - `messages`
      - A release changelog and installation messages will put in here
    - `parser`
@@ -47,11 +48,13 @@
    - `QuickMenu`
      - A subtree of `QuickMenu` repository 
    - `snippets`
-     - A collection of Javatar snippets that will be used within plugin
+     - A collection of Javatar snippets that are used within a plugin
    - `syntax`
-     - A collection of syntaxes that are used within plugin
+     - A collection of syntaxes that are used within a plugin
    - `tests`
      - A UnitTest test cases and its stubs
+   - `threads`
+     - A collection of threads that are used within a plugin
    - `utils`
      - A collection of small classes to helps with `core` classes
      - Any (very) small functions should be put inside `utils` class instead of create an explicit class for it
@@ -79,7 +82,9 @@
   - `release` must contains a tag
 
 ---
-*[1]*: Example:
+*[1]*: PackagesInstallerThread, PackagesLoaderThread, etc. are reside in a `packages_manager.py` file since PackagesManager is using these threads hence it is a responder for the threads.
+
+*[2]*: Example:
 
 ```
 visibility_map = {

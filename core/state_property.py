@@ -121,6 +121,7 @@ class _StateProperty:
 
             otherwise, active view will be used
         """
+        view = view or sublime.active_window().active_view()
         current_file = self.get_file(view)
         if current_file:
             return os.path.dirname(current_file)
