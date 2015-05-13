@@ -59,6 +59,9 @@ class _StatusManager:
         WARNING: This method must not access any settings
         """
         self.status = {}
+        self.running = False
+        view = sublime.active_window().active_view()
+        view.erase_status(STATUS_NAME)
         if show_message:
             view = sublime.active_window().active_view()
             view.set_status(STATUS_NAME,
@@ -77,7 +80,9 @@ class _StatusManager:
             "status_scrolling_size",
             self.scroll_size
         )
-        self.run()
+        if not self.running:
+            self.running = True
+            self.run()
         self.startup_status = self.show_status(
             self.animated_startup_text,
             delay=-1
@@ -312,6 +317,8 @@ class _StatusManager:
         """
         Update all status messages and cycle through them
         """
+        if not self.running:
+            return
         view = sublime.active_window().active_view()
         for status_name in tuple(self.status.keys()):
             status_section = self.status[status_name]

@@ -44,7 +44,10 @@ class _StateProperty:
         if not file_path and not view:
             view = sublime.active_window().active_view()
             if view.file_name():
-                return self.is_file(view) and self.is_java(file_path=view.file_name())
+                return (
+                    self.is_file(view) and
+                    self.is_java(file_path=view.file_name())
+                )
         elif file_path:
             _, ext = os.path.splitext(os.path.basename(file_path))
             return ext in Settings().get("java_extensions")
@@ -57,9 +60,7 @@ class _StateProperty:
         """
         Returns a file within specified view
 
-        @param view: a target view
-            if provided, will use as a target view
-
+        @param view: a target view used as a target view,
             otherwise, active view will be used
         """
         view = view or sublime.active_window().active_view()
@@ -67,64 +68,86 @@ class _StateProperty:
             return view.file_name()
         return None
 
-    def get_project_dirs(self, window=None):
+    def get_project_dirs(self, window=None, file_path=None):
         """
         Returns a list of folders opened in the project,
             otherwise, return a list of a current directory
 
-        @param window: a target window
-            if provided, will use as a target window
-
+        @param window: a target window used as a target window,
             otherwise, active window will be used
+        @param file_path: a file path
         """
         window = window or sublime.active_window()
         if window:
             return window.folders()
-        return [self.get_dir()]
+        return [self.get_dir(file_path=file_path)]
 
-    def get_source_folders(self):
+    def get_source_folders(self, file_path=None):
         """
         Returns a list of folders which specified as a source folder,
             otherwise, returns a project folders
+
+        @param file_path: a file path
         """
         return (
             Settings().get("source_folders") or
-            self.get_project_dirs()
+            self.get_project_dirs(file_path=file_path)
         )
 
-    def get_root_dir(self):
+    def get_source_folder(self, file_path=None):
+        """
+        Returns a source folder contains a specified file
+
+        Source folder will be used to create a new Java file and another tasks
+            this should be adapt with current state of the project
+
+        @param file_path: a file path
+        """
+        file_path = file_path or self.get_file()
+        from ..utils import Utils
+        if self.is_project():
+            source_folders = self.get_source_folders(file_path=file_path)
+            if source_folders:
+                if not file_path:
+                    return source_folders[0]
+                for source_folder in source_folders:
+                    if Utils.contains_file(source_folder, file_path):
+                        return source_folder
+        if self.get_dir(file_path=file_path):
+            return self.get_dir(file_path=file_path)
+        return None
+
+    def get_root_dir(self, file_path=None, view=None):
         """
         Returns a proper root folder in the project
 
-        Root folder will be used to create a new Java file and another tasks
+        Root folder will be used to run a project and use for another tasks
             this should be adapt with current state of the project
-        """
-        from ..utils import Utils
-        if self.is_project():
-            source_folders = self.get_source_folders()
-            if source_folders:
-                if not self.get_file():
-                    return source_folders[0]
-                for source_folder in source_folders:
-                    if Utils.contains_file(source_folder, self.get_file()):
-                        return source_folder
-        if self.get_dir():
-            return self.get_dir()
-        return None
 
-    def get_dir(self, view=None):
-        """
-        Returns a directory contains file within specified view
-
-        @param view: a target view
-            if provided, will use as a target view
-
+        @param file_path: a file path
+        @param view: a target view used as a target view,
             otherwise, active view will be used
         """
-        view = view or sublime.active_window().active_view()
-        current_file = self.get_file(view)
-        if current_file:
-            return os.path.dirname(current_file)
+        if self.is_project():
+            project_folders = self.get_project_dirs(file_path=file_path)
+            if project_folders:
+                return project_folders[0]
+        if self.get_dir():
+            return self.get_dir(file_path=file_path, view=view)
+        return None
+
+    def get_dir(self, file_path=None, view=None):
+        """
+        Returns a directory contains a file in a specified view if not a
+            specified file path
+
+        @param file_path: a file path
+        @param view: a target view used as a target view,
+            otherwise, active view will be used
+        """
+        file_path = file_path or self.get_file(view)
+        if file_path:
+            return os.path.dirname(file_path)
         return None
 
 

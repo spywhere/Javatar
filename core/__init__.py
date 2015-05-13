@@ -4,6 +4,7 @@ from .dict import *
 from .event_handler import *
 from .generic_shell import *
 from .java_utils import *
+from. jdk_manager import *
 from .json_panel import *
 from .logger import *
 from .packages_manager import *

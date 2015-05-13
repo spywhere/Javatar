@@ -14,6 +14,8 @@ class JavatarDict:
     def __init__(self, global_dict=None, local_dict=None):
         self.global_dict = global_dict or {}
         self.local_dict = local_dict or {}
+        self.global_change = False
+        self.local_change = False
 
     def get_dict(self, customMerger=None):
         """
@@ -40,9 +42,9 @@ class JavatarDict:
             dictionary or not
         """
         return (
-            in_global and key in self.global_dict
-        ) or (
             in_local and key in self.local_dict
+        ) or (
+            in_global and key in self.global_dict
         )
 
     def get(self, key, default=None):
@@ -75,13 +77,31 @@ class JavatarDict:
         if val is None:
             if self.has(key, in_global=False, in_local=True):
                 del self.local_dict[key]
+                self.local_change = True
             elif self.has(key, in_global=True, in_local=False):
                 del self.global_dict[key]
+                self.global_change = True
         else:
             if to_global:
-                self.global_dict[key] = val
+                if key not in self.global_dict or self.global_dict[key] != val:
+                    self.global_dict[key] = val
+                    self.global_change = True
             else:
-                self.local_dict[key] = val
+                if key not in self.local_dict or self.local_dict[key] != val:
+                    self.local_dict[key] = val
+                    self.local_change = True
+
+    def is_local_change(self):
+        """
+        Returns whether local dictionary is changed or not
+        """
+        return self.local_change
+
+    def is_global_change(self):
+        """
+        Returns whether global dictionary is changed or not
+        """
+        return self.global_change
 
     def get_local_dict(self):
         """

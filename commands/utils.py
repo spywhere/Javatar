@@ -103,6 +103,7 @@ class JavatarUtilsCommand(sublime_plugin.TextCommand):
                 "javatar.commands.utils.utils.reload", "Reload Javatar"
             )
             Logger().info("Reloading Javatar...")
+            Constant.reset()
             for mod in tuple(sys.modules.keys()):
                 if mod.lower().startswith("javatar"):
                     Logger().info("Reloading module " + mod + "...")

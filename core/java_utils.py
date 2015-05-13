@@ -205,7 +205,7 @@ class _JavaUtils:
         """
         from ..utils import Utils
         if relative:
-            path = os.path.relpath(path, StateProperty().get_root_dir())
+            path = os.path.relpath(path, StateProperty().get_source_folder())
         class_path = ".".join(Utils.split_path(path))
         return JavaPackage(
             self.normalize_package_path(class_path).split(".")

@@ -9,7 +9,7 @@ class TestJavaUtils(unittest.TestCase):
         return_value=True
     )
     @patch(
-        "Javatar.core.state_property._StateProperty.get_root_dir",
+        "Javatar.core.state_property._StateProperty.get_source_folder",
         return_value="alpha/"
     )
     @patch(
@@ -27,7 +27,7 @@ class TestJavaUtils(unittest.TestCase):
         return_value=False
     )
     @patch(
-        "Javatar.core.state_property._StateProperty.get_root_dir",
+        "Javatar.core.state_property._StateProperty.get_source_folder",
         return_value="alpha/"
     )
     @patch(
@@ -45,7 +45,7 @@ class TestJavaUtils(unittest.TestCase):
         return_value=True
     )
     @patch(
-        "Javatar.core.state_property._StateProperty.get_root_dir",
+        "Javatar.core.state_property._StateProperty.get_source_folder",
         return_value="alpha/"
     )
     @patch(
@@ -141,7 +141,7 @@ class TestJavaUtils(unittest.TestCase):
             )
 
     @patch(
-        "Javatar.core.state_property._StateProperty.get_root_dir",
+        "Javatar.core.state_property._StateProperty.get_source_folder",
         return_value="alpha/"
     )
     def test_to_package(self, *_):

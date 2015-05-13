@@ -137,7 +137,7 @@ class JavatarCreateCommand(sublime_plugin.WindowCommand):
             )
         else:
             create_directory = os.path.join(
-                StateProperty().get_root_dir(),
+                StateProperty().get_source_folder(),
                 class_info["package"].as_path()
             )
 

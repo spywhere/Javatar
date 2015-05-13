@@ -2,6 +2,7 @@ import sublime
 import sys
 from ..core import (
     ActionHistory,
+    JDKManager,
     Logger,
     PackagesManager,
     ProjectRestoration,
@@ -50,10 +51,15 @@ class Constant:
 
     @staticmethod
     def ready():
-        return SnippetsManager().ready() and PackagesManager().ready()
+        return (
+            JDKManager().ready() and
+            SnippetsManager().ready() and
+            PackagesManager().ready()
+        )
 
     @staticmethod
-    def startup():
+    def reset():
+        JDKManager().reset()
         Logger().reset()
         StatusManager().reset()
         ActionHistory().reset()
@@ -61,6 +67,9 @@ class Constant:
         SnippetsManager().reset()
         PackagesManager().reset()
 
+    @staticmethod
+    def startup():
+        Constant.reset()
         ActionHistory().add_action("javatar", "Startup")
         Settings().startup()
 
@@ -69,6 +78,7 @@ class Constant:
 
     @staticmethod
     def post_settings():
+        JDKManager().startup()
         Logger().startup()
         StatusManager().pre_startup()
         ProjectRestoration().load_state()

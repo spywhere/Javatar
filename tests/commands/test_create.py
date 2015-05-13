@@ -1,7 +1,7 @@
 import sublime
 import unittest
 from unittest.mock import patch, MagicMock
-from Javatar.commands.create import (
+from Javatar.commands.creates import (
     JavatarCreateCommand,
     JavatarCreatePackageCommand
 )
@@ -41,7 +41,7 @@ class TestCreateClass(unittest.TestCase):
         return_value=True
     )
     @patch(
-        "Javatar.core.state_property._StateProperty.get_root_dir",
+        "Javatar.core.state_property._StateProperty.get_source_folder",
         return_value="alpha"
     )
     @patch(
@@ -73,7 +73,7 @@ class TestCreateClass(unittest.TestCase):
         return_value=True
     )
     @patch(
-        "Javatar.core.state_property._StateProperty.get_root_dir",
+        "Javatar.core.state_property._StateProperty.get_source_folder",
         return_value="alpha"
     )
     @patch(
@@ -594,7 +594,7 @@ class TestCreatePackage(unittest.TestCase):
         return_value=True
     )
     @patch(
-        "Javatar.core.state_property._StateProperty.get_root_dir",
+        "Javatar.core.state_property._StateProperty.get_source_folder",
         return_value="alpha"
     )
     @patch(
@@ -627,7 +627,7 @@ class TestCreatePackage(unittest.TestCase):
         return_value=True
     )
     @patch(
-        "Javatar.core.state_property._StateProperty.get_root_dir",
+        "Javatar.core.state_property._StateProperty.get_source_folder",
         return_value="alpha"
     )
     @patch(
