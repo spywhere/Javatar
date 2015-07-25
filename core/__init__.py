@@ -1,4 +1,6 @@
 from .action_history import *
+from .browse_dialog import *
+from .build_system import *
 from .dependency_manager import *
 from .dict import *
 from .event_handler import *
@@ -7,6 +9,7 @@ from .java_utils import *
 from. jdk_manager import *
 from .json_panel import *
 from .logger import *
+from .macro import *
 from .packages_manager import *
 from .project_restoration import *
 from .regex import *

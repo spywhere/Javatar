@@ -6,25 +6,31 @@
 			"path": "."
 		}
 	],
-	"terminality": {
-		"run_if_only_one_available": false,
-		"execution_units": {
-			"source.python": {
+	"terminality":
+	{
+		"execution_units":
+		{
+			"*":
+			{
+				"terminal": 0,
+				"unittest":
+				{
+					"args":
+					{
+						"output": "<panel>",
+						"package": "<current>"
+					},
+					"description": "Run unit testing on $working_name project",
+					"name": "Run $working_name Tests",
+					"window_command": "unit_testing"
+				}
+			},
+			"source.python":
+			{
 				"python2run": 0,
 				"python3run": 0
-			},
-			"*": {
-				"terminal": 0,
-				"unittest": {
-					"name": "Run $working_name Tests",
-					"description": "Run unit testing on $working_name project",
-					"window_command": "unit_testing",
-					"args": {
-						"package": "<current>",
-						"output": "<panel>"
-					}
-				}
 			}
-		}
+		},
+		"run_if_only_one_available": false
 	}
 }

@@ -18,7 +18,8 @@ class JDKDetectorThread(threading.Thread):
         self.on_done = on_done
         threading.Thread.__init__(self)
 
-    def get_jdk_version(self, path=None, executable=None):
+    @classmethod
+    def get_jdk_version(cls, path=None, executable=None):
         """
         Test a specified JDK and returns its version
 
@@ -31,7 +32,9 @@ class JDKDetectorThread(threading.Thread):
             output_version = None
             exes = Settings().get("java_executables")
             for exe_type in exes:
-                version = self.get_jdk_version(path, exes[exe_type])
+                version = JDKDetectorThread.get_jdk_version(
+                    path, exes[exe_type]
+                )
                 if not version:
                     return None
                 elif not output_version:
@@ -136,7 +139,11 @@ class JDKDetectorThread(threading.Thread):
             if jdks.get("use") == "":
                 version = self.get_jdk_version()
                 if version:
-                    print("Use default settings")
+                    Logger().info(
+                        "Use default settings [%s]" % (
+                            self.to_readable_version(version)
+                        )
+                    )
                     return jdks
             if jdks.has(jdks.get("use")):
                 jdk = jdks.get(jdks.get("use"))
@@ -144,7 +151,11 @@ class JDKDetectorThread(threading.Thread):
                     "version" in jdk and
                     os.path.exists(jdk["path"]) and
                         self.is_jdk_path(jdk["path"])):
-                    print("Use selected JDK")
+                    Logger().info(
+                        "Use selected JDK [%s]" % (
+                            self.to_readable_version(jdk)
+                        )
+                    )
                     return jdks
             jdks.set(jdks.get("use"), None)
             jdks.set("use", None)
@@ -153,7 +164,11 @@ class JDKDetectorThread(threading.Thread):
         installaltion_paths = Settings().get("jdk_installation")
         default = self.get_jdk_version()
         if default:
-            print("Use default JDK")
+            Logger().info(
+                "Use default JDK [%s]" % (
+                    self.to_readable_version(default)
+                )
+            )
             jdks.set("use", "")
 
         if platform in installaltion_paths:
@@ -166,7 +181,11 @@ class JDKDetectorThread(threading.Thread):
             latest_jdk = self.get_latest_jdk(jdks.get_dict())
             if not latest_jdk:
                 return None
-            print("Use latest JDK")
+            Logger().info(
+                "Use latest JDK [%s]" % (
+                    self.to_readable_version(latest_jdk)
+                )
+            )
             jdks.set("use", latest_jdk)
         return jdks
 

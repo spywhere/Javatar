@@ -133,10 +133,10 @@
         "Back to previous menu"
       ], [
         "Set Program Arguments",
-        "Set the arguments to pass on main execution"
+        "Set the arguments to pass on the main execution"
       ], [
-        "Set Source Folder",
-        "Set source folder to specified as default package"
+        "Source Folders...",
+        "Manage source folders"
       ], [
         "Dependencies...",
         "Manage project dependencies"
@@ -149,22 +149,19 @@
       {
         "name": "main"
       }, {
-        "command": "javatar_settings",
+        "command": "javatar_project_settings",
         "args": {
-          "actiontype": "set_program_arguments"
+          "action_type": "set_program_arguments"
         }
       }, {
-        "command": "javatar_settings",
-        "args": {
-          "actiontype": "set_source_folder"
-        }
+        "name": "local_source_folders"
       }, {
         "name": "local_dependencies"
       }, {
-        "command": "javatar_settings",
+        "command": "javatar_project_settings",
         "args": {
-          "actiontype": "set_jdk",
-          "arg1": true
+          "action_type": "set_jdk",
+          "to_global": false
         }
       }
     ]
@@ -189,10 +186,32 @@
       }, {
         "name": "global_dependencies"
       }, {
-        "command": "javatar_settings",
+        "command": "javatar_project_settings",
         "args": {
-          "actiontype": "set_jdk",
-          "arg1": false
+          "action_type": "set_jdk",
+          "to_global": true
+        }
+      }
+    ]
+  },
+  "local_source_folders": {
+    "selected_index": 2,
+    "items": [
+      [
+        "Back",
+        "Back to previous menu"
+      ], [
+        "Add Source Folder",
+        "Add a source folder to specified as default package"
+      ]
+    ],
+    "actions": [
+      {
+        "name": "project_settings"
+      }, {
+        "command": "javatar_project_settings",
+        "args": {
+          "action_type": "add_source_folder"
         }
       }
     ]
@@ -215,16 +234,16 @@
       {
         "name": "project_settings"
       }, {
-        "command": "javatar_settings",
+        "command": "javatar_project_settings",
         "args": {
-          "actiontype": "add_external_jar",
-          "arg1": true
+          "action_type": "add_external_jar",
+          "to_global": false
         }
       }, {
-        "command": "javatar_settings",
+        "command": "javatar_project_settings",
         "args": {
-          "actiontype": "add_class_folder",
-          "arg1": true
+          "action_type": "add_class_folder",
+          "to_global": false
         }
       }
     ]
@@ -247,16 +266,16 @@
       {
         "name": "global_settings"
       }, {
-        "command": "javatar_settings",
+        "command": "javatar_project_settings",
         "args": {
-          "actiontype": "add_external_jar",
-          "arg1": false
+          "action_type": "add_external_jar",
+          "to_global": true
         }
       }, {
-        "command": "javatar_settings",
+        "command": "javatar_project_settings",
         "args": {
-          "actiontype": "add_class_folder",
-          "arg1": false
+          "action_type": "add_class_folder",
+          "to_global": true
         }
       }
     ]

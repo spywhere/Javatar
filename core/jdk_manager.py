@@ -76,6 +76,16 @@ class _JDKManager:
             return jdks.get(jdks.get("use"))
         return None
 
+    def get_jdk_version(self, path=None, executable=None):
+        """
+        Test a specified JDK and returns its version
+
+        @param path: a JDK installaltion path
+        @param executable: an executable name to check, if provided,
+            otherwise, will check all executables
+        """
+        return JDKDetectorThread.get_jdk_version(path, executable)
+
     def to_readable_version(self, jdk=None):
         """
         Convert a JDK dict to readable JDK string

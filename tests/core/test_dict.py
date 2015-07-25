@@ -41,3 +41,47 @@ class TestJavatarDict(unittest.TestCase):
         self.assertEqual(dict.get_dict(), {
             "alpha": "echo"
         })
+
+    def test_global_dict(self):
+        global_dict = {
+            "alpha": "bravo",
+            "charlie": "delta"
+        }
+        dict = JavatarDict(global_dict=global_dict)
+        self.assertEqual(dict.get("echo"), None)
+        self.assertEqual(dict.get("charlie"), "delta")
+        self.assertEqual(dict.get_dict(), {
+            "alpha": "bravo",
+            "charlie": "delta"
+        })
+
+    def test_local_dict(self):
+        local_dict = {
+            "echo": "foxtrot",
+            "charlie": "golf"
+        }
+        dict = JavatarDict(local_dict=local_dict)
+        self.assertEqual(dict.get("echo"), "foxtrot")
+        self.assertEqual(dict.get("charlie"), "golf")
+        self.assertEqual(dict.get_dict(), {
+            "echo": "foxtrot",
+            "charlie": "golf"
+        })
+
+    def test_merged_dict(self):
+        global_dict = {
+            "alpha": "bravo",
+            "charlie": "delta"
+        }
+        local_dict = {
+            "echo": "foxtrot",
+            "charlie": "golf"
+        }
+        dict = JavatarDict(global_dict=global_dict, local_dict=local_dict)
+        self.assertEqual(dict.get("echo"), "foxtrot")
+        self.assertEqual(dict.get("charlie"), "golf")
+        self.assertEqual(dict.get_dict(), {
+            "alpha": "bravo",
+            "charlie": "golf",
+            "echo": "foxtrot"
+        })

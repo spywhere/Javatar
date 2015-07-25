@@ -1,5 +1,5 @@
 import sublime
-import os.path
+import os
 from .settings import Settings
 
 
@@ -56,6 +56,19 @@ class _StateProperty:
             view.find_by_selector(Settings().get("java_source_selector"))
         )
 
+    def is_source_folder(self, path, can_empty=True):
+        empty = True
+        for name in os.listdir(path):
+            empty = False
+            path_name = os.path.join(path, name)
+            if can_empty:
+                if os.path.isdir(path_name):
+                    if self.is_source_folder(path_name, can_empty):
+                        return True
+            if os.path.isfile(path_name) and self.is_java(path_name):
+                return True
+        return can_empty and empty
+
     def get_file(self, view=None):
         """
         Returns a file within specified view
@@ -82,17 +95,24 @@ class _StateProperty:
             return window.folders()
         return [self.get_dir(file_path=file_path)]
 
-    def get_source_folders(self, file_path=None):
+    def get_source_folders(self, file_path=None, as_tuple=False):
         """
         Returns a list of folders which specified as a source folder,
             otherwise, returns a project folders
 
         @param file_path: a file path
         """
-        return (
-            Settings().get("source_folders") or
-            self.get_project_dirs(file_path=file_path)
-        )
+        if as_tuple:
+            source_folders = Settings().get("source_folders")
+            if source_folders:
+                return (source_folders, True)
+            else:
+                return (self.get_project_dirs(file_path=file_path), False)
+        else:
+            return (
+                Settings().get("source_folders") or
+                self.get_project_dirs(file_path=file_path)
+            )
 
     def get_source_folder(self, file_path=None):
         """
@@ -149,6 +169,54 @@ class _StateProperty:
         if file_path:
             return os.path.dirname(file_path)
         return None
+
+    def refresh_source_folders(self):
+        source_folder_menu = {
+            "selected_index": 2,
+            "items": [
+                [
+                    "Back",
+                    "Back to previous menu"
+                ], [
+                    "Add Source Folder",
+                    "Add a source folder to specified as default package"
+                ]
+            ],
+            "actions": [
+                {
+                    "name": "project_settings"
+                }, {
+                    "command": "javatar_project_settings",
+                    "args": {
+                        "action_type": "add_source_folder"
+                    }
+                }
+            ]
+        }
+
+        source_folders, from_settings = self.get_source_folders(as_tuple=True)
+        for source_folder in source_folders:
+            name = os.path.basename(source_folder)
+            source_folder_menu["actions"].append({
+                "command": "javatar_project_settings",
+                "args": {
+                    "action_type": "remove_source_folder",
+                    "source_folder": source_folder
+                }
+            })
+            source_folder_menu["items"].append([
+                name,
+                (
+                    "Select to remove from the list"
+                    if from_settings
+                    else "Default source folder." +
+                    " Add a new one to override this folder"
+                )
+            ])
+        sublime.active_window().run_command("javatar", {"replaceMenu": {
+            "name": "local_source_folders",
+            "menu": source_folder_menu
+        }})
 
 
 def StateProperty():

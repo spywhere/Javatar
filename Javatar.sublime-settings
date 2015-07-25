@@ -36,7 +36,7 @@
 
     // Source folders (used as default package), must be specified in full path
     //     Default is derived from...
-    //         - Project folder contains currently working file
+    //         - Project folders
     //         - Current directory/folder
     "source_folders": [],
 
@@ -44,7 +44,7 @@
     "dependencies": [],
 
     // Initial directory for finding dependencies
-    "dependencies_path": "$project_dir",
+    "dependencies_path": "$project_dirs_prefix",
 
     //////////////////////////////
     // Project Data Restoration //

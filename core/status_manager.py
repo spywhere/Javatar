@@ -33,6 +33,13 @@ class _StatusManager:
         self.offset = 0
         self.scroll_size = 50
 
+    def show_notification(self, message, title="Javatar"):
+        sublime.run_command("sub_notify", {
+            "title": title,
+            "msg": message,
+            "sound": True
+        })
+
     def animated_startup_text(self, status=None, animated=True):
         """
         Returns animated startup message

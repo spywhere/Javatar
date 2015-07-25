@@ -76,12 +76,18 @@ class _DependencyManager:
 
         dependency_menu["actions"].extend([
             {
-                "command": "javatar_settings",
-                "args": {"actiontype": "add_external_jar", "arg1": from_global}
+                "command": "javatar_project_settings",
+                "args": {
+                    "action_type": "add_external_jar",
+                    "to_global": from_global
+                }
             },
             {
-                "command": "javatar_settings",
-                "args": {"actiontype": "add_class_folder", "arg1": from_global}
+                "command": "javatar_project_settings",
+                "args": {
+                    "action_type": "add_class_folder",
+                    "to_global": from_global
+                }
             }
         ])
 
@@ -91,11 +97,11 @@ class _DependencyManager:
             if dependency[1]:
                 dependency_menu["actions"].append(
                     {
-                        "command": "javatar_settings",
+                        "command": "javatar_project_settings",
                         "args": {
-                            "actiontype": "remove_dependency",
-                            "arg1": dependency[0],
-                            "arg2": False
+                            "action_type": "remove_dependency",
+                            "dependency": dependency[0],
+                            "from_global": True
                         }
                     }
                 )
@@ -112,11 +118,11 @@ class _DependencyManager:
             else:
                 dependency_menu["actions"].append(
                     {
-                        "command": "javatar_settings",
+                        "command": "javatar_project_settings",
                         "args": {
-                            "actiontype": "remove_dependency",
-                            "arg1": dependency[0],
-                            "arg2": True
+                            "action_type": "remove_dependency",
+                            "dependency": dependency[0],
+                            "from_global": False
                         }
                     }
                 )
