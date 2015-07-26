@@ -54,7 +54,7 @@ TODO:
 #### News
 Check and show news
 
-#### Shell
+#### Shell [Use GenericShell instead]
 TODO:
 
 - Create an abstract class

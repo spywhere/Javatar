@@ -21,11 +21,16 @@ class _BuildSystem:
         return cls._instance
 
     def __init__(self):
+        self.log_view = None
+        self.reset()
+
+    def reset(self):
         self.failed = False
         self.building = False
         self.builders = []
-        self.log_view = None
         self.create_log = False
+        self.finish_callback = None
+        self.cancel_callback = None
 
     def create_builder(self, files=None, macro_data=None):
         """
@@ -38,18 +43,29 @@ class _BuildSystem:
         from ..threads import BuilderThread
         macro_data = macro_data or {}
         builder = BuilderThread(self, files, macro_data)
+        self.progress.add(builder, "")
+        if not self.progress.running:
+            self.progress.run()
         self.builders.append(builder)
 
-    def on_builder_complete(self, elapse_time, data, return_code, params):
-        if self.create_log and not self.log_view:
+    def on_builder_complete(self, total_files, elapse_time, data, ret, params):
+        if self.create_log and (
+            not self.log_view or not self.log_view.id()
+        ):
             self.cancel_build()
             return
-        if return_code != 0:
+        if ret != 0:
             self.failed = True
-            self.cancel_build()
-            return
+        self.current_progress += total_files
+        self.progress.set_message("Building %s of %s file%s... %.2f%%" % (
+            self.current_progress,
+            self.total_progress,
+            "s" if self.total_progress > 1 else "",
+            self.current_progress * 100 / self.total_progress
+        ))
+
         if data:
-            if not self.log_view:
+            if not self.create_log and not self.log_view:
                 target_group, target_index = Settings().get_view_index(
                     "build_log_target_group"
                 )
@@ -67,19 +83,23 @@ class _BuildSystem:
                 # Prevent view access while creating which cause double view to create
                 time.sleep(Settings().get("build_log_delay"))
             self.log_view.set_scratch(True)
-            self.log_view.run_command("javatar_util", {
+            self.log_view.run_command("javatar_utils", {
                 "util_type": "add",
                 "text": data
             })
 
     def on_build_complete(self):
-        if self.create_log and not self.log_view:
+        if self.create_log and (
+            not self.log_view or not self.log_view.id()
+        ):
             StatusManager().show_notification("Building Cancelled")
             StatusManager().show_status("Building Cancelled", target="build")
             ActionHistory().add_action(
                 "javatar.core.build_system.on_build_complete",
                 "Building Cancelled"
             )
+            if self.cancel_callback:
+                self.cancel_callback()
             return
 
         if self.failed:
@@ -92,13 +112,16 @@ class _BuildSystem:
         time_diff = time.time() - self.start_time
         StatusManager().show_notification(message.format(time_diff))
         self.build_size = -1
-        if self.log_view is not None:
+        if self.log_view:
             self.log_view.set_name(message.format(time_diff))
         StatusManager().show_status(message.format(time_diff), target="build")
         ActionHistory().add_action(
             "javatar.core.build_system.on_build_complete",
             message.format(time_diff)
         )
+        if self.finish_callback:
+            self.finish_callback(self.failed)
+        self.reset()
 
     def cancel_build(self):
         """
@@ -116,18 +139,18 @@ class _BuildSystem:
 
         @param files: a list of file paths
         """
+        self.log_view = None
         self.window = window or sublime.active_window()
         if self.building:
             self.cancel_build()
         if not files:
-            return False
+            return "No class to build"
 
         from .jdk_manager import JDKManager
         macro_data = {}
         executable_name = JDKManager().get_executable("build")
         if not executable_name:
-            sublime.error_message("Build executable is not found")
-            return False
+            return "Build executable is not found"
 
         self.start_time = time.time()
         self.building = True
@@ -141,11 +164,16 @@ class _BuildSystem:
         per_thread = math.ceil(
             len(files) / Settings().get("builder_threads", 1)
         )
-        self.progress.set_message("Building")
+        self.progress.set_message("Building %s of %s file%s... %.2f%%" % (
+            self.current_progress,
+            self.total_progress,
+            "s" if self.total_progress > 1 else "",
+            self.current_progress * 100 / self.total_progress
+        ))
         while files:
             self.create_builder(files[:per_thread], macro_data=macro_data)
             files = files[per_thread:]
-        return True
+        return None
 
     def build_dir(self, dir_path=None, window=None):
         """

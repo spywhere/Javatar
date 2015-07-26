@@ -26,7 +26,7 @@ class Constant:
 
     @staticmethod
     def get_version():
-        return "2.0.0-pre-alpha"
+        return "2.0.0-prealpha"
 
     @staticmethod
     def get_usages_schema_version():
@@ -88,9 +88,9 @@ class Constant:
 
     @staticmethod
     def post_startup():
+        StatusManager().startup()
         DependencyManager().refresh_dependencies()
         StateProperty().refresh_source_folders()
-        StatusManager().startup()
         Constant.check_conflicts(
             StatusManager().show_status("Javatar is ready")
         )

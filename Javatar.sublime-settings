@@ -44,7 +44,7 @@
     "dependencies": [],
 
     // Initial directory for finding dependencies
-    "dependencies_path": "$project_dirs_prefix",
+    "dependencies_path": "%project_dirs_prefix%",
 
     //////////////////////////////
     // Project Data Restoration //
@@ -100,23 +100,30 @@
     // Enable automatic save before build
     "automatic_save" : false,
 
+    // Enable automatic build before run
+    "automatic_build": true,
+
+    // Always ask if there are more than one main class before run
+    //    Disable will automatically run based on a current file
+    "always_ask_to_run": false,
+
     // Program arguments to pass to the main executed on the "run" command
     "program_arguments" : "",
 
     // Additional arguments to pass to the "build" command
-    "build_arguments": "",
+    "build_arguments": "-Xlint:all",
 
     // Location to run "run" command
-    "run_location" : "$project_dir",
+    "run_location" : "%project_dirs_prefix%",
 
     // Location to run "build" command
-    "build_location" : "$project_dir",
+    "build_location" : "%project_dirs_prefix%",
 
     // Build output (class files) location
     //    Specified here and Javatar will create target path and reference
     //        by -d flag in build_command
     //    In this case, "%project_directory%/bin"
-    "build_output_location" : "$project_dir$sepbin",
+    "build_output_location" : "%project_dirs_prefix%%sep%bin",
 
     // Number of builder threads
     //    Source files will be distributed equally to all builders
@@ -130,7 +137,7 @@
     //    Proper set this value can helps distributed the load of each build
     //        process
     //    Set a value lower than 1 will build all files at once
-    "parallel_builds": 0,
+    "parallel_builds": 10,
 
     // Build log view creation delay (in second)
     //    Increase this value can helps prevent double view from showing but
@@ -183,9 +190,6 @@
 
     // Run command
     "run_command" : "$classpath $full_class_path $program_arguments",
-
-    // Build command
-    "build_command" : "$sourcepath $classpath $d \"$file\" -Xlint:all",
 
     //////////////////////////////////
     // Javatar Validations Settings //

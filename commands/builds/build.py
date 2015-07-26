@@ -8,7 +8,7 @@ from ...core import (
 )
 
 
-class JavatarBuild(sublime_plugin.WindowCommand):
+class JavatarBuildCommand(sublime_plugin.WindowCommand):
     def build_project(self):
         if not StateProperty().is_project():
             sublime.error_message("Unknown package location")
@@ -21,11 +21,12 @@ class JavatarBuild(sublime_plugin.WindowCommand):
                 else:
                     sublime.error_message("Some Java files are not saved")
                     return
-        if not BuildSystem().build_dirs(
+        error_message = BuildSystem().build_dirs(
             StateProperty().get_source_folders(),
             window=self.window
-        ):
-            sublime.error_message("No class to build")
+        )
+        if error_message:
+            sublime.error_message(error_message)
 
     def build_package(self):
         if not StateProperty().is_project() or not StateProperty().get_dir():
@@ -39,11 +40,12 @@ class JavatarBuild(sublime_plugin.WindowCommand):
                 else:
                     sublime.error_message("Some Java files are not saved")
                     return
-        if not BuildSystem().build_dir(
+        error_message = BuildSystem().build_dir(
             StateProperty().get_dir(),
             window=self.window
-        ):
-            sublime.error_message("No class to build")
+        )
+        if error_message:
+            sublime.error_message(error_message)
 
     def build_working(self):
         if not StateProperty().is_project():
@@ -59,8 +61,9 @@ class JavatarBuild(sublime_plugin.WindowCommand):
                 else:
                     sublime.error_message("Some Java files are not saved")
                     return
-        if not BuildSystem().build_files(files, window=self.window):
-            sublime.error_message("No class to build")
+        error_message = BuildSystem().build_files(files, window=self.window)
+        if error_message:
+            sublime.error_message(error_message)
 
     def build_class(self):
         view = self.window.active_view()
@@ -77,11 +80,12 @@ class JavatarBuild(sublime_plugin.WindowCommand):
             else:
                 sublime.error_message("Some Java files are not saved")
                 return
-        if not BuildSystem().build_files(
+        error_message = BuildSystem().build_files(
             [view.file_name()],
             window=self.window
-        ):
-            sublime.error_message("No class to build")
+        )
+        if error_message:
+            sublime.error_message(error_message)
 
     def run(self, build_type=None):
         if not build_type:

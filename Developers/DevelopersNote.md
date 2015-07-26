@@ -20,14 +20,15 @@
 - Features
   - *Remove* Javatar calls (not so useful)
   - *Remove* Package channel
-  - Better Build System
+  - [Done] Better Build System
   - Code Linting
-  - Multiple Source Folders
+  - [Done] Multiple Source Folders
   - Organize Imports with static imports
   - Run main class without open the main class
   - QuickMenu collect user selections (for stats)
   - Rename/Move packages or classes [*1*]
   - .jar file export (includes executable .jar) [*2*]
+  - Build only changed files
   - Dynamic method call auto-complete
   - Generate all interface methods when create an inherited class
   - Class Finding (`Ctrl+H` in eclipse)

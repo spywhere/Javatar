@@ -5,7 +5,7 @@ from .state_property import StateProperty
 
 
 MACRO_PATTERN = re.compile(
-    "\\$(\\w+|\\$)(\\[((\\d*)|((\\d*):(\\d*)))\\])?(<(.?)>)?"
+    "%(\\w+|\\%)(\\[((\\d*)|((\\d*):(\\d*)))\\])?(<(.?)>)?%"
 )
 
 
@@ -20,7 +20,7 @@ class _Macro:
         macros = macros or {}
         params = params or {}
         attrs = dir(self)
-        macros["$"] = "$"
+        macros["%"] = "%"
         reserved = ["macro"]
         # Create a macro name based on method name
         for attr in attrs:

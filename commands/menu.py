@@ -34,17 +34,18 @@ class JavatarCommand(sublime_plugin.WindowCommand):
         Show menu to user, if ready
         """
         if not Constant.ready():
-            if self.ready_retry > 2:
-                sublime.message_dialog(
-                    "Javatar is starting up... " +
-                    "Please wait a few seconds and try again."
-                )
-            else:
-                sublime.status_message(
-                    "Javatar is starting up... " +
-                    "Please wait a few seconds and try again..."
-                )
-            self.ready_retry += 1
+            if not replaceMenu:
+                if self.ready_retry > 2:
+                    sublime.message_dialog(
+                        "Javatar is starting up... " +
+                        "Please wait a few seconds and try again."
+                    )
+                else:
+                    sublime.status_message(
+                        "Javatar is starting up... " +
+                        "Please wait a few seconds and try again..."
+                    )
+                self.ready_retry += 1
             return
         if self.qm is None:
             from ..core import SnippetsManager

@@ -21,7 +21,7 @@ class _DependencyManager:
         """
         self.refresh_dependencies()
 
-    def get_dependencies(self, from_global=True):
+    def get_dependencies(self, from_global=False):
         """
         Returns dependency list
 

@@ -1,7 +1,9 @@
 from .commands import *
+from .core.event_handler import *
 from .core import (
-    EventHandler,
-    ProjectRestoration
+    DependencyManager,
+    ProjectRestoration,
+    StateProperty
 )
 from .utils import (
     Constant
@@ -35,5 +37,5 @@ def on_project_stable(view_or_window=None, command_name=None, args=None):
 
 
 def on_change(view):
-    pass
-    # refresh_dependencies()
+    DependencyManager().refresh_dependencies()
+    StateProperty().refresh_source_folders()

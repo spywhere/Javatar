@@ -11,6 +11,7 @@ class MultiThreadProgress:
     def __init__(self, message="", success_message=None, on_complete=None,
                  on_all_complete=None, anim_fx=None,
                  target=None):
+        self.running = False
         self.thread_list = []
         self.message = message
         self.target = target or "ThreadProgress"
@@ -25,7 +26,6 @@ class MultiThreadProgress:
             target=self.target,
             delay=-1
         )
-        self.run()
 
     def add(self, thread, message):
         """
@@ -52,12 +52,13 @@ class MultiThreadProgress:
         multiple = index > 1
         msg = self.message
         for thread, message in self.thread_list:
-            if multiple:
-                if index == 1:
-                    msg += " and "
-                elif index < len(self.thread_list):
-                    msg += ", "
-            msg += message
+            if message:
+                if multiple:
+                    if index == 1:
+                        msg += " and "
+                    elif index < len(self.thread_list):
+                        msg += ", "
+                msg += message
             if hasattr(thread, "message"):
                 msg += thread.message
             index -= 1
@@ -82,6 +83,7 @@ class MultiThreadProgress:
         """
         Check for thread progress
         """
+        self.running = True
         alive = False
         index = 0
         for thread, message in self.thread_list:

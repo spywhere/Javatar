@@ -78,7 +78,7 @@
           "build_type": "class"
         }
       }, {
-        "command": "javatar_run_main"
+        "command": "javatar_run"
       }
     ]
   },
