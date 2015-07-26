@@ -24,7 +24,7 @@
   - Code Linting
   - [Done] Multiple Source Folders
   - Organize Imports with static imports
-  - Run main class without open the main class
+  - [Done] Run main class without open the main class
   - QuickMenu collect user selections (for stats)
   - Rename/Move packages or classes [*1*]
   - .jar file export (includes executable .jar) [*2*]

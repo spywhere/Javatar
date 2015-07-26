@@ -155,6 +155,11 @@ class _JavaUtils:
         return path
 
     def is_java(self, view=None):
+        """
+        Returns whether specified view is a Java file or not
+
+        @param view: a view to be validated
+        """
         view = view or sublime.active_window().active_view()
         if not view:
             return False

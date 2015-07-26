@@ -13,6 +13,11 @@ from ..core import (
 
 
 class JDKDetectorThread(threading.Thread):
+
+    """
+    A thread to detect and update JDK versions
+    """
+
     def __init__(self, silent=False, on_done=None):
         self.silent = silent
         self.on_done = on_done
@@ -54,6 +59,11 @@ class JDKDetectorThread(threading.Thread):
         return None
 
     def is_jdk_path(self, path):
+        """
+        Check whether the specified path is a JDK installation path
+
+        @param path: a directory path
+        """
         required_files = set(Settings().get("java_executables").values())
 
         existing_files = (
@@ -190,6 +200,9 @@ class JDKDetectorThread(threading.Thread):
         return jdks
 
     def run(self, renew=False):
+        """
+        Detect and update the JDK versions for projects
+        """
         try:
             jdks = self.verify_jdks()
             if jdks and jdks.get_dict():

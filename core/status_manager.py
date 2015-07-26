@@ -34,6 +34,12 @@ class _StatusManager:
         self.scroll_size = 50
 
     def show_notification(self, message, title="Javatar"):
+        """
+        Push the notification to the system
+
+        @param message: a notification message
+        @param title: a notification caption
+        """
         sublime.run_command("sub_notify", {
             "title": title,
             "msg": message,
@@ -283,9 +289,15 @@ class _StatusManager:
         return status["delay"] > 0
 
     def text_no_scroll(self, text, status=None):
+        """
+        A simple text display
+        """
         return text
 
     def text_scroller(self, text, status=None):
+        """
+        A simple text scroller (from right to left)
+        """
         scroll_size = self.scroll_size
         if len(text) <= scroll_size:
             return text
@@ -305,6 +317,9 @@ class _StatusManager:
         return text[offset:][:scroll_size]
 
     def text_cycler(self, text, status=None):
+        """
+        A text scroller which goes back and forth
+        """
         scroll_size = self.scroll_size
         if len(text) <= scroll_size:
             return text

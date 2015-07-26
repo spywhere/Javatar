@@ -15,11 +15,18 @@ from ...utils import StatusManager
 
 class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
 
+    """
+    Command to set the various settings for Javatar and projects
+    """
+
     def run(self, action_type, **kwargs):
         self.action_type = action_type
         getattr(self, action_type)(**kwargs)
 
     def set_program_arguments(self):
+        """
+        Set the program arguments to pass to the main execution unit
+        """
         arguments = Settings().get("program_arguments", "")
         panel = sublime.active_window().show_input_panel(
             "Arguments:",
@@ -31,11 +38,19 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
         panel.sel().add(sublime.Region(0, panel.size()))
 
     def on_set_program_arguments(self, arguments):
+        """
+        A callback when set the program arguments
+
+        @param arguments: arguments to be used
+        """
         Settings().set("program_arguments", arguments)
 
         self.show_menu("project_settings")
 
     def on_cancel_program_arguments(self):
+        """
+        A callback when cancel to set the program arguments
+        """
         sublime.set_timeout(
             lambda: sublime.active_window().run_command(
                 "javatar", {"action": {"name": "project_settings"}}
@@ -44,6 +59,12 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
         )
 
     def get_usable_source_folders(self, path, prefix=""):
+        """
+        Returns a list of potential source folders
+
+        @param path: a directory path to search
+        @param prefix: a path prefix to convert to relative path
+        """
         folder_list = []
         for name in os.listdir(path):
             path_name = os.path.join(path, name)
@@ -60,6 +81,9 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
         return folder_list
 
     def add_source_folder(self):
+        """
+        Show a list of potential source folders to select
+        """
         self.prefix = os.path.dirname(
             os.path.commonprefix(StateProperty().get_project_dirs())
         )
@@ -82,6 +106,11 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
         )
 
     def remove_source_folder(self, source_folder):
+        """
+        Remove a specified source folder from the settings
+
+        @param source_folder: a source_folder to remove
+        """
         source_folders = Settings().get("source_folders", [])
 
         if source_folder in source_folders:
@@ -96,6 +125,9 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
         ))
 
     def on_source_folder_added(self, index):
+        """
+        A callback when select a source folder
+        """
         if index >= 0:
             source_folders = Settings().get("source_folders", [])
 
@@ -113,9 +145,15 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
             ))
 
     def jar_file_filter(self, path):
+        """
+        A filter for .jar files
+        """
         return os.path.isdir(path) or path.endswith(".jar")
 
     def directory_filter(self, path):
+        """
+        A filter for directories
+        """
         return os.path.isdir(path)
 
     def file_prelist(self, path):
@@ -138,6 +176,12 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
         return dir_list
 
     def add_external_jar(self, to_global=True):
+        """
+        Show a file browser to user and let them select a .jar file
+
+        @param to_global: a boolean specified whether the settings will be save
+            to global settings or not
+        """
         self.from_global = to_global
         fd = BrowseDialog(
             initial_dir=Macro().parse(Settings().get("dependencies_path")),
@@ -148,6 +192,12 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
         fd.browse(prelist=self.file_prelist)
 
     def add_class_folder(self, to_global=True):
+        """
+        Show a file browser to user and let them select a class folder
+
+        @param to_global: a boolean specified whether the settings will be save
+            to global settings or not
+        """
         self.from_global = to_global
         fd = BrowseDialog(
             initial_dir=Macro().parse(Settings().get("dependencies_path")),
@@ -159,6 +209,13 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
         fd.browse(prelist=self.dir_prelist)
 
     def remove_dependency(self, dependency, from_global=True):
+        """
+        Remove specified dependency from the settings
+
+        @param dependency: a dependency to remove
+        @param from_global: a boolean specified whether the settings will be
+            remove from global settings or not
+        """
         dependencies = Settings().get(
             "dependencies",
             [],
@@ -179,6 +236,9 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
         ))
 
     def on_select_dependency(self, index):
+        """
+        A callback when select a dependency
+        """
         if self.action_type == "add_external_jar":
             path = index
         elif self.action_type == "add_class_folder":
@@ -211,11 +271,20 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
         ))
 
     def on_cancel_dependency(self):
+        """
+        A callback when cancel to select a dependency
+        """
         menu_name = "global" if self.from_global else "local"
         menu_name += "_dependencies"
         self.show_menu(menu_name)
 
     def set_jdk(self, to_global=True):
+        """
+        Show a list of available JDKs to use
+
+        @param to_global: a boolean specified whether the settings will be save
+            to global settings or not
+        """
         self.from_global = to_global
         JDKManager().detect_jdk(
             silent=True,
@@ -224,6 +293,9 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
         )
 
     def on_jdk_detected(self):
+        """
+        A callback when JDKs are detected
+        """
         if self.from_global:
             jdks = JavatarDict(Settings().get_global("jdk_version"))
         else:
@@ -267,6 +339,9 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
             )
 
     def on_select_jdk(self, index):
+        """
+        A callback when select a JDK to use
+        """
         if index >= 0:
             jdks = Settings().get("jdk_version", from_global=self.from_global)
             jdks = jdks or {}
@@ -286,6 +361,11 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
             JDKManager().detect_jdk(silent=True)
 
     def show_menu(self, menu_name):
+        """
+        Show a specified menu
+
+        @param menu_name: a menu to show
+        """
         sublime.set_timeout(
             lambda: sublime.active_window().run_command(
                 "javatar", {"action": {"name": menu_name}}
@@ -294,4 +374,9 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
         )
 
     def show_delayed_status(self, message):
+        """
+        Show a message after a few delay
+
+        @param message: a status message
+        """
         sublime.set_timeout(lambda: StatusManager().show_status(message), 500)

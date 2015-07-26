@@ -33,7 +33,7 @@ REPORT_TEMPLATE = '''\
 class JavatarActionHistoryCommand(sublime_plugin.WindowCommand):
 
     """
-    Command to show menu which use to create a new Java file
+    Command to show an action history
     """
 
     def get_actions(self, selector):
@@ -45,6 +45,11 @@ class JavatarActionHistoryCommand(sublime_plugin.WindowCommand):
         return ActionHistory().get_action(include, exclude)
 
     def print_action_history(self, selector):
+        """
+        Show an action history to user using specified selector
+
+        @param selector: a action selector
+        """
         selector = selector or ""
         actions = self.get_actions(selector)
 

@@ -1,7 +1,6 @@
 import sublime
 import sublime_plugin
 import os
-import re
 import shlex
 from ...core import (
     BuildSystem,
@@ -11,16 +10,25 @@ from ...core import (
     JDKManager,
     Macro,
     MultiThreadProgress,
+    RE,
     Settings,
     StateProperty
 )
 
 
 class JavatarRunCommand(sublime_plugin.WindowCommand):
+
+    """
+    A command to run a main class
+    """
+
     progress = None
     total_console = 0
 
     def build_project(self):
+        """
+        Build the project
+        """
         if not StateProperty().is_project():
             sublime.error_message("Unknown package location")
             return
@@ -41,6 +49,9 @@ class JavatarRunCommand(sublime_plugin.WindowCommand):
             sublime.error_message(error_message)
 
     def on_build_finish(self, failed):
+        """
+        A callback when build is finish
+        """
         if not failed:
             self.run(skip_build=True)
 
@@ -67,17 +78,30 @@ class JavatarRunCommand(sublime_plugin.WindowCommand):
         return files
 
     def is_main_class(self, file_path):
+        """
+        Returns whether the specified path is a main class
+
+        @param file_path: a file path to be validated
+        """
         if not StateProperty().is_java(file_path):
             return False
         datafile = open(file_path, "r")
         data = datafile.read()
         datafile.close()
-        main_signature = re.compile("public\\s+static\\s+void\\s+main\\s*\\(\\s*String\\s*\\[\\s*\\]\\s+\\w+\\s*\\)")
-        if main_signature.search(data):
+        if RE().get(
+            "main_signature",
+            "public\\s+static\\s+void\\s+main\\s*" +
+            "\\(\\s*String\\s*\\[\\s*\\]\\s+\\w+\\s*\\)"
+        ).search(data):
             return True
         return False
 
     def trim_extension(self, file_path):
+        """
+        Remove a file extension from the file path
+
+        @param file_path: a file path to remove an extension
+        """
         filename, ext = os.path.splitext(os.path.basename(file_path))
         for extension in Settings().get("java_extensions"):
             if ext == extension:
@@ -85,6 +109,11 @@ class JavatarRunCommand(sublime_plugin.WindowCommand):
         return file_path
 
     def run_program(self, file_path):
+        """
+        Run a specified class using file path
+
+        @param file_path: a file path to a main class
+        """
         class_name = self.trim_extension(os.path.basename(file_path))
         full_class_path = JavaUtils().to_package(
             self.trim_extension(file_path)
@@ -92,7 +121,9 @@ class JavatarRunCommand(sublime_plugin.WindowCommand):
 
         view = self.window.new_file()
         # self.window.set_view_index(view, target_group, target_index)
-        view.set_syntax_file("Packages/Javatar/syntax/JavaStackTrace.tmLanguage")
+        view.set_syntax_file(
+            "Packages/Javatar/syntax/JavaStackTrace.tmLanguage"
+        )
         view.set_name("Running " + class_name + " ...")
         view.set_scratch(True)
         output_location = Macro().parse(Settings().get("build_output_location"))
@@ -143,6 +174,9 @@ class JavatarRunCommand(sublime_plugin.WindowCommand):
             self.progress.run()
 
     def on_console_close(self, view, class_name, elapse_time, ret, params):
+        """
+        A callback when close a console window
+        """
         self.total_console -= 1
         if self.progress:
             self.progress.set_message("%s console%s running" % (
@@ -156,15 +190,26 @@ class JavatarRunCommand(sublime_plugin.WindowCommand):
             ))
 
     def on_all_console_close(self):
+        """
+        A callback when close all console windows
+        """
         self.progress = None
 
     def on_select_file(self, index):
+        """
+        A callback when select a file to run
+        """
         if index < 0:
             return
 
         self.run_program(self.runnable_files[index])
 
     def run(self, skip_build=False):
+        """
+        Detect and run a main class
+
+        This will show a panel if there are multiple files available
+        """
         if not skip_build and Settings().get("automatic_build"):
             self.build_project()
             return

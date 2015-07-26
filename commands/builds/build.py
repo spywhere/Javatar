@@ -9,7 +9,17 @@ from ...core import (
 
 
 class JavatarBuildCommand(sublime_plugin.WindowCommand):
+
+    """
+    A command to build a project
+    """
+
     def build_project(self):
+        """
+        Build a project
+
+        This will build all source code files in all source folders
+        """
         if not StateProperty().is_project():
             sublime.error_message("Unknown package location")
             return
@@ -29,6 +39,12 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
             sublime.error_message(error_message)
 
     def build_package(self):
+        """
+        Build files in the same package
+
+        This will build all source code files in the same package as
+            current file
+        """
         if not StateProperty().is_project() or not StateProperty().get_dir():
             sublime.error_message("Unknown package location")
             return
@@ -48,6 +64,11 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
             sublime.error_message(error_message)
 
     def build_working(self):
+        """
+        Build opened files
+
+        This will build all source code files opened in the window
+        """
         if not StateProperty().is_project():
             sublime.error_message("Unknown package location")
             return
@@ -66,6 +87,11 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
             sublime.error_message(error_message)
 
     def build_class(self):
+        """
+        Build current file
+
+        This will build only currently opened source code file
+        """
         view = self.window.active_view()
         if (not StateProperty().is_project() or
                 not StateProperty().is_file(view)):
@@ -88,6 +114,9 @@ class JavatarBuildCommand(sublime_plugin.WindowCommand):
             sublime.error_message(error_message)
 
     def run(self, build_type=None):
+        """
+        Run the build command
+        """
         if not build_type:
             return
         if build_type == "project":

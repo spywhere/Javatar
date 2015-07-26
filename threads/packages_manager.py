@@ -20,6 +20,11 @@ class PackageInstallerThread(threading.Thread):
         threading.Thread.__init__(self)
 
     def on_downloaded(self, data):
+        """
+        Install the package if data is found
+
+        @param data: data to check
+        """
         if data is None:
             self.result_message = (
                 "Javatar package \"%s\" " % (self.package["name"]) +
@@ -35,6 +40,9 @@ class PackageInstallerThread(threading.Thread):
             )
 
     def run(self):
+        """
+        Download and install the specified package
+        """
         try:
             from ..utils import Downloader
             local_path = join(

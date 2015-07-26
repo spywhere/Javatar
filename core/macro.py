@@ -1,12 +1,7 @@
 import sublime
 import os
-import re
+from .regex import RE
 from .state_property import StateProperty
-
-
-MACRO_PATTERN = re.compile(
-    "%(\\w+|\\%)(\\[((\\d*)|((\\d*):(\\d*)))\\])?(<(.?)>)?%"
-)
 
 
 class _Macro:
@@ -17,6 +12,12 @@ class _Macro:
         return cls._instance
 
     def get(self, macros=None, params=None):
+        """
+        Returns a list of available macros
+
+        @param macros: a macros to be merged with
+        @param params: parameters to pass to various macros
+        """
         macros = macros or {}
         params = params or {}
         attrs = dir(self)
@@ -39,6 +40,12 @@ class _Macro:
         return macros
 
     def get_macro(self, match, macros=None):
+        """
+        Returns the result of macro for the RegEx match
+
+        @param match: a RegEx match
+        @param macros: a list of lookup macros
+        """
         macros = macros or {}
         name = match.group(1).lower()
         sep = match.group(9) if match.group(8) else None
@@ -59,8 +66,17 @@ class _Macro:
             return str(output)
 
     def parse(self, string, macros=None):
+        """
+        Returns a macro-parsed string
+
+        @param string: a string to parse
+        @param macros: a list of lookup macros
+        """
         macros = macros or self.get()
-        return MACRO_PATTERN.sub(
+        return RE().get(
+            "macro",
+            "%(\\w+|\\%)(\\[((\\d*)|((\\d*):(\\d*)))\\])?(<(.?)>)?%"
+        ).sub(
             lambda m: self.get_macro(m, macros),
             string
         )

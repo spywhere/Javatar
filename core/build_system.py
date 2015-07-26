@@ -25,6 +25,9 @@ class _BuildSystem:
         self.reset()
 
     def reset(self):
+        """
+        Reset the instance variables to clear the build
+        """
         self.failed = False
         self.building = False
         self.builders = []
@@ -49,6 +52,15 @@ class _BuildSystem:
         self.builders.append(builder)
 
     def on_builder_complete(self, total_files, elapse_time, data, ret, params):
+        """
+        A callback for the builder thread
+
+        @param total_files: a total number of files passed to the builder
+        @param elapse_time: a total time to build the files
+        @param data: a returned data from the process
+        @param ret: a return code from the process
+        @param params: an additional parameters passed to the builder
+        """
         if self.create_log and (
             not self.log_view or not self.log_view.id()
         ):
@@ -80,7 +92,8 @@ class _BuildSystem:
                 self.log_view.set_syntax_file(
                     "Packages/Javatar/syntax/JavaCompilationError.tmLanguage"
                 )
-                # Prevent view access while creating which cause double view to create
+                # Prevent view access while creating which cause
+                #    double view to create
                 time.sleep(Settings().get("build_log_delay"))
             self.log_view.set_scratch(True)
             self.log_view.run_command("javatar_utils", {
@@ -89,6 +102,9 @@ class _BuildSystem:
             })
 
     def on_build_complete(self):
+        """
+        A callback when the build process is finish
+        """
         if self.create_log and (
             not self.log_view or not self.log_view.id()
         ):

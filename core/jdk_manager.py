@@ -64,6 +64,11 @@ class _JDKManager:
             thread.start()
 
     def get_default_jdk(self, jdks=None):
+        """
+        Returns the default JDK that Javatar is using from the specified JDKs
+
+        @param jdks: a JDKs to check against
+        """
         jdks = jdks or JavatarDict(
             Settings().get_global("jdk_version"),
             Settings().get_local("jdk_version")

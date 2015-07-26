@@ -41,6 +41,18 @@ class _StateProperty:
         return self.get_file(view) is not None
 
     def is_java(self, file_path=None, view=None):
+        """
+        Returns whether specified file or view is a Java file or not
+
+        @param file_path: a target file path
+            if provided, will use as a target file path
+
+            otherwise, a file from the active view will be used
+        @param view: a target view
+            if provided, will use as a target view
+
+            otherwise, active view will be used
+        """
         if not file_path and not view:
             view = sublime.active_window().active_view()
             if view.file_name():
@@ -57,6 +69,13 @@ class _StateProperty:
         )
 
     def is_source_folder(self, path, can_empty=True):
+        """
+        Returns whether specified path is a source folder or not
+
+        @param path: a directory path
+        @param can_empty: a boolean specified whether the empty folder will
+            consider as a source folder
+        """
         empty = True
         for name in os.listdir(path):
             empty = False
@@ -101,6 +120,8 @@ class _StateProperty:
             otherwise, returns a project folders
 
         @param file_path: a file path
+        @param as_tuple: a boolean specified whether the result will be
+            returned as a tuple of (folder path, from global) or not
         """
         if as_tuple:
             source_folders = Settings().get("source_folders")
@@ -171,6 +192,9 @@ class _StateProperty:
         return None
 
     def refresh_source_folders(self):
+        """
+        Refresh the source folders menu
+        """
         source_folder_menu = {
             "selected_index": 2,
             "items": [

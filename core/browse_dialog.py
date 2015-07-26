@@ -3,6 +3,11 @@ import os
 
 
 class BrowseDialog:
+
+    """
+    A file browser with filters and selectors supported
+    """
+
     def __init__(self, initial_dir, path_filter=None, selector=None,
                  window=None, on_done=None, on_cancel=None):
         self.window = window or sublime.active_window()

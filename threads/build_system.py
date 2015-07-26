@@ -11,6 +11,11 @@ from ..core import (
 
 
 class BuilderThread(threading.Thread):
+
+    """
+    A thread to build Java source code files
+    """
+
     def __init__(self, controller, files=None, macro_data=None):
         self.files = files or []
         self.total_files = len(self.files)
@@ -22,6 +27,9 @@ class BuilderThread(threading.Thread):
         self.start()
 
     def run(self):
+        """
+        Build the specified files
+        """
         from ..core import JDKManager, Macro
         sourcepath = pathsep.join(StateProperty().get_source_folders())
         dependencies = ["."] + [
@@ -80,10 +88,16 @@ class BuilderThread(threading.Thread):
             pass
 
     def on_build_done(self, total_files, elapse_time, data, ret, params):
+        """
+        Report the build result to the main builder controller
+        """
         self.builds -= 1
         self.controller.on_builder_complete(
             total_files, elapse_time, data, ret, params
         )
 
     def cancel(self):
+        """
+        Cancel the build process
+        """
         self.running = False
