@@ -205,7 +205,16 @@ class _JavaUtils:
         """
         from ..utils import Utils
         if relative:
-            path = os.path.relpath(path, StateProperty().get_source_folder())
+            convert = False
+            for source_folder in StateProperty().get_source_folders():
+                if Utils().contains_file(source_folder, path):
+                    convert = True
+                    path = os.path.relpath(path, source_folder)
+                    break
+            if not convert:
+                path = os.path.relpath(
+                    path, StateProperty().get_source_folder()
+                )
         class_path = ".".join(Utils.split_path(path))
         return JavaPackage(
             self.normalize_package_path(class_path).split(".")

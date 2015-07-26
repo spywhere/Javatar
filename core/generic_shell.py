@@ -88,7 +88,7 @@ class GenericShell(threading.Thread):
                     print(decoded_data)
             elif self.proc.poll() is not None:
                 break
-            sleep(Settings().get("refresh_interval"))
+            sleep(Settings().get("shell_refresh_interval"))
         self.isReadable = False
 
     def read_stdin(self):
@@ -123,7 +123,7 @@ class GenericShell(threading.Thread):
                     sublime.Region(0, self.view.size())
                 )
                 self.data_in = ""
-            sleep(Settings().get("refresh_interval"))
+            sleep(Settings().get("shell_refresh_interval"))
         self.isWritable = False
 
     def run(self):
@@ -139,14 +139,18 @@ class GenericShell(threading.Thread):
         if not self.read_only:
             threading.Thread(target=self.read_stdin).start()
 
-        while self.view is not None and self.view.window() is not None:
+        while (self.view is not None and
+               self.view.id() and
+                self.view.window() is not None):
             if self.proc.poll() is not None:
                 self.return_code = self.proc.poll()
             if not self.isWritable and not self.isReadable:
                 self.proc.stdout.close()
                 self.proc.stdin.close()
                 break
-            sleep(Settings().get("refresh_interval"))
+            if self.proc.poll() is not None:
+                break
+            sleep(Settings().get("shell_refresh_interval"))
         if self.return_code is None:
             self.kill(self.proc)
         self.result = True
