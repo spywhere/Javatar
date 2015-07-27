@@ -55,6 +55,9 @@
     // Initial directory for finding dependencies
     "dependencies_path" : "$project_dir",
 
+    // Show hidden files and directories for browsing dependencies
+    "show_hidden_files_and_directories": false,
+
     ///////////////////
     // Java Settings //
     ///////////////////

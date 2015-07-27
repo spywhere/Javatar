@@ -57,10 +57,24 @@ class JavatarSettingsCommand(sublime_plugin.WindowCommand):
         return folders
 
     def jar_file_filter(self, path):
-        return os.path.isdir(path) or path.endswith(".jar")
+        if (os.path.basename(path).startswith(".") and
+            get_settings("show_hidden_files_and_directories") and
+                (os.path.isdir(path) or path.endswith(".jar"))):
+            return True
+        return (
+            not os.path.basename(path).startswith(".") and
+            (os.path.isdir(path) or path.endswith(".jar"))
+        )
 
     def directory_filter(self, path):
-        return os.path.isdir(path)
+        if (os.path.basename(path).startswith(".") and
+            get_settings("show_hidden_files_and_directories") and
+                (os.path.isdir(path) or path.endswith(".jar"))):
+            return True
+        return (
+            not os.path.basename(path).startswith(".") and
+            os.path.isdir(path)
+        )
 
     def file_prelist(self, path):
         dir_list = []
