@@ -5,7 +5,7 @@ from .javatar_utils import start_clock, stop_clock
 
 
 # Major.Minor.Patch
-VERSION = "1.0.0"
+VERSION = "1.0.1"
 UPDATEFOR = "all"
 NEWSID = 20
 
@@ -18,6 +18,7 @@ These are updates and fixes for Javatar {VERSION}...
 - Build logs and output consoles can be show in different groups
 - Create section now select "Class" as default
 - Fix invalid logic and proper traceback display
+- Add option to show hidden files and directories
 
 You can report/suggest any issue on Javatar repository. Link is already located in README file.
 '''
