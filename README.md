@@ -15,13 +15,18 @@ To install a prerelease version, please add `Javatar` to the `install_preleases`
 Prerelease version contains a new feature which will introduce in Javatar v2.0.0 but please keep in mind that prerelease version is not a stable build to use and not all features are fully working.
 
 #### What's new in Javatar v2.0.0-prealpha
+- Remove in v2.0.0
+  - Package Channel
+  - Javatar Calls
 - Build System
   - Multiple builder supports
   - Multiple source folders supports
   - Run main class without open the main class
+- Linter supported
+  - Java linter supported via SublimeLinter
 - Status Management
   - More cleaner ways to show a status message with various contexts
 - Console
-  - A cleaner ways to run multiple instance of programs
+  - A cleaner ways to indicate multiple instance of programs
 - Macro
   - Complex macros supports

@@ -46,6 +46,9 @@
     // Initial directory for finding dependencies
     "dependencies_path": "%project_dirs_prefix%",
 
+    // Show hidden files and directories for browsing dependencies
+    "show_hidden_files_and_directories": false,
+
     //////////////////////////////
     // Project Data Restoration //
     //////////////////////////////
@@ -90,6 +93,7 @@
     "java_executables" : {
         "build" : "javac",
         "run" : "java",
+        "lint" : "javac",
         "version": "java"
     },
 
@@ -112,6 +116,9 @@
 
     // Additional arguments to pass to the "build" command
     "build_arguments": "-Xlint:all",
+
+    // Additional arguments to pass to the linter
+    "linter_arguments": "-Xlint:all",
 
     // Location to run "run" command
     "run_location" : "%project_dirs_prefix%",
@@ -185,11 +192,6 @@
     //    replace = Replace all invalid encoding character with "?" symbol
     // Change this value without knowing what you're doing is not a good idea
     "encoding_handle": "replace",
-
-
-
-    // Run command
-    "run_command" : "$classpath $full_class_path $program_arguments",
 
     //////////////////////////////////
     // Javatar Validations Settings //

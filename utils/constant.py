@@ -91,6 +91,7 @@ class Constant:
         StatusManager().startup()
         DependencyManager().refresh_dependencies()
         StateProperty().refresh_source_folders()
+        Constant.check_upgrade()
         Constant.check_conflicts(
             StatusManager().show_status("Javatar is ready")
         )
@@ -101,26 +102,92 @@ class Constant:
         )
 
     @staticmethod
+    def check_upgrade():
+        # if Constant.is_debug():
+        #     return
+        #
+        deprecated_key = [
+            "run_command",
+            "build_command"
+        ]
+        upgrade_key = [
+            "dependencies_path",
+            "run_location"
+            "build_location",
+            "build_output_location"
+        ]
+        upgradable_keys = [
+            "project_dir",
+            "source_folder",
+            "packages_path",
+            "sep",
+            "$"
+        ]
+        deprecated_keys = [key for key in deprecated_key if Settings().has(key)]
+        upgrade_keys = []
+        for key in upgrade_key:
+            if Settings().has(key):
+                value = Settings().get(key)
+                for k in upgradable_keys:
+                    if ("$" + k) in value:
+                        upgrade_keys.append(key)
+                        break
+        if deprecated_keys:
+            Logger().warning(
+                "Your settings contain deprecated key." +
+                " Please consider changing your \"" +
+                ", ".join(deprecated_keys) +
+                "\" key to a new one."
+            )
+        if upgrade_keys:
+            do_upgrade = sublime.ok_cancel_dialog(
+                "Your Javatar's settings contain old version of macro system" +
+                " setttings.\n\nDo you want Javatar to upgrade the settings" +
+                " for you?",
+                "Upgrade"
+            )
+            if do_upgrade:
+                Settings().upgrade_settings(upgrade_keys)
+
+    @staticmethod
     def check_conflicts(old_ref=None):
         file_header = [
             mod
             for mod in sys.modules.keys()
             if mod.lower().startswith("fileheader")
         ]
+        sublime_linter = [
+            mod
+            for mod in sys.modules.keys()
+            if mod.lower().startswith("sublimelinter")
+        ]
+        message = ""
+        if sublime_linter:
+            from ..extensions.linter import JavatarLinter
+            JavatarLinter
+            Logger().info(
+                "SublimeLinter is installed. Javatar linter now enabled"
+            )
+        else:
+            message += ("SublimeLinter is not installed." +
+                        " Javatar linter now disabled")
         if file_header:
-            message = (
+            msg = (
                 "FileHeader is installed. Javatar might conflicts with" +
                 " FileHeader when create a new file"
             )
-            StatusManager().hide_status(old_ref)
-            Logger().warning(message)
-            StatusManager().show_status(
-                message,
-                ref=old_ref,
-                scrolling=StatusManager().SCROLL,
-                delay=25000,
-                must_see=True
-            )
+            if message:
+                message += "    "
+            message += msg
+            Logger().warning(msg)
+        StatusManager().hide_status(old_ref)
+        StatusManager().show_status(
+            message,
+            ref=old_ref,
+            scrolling=StatusManager().SCROLL,
+            delay=25000,
+            must_see=True
+        )
 
     @staticmethod
     def check_startup():

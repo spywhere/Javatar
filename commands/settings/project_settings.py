@@ -148,13 +148,29 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
         """
         A filter for .jar files
         """
-        return os.path.isdir(path) or path.endswith(".jar")
+        # TODO(spywhere): Optimize this logic (if it can)
+        if (os.path.basename(path).startswith(".") and
+            Settings().get("show_hidden_files_and_directories", False) and
+                (os.path.isdir(path) or path.endswith(".jar"))):
+            return True
+        return (
+            not os.path.basename(path).startswith(".") and
+            (os.path.isdir(path) or path.endswith(".jar"))
+        )
 
     def directory_filter(self, path):
         """
         A filter for directories
         """
-        return os.path.isdir(path)
+        # TODO(spywhere): Optimize this logic (if it can)
+        if (os.path.basename(path).startswith(".") and
+            Settings().get("show_hidden_files_and_directories", False) and
+                (os.path.isdir(path) or path.endswith(".jar"))):
+            return True
+        return (
+            not os.path.basename(path).startswith(".") and
+            os.path.isdir(path)
+        )
 
     def file_prelist(self, path):
         dir_list = []

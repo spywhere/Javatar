@@ -35,7 +35,7 @@ class BrowseDialog:
         dir_list = []
         for name in os.listdir(path):
             pathname = os.path.join(path, name)
-            if not name.startswith(".") and self.path_filter(pathname):
+            if self.path_filter(pathname):
                 if os.path.isdir(pathname):
                     dir_list.append(["[" + name + "]", pathname])
                 elif os.path.isfile(pathname):

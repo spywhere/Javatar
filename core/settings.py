@@ -32,6 +32,26 @@ class _Settings:
         self.settings = sublime.load_settings(self.settings_base)
         self.sublime_settings = sublime.load_settings(self.sublime_base)
 
+    def upgrade_settings(self, keys):
+        """
+        Upgrade the outdated settings
+
+        @param keys: a list of key to upgrade
+        """
+        upgradable_keys = {
+            "project_dir": "%root_dir%",
+            "source_folder": "%source_folder%",
+            "packages_path": "%packages_path%",
+            "sep": "%sep%",
+            "$": "$"
+        }
+        for key in keys:
+            value, from_global = self.get(key, as_tuple=True)
+            value = value.replace("%", "%%%")
+            for k in upgradable_keys:
+                value = value.replace("$" + k, upgradable_keys[k])
+            self.set(key, value, to_global=from_global)
+
     def get_global(self, key, default=None, as_tuple=False):
         """
         Returns a value in default settings file
@@ -43,7 +63,7 @@ class _Settings:
             settings or not
         """
         if as_tuple:
-            return (self.get_global(key, default, as_tuple=False), False)
+            return (self.get_global(key, default, as_tuple=False), True)
         else:
             return self.settings.get(key, default)
 
@@ -58,7 +78,7 @@ class _Settings:
             settings or not
         """
         if as_tuple:
-            return (self.get_local(key, default, as_tuple=False), True)
+            return (self.get_local(key, default, as_tuple=False), False)
         else:
             project_data = sublime.active_window().project_data()
             if (project_data and "javatar" in project_data and
@@ -75,12 +95,24 @@ class _Settings:
         """
         return self.sublime_settings.get(key, default)
 
+    def has(self, key, from_global=None):
+        """
+        Returns whether the settings contain a specified key
+
+        @param key: a key to be validated
+        @param from_global: a boolean specified whether the settings is read
+            from default settings or not
+        """
+        return self.get(key, from_global=from_global) is not None
+
     def get(self, key, default=None, from_global=None, as_tuple=False):
         """
         Returns a value in settings
 
         @param key: a key to get value
         @param default: a return value if specified key is not exists
+        @param from_global: a boolean specified whether the settings is read
+            from default settings or not
         @param as_tuple: a boolean specified whether returns as a tuple contains
             value and a boolean specified if value gather from project
             settings or not
@@ -94,7 +126,7 @@ class _Settings:
                 from_global=False,
                 as_tuple=as_tuple
             )
-            if value is None:
+            if (isinstance(value, tuple) and value[0] is None) or value is None:
                 value = self.get(
                     key,
                     default=default,
@@ -153,6 +185,11 @@ class _Settings:
             window.set_project_data(project_data)
 
     def get_view_index(self, key):
+        """
+        Returns the processed view's group and index
+
+        @param key: a key to get value
+        """
         group_settings = self.get(key)
         view_group = -1
         view_index = -1

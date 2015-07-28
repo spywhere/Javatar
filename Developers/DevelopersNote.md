@@ -11,18 +11,19 @@
   - [Done] Travis support
   - [Done] Code Quality (Static Analysis)
   - [WIP] UnitTests - small functions are easier to test
-  - [TODO] Shell Manager
+  - [Done] Shell Manager (use MultiThreadProgress instead)
   - [Done] Work-based class design
   - [Done] Git feature branching
   - [Done] Fully pep8 compatible (if possible)
   - [Done] Logging Utilities
   - [Done] Status Manager
 - Features
-  - *Remove* Javatar calls (not so useful)
-  - *Remove* Package channel
+  - [Done] *Remove* Javatar calls (not so useful)
+  - [Done] *Remove* Package channel
   - [Done] Better Build System
-  - Code Linting
+  - [Done] Code Linting (via SublimeLinter)
   - [Done] Multiple Source Folders
+  - Native files supports
   - Organize Imports with static imports
   - [Done] Run main class without open the main class
   - QuickMenu collect user selections (for stats)
