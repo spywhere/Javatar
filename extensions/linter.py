@@ -10,8 +10,11 @@ from SublimeLinter.lint import Linter, util
 
 
 class JavatarLinter(Linter):
-    """Provides an interface to javac."""
+    """
+    Javatar's implementation of javac linter for SublimeLinter
+    """
 
+    executable = JDKManager().get_executable("lint")
     syntax = "java"
     version_args = "-version"
     version_re = r"(?P<version>\d+\.\d+\.\d+)"
@@ -30,9 +33,7 @@ class JavatarLinter(Linter):
 
     def cmd(self):
         """
-        Return the command line to execute.
-        We override this because we have to munge the -Xlint argument
-        based on the "lint" setting.
+        Returns the command to be used by SublimeLinter
         """
 
         sourcepath = pathsep.join(StateProperty().get_source_folders())

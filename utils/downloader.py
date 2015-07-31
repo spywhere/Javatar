@@ -11,6 +11,22 @@ class Downloader:
     """
 
     @staticmethod
+    def request(url, params=None, on_complete=None):
+        """
+        Send the HTTP GET request and returns data from specified url
+
+        @param url: url to send the request
+        @param params: parameters to pass to the url
+        @param on_complete: a callback function
+            if provided, method will become an async task and will callback when
+                request is complete
+        """
+        params = params or {}
+        if params:
+            url += "?" + urllib.parse.urlencode(params)
+        return Downloader.download(url, on_complete=on_complete)
+
+    @staticmethod
     def download(url, checksum=None, on_complete=None):
         """
         Download and returns data from specified url

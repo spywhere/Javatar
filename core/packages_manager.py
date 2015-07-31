@@ -191,6 +191,7 @@ class _PackagesManager:
         @param package: an installed package informations
         @param on_done: callback after refreshed
         """
+        # TODO(spywhere): Send packages usages
         self.reset()
         self.load_packages(
             on_done=lambda: self.update_packages_list(

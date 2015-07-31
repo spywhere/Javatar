@@ -89,9 +89,7 @@ class JavatarRunCommand(sublime_plugin.WindowCommand):
         data = datafile.read()
         datafile.close()
         if RE().get(
-            "main_signature",
-            "public\\s+static\\s+void\\s+main\\s*" +
-            "\\(\\s*String\\s*\\[\\s*\\]\\s+\\w+\\s*\\)"
+            "main_method_signature_match"
         ).search(data):
             return True
         return False

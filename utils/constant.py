@@ -26,7 +26,7 @@ class Constant:
 
     @staticmethod
     def get_version():
-        return "2.0.0-prealpha"
+        return "2.0.0-prealpha.1"
 
     @staticmethod
     def get_usages_schema_version():
@@ -88,6 +88,7 @@ class Constant:
 
     @staticmethod
     def post_startup():
+        from ..core import Usages
         StatusManager().startup()
         DependencyManager().refresh_dependencies()
         StateProperty().refresh_source_folders()
@@ -96,6 +97,7 @@ class Constant:
             StatusManager().show_status("Javatar is ready")
         )
         Logger().info("Startup Time: {0:.2f}s".format(Constant.startup_time))
+        Usages().send_usages()
         ActionHistory().add_action(
             "javatar",
             "Ready within {0:.2f}s".format(Constant.startup_time)
