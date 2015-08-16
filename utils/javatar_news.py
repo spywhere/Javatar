@@ -5,20 +5,21 @@ from .javatar_utils import start_clock, stop_clock
 
 
 # Major.Minor.Patch
-VERSION = "1.0.1"
+VERSION = "1.0.2"
 UPDATEFOR = "all"
 NEWSID = 20
 
 NEWS_TEMPLATE = '''\
 Just install Javatar? Checkout JavatarDoc for Javatar information and guides. Link is located in README file.
 
-Javatar 1.0.0 has been released!
+Javatar 1.0.2 has been released!
 
 These are updates and fixes for Javatar {VERSION}...
 - Build logs and output consoles can be show in different groups
 - Create section now select "Class" as default
-- Fix invalid logic and proper traceback display
 - Add option to show hidden files and directories
+- Fix invalid logic and proper traceback display
+- Fix user's packages path casing which might cause error when install on case-sensitive system
 
 You can report/suggest any issue on Javatar repository. Link is already located in README file.
 '''

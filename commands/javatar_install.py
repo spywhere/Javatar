@@ -98,7 +98,7 @@ class JavatarRemotePackageInstallerThread(threading.Thread):
             if self.checksum != datahash:
                 self.result = False
                 return
-            open(join(sublime.packages_path(), "user", self.filename + ".javatar-packages"), "wb").write(data)
+            open(join(sublime.packages_path(), "User", self.filename + ".javatar-packages"), "wb").write(data)
             self.result = True
             if self.on_complete is not None:
                 sublime.set_timeout(self.on_complete, 3000)
