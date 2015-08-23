@@ -231,7 +231,7 @@
     "import_package_name_selector" : ">ImportDeclaration>QualifiedName",
 
     // Main method signature matching using RegEx
-    "main_method_signature_match": "public\\s+static\\s+void\\s+main\\s*\\(\\s*(String\\s*\\[\\s*\\]\\s+\\w+|String\\s*\\.\\.\\.\\s+\\w+)\\s*\\)",
+    "main_method_signature_match": "public\\s+static\\s+void\\s+main\\s*\\((\\s*final)?\\s*(String\\s*\\[\\s*\\]\\s+\\w+|String\\s*\\.\\.\\.\\s+\\w+)\\s*\\)",
 
     // Class path validation using RegEx
     "class_path_match" : "^(([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*)([a-zA-Z_$][a-zA-Z\\d_$]*)$",

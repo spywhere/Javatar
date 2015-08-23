@@ -47,7 +47,7 @@ class PackageInstallerThread(threading.Thread):
             from ..utils import Downloader
             local_path = join(
                 sublime.packages_path(),
-                "user",
+                "User",
                 "%s.javatar-packages" % (self.package["filename"])
             )
             self.package["local_path"] = local_path

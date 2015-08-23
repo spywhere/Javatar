@@ -1,4 +1,3 @@
-sudo: required
 env:
     global:
         - PACKAGE="Javatar"
