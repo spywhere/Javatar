@@ -308,21 +308,21 @@ class GrammarParser():
                 regions.append(region)
         return regions
 
-    def filter_region(self, region, selector, find_any, filter_selector, filter_value):
-        nodes = self.find_inside_region([region["begin"], region["end"]])
+    @staticmethod
+    def filter_region(region, selector, find_any, filter_selector, filter_value, search_regions):
+        nodes = GrammarParser.filter_inside_region([region["begin"], region["end"]], search_regions)
         if find_any:
-            nodes = self.find_by_selector(">" + filter_selector, nodes)
+            nodes = GrammarParser.filter_by_selector(">" + filter_selector, nodes)
         else:
-            nodes = self.find_by_selector(region["parent"] + ">" + filter_selector, nodes)
+            nodes = GrammarParser.filter_by_selector(region["parent"] + ">" + filter_selector, nodes)
         for node in nodes:
             if node["value"] == filter_value:
                 return True
         return False
 
     # Find by selector
-    def find_by_selector(self, selector, search_regions=None):
-        if search_regions is None:
-            search_regions = self.regions
+    @staticmethod
+    def filter_by_selector(selector, search_regions):
         regions = []
         filter_pattern = re.compile("(\\[(?P<FilterAny>>)?(?P<Filter>[\\w-]+)=(?P<Value>[^\\]]*)\\])")
         filter_match = filter_pattern.search(selector)
@@ -350,14 +350,14 @@ class GrammarParser():
                 key = "name"
 
             is_child = selector + ">" in region["parent"]
-            child_filtered = not filter_selector or self.filter_region(region, selector, filter_any, filter_selector, filter_value)
+            child_filtered = not filter_selector or GrammarParser.filter_region(region, selector, filter_any, filter_selector, filter_value, search_regions)
 
             if find_any:
                 if selector in region[key] and not is_child:
                     if not child_filtered:
                         continue
                     if find_child:
-                        regions += self.find_inside_region([region["begin"], region["end"]])
+                        regions += GrammarParser.filter_inside_region([region["begin"], region["end"]], search_regions)
                     else:
                         regions.append(region)
             else:
@@ -365,56 +365,73 @@ class GrammarParser():
                     if not child_filtered:
                         continue
                     if find_child:
-                        regions += self.find_inside_region([region["begin"], region["end"]])
+                        regions += GrammarParser.filter_inside_region([region["begin"], region["end"]], search_regions)
                     else:
                         regions.append(region)
                 elif region[key].startswith(selector) and not is_child:
                     if not child_filtered:
                         continue
                     if find_child:
-                        regions += self.find_inside_region([region["begin"], region["end"]])
+                        regions += GrammarParser.filter_inside_region([region["begin"], region["end"]], search_regions)
                     else:
                         regions.append(region)
         return regions
 
+    def find_by_selector(self, selector, search_regions=None):
+        search_regions = search_regions or self.regions
+        return GrammarParser.filter_by_selector(selector, search_regions)
+
     # Find by selectors (list)
-    def find_by_selectors(self, selector_list, search_regions=None):
+    @staticmethod
+    def filter_by_selectors(selector_list, search_regions):
         if type(selector_list) is str:
             selectors = selector_list.split("|")
             new_selectors = []
             for selector in selectors:
                 new_selectors.append(selector)
-            return self.find_by_selectors(new_selectors, search_regions)
-        if search_regions is None:
-            search_regions = self.regions
+            return GrammarParser.filter_by_selectors(new_selectors, search_regions)
         regions = []
         for selector in selector_list:
-            regions += self.find_by_selector(selector, search_regions)
+            regions += GrammarParser.filter_by_selector(selector, search_regions)
         return regions
 
+    def find_by_selectors(self, selector_list, search_regions=None):
+        search_regions = search_regions or self.regions
+        return GrammarParser.filter_by_selectors(selector_list, search_regions)
+
     # Find selector cover region
-    def find_by_region(self, region, search_regions=None):
+    @staticmethod
+    def filter_by_region(region, search_regions):
         if type(region) is int:
-            return self.find_by_region([region, region], search_regions)
-        if search_regions is None:
-            search_regions = self.regions
+            return GrammarParser.filter_by_region([region, region], search_regions)
         regions = []
         for node in search_regions:
             if node["begin"] <= region[0] and node["end"] >= region[1]:
                 regions.append(node)
         return regions
 
+    # Find selector cover region
+    def find_by_region(self, region, search_regions=None):
+        search_regions = search_regions or self.regions
+        return GrammarParser.filter_by_region(region, search_regions)
+
     # Find selector inside region
-    def find_inside_region(self, region, search_regions=None):
+    @staticmethod
+    def filter_inside_region(region, search_regions):
         if type(region) is int:
-            return self.find_inside_region([region, region], search_regions)
-        if search_regions is None:
-            search_regions = self.regions
+            return GrammarParser.filter_inside_region(
+                [region, region], search_regions
+            )
         regions = []
         for node in search_regions:
             if node["begin"] >= region[0] and node["end"] <= region[1]:
                 regions.append(node)
         return regions
+
+    # Find selector inside region
+    def find_inside_region(self, region, search_regions=None):
+        search_regions = search_regions or self.regions
+        return GrammarParser.filter_inside_region(region, search_regions)
 
     # Get parse time
     def get_elapse_time(self):
