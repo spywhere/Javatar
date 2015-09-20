@@ -353,7 +353,7 @@ class GrammarParser():
             child_filtered = not filter_selector or GrammarParser.filter_region(region, selector, filter_any, filter_selector, filter_value, search_regions)
 
             if find_any:
-                if selector in region[key] and not is_child:
+                if region[key].endswith(selector) and not is_child:
                     if not child_filtered:
                         continue
                     if find_child:
