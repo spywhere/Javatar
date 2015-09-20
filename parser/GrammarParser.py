@@ -308,30 +308,73 @@ class GrammarParser():
                 regions.append(region)
         return regions
 
+    def filter_region(self, region, selector, find_any, filter_selector, filter_value):
+        nodes = self.find_inside_region([region["begin"], region["end"]])
+        if find_any:
+            nodes = self.find_by_selector(">" + filter_selector, nodes)
+        else:
+            nodes = self.find_by_selector(region["parent"] + ">" + filter_selector, nodes)
+        for node in nodes:
+            if node["value"] == filter_value:
+                return True
+        return False
+
     # Find by selector
     def find_by_selector(self, selector, search_regions=None):
         if search_regions is None:
             search_regions = self.regions
         regions = []
-        find_by_name = selector.startswith("@")
-        if find_by_name:
+        filter_pattern = re.compile("(\\[(?P<FilterAny>>)?(?P<Filter>[\\w-]+)=(?P<Value>[^\\]]*)\\])")
+        filter_match = filter_pattern.search(selector)
+
+        filter_selector = None
+        if filter_match:
+            selector = selector[:-len(filter_match.group(0))]
+            filter_any = filter_match.group("FilterAny") and filter_match.group("FilterAny") is not ""
+            filter_selector = filter_match.group("Filter")
+            filter_value = filter_match.group("Value")
+
+        find_name = selector.startswith("@")
+        if find_name:
+            selector = selector[1:]
+        find_any = selector.startswith(">")
+        if find_any:
             selector = selector[1:]
         find_child = selector.endswith(">")
         if find_child:
             selector = selector[:-1]
-        find_all = selector.startswith(">")
-        if find_all:
-            selector = selector[1:]
+
         for region in search_regions:
-            name = region["parent"]
-            if find_by_name:
-                name = region["name"]
-            if find_all:
-                if (find_child and selector+">" in name) or (not find_child and selector in name and selector+">" not in name):
-                    regions.append(region)
+            key = "parent"
+            if find_name:
+                key = "name"
+
+            is_child = selector + ">" in region["parent"]
+            child_filtered = not filter_selector or self.filter_region(region, selector, filter_any, filter_selector, filter_value)
+
+            if find_any:
+                if selector in region[key] and not is_child:
+                    if not child_filtered:
+                        continue
+                    if find_child:
+                        regions += self.find_inside_region([region["begin"], region["end"]])
+                    else:
+                        regions.append(region)
             else:
-                if (find_child and name.startswith(selector+">")) or (not find_child and name.startswith(selector) and selector+">" not in name):
-                    regions.append(region)
+                if key is "name" and region[key] is selector and not is_child:
+                    if not child_filtered:
+                        continue
+                    if find_child:
+                        regions += self.find_inside_region([region["begin"], region["end"]])
+                    else:
+                        regions.append(region)
+                elif region[key].startswith(selector) and not is_child:
+                    if not child_filtered:
+                        continue
+                    if find_child:
+                        regions += self.find_inside_region([region["begin"], region["end"]])
+                    else:
+                        regions.append(region)
         return regions
 
     # Find by selectors (list)

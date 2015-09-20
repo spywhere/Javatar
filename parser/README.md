@@ -73,11 +73,20 @@ When parsing is finished, you can select a portion of nodes (or tokens) to use. 
 	
 		[@][>]selector[>]
 	
-	@ = Search by node name<br />
-	\> (At start) = Find anywhere that contains selector<br />
+	@ = Search by node name  
+	\> (At start) = Find anywhere that contains selector  
 	\> (At the end) = Find only its childs
 
 	[ ] indicate that it is an optional option.
+	
+	Selector also support filtering, by adding `[ChildSelector=Value]` (include braces) to the end of the selector (also after the `>`, if any), will select the only node which qualify for the filter selector.
+	
+	Filter's selector format is as follows...
+	
+		[>]selector
+	
+	\> (At start) = Find anywhere that contains selector
+	
  - Find by selector(s)
 
 	```py
