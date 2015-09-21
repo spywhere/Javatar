@@ -37,6 +37,8 @@
      - All development-related files will put in here
      - This folder structure intend for developers' use only
      - **Beware!** That this folder must not push to `master` or `release` branch
+   - `extensions`
+     - A collection of 3rd-party package extensions
    - `grammars`
      - A collection of language grammars that required within a plugin
    - `menu`
