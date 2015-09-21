@@ -26,7 +26,7 @@ class Constant:
 
     @staticmethod
     def get_version():
-        return "2.0.0-prealpha.1"
+        return "2.0.0-prebeta"
 
     @staticmethod
     def get_usages_schema_version():
