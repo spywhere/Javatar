@@ -38,4 +38,5 @@ def on_project_stable(view_or_window=None, command_name=None, args=None):
 
 def on_change(view):
     DependencyManager().refresh_dependencies()
+    StateProperty().refresh_library_paths()
     StateProperty().refresh_source_folders()

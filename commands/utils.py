@@ -7,6 +7,7 @@ import traceback
 from ..parser.GrammarParser import GrammarParser
 from ..core import (
     ActionHistory,
+    JavaStructure,
     JSONPanel,
     Logger,
     PackagesManager,
@@ -58,8 +59,21 @@ class JavatarUtilsCommand(sublime_plugin.TextCommand):
             self.view.set_read_only(True)
         elif util_type == "clear_read_only":
             self.view.set_read_only(False)
-        elif util_type == "test" and Constant.is_debug():
-            self.view.show_popup_menu(["A", "B"], self.nothing)
+        elif util_type == "parser_test" and Constant.is_debug():
+            for cl in JavaStructure().classes_in_file(self.view.file_name()):
+                print("Class: " + cl["name"])
+                for ctor in JavaStructure().constructors_in_class(cl):
+                    params = []
+                    for param in ctor["params"]:
+                        params.append(param["type"] + " " + param["name"])
+                    print("  Constructor: " + ctor["name"] + "(" + ", ".join(params) + ")")
+                for field in JavaStructure().fields_in_class(cl):
+                    print("  Field: " + field["type"] + " " + field["name"])
+                for method in JavaStructure().methods_in_class(cl):
+                    params = []
+                    for param in method["params"]:
+                        params.append(param["type"] + " " + param["name"])
+                    print("  Method: " + method["returnType"] + " " + method["name"] + "(" + ", ".join(params) + ")")
         elif util_type == "remote_hash":
             sublime.active_window().show_input_panel(
                 "URL:", "", self.remote_hash, None, None

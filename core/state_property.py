@@ -191,6 +191,122 @@ class _StateProperty:
             return os.path.dirname(file_path)
         return None
 
+    def get_library_paths(self, from_global=False):
+        """
+        Returns library path list
+
+        @param from_global: a boolean specified whether returns a library path
+            list from global settings or local settings
+        """
+        out_library_paths = []
+        library_paths = Settings().get(
+            "library_paths", from_global=from_global
+        )
+
+        if library_paths is not None:
+            out_library_paths.extend(
+                [library_path, from_global]
+                for library_path in library_paths
+                if os.path.exists(library_path)
+            )
+
+        if not from_global:
+            out_library_paths.extend(
+                [library_path, True]
+                for library_path in Settings().get(
+                    "library_paths", default=[], from_global=True
+                )
+                if os.path.exists(library_path)
+            )
+
+        return out_library_paths
+
+    def refresh_library_paths(self, from_global=None):
+        if from_global is None:
+            self.refresh_library_paths(True)
+            self.refresh_library_paths(False)
+            return
+        previous_menu = "global_settings" if from_global else "project_settings"
+        library_paths_menu = {
+            "selected_index": 2,
+            "items": [
+                [
+                    "Back",
+                    "Back to previous menu"
+                ], [
+                    "Add Library Path",
+                    "Add a library path to be used when run the program"
+                ],
+            ],
+            "actions": [
+                {
+                    "name": previous_menu
+                }, {
+                    "command": "javatar_project_settings",
+                    "args": {
+                        "action_type": "add_library_path",
+                        "to_global": from_global
+                    }
+                }
+            ]
+        }
+
+        library_paths = self.get_library_paths(from_global)
+        for library_path in library_paths:
+            name = os.path.basename(library_path[0])
+            if library_path[1]:
+                library_paths_menu["actions"].append(
+                    {
+                        "command": "javatar_project_settings",
+                        "args": {
+                            "action_type": "remove_library_path",
+                            "library_path": library_path[0],
+                            "from_global": True
+                        }
+                    }
+                )
+                if os.path.isdir(library_path[0]):
+                    library_paths_menu["items"].append([
+                        "[" + name + "]",
+                        "Global library path. Select to remove from the list"
+                    ])
+                else:
+                    library_paths_menu["items"].append([
+                        name,
+                        "Global library path. Select to remove from the list"
+                    ])
+            else:
+                library_paths_menu["actions"].append(
+                    {
+                        "command": "javatar_project_settings",
+                        "args": {
+                            "action_type": "remove_library_path",
+                            "library_path": library_path[0],
+                            "from_global": False
+                        }
+                    }
+                )
+                if os.path.isdir(library_path[0]):
+                    library_paths_menu["items"].append([
+                        "[" + name + "]",
+                        "Project library path. Select to remove from the list"
+                    ])
+                else:
+                    library_paths_menu["items"].append([
+                        name,
+                        "Project library path. Select to remove from the list"
+                    ])
+
+        menu_name = "_library_paths"
+        if from_global:
+            menu_name = "global" + menu_name
+        else:
+            menu_name = "local" + menu_name
+        sublime.active_window().run_command("javatar", {"replaceMenu": {
+            "name": menu_name,
+            "menu": library_paths_menu
+        }})
+
     def refresh_source_folders(self):
         """
         Refresh the source folders menu

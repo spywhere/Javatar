@@ -58,6 +58,12 @@ class JavaPackage:
         """
         return not self.package_paths
 
+    def as_list(self):
+        """
+        Returns package as a component list
+        """
+        return self.package_paths
+
     def as_path(self):
         """
         Returns package as a file path
@@ -79,14 +85,16 @@ class JavaClassPath:
     A class represents a Java class path
     """
 
-    def __init__(self, path=None):
+    def __init__(self, class_path=None):
         self.package = JavaPackage()
         self.jclass = JavaClass()
-        if isinstance(path, str) and path:
-            match = RE().match("class_path_match", path)
+        if isinstance(class_path, str) and class_path:
+            match = RE().match("class_path_match", class_path)
             if match:
                 self.package = JavaPackage(
-                    JavaUtils().normalize_package_path(match.group(1)).split(".")
+                    JavaUtils().normalize_package_path(
+                        match.group(1)
+                    ).split(".")
                 )
                 self.jclass = JavaClass(
                     JavaUtils().normalize_package_path(match.group(3))
@@ -198,7 +206,9 @@ class _JavaUtils:
 
         @param class_path: a class path to be trimmed
         """
-        return RE().get("normalize_package_path", "^\\.*|\\.*$").sub("", class_path)
+        return RE().get("normalize_package_path", "^\\.*|\\.*$").sub(
+            "", class_path
+        )
 
     def to_package(self, path, relative=True):
         """

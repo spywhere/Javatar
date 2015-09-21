@@ -141,6 +141,9 @@
         "Dependencies...",
         "Manage project dependencies"
       ], [
+        "Java Library Paths...",
+        "Manage Java library paths"
+      ], [
         "Set Default JDK",
         "Set default JDK for builds and runs"
       ]
@@ -157,6 +160,8 @@
         "name": "local_source_folders"
       }, {
         "name": "local_dependencies"
+      }, {
+        "name": "local_library_paths"
       }, {
         "command": "javatar_project_settings",
         "args": {
@@ -176,6 +181,9 @@
         "Dependencies...",
         "Manage default dependencies"
       ], [
+        "Java Library Paths...",
+        "Manage Java library paths"
+      ], [
         "Set Default JDK",
         "Set default JDK for builds and runs"
       ]
@@ -185,6 +193,8 @@
         "name": "main"
       }, {
         "name": "global_dependencies"
+      }, {
+        "name": "global_library_paths"
       }, {
         "command": "javatar_project_settings",
         "args": {
@@ -248,6 +258,29 @@
       }
     ]
   },
+  "local_library_paths": {
+    "selected_index": 2,
+    "items": [
+      [
+        "Back",
+        "Back to previous menu"
+      ], [
+        "Add Library Path",
+        "Add a library path to be used when run the program"
+      ]
+    ],
+    "actions": [
+      {
+        "name": "project_settings"
+      }, {
+        "command": "javatar_project_settings",
+        "args": {
+          "action_type": "add_library_path",
+          "to_global": false
+        }
+      }
+    ]
+  },
   "global_dependencies": {
     "selected_index": 2,
     "items": [
@@ -275,6 +308,29 @@
         "command": "javatar_project_settings",
         "args": {
           "action_type": "add_class_folder",
+          "to_global": true
+        }
+      }
+    ]
+  },
+  "global_library_paths": {
+    "selected_index": 2,
+    "items": [
+      [
+        "Back",
+        "Back to previous menu"
+      ], [
+        "Add Library Path",
+        "Add a library path to be used when run the program"
+      ]
+    ],
+    "actions": [
+      {
+        "name": "global_settings"
+      }, {
+        "command": "javatar_project_settings",
+        "args": {
+          "action_type": "add_library_path",
           "to_global": true
         }
       }
@@ -400,7 +456,10 @@
         "Prettify JSON",
         "Reformat current document as pretty JSON"
       ], [
-        "Testing",
+        "Parser test",
+        "For testing and experimenting new feature"
+      ], [
+        "JSON config view test",
         "For testing and experimenting new feature"
       ]
     ],
@@ -416,6 +475,11 @@
         "command": "javatar_utils",
         "args": {
           "util_type": "tojson"
+        }
+      }, {
+        "command": "javatar_utils",
+        "args": {
+          "util_type": "parser_test"
         }
       }, {
         "command": "javatar_utils",

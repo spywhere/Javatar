@@ -9,16 +9,17 @@ Report Issue: [https://github.com/spywhere/Javatar/issues](https://github.com/sp
 [![Build Status](https://img.shields.io/travis/spywhere/Javatar/release.svg?style=flat)](https://travis-ci.org/spywhere/Javatar)|[![Build Status](https://img.shields.io/travis/spywhere/Javatar/master.svg?style=flat)](https://travis-ci.org/spywhere/Javatar)|[![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/spywhere/Javatar/blob/master/LICENSE)
 release|master (develop)
 
-## Javatar v2.0.0-prealpha
+## Javatar v2.0.0-prebeta
 To install a prerelease version, please add `Javatar` to the `install_preleases` list in the Package Control user's settings.
 
 Prerelease version contains a new feature which will introduce in Javatar v2.0.0 but please keep in mind that prerelease version is not a stable build to use and not all features are fully working.
 
-#### What's new in Javatar v2.0.0-prealpha
+#### What's new in Javatar v2.0.0-prebeta
 - Remove in v2.0.0
   - Package Channel
   - Javatar Calls
 - Build System
+  - Java library path supports
   - Multiple builder supports
   - Multiple source folders supports
   - Run main class without open the main class
@@ -28,5 +29,6 @@ Prerelease version contains a new feature which will introduce in Javatar v2.0.0
   - More cleaner ways to show a status message with various contexts
 - Console
   - A cleaner ways to indicate multiple instance of programs
+  - EOF signal supported (by clearing the console)
 - Macro
   - Complex macros supports

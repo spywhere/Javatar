@@ -95,6 +95,9 @@ class GenericShell(threading.Thread):
         while self.proc.poll() is None:
             # If input make output less than before, reset it
             if len(self.old_data) > self.view.size():
+                send_eof = False
+                if self.view.size() == 0:
+                    send_eof = True
                 self.view.run_command(
                     "javatar_utils",
                     {"util_type": "clear"}
@@ -103,6 +106,9 @@ class GenericShell(threading.Thread):
                     "javatar_utils",
                     {"util_type": "add", "text": self.old_data}
                 )
+                if send_eof:
+                    self.proc.stdin.close()
+                    break
             elif len(self.old_data) < self.view.size():
                 self.data_in = self.view.substr(
                     sublime.Region(len(self.old_data), self.view.size())

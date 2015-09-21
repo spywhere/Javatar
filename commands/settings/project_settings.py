@@ -45,18 +45,95 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
         """
         Settings().set("program_arguments", arguments)
 
-        self.show_menu("project_settings")
+        self.show_menu(
+            "global_settings" if self.from_global else "project_settings"
+        )
 
     def on_cancel_program_arguments(self):
         """
         A callback when cancel to set the program arguments
         """
-        sublime.set_timeout(
-            lambda: sublime.active_window().run_command(
-                "javatar", {"action": {"name": "project_settings"}}
-            ),
-            10
+        self.show_menu(
+            "global_settings" if self.from_global else "project_settings"
         )
+
+    def add_library_path(self, to_global):
+        """
+        Show a list of folder structure to select as a library path
+        """
+        self.from_global = to_global
+        fd = BrowseDialog(
+            initial_dir=os.path.dirname(
+                os.path.commonprefix(StateProperty().get_project_dirs())
+            ),
+            path_filter=self.directory_filter,
+            selector=self.dir_selector,
+            on_done=self.on_select_library_path,
+            on_cancel=self.on_cancel_library_path
+        )
+        fd.browse(prelist=self.dir_prelist)
+
+    def remove_library_path(self, library_path, from_global=True):
+        """
+        Remove specified library path from the settings
+
+        @param library_path: a library path to remove
+        @param from_global: a boolean specified whether the settings will be
+            remove from global settings or not
+        """
+        library_paths = Settings().get(
+            "library_paths",
+            [],
+            from_global=from_global
+        )
+
+        if library_path in library_paths:
+            library_paths.remove(library_path)
+
+        Settings().set("library_paths", library_paths, to_global=from_global)
+        StateProperty().refresh_library_paths()
+
+        menu_name = "global" if from_global else "local"
+        menu_name += "_library_paths"
+        self.show_menu(menu_name)
+        self.show_delayed_status("Library path \"%s\" has been removed" % (
+            os.path.basename(library_path)
+        ))
+
+    def on_select_library_path(self, index):
+        """
+        A callback when select a dependency
+        """
+        path = index[2:-1]
+
+        library_paths = Settings().get(
+            "library_paths", [], from_global=self.from_global
+        )
+
+        library_paths += [path]
+
+        Settings().set(
+            "library_paths",
+            library_paths,
+            to_global=self.from_global
+        )
+        StateProperty().refresh_library_paths()
+
+        menu_name = "global" if self.from_global else "local"
+        menu_name += "_library_paths"
+
+        self.show_menu(menu_name)
+        self.show_delayed_status("Library path \"%s\" has been added" % (
+            os.path.basename(path)
+        ))
+
+    def on_cancel_library_path(self):
+        """
+        A callback when cancel to select a dependency
+        """
+        menu_name = "global" if self.from_global else "local"
+        menu_name += "_library_paths"
+        self.show_menu(menu_name)
 
     def get_usable_source_folders(self, path, prefix=""):
         """

@@ -1,4 +1,5 @@
 import sublime
+import gc
 from .logger import Logger
 from .settings import Settings
 
@@ -18,6 +19,11 @@ class _ProjectRestoration:
     def __init__(self):
         self.loaded = False
 
+    def free_memory(self):
+        num_freed = gc.collect()
+        if num_freed:
+            Logger().debug("%s objects has been freed" % (num_freed))
+
     def save_state(self, repeat=False):
         """
         Save project state into global settings file
@@ -26,6 +32,7 @@ class _ProjectRestoration:
             again after specified time period or not
         """
         if not self.loaded:
+            self.free_memory()
             return
         if Settings().get("allow_project_restoration"):
             project_data = {
@@ -33,6 +40,7 @@ class _ProjectRestoration:
                 for window in sublime.windows()
             }
             Settings().set("project_data", project_data, to_global=True)
+            self.free_memory()
             if repeat:
                 sublime.set_timeout(
                     self.save_state,

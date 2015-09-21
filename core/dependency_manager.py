@@ -41,7 +41,9 @@ class _DependencyManager:
         if not from_global:
             out_dependencies.extend(
                 [dependency, True]
-                for dependency in Settings().get("dependencies", from_global=True)
+                for dependency in Settings().get(
+                    "dependencies", default=[], from_global=True
+                )
                 if os.path.exists(dependency)
             )
 
@@ -60,6 +62,7 @@ class _DependencyManager:
             self.refresh_dependencies(False)
             self.refresh_dependencies(True)
             return
+        previous_menu = "global_settings" if from_global else "project_settings"
         dependency_menu = {
             "selected_index": 2,
             "items": [
@@ -69,27 +72,22 @@ class _DependencyManager:
             ],
             "actions": [
                 {
-                    "name": "project_settings"
+                    "name": previous_menu
+                }, {
+                    "command": "javatar_project_settings",
+                    "args": {
+                        "action_type": "add_external_jar",
+                        "to_global": from_global
+                    }
+                }, {
+                    "command": "javatar_project_settings",
+                    "args": {
+                        "action_type": "add_class_folder",
+                        "to_global": from_global
+                    }
                 }
             ]
         }
-
-        dependency_menu["actions"].extend([
-            {
-                "command": "javatar_project_settings",
-                "args": {
-                    "action_type": "add_external_jar",
-                    "to_global": from_global
-                }
-            },
-            {
-                "command": "javatar_project_settings",
-                "args": {
-                    "action_type": "add_class_folder",
-                    "to_global": from_global
-                }
-            }
-        ])
 
         dependencies = self.get_dependencies(from_global)
         for dependency in dependencies:

@@ -5,6 +5,7 @@ from .dependency_manager import *
 from .dict import *
 from .event_handler import *
 from .generic_shell import *
+from .java_structure import *
 from .java_utils import *
 from. jdk_manager import *
 from .json_panel import *

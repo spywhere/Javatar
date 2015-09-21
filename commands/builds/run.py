@@ -8,6 +8,7 @@ from ...core import (
     GenericShell,
     JavaUtils,
     JDKManager,
+    Logger,
     Macro,
     MultiThreadProgress,
     RE,
@@ -135,14 +136,28 @@ class JavatarRunCommand(sublime_plugin.WindowCommand):
             return
         arguments = Macro().parse(Settings().get("program_arguments"))
         classpath = os.pathsep.join(dependencies)
-        run_script = "%s -classpath %s %s" % (
+        system_property = ""
+        library_paths = StateProperty().get_library_paths()
+        if library_paths:
+            system_property += " -Djava.library.path=%s" % (
+                shlex.quote(os.pathsep.join(
+                    [path[0] for path in library_paths]
+                ))
+            )
+        run_script = "%s -classpath %s%s%s %s" % (
             shlex.quote(executable),
             shlex.quote(classpath),
+            system_property,
+            " -XstartOnFirstThread" if Settings().get(
+                "always_run_on_first_thread"
+            ) and sublime.platform() == "osx" else "",
             full_class_path
         )
 
         if arguments:
             run_script += " %s" % (arguments)
+
+        Logger().debug("Run script %s" % (run_script))
 
         console = GenericShell(
             run_script,
