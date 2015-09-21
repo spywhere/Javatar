@@ -91,6 +91,18 @@ class _DependencyManager:
             ]
         }
 
+        if not from_global:
+            dependency_menu["items"].append([
+                "Add Maven Dependency",
+                "Download and add Maven dependency from the central repository"
+            ])
+            dependency_menu["actions"].append({
+                "command": "javatar_project_settings",
+                "args": {
+                    "action_type": "add_maven_dependency"
+                }
+            })
+
         dependencies = self.get_dependencies(from_global, True)
         for dependency in dependencies:
             name = os.path.basename(dependency[0])

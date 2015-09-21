@@ -1,16 +1,22 @@
 import sublime
 import sublime_plugin
 import os
+import urllib
 from ...core import (
+    ActionHistory,
     BrowseDialog,
     DependencyManager,
     JavatarDict,
     JDKManager,
     Macro,
     Settings,
-    StateProperty
+    StateProperty,
+    ThreadProgress
 )
-from ...utils import StatusManager
+from ...utils import (
+    Downloader,
+    StatusManager
+)
 
 
 class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
@@ -208,9 +214,11 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
         if index >= 0:
             source_folders = Settings().get("source_folders", [])
 
-            source_folders.append(
-                os.path.join(self.prefix, self.usable_source_folders[index][1])
+            path = os.path.join(
+                self.prefix, self.usable_source_folders[index][1]
             )
+            if path not in source_folders:
+                source_folders += [path]
 
             Settings().set("source_folders", source_folders)
 
@@ -267,6 +275,202 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
         if os.path.dirname(path) != path:
             dir_list.append(["[Parent Folder]", os.path.dirname(path)])
         return dir_list
+
+    def add_maven_dependency(self):
+        panel = sublime.active_window().show_input_panel(
+            "Maven Dependency:",
+            "groupid:artifactid:version",
+            self.on_select_maven_dependency,
+            None,
+            self.on_cancel_maven_dependency
+        )
+        panel.sel().add(sublime.Region(0, panel.size()))
+
+    def on_select_maven_dependency(self, class_path):
+        """
+        A callback when select the Maven dependency
+
+        @param class_path: Maven dependency class path
+        """
+
+        host = "http://search.maven.org"
+        class_path = class_path.split(":")
+        error_message = "Failed to retrieve dependency informations"
+        try:
+            if len(class_path) > 2:
+                error_message = "Failed to download dependency"
+                output_location = Macro().parse(Settings().get(
+                    "dependencies_download_location"
+                ))
+                if output_location:
+                    if os.path.isfile(output_location):
+                        return
+                    elif not os.path.isdir(output_location):
+                        try:
+                            os.makedirs(output_location)
+                        except:
+                            pass
+                groupid = class_path[0].replace(".", "/")
+                artifactid = class_path[1].replace(".", "/")
+                version = class_path[2]
+                path = [
+                    groupid,
+                    artifactid,
+                    version,
+                    "%s-%s.jar" % (artifactid, version)
+                ]
+                jar_url = host + "/remotecontent?filepath=%s" % ("/".join(path))
+                output_file = os.path.join(
+                    output_location, os.path.basename(jar_url)
+                )
+                download_thread = Downloader.download_file(
+                    jar_url,
+                    output_file,
+                    on_complete=lambda status: self.on_dependency_downloaded(
+                        status, output_file
+                    )
+                )
+                ThreadProgress(
+                    download_thread,
+                    "Downloading Maven dependency \"%s\"" % (
+                        ":".join(class_path)
+                    ), (
+                        "Maven dependency \"%s\" has been " % (
+                            ":".join(class_path)
+                        ) + "successfully downloaded"
+                    )
+                )
+            elif len(class_path) > 1:
+                groupid = class_path[0]
+                artifactid = class_path[1]
+                info_thread = Downloader.request(
+                    host + "/solrsearch/select?q=%s&core=gav&wt=json" % (
+                        urllib.request.quote(
+                            "g:\"%s\" AND a:\"%s\"" % (groupid, artifactid),
+                            ""
+                        )
+                    ), on_complete=lambda data: self.on_maven_repo_retrieved(
+                        data, groupid, artifactid
+                    )
+                )
+                ThreadProgress(
+                    info_thread, "Acquiring Maven dependency versions"
+                )
+            elif len(class_path) > 0:
+                groupid = class_path[0]
+                info_thread = Downloader.request(host + "/solrsearch/select?q=%s&wt=json" % (
+                    urllib.request.quote(
+                        "g:\"%s\"" % (groupid),
+                        ""
+                    )
+                ), on_complete=lambda data: self.on_maven_repo_retrieved(
+                    data, groupid
+                ))
+                ThreadProgress(
+                    info_thread, "Acquiring Maven dependency artifacts"
+                )
+        except Exception as e:
+            ActionHistory().add_action(
+                (
+                    "javatar.commands.settings" +
+                    ".project_settings.on_select_maven_dependency"
+                ),
+                error_message,
+                e
+            )
+            self.show_delayed_status(error_message)
+            self.show_menu("local_dependencies")
+
+    def on_maven_repo_retrieved(self, data, groupid, artifactid=None):
+        try:
+            json = sublime.decode_value(data.decode())
+        except Exception:
+            self.show_delayed_status(
+                "Malform dependency informations"
+            )
+            self.show_menu("local_dependencies")
+            return
+        if "response" not in json or "docs" not in json["response"]:
+            self.show_delayed_status(
+                "Invalid response for dependency informations"
+            )
+            self.show_menu("local_dependencies")
+            return
+        docs = json["response"]["docs"]
+        if ("numFound" not in json["response"] or
+                json["response"]["numFound"] == 0):
+            self.show_delayed_status(
+                "No dependency available for \"%s\"" % (
+                    groupid + ((":" + artifactid) if artifactid else "")
+                )
+            )
+            self.show_menu("local_dependencies")
+            return
+        versions = []
+        artifacts = []
+        for doc in docs:
+            if "a" not in doc or "id" not in doc:
+                continue
+            if artifactid:
+                versions.append([
+                    doc["a"] + doc["latestVersion"]
+                    if "latestVersion" in doc else doc["v"]
+                    if "v" in doc else "Unknown",
+                    "ID: " + doc["id"]
+                ])
+            else:
+                artifacts.append([
+                    doc["a"],
+                    "Latest Version: " + doc["latestVersion"]
+                    if "latestVersion" in doc else doc["v"]
+                    if "v" in doc else "Unknown"
+                ])
+        sublime.active_window().show_quick_panel(
+            versions if artifactid else artifacts,
+            lambda index: self.on_select_maven_artifact_or_version(
+                index, docs
+            )
+        )
+
+    def on_select_maven_artifact_or_version(self, index, docs):
+        if index < 0:
+            self.show_menu("local_dependencies")
+            return
+
+        self.on_select_maven_dependency(docs[index]["id"])
+
+    def on_dependency_downloaded(self, status, path):
+        if not status:
+            self.show_delayed_status("Failed to download dependency \"%s\"" % (
+                os.path.basename(path)
+            ))
+            self.show_menu("local_dependencies")
+            return
+
+        dependencies = Settings().get(
+            "dependencies", [], from_global=False
+        )
+
+        if path not in dependencies:
+            dependencies += [path]
+
+        Settings().set(
+            "dependencies",
+            dependencies,
+            to_global=False
+        )
+        DependencyManager().refresh_dependencies()
+
+        self.show_delayed_status("Dependency \"%s\" has been added" % (
+            os.path.basename(path)
+        ))
+        self.show_menu("local_dependencies")
+
+    def on_cancel_maven_dependency(self):
+        """
+        A callback when cancel the Maven dependency selection
+        """
+        self.show_menu("local_dependencies")
 
     def add_external_jar(self, to_global=True):
         """
@@ -341,7 +545,8 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
             "dependencies", [], from_global=self.from_global
         )
 
-        dependencies += [path]
+        if path not in dependencies:
+            dependencies += [path]
 
         Settings().set(
             "dependencies",

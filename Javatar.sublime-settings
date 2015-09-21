@@ -40,11 +40,11 @@
     //         - Current directory/folder
     "source_folders": [],
 
-    // .jar and class path dependencies, use on build
-    "dependencies": [],
-
     // Initial directory for finding dependencies
     "dependencies_path": "%project_dirs_prefix%",
+
+    // Dependencies download location
+    "dependencies_download_location" : "%project_dirs_prefix%%sep%jar",
 
     // Show hidden files and directories for browsing dependencies
     "show_hidden_files_and_directories": false,

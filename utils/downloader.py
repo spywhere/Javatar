@@ -107,5 +107,7 @@ class DownloaderThread(threading.Thread):
             data = self.func(*self.args)
             if self.on_complete:
                 self.on_complete(data)
+            self.result = True
         except Exception as e:
+            self.result = False
             raise e

@@ -238,6 +238,9 @@
       ], [
         "Add Class Folder",
         "Add dependency class folder"
+      ],[
+        "Add Maven Dependency",
+        "Download and add Maven dependency from the central repository"
       ]
     ],
     "actions": [
@@ -254,6 +257,11 @@
         "args": {
           "action_type": "add_class_folder",
           "to_global": false
+        }
+      }, {
+        "command": "javatar_project_settings",
+        "args": {
+          "action_type": "add_maven_dependency"
         }
       }
     ]

@@ -23,6 +23,8 @@ Prerelease version contains a new feature which will introduce in Javatar v2.0.0
   - Multiple builder supports
   - Multiple source folders supports
   - Run main class without open the main class
+- Dependency Management
+  - Maven dependency supports (download from the central repository)
 - Linter supported
   - Java linter supported via SublimeLinter
 - Status Management

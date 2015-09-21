@@ -133,7 +133,8 @@ class ThreadProgress:
             delay=-1
         )
         self.run()
-        thread.start()
+        if not thread.is_alive():
+            thread.start()
 
     def get_message(self):
         """
@@ -164,27 +165,27 @@ class ThreadProgress:
         Check for thread progress
         """
         if not self.thread.is_alive() and hasattr(self.thread, "result"):
-                if self.thread.result:
-                    if self.on_done is not None:
-                        self.on_done()
-                    if self.success_message is not None:
-                        StatusManager().show_status(
-                            self.success_message,
-                            ref="ThreadProgress",
-                            target=self.target
-                        )
-                    else:
-                        StatusManager().hide_status("ThreadProgress")
+            if self.thread.result:
+                if self.on_done is not None:
+                    self.on_done()
+                if self.success_message is not None:
+                    StatusManager().show_status(
+                        self.success_message,
+                        ref="ThreadProgress",
+                        target=self.target
+                    )
                 else:
-                    if hasattr(self.thread, "result_message"):
-                        StatusManager().show_status(
-                            self.thread.result_message,
-                            ref="ThreadProgress",
-                            target=self.target
-                        )
-                    else:
-                        StatusManager().hide_status("ThreadProgress")
-                return
+                    StatusManager().hide_status("ThreadProgress")
+            else:
+                if hasattr(self.thread, "result_message"):
+                    StatusManager().show_status(
+                        self.thread.result_message,
+                        ref="ThreadProgress",
+                        target=self.target
+                    )
+                else:
+                    StatusManager().hide_status("ThreadProgress")
+            return
         sublime.set_timeout(self.run, 100)
 
 
@@ -199,6 +200,8 @@ class SilentThreadProgress:
         self.on_complete = on_complete
         self.target = target or "ThreadProgress"
         sublime.set_timeout(lambda: self.run(), 100)
+        if not thread.is_alive():
+            thread.start()
 
     def run(self):
         """
