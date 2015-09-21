@@ -2,6 +2,7 @@ import sublime
 import os
 import sys
 import threading
+import shlex
 import subprocess
 from time import time, sleep
 from .settings import Settings
@@ -26,7 +27,7 @@ class GenericShell(threading.Thread):
     def popen(self, cmd, cwd):
         if sys.platform == "win32":
             return subprocess.Popen(
-                cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                shlex.split(cmd), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT, cwd=cwd, shell=True
             )
         elif sys.platform == "darwin":
@@ -43,7 +44,7 @@ class GenericShell(threading.Thread):
             )
         else:
             return subprocess.Popen(
-                cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                shlex.split(cmd), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT, cwd=cwd, shell=False
             )
 
@@ -184,7 +185,7 @@ class GenericSilentShell(threading.Thread):
     def popen(self, cmd, cwd):
         if sys.platform == "win32":
             return subprocess.Popen(
-                cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                shlex.split(cmd), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT, cwd=cwd, shell=True
             )
         elif sys.platform == "darwin":
@@ -201,7 +202,7 @@ class GenericSilentShell(threading.Thread):
             )
         else:
             return subprocess.Popen(
-                cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                shlex.split(cmd), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT, cwd=cwd, shell=False
             )
 
@@ -290,7 +291,7 @@ class GenericBlockShell():
     def popen(self, cmd, cwd):
         if sys.platform == "win32":
             return subprocess.Popen(
-                cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                shlex.split(cmd), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT, cwd=cwd, shell=True
             )
         elif sys.platform == "darwin":
@@ -307,7 +308,7 @@ class GenericBlockShell():
             )
         else:
             return subprocess.Popen(
-                cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+                shlex.split(cmd), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
                 stderr=subprocess.STDOUT, cwd=cwd, shell=False
             )
 

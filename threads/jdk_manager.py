@@ -193,7 +193,7 @@ class JDKDetectorThread(threading.Thread):
                 return None
             Logger().info(
                 "Use latest JDK [%s]" % (
-                    self.to_readable_version(latest_jdk)
+                    latest_jdk
                 )
             )
             jdks.set("use", latest_jdk)
