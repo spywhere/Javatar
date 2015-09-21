@@ -32,3 +32,6 @@ Prerelease version contains a new feature which will introduce in Javatar v2.0.0
   - EOF signal supported (by clearing the console)
 - Macro
   - Complex macros supports
+- Miscellaneous
+  - Reduce memory usage
+  - Missing project settings detection
