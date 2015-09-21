@@ -21,12 +21,14 @@ class _DependencyManager:
         """
         self.refresh_dependencies()
 
-    def get_dependencies(self, from_global=False):
+    def get_dependencies(self, from_global=False, include_missing=False):
         """
         Returns dependency list
 
         @param from_global: a boolean specified whether returns a dependency
             list from global settings or local settings
+        @param include_missing: a boolean specified whether returns a list
+            with missing dependencies or not
         """
         out_dependencies = []
         dependencies = Settings().get("dependencies", from_global=from_global)
@@ -35,7 +37,7 @@ class _DependencyManager:
             out_dependencies.extend(
                 [dependency, from_global]
                 for dependency in dependencies
-                if os.path.exists(dependency)
+                if os.path.exists(dependency) or include_missing
             )
 
         if not from_global:
@@ -44,7 +46,7 @@ class _DependencyManager:
                 for dependency in Settings().get(
                     "dependencies", default=[], from_global=True
                 )
-                if os.path.exists(dependency)
+                if os.path.exists(dependency) or include_missing
             )
 
         return out_dependencies
@@ -89,7 +91,7 @@ class _DependencyManager:
             ]
         }
 
-        dependencies = self.get_dependencies(from_global)
+        dependencies = self.get_dependencies(from_global, True)
         for dependency in dependencies:
             name = os.path.basename(dependency[0])
             if dependency[1]:
@@ -103,7 +105,12 @@ class _DependencyManager:
                         }
                     }
                 )
-                if os.path.isdir(dependency[0]):
+                if not os.path.exists(dependency[0]):
+                    dependency_menu["items"].append([
+                        "[Missing] " + name,
+                        "Global dependency. Select to remove from the list"
+                    ])
+                elif os.path.isdir(dependency[0]):
                     dependency_menu["items"].append([
                         "[" + name + "]",
                         "Global dependency. Select to remove from the list"
@@ -124,7 +131,12 @@ class _DependencyManager:
                         }
                     }
                 )
-                if os.path.isdir(dependency[0]):
+                if not os.path.exists(dependency[0]):
+                    dependency_menu["items"].append([
+                        "[Missing] " + name,
+                        "Project dependency. Select to remove from the list"
+                    ])
+                elif os.path.isdir(dependency[0]):
                     dependency_menu["items"].append([
                         "[" + name + "]",
                         "Project dependency. Select to remove from the list"

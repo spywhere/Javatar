@@ -114,7 +114,8 @@ class _StateProperty:
             return window.folders()
         return [self.get_dir(file_path=file_path)]
 
-    def get_source_folders(self, file_path=None, as_tuple=False):
+    def get_source_folders(self, file_path=None, as_tuple=False,
+                           include_missing=False):
         """
         Returns a list of folders which specified as a source folder,
             otherwise, returns a project folders
@@ -122,16 +123,22 @@ class _StateProperty:
         @param file_path: a file path
         @param as_tuple: a boolean specified whether the result will be
             returned as a tuple of (folder path, from global) or not
+        @param include_missing: a boolean specified whether returns a list
+            with missing source folders or not
         """
+        source_folders = [
+            source_folder
+            for source_folder in Settings().get("source_folders")
+            if os.path.exists(source_folder) or include_missing
+        ]
         if as_tuple:
-            source_folders = Settings().get("source_folders")
             if source_folders:
                 return (source_folders, True)
             else:
                 return (self.get_project_dirs(file_path=file_path), False)
         else:
             return (
-                Settings().get("source_folders") or
+                source_folders or
                 self.get_project_dirs(file_path=file_path)
             )
 
@@ -191,12 +198,14 @@ class _StateProperty:
             return os.path.dirname(file_path)
         return None
 
-    def get_library_paths(self, from_global=False):
+    def get_library_paths(self, from_global=False, include_missing=False):
         """
         Returns library path list
 
         @param from_global: a boolean specified whether returns a library path
             list from global settings or local settings
+        @param include_missing: a boolean specified whether returns a list
+            with missing library paths or not
         """
         out_library_paths = []
         library_paths = Settings().get(
@@ -207,7 +216,7 @@ class _StateProperty:
             out_library_paths.extend(
                 [library_path, from_global]
                 for library_path in library_paths
-                if os.path.exists(library_path)
+                if os.path.exists(library_path) or include_missing
             )
 
         if not from_global:
@@ -216,7 +225,7 @@ class _StateProperty:
                 for library_path in Settings().get(
                     "library_paths", default=[], from_global=True
                 )
-                if os.path.exists(library_path)
+                if os.path.exists(library_path) or include_missing
             )
 
         return out_library_paths
@@ -251,7 +260,7 @@ class _StateProperty:
             ]
         }
 
-        library_paths = self.get_library_paths(from_global)
+        library_paths = self.get_library_paths(from_global, True)
         for library_path in library_paths:
             name = os.path.basename(library_path[0])
             if library_path[1]:
@@ -265,7 +274,12 @@ class _StateProperty:
                         }
                     }
                 )
-                if os.path.isdir(library_path[0]):
+                if not os.path.exists(library_path[0]):
+                    library_paths_menu["items"].append([
+                        "[Missing] " + name,
+                        "Global library path. Select to remove from the list"
+                    ])
+                elif os.path.isdir(library_path[0]):
                     library_paths_menu["items"].append([
                         "[" + name + "]",
                         "Global library path. Select to remove from the list"
@@ -286,7 +300,12 @@ class _StateProperty:
                         }
                     }
                 )
-                if os.path.isdir(library_path[0]):
+                if not os.path.exists(library_path[0]):
+                    library_paths_menu["items"].append([
+                        "[Missing] " + name,
+                        "Project library path. Select to remove from the list"
+                    ])
+                elif os.path.isdir(library_path[0]):
                     library_paths_menu["items"].append([
                         "[" + name + "]",
                         "Project library path. Select to remove from the list"
@@ -334,7 +353,9 @@ class _StateProperty:
             ]
         }
 
-        source_folders, from_settings = self.get_source_folders(as_tuple=True)
+        source_folders, from_settings = self.get_source_folders(
+            as_tuple=True, include_missing=True
+        )
         for source_folder in source_folders:
             name = os.path.basename(source_folder)
             source_folder_menu["actions"].append({
@@ -345,7 +366,9 @@ class _StateProperty:
                 }
             })
             source_folder_menu["items"].append([
-                name,
+                (
+                    "[Missing] " if not os.path.exists(source_folder) else ""
+                ) + name,
                 (
                     "Select to remove from the list"
                     if from_settings
