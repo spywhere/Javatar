@@ -91,15 +91,15 @@
     //
     // References:
     //     http://docs.oracle.com/javase/8/docs/technotes/guides/install/index.html
-    "jdk_installation" : {
-        "osx" : ["/Library/Java/JavaVirtualMachines"],
-        "windows" : ["C:\\Program Files\\Java", "C:\\Program Files (x86)\\Java"],
-        "linux" : ["/usr/jdk"],
-        "all" : ["/usr/jdk"]
+    "jdk_installation": {
+        "osx": ["/Library/Java/JavaVirtualMachines"],
+        "windows": ["C:\\Program Files\\Java", "C:\\Program Files (x86)\\Java"],
+        "linux": ["/usr/jdk"],
+        "all": ["/usr/jdk"]
     },
 
     // Executables that Javatar used
-    "java_executables" : {
+    "java_executables": {
         "build": "javac",
         "run": "java",
         "lint": "javac",
@@ -111,7 +111,7 @@
     ////////////////////////////
 
     // Enable automatic save before build
-    "automatic_save" : false,
+    "automatic_save": false,
 
     // Enable automatic build before run
     "automatic_build": true,
@@ -152,7 +152,7 @@
     //    Source files will be distributed equally to all builders
     //    Increase this value can helps building done faster but also use more
     //        performances
-    "builder_threads" : 2,
+    "builder_threads": 2,
 
     // Number of files to build in each builder
     //    Each builder will pass the specified amount of source files
@@ -165,7 +165,7 @@
     // Build log view creation delay (in second)
     //    Increase this value can helps prevent double view from showing but
     //        also freeze computer for a specified time
-    "build_log_delay" : 0.05,
+    "build_log_delay": 0.05,
 
     // Show a build log in specified group and index
     //    This list prioritize from top to bottom

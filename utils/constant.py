@@ -27,7 +27,7 @@ class Constant:
 
     @staticmethod
     def get_version():
-        return "2.0.0-prebeta"
+        return "2.0.0-prebeta.1"
 
     @staticmethod
     def get_usages_schema_version():
@@ -110,9 +110,6 @@ class Constant:
 
     @staticmethod
     def check_upgrade():
-        # if Constant.is_debug():
-        #     return
-        #
         deprecated_key = [
             "run_command",
             "build_command"
@@ -149,12 +146,16 @@ class Constant:
         if upgrade_keys:
             do_upgrade = sublime.ok_cancel_dialog(
                 "Your Javatar's settings contain old version of macro system" +
-                " setttings.\n\nDo you want Javatar to upgrade the settings" +
-                " for you?",
+                " setttings.\n\nDo you want Javatar to upgrade the upgradable" +
+                " settings for you?",
                 "Upgrade"
             )
             if do_upgrade:
                 Settings().upgrade_settings(upgrade_keys)
+                sublime.message_dialog(
+                    "Javatar's settings have been upgraded." +
+                    " Please validate the settings before continue your work."
+                )
 
     @staticmethod
     def check_conflicts(old_ref=None):
