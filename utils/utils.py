@@ -1,4 +1,5 @@
 import sublime
+import re
 import os.path
 
 
@@ -7,6 +8,26 @@ class Utils:
     """
     A collection of small functions
     """
+
+    @staticmethod
+    def time_from_string(time_str):
+        duration = 0
+        match = re.match(
+            (
+                "((?P<day>\\d+)d)?((?P<hour>\\d+)h)?" +
+                "((?P<min>\\d+)m)?((?P<sec>\\d+)s)?"
+            ), time_str
+        )
+        if match:
+            if match.group("day"):
+                duration += int(match.group("day")) * 8640
+            if match.group("hour"):
+                duration += int(match.group("hour")) * 3600
+            if match.group("min"):
+                duration += int(match.group("min")) * 60
+            if match.group("sec"):
+                duration += int(match.group("sec"))
+        return duration
 
     @staticmethod
     def to_readable_size(filesize, base=1000):

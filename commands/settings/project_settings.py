@@ -384,10 +384,16 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
     def on_maven_repo_retrieved(self, data, groupid, artifactid=None):
         try:
             json = sublime.decode_value(data.decode())
-        except Exception:
-            self.show_delayed_status(
-                "Malform dependency informations"
+        except Exception as e:
+            ActionHistory().add_action(
+                (
+                    "javatar.commands.settings.project_settings" +
+                    ".on_maven_repo_retrieved"
+                ),
+                "Malform dependency informations",
+                e
             )
+            self.show_delayed_status("Malform dependency informations")
             self.show_menu("local_dependencies")
             return
         if "response" not in json or "docs" not in json["response"]:

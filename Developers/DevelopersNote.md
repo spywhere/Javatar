@@ -20,22 +20,22 @@
 - Features
   - [Done] *Remove* Javatar calls (not so useful)
   - [Done] *Remove* Package channel
-  - [Done] Better Build System
-  - [Done] Code Linting (via SublimeLinter)
-  - [Done] Multiple Source Folders
-  - Native files supports
-  - Organize Imports with static imports
+  - [Done] Better build system
+  - [Done] Code linting (via SublimeLinter)
+  - [Done] Multiple source folders
+  - [Done] Library path supports
+  - [WIP] Organize Imports with grouping
   - [Done] Run main class without open the main class
+  - [WIP] Extension API
   - QuickMenu collect user selections (for stats)
   - Rename/Move packages or classes [*1*]
   - .jar file export (includes executable .jar) [*2*]
-  - Build only changed files
+  - [Done] Build only changed files
   - Dynamic method call auto-complete
   - Generate all interface methods when create an inherited class
   - Class Finding (`Ctrl+H` in eclipse)
   - JUnit support [FAQ](http://junit.org/faq.html)
   - Language Localization (not soon except requested)
-  - JVM Language compatible (not soon)
   - [Done] Action History capture all exception (so it can helps with issues)
 
 ### Feature Description

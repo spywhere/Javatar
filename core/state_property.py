@@ -1,5 +1,6 @@
 import sublime
 import os
+import time
 from .settings import Settings
 
 
@@ -87,6 +88,39 @@ class _StateProperty:
             if os.path.isfile(path_name) and self.is_java(path_name):
                 return True
         return can_empty and empty
+
+    def load_cache(self):
+        from .macro import Macro
+        from ..utils import Utils
+        cache_location = Macro().parse(Settings().get(
+            "cache_file_location"
+        ))
+        cache_path = os.path.join(cache_location, ".javatar-cache")
+        if os.path.exists(cache_path):
+            cache_file = open(cache_path, "r")
+            cache = sublime.decode_value(cache_file.read())
+            cache_file.close()
+            if "creation_time" in cache:
+                valid_time = time.time() - Utils.time_from_string(
+                    Settings().get("cache_valid_duration")
+                )
+                if cache["creation_time"] < valid_time:
+                    return {}
+            return cache
+        else:
+            return {}
+
+    def save_cache(self, cache):
+        if "creation_time" not in cache:
+            cache["creation_time"] = int(time.time())
+        from .macro import Macro
+        cache_location = Macro().parse(Settings().get(
+            "cache_file_location"
+        ))
+        cache_path = os.path.join(cache_location, ".javatar-cache")
+        cache_file = open(cache_path, "w")
+        cache_file.write(sublime.encode_value(cache, True))
+        cache_file.close()
 
     def get_file(self, view=None):
         """

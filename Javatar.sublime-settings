@@ -44,7 +44,24 @@
     "dependencies_path": "%project_dirs_prefix%",
 
     // Dependencies download location
-    "dependencies_download_location" : "%project_dirs_prefix%%sep%jar",
+    "dependencies_download_location": "%project_dirs_prefix%%sep%jar",
+
+    // Javatar cache file location
+    "cache_file_location": "%project_dirs_prefix%",
+
+    // Maximum duration until cache expire
+    //     Expired cache will have to rebuild all cache once more
+    //
+    // Format:
+    //     d: day
+    //     h: hour
+    //     m: minute
+    //     s: second
+    //
+    //     Examples:
+    //         "1d2h" is 1 day and 2 hours
+    //         "6h30m2s" is 6 hours, 30 minutes and 2 seconds
+    "cache_valid_duration": "1h",
 
     // Show hidden files and directories for browsing dependencies
     "show_hidden_files_and_directories": false,
@@ -83,9 +100,9 @@
 
     // Executables that Javatar used
     "java_executables" : {
-        "build" : "javac",
-        "run" : "java",
-        "lint" : "javac",
+        "build": "javac",
+        "run": "java",
+        "lint": "javac",
         "version": "java"
     },
 
@@ -103,8 +120,12 @@
     //    Disable will automatically run based on a current file
     "always_ask_to_run": false,
 
+    // Always build the file whether it has changed or not
+    //    Disable will build based on the file changes
+    "always_rebuild": false,
+
     // Program arguments to pass to the main executed on the "run" command
-    "program_arguments" : "",
+    "program_arguments": "",
 
     // Additional arguments to pass to the "build" command
     "build_arguments": "-Xlint:all",
@@ -116,16 +137,16 @@
     "always_run_on_first_thread": true,
 
     // Location to run "run" command
-    "run_location" : "%project_dirs_prefix%",
+    "run_location": "%project_dirs_prefix%",
 
     // Location to run "build" command
-    "build_location" : "%project_dirs_prefix%",
+    "build_location": "%project_dirs_prefix%",
 
     // Build output (class files) location
     //    Specified here and Javatar will create target path and reference
     //        by -d flag in build_command
     //    In this case, "%project_directory%/bin"
-    "build_output_location" : "%project_dirs_prefix%%sep%bin",
+    "build_output_location": "%project_dirs_prefix%%sep%bin",
 
     // Number of builder threads
     //    Source files will be distributed equally to all builders
@@ -232,7 +253,7 @@
     "class_method_name_selector": ">MethodDeclaration>Identifier",
 
     // Constructor parameter selector (Use in structure parsing)
-    "parameter_selector": ">FormalParameters>FormalParameterList>FormalParameter",
+    "parameter_selector": ">FormalParameters>FormalParameterList>FormalParameter|>FormalParameters>FormalParameterList>LastFormalParameter",
 
     // Constructor parameter type selector (Use in structure parsing)
     "parameter_type_selector": ">Type",
@@ -262,7 +283,7 @@
     "import_declaration_selector": "@ImportDeclaration",
 
     // Package name in import declaration selector (Use in Organize Imports)
-    "import_package_name_selector": ">ImportDeclaration>QualifiedName",
+    "import_declaration_package_selector": ">ImportDeclaration>QualifiedName",
 
     // Main method signature matching using RegEx
     "main_method_signature_match": "public\\s+static\\s+void\\s+main\\s*\\((\\s*final)?\\s*(String\\s*\\[\\s*\\]\\s+\\w+|String\\s*\\.\\.\\.\\s+\\w+)\\s*\\)",

@@ -13,6 +13,8 @@
         "Javatar Settings...", "Adjust Javatar settings"
       ], [
         "Packages Manager...", "Javatar packages manager"
+      ], [
+        "Help and Support...", "Utilities for Help and Support on Javatar"
       ]
     ],
     "actions": [
@@ -28,6 +30,8 @@
         "name": "global_settings"
       }, {
         "name": "package_manager"
+      }, {
+        "name": "help"
       }
     ]
   },
@@ -110,9 +114,6 @@
       ], [
         "Organize Imports",
         "Correct class imports in current file"
-      ], [
-        "Correct Class",
-        "Correct package and class name in current file"
       ]
     ],
     "actions": [
@@ -120,8 +121,6 @@
         "name": "main"
       }, {
         "command": "javatar_organize_imports"
-      }, {
-        "command": "javatar_correct_class"
       }
     ]
   },

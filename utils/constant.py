@@ -6,6 +6,7 @@ from ..core import (
     JDKManager,
     Logger,
     PackagesManager,
+    PluginManager,
     ProjectRestoration,
     Settings,
     SnippetsManager,
@@ -103,6 +104,9 @@ class Constant:
             "javatar",
             "Ready within {0:.2f}s".format(Constant.startup_time)
         )
+        from ..extensions.javatar import JavatarMenu
+        JavatarMenu
+        PluginManager().load_plugins()
 
     @staticmethod
     def check_upgrade():

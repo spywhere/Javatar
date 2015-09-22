@@ -3,7 +3,6 @@ import sublime_plugin
 import sys
 from imp import reload
 import hashlib
-import traceback
 from ..parser.GrammarParser import GrammarParser
 from ..core import (
     ActionHistory,
@@ -52,7 +51,9 @@ class JavatarUtilsCommand(sublime_plugin.TextCommand):
         elif util_type == "add":
             self.view.insert(edit, self.view.size(), text)
         elif util_type == "replace":
-            self.view.insert(edit, region, text)
+            if isinstance(region, list) or isinstance(region, tuple):
+                region = sublime.Region(region[0], region[1])
+            self.view.replace(edit, region, text)
         elif util_type == "clear":
             self.view.erase(edit, sublime.Region(0, self.view.size()))
         elif util_type == "set_read_only":
@@ -195,9 +196,11 @@ class JavatarUtilsCommand(sublime_plugin.TextCommand):
                 )
             )
             StatusManager().show_status(status_text)
-        except Exception:
-            Logger().error(
-                "Error while parsing\n%s" % (traceback.format_exc())
+        except Exception as e:
+            ActionHistory().add_action(
+                "javatar.commands.utils.parse_code",
+                "Error while parsing",
+                e
             )
 
     def remote_hash(self, url):
@@ -210,9 +213,11 @@ class JavatarUtilsCommand(sublime_plugin.TextCommand):
             data = Downloader.download(url)
             datahash = hashlib.sha256(data).hexdigest()
             Logger().none("Hash: " + datahash)
-        except Exception:
-            Logger().error(
-                "Error while remote hash\n%s" % (traceback.format_exc())
+        except Exception as e:
+            ActionHistory().add_action(
+                "javatar.commands.utils.remote_hash",
+                "Error while remote hash",
+                e
             )
 
     def nothing(self, index=-1):

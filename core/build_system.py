@@ -5,6 +5,7 @@ import math
 from .action_history import ActionHistory
 from .java_utils import JavaUtils
 from .settings import Settings
+from .state_property import StateProperty
 from .status_manager import StatusManager
 from .thread_progress import MultiThreadProgress
 
@@ -45,7 +46,7 @@ class _BuildSystem:
             return
         from ..threads import BuilderThread
         macro_data = macro_data or {}
-        builder = BuilderThread(self, files, macro_data)
+        builder = BuilderThread(self, files, macro_data, files)
         self.progress.add(builder, "")
         if not self.progress.running:
             self.progress.run()
@@ -68,6 +69,8 @@ class _BuildSystem:
             return
         if ret != 0:
             self.failed = True
+        else:
+            self.update_cache_for_files(params)
         self.current_progress += total_files
         self.progress.set_message("Building %s of %s file%s... %.2f%%" % (
             self.current_progress,
@@ -149,6 +152,51 @@ class _BuildSystem:
             builder.cancel()
         self.building = False
 
+    def trim_extension(self, file_path):
+        """
+        Remove a file extension from the file path
+
+        @param file_path: a file path to remove an extension
+        """
+        filename, ext = os.path.splitext(os.path.basename(file_path))
+        for extension in Settings().get("java_extensions"):
+            if ext == extension:
+                return file_path[:-len(ext)]
+        return file_path
+
+    def update_cache_for_files(self, files):
+        if Settings().get("always_rebuild"):
+            return
+        cache = StateProperty().load_cache()
+        if "build_cache" not in cache:
+            cache["build_cache"] = {}
+        for file_path in files:
+            modified_time = int(os.path.getmtime(file_path))
+            full_class_path = JavaUtils().to_package(
+                self.trim_extension(file_path)
+            ).as_class_path()
+            cache["build_cache"][full_class_path] = modified_time
+        StateProperty().save_cache(cache)
+
+    def is_file_changed(self, file_path):
+        """
+        Returns whether the specified file path has been modified or not
+
+        @param file_path: a file path to check (must exists)
+        """
+        if Settings().get("always_rebuild"):
+            return True
+        modified_time = int(os.path.getmtime(file_path))
+        cache = StateProperty().load_cache()
+        if "build_cache" not in cache:
+            cache["build_cache"] = {}
+        full_class_path = JavaUtils().to_package(
+            self.trim_extension(file_path)
+        ).as_class_path()
+        if full_class_path not in cache["build_cache"]:
+            return True
+        return cache["build_cache"][full_class_path] != modified_time
+
     def build_files(self, files=None, window=None):
         """
         Calculate and assigns file paths to builder threads
@@ -161,6 +209,15 @@ class _BuildSystem:
             self.cancel_build()
         if not files:
             return "No class to build"
+        self.start_time = time.time()
+        if not Settings().get("always_rebuild"):
+            files = [
+                file_path
+                for file_path in files
+                if self.is_file_changed(file_path)
+            ]
+            if not files:
+                self.on_build_complete()
 
         from .jdk_manager import JDKManager
         macro_data = {}
@@ -168,7 +225,6 @@ class _BuildSystem:
         if not executable_name:
             return "Build executable is not found"
 
-        self.start_time = time.time()
         self.building = True
         self.progress = MultiThreadProgress(
             "Preparing build",

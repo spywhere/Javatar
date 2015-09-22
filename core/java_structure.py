@@ -1,9 +1,8 @@
 import sublime
 import os
-import traceback
+from .action_history import ActionHistory
 from .java_utils import JavaClassPath, JavaUtils
 from .state_property import StateProperty
-from .logger import Logger
 from .settings import Settings
 from ..parser.GrammarParser import GrammarParser
 
@@ -39,6 +38,123 @@ class _JavaStructure:
                 return file_path
         return None
 
+    def find_class_paths_for_class(self, class_name, include_local=True,
+                                   custom_filter=None):
+        from .packages_manager import PackagesManager
+        class_paths = []
+        found_class = False
+        if include_local:
+            for source_folder in StateProperty().get_source_folders():
+                for root, dir_names, file_names in os.walk(source_folder):
+                    for file_name in file_names:
+                        if file_name != class_name + ".java":
+                            continue
+                        class_paths.append(
+                            ".".join([x for x in [
+                                JavaUtils().to_package(root).as_class_path(),
+                                class_name
+                            ] if x])
+                        )
+                        found_class = True
+        for import_package in PackagesManager().get_packages():
+            if "packages" in import_package:
+                for package in import_package["packages"]:
+                    package_data = import_package["packages"][package]
+                    if custom_filter:
+                        cont, cl_paths = custom_filter(
+                            class_name, package, package_data
+                        )
+                        class_paths.extend(cl_paths)
+                        if cont:
+                            continue
+                        else:
+                            break
+                    if (not found_class and
+                        "default" in package_data and
+                            package_data["default"]):
+                        continue
+                    if class_name in PackagesManager().types_in_package(
+                            package_data):
+                        class_paths.append(
+                            ".".join([x for x in [package, class_name] if x])
+                        )
+        class_paths.sort()
+        return class_paths
+
+    def package_declarations_in_file(self, file_path):
+        if not JavaUtils().is_java_file(file_path):
+            return []
+        try:
+            parser = GrammarParser(sublime.decode_value(sublime.load_resource(
+                "Packages/Javatar/grammars/Java8.javatar-grammar"
+            )))
+
+            java_file = open(file_path, "r")
+            source_code = java_file.read()
+            java_file.close()
+            parse_output = parser.parse_grammar(source_code)
+            if parse_output["success"]:
+                return parser.find_by_selectors(
+                    Settings().get("package_declaration_selector")
+                )
+        except Exception as e:
+            ActionHistory().add_action(
+                "javatar.core.java_structure.classes_in_file",
+                "Error while parsing",
+                e
+            )
+        return None
+
+    def imports_and_types_in_file(self, file_path):
+        if not JavaUtils().is_java_file(file_path):
+            return []
+        imports_and_types = {
+            "imports": [],
+            "import_nodes": [],
+            "types": []
+        }
+        try:
+            parser = GrammarParser(sublime.decode_value(sublime.load_resource(
+                "Packages/Javatar/grammars/Java8.javatar-grammar"
+            )))
+
+            java_file = open(file_path, "r")
+            source_code = java_file.read()
+            java_file.close()
+            parse_output = parser.parse_grammar(source_code)
+            if parse_output["success"]:
+                type_declarations = parser.find_by_selectors(
+                    Settings().get("type_selectors")
+                )
+                for type_declaration in type_declarations:
+                    imports_and_types["types"].append(
+                        type_declaration["value"]
+                    )
+
+                declarations = parser.find_by_selectors(
+                    Settings().get("declarations_selector")
+                )
+                imports_and_types["import_nodes"] = parser.find_by_selectors(
+                    Settings().get("import_declaration_selector"),
+                    declarations
+                )
+                import_declarations = parser.find_by_selectors(
+                    Settings().get("import_declaration_package_selector"),
+                    declarations
+                )
+                for import_declaration in import_declarations:
+                    class_path = JavaClassPath(import_declaration["value"])
+                    imports_and_types["imports"].append(
+                        class_path
+                    )
+        except Exception as e:
+            ActionHistory().add_action(
+                "javatar.core.java_structure.classes_in_file",
+                "Error while parsing",
+                e
+            )
+        return imports_and_types
+
     def classes_in_file(self, file_path):
         if not JavaUtils().is_java_file(file_path):
             return []
@@ -66,9 +182,11 @@ class _JavaStructure:
                         "name": class_name["value"],
                         "nodes": nodes
                     })
-        except:
-            Logger().error(
-                "Error while parsing\n%s" % (traceback.format_exc())
+        except Exception as e:
+            ActionHistory().add_action(
+                "javatar.core.java_structure.classes_in_file",
+                "Error while parsing",
+                e
             )
 
         return classes

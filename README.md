@@ -18,11 +18,13 @@ Prerelease version contains a new feature which will introduce in Javatar v2.0.0
 - Remove in v2.0.0
   - Package Channel
   - Javatar Calls
+  - Correct Class (use Organize Imports instead)
 - Build System
   - Java library path supports
   - Multiple builder supports
   - Multiple source folders supports
   - Run main class without open the main class
+  - Incremental builds (build only changed files)
 - Dependency Management
   - Maven dependency supports (download from the central repository)
 - Linter supported
@@ -34,6 +36,8 @@ Prerelease version contains a new feature which will introduce in Javatar v2.0.0
   - EOF signal supported (by clearing the console)
 - Macro
   - Complex macros supports
+- Plugin System
+  - Plugin API (to extends the Javatar functionalities)
 - Miscellaneous
   - Reduce memory usage
   - Missing project settings detection

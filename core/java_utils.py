@@ -126,7 +126,11 @@ class JavaClassPath:
             return self.jclass.get()
         elif self.jclass.is_empty():
             return self.package.as_class_path()
-        return ".".join([self.package.as_class_path(), self.jclass.get()])
+        return ".".join([
+            x for x in
+            [self.package.as_class_path(), self.jclass.get()]
+            if x
+        ])
 
 
 class _JavaUtils:

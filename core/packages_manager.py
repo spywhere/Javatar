@@ -35,6 +35,12 @@ class _PackagesManager:
         self.installed_packages = None
         self.default_packages = None
 
+    def get_packages(self):
+        """
+        Returns a list of loaded packages
+        """
+        return self.default_packages
+
     def get_installed_packages(self, name=None):
         """
         Returns installed packages list or just one installed package
@@ -51,6 +57,25 @@ class _PackagesManager:
                 if package["name"].startswith(name):
                     return package
             return None
+
+    def types_in_package(self, package):
+        """
+        Returns a list of types in specified package
+
+        @param package: a package retrieved from Packages Manager
+        """
+        types = []
+        search_types = [
+            "interface", "class", "enum", "exception", "error", "type",
+            "annotation"
+        ]
+        for search_type in search_types:
+            if search_type in package:
+                types.extend(
+                    class_info["name"]
+                    for class_info in package[search_type]
+                )
+        return types
 
     def on_packages_loaded(self, packages):
         """

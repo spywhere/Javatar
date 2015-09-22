@@ -7,6 +7,7 @@ from ...core import (
     DependencyManager,
     GenericShell,
     JavaUtils,
+    JavaStructure,
     JDKManager,
     Logger,
     Macro,
@@ -86,13 +87,17 @@ class JavatarRunCommand(sublime_plugin.WindowCommand):
         """
         if not StateProperty().is_java(file_path):
             return False
-        datafile = open(file_path, "r")
-        data = datafile.read()
-        datafile.close()
-        if RE().get(
-            "main_method_signature_match"
-        ).search(data):
-            return True
+
+        for cl in JavaStructure().classes_in_file(file_path):
+            for method in JavaStructure().methods_in_class(cl):
+                if method["name"] != "main":
+                    break
+                elif len(method["params"]) != 1:
+                    break
+                elif not RE().get("string_type_match", "^String\\b").search(
+                        method["params"][0]["type"]):
+                    break
+                return True
         return False
 
     def trim_extension(self, file_path):

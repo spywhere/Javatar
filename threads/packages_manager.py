@@ -1,6 +1,5 @@
 import sublime
 import threading
-import traceback
 from os.path import basename, join
 from ..core import (
     ActionHistory,
@@ -211,11 +210,14 @@ class PackagesUpdaterThread(threading.Thread):
                     url=Constant.get_packages_repo()
                 ).decode("utf-8")
             )
-        except Exception:
-            Logger().error(
-                "Error while fetching packages data\n%s" % (
-                    traceback.format_exc()
-                )
+        except Exception as e:
+            ActionHistory().add_action(
+                (
+                    "javatar.threads.packages_manager" +
+                    ".PackagesUpdaterThread.fetch_packages_data"
+                ),
+                "Error while fetching packages data",
+                e
             )
             return None
 

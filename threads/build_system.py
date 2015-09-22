@@ -16,10 +16,11 @@ class BuilderThread(threading.Thread):
     A thread to build Java source code files
     """
 
-    def __init__(self, controller, files=None, macro_data=None):
+    def __init__(self, controller, files=None, macro_data=None, params=None):
         self.files = files or []
         self.total_files = len(self.files)
         self.macro_data = macro_data or {}
+        self.params = params
         self.controller = controller
         self.running = True
         self.builds = 0
@@ -79,7 +80,7 @@ class BuilderThread(threading.Thread):
             shell = GenericSilentShell(
                 actual_build_script,
                 lambda elapse_time, data, ret, params: self.on_build_done(
-                    len(files), elapse_time, data, ret, params
+                    len(files), elapse_time, data, ret
                 )
             )
             shell.set_cwd(Macro().parse(Settings().get("build_location")))
@@ -87,13 +88,13 @@ class BuilderThread(threading.Thread):
         while self.running and self.builds > 0:
             pass
 
-    def on_build_done(self, total_files, elapse_time, data, ret, params):
+    def on_build_done(self, total_files, elapse_time, data, ret):
         """
         Report the build result to the main builder controller
         """
         self.builds -= 1
         self.controller.on_builder_complete(
-            total_files, elapse_time, data, ret, params
+            total_files, elapse_time, data, ret, self.params
         )
 
     def cancel(self):

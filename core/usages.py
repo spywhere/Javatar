@@ -1,6 +1,6 @@
 import sublime
 import os.path
-import traceback
+from .action_history import ActionHistory
 from .logger import Logger
 from .settings import Settings
 from ..utils import Constant, Downloader
@@ -23,11 +23,11 @@ class _Usages:
                     params,
                     on_complete=self.on_usages_sent
                 )
-            except:
-                Logger().error(
-                    "Error while sending usages data\n%s" % (
-                        traceback.format_exc()
-                    )
+            except Exception as e:
+                ActionHistory().add_action(
+                    "javatar.core.usages.send_usages",
+                    "Error while sending usages data",
+                    e
                 )
 
     def on_usages_sent(self, data):

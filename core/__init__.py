@@ -12,6 +12,7 @@ from .json_panel import *
 from .logger import *
 from .macro import *
 from .packages_manager import *
+from .plugin_manager import *
 from .project_restoration import *
 from .regex import *
 from .settings import *
