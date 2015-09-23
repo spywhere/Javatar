@@ -51,7 +51,7 @@ class JavatarCommand(sublime_plugin.WindowCommand):
         if self.qm is None:
             self.qm = QuickMenu(self.main_menu)
         if replaceMenu is not None:
-            self.qm.setMenu(replaceMenu["name"], replaceMenu["menu"])
+            self._main_menu[replaceMenu["name"]] = replaceMenu["menu"]
             return
         else:
             for key, menu in self.main_menu.items():
