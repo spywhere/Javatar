@@ -15,7 +15,14 @@ class _Usages:
 
     def send_usages(self):
         if Settings().get("send_stats_and_usages"):
+            version = Settings().get_global("version")
+            action = "install"
+            if version and version == Constant.get_version():
+                return
+            elif version:
+                action = "upgrade"
             params = self.get_usages_data()
+            params["Action"] = action
             params["usage"] = "true"
             try:
                 Downloader.request(
@@ -31,23 +38,30 @@ class _Usages:
                 )
 
     def on_usages_sent(self, data):
-        Logger().info("Javatar usages has been sent")
+        if "Finished" in data.decode():
+            Logger().info("Javatar usages has been sent")
+            Settings().set("version", Constant.get_version(), to_global=True)
+        else:
+            Logger().error("Failed to send Javatar usages informations: %s" % (
+                data.decode()
+            ))
 
     def get_usages_data(self):
         return {
             "SchemaVersion": Constant.get_usages_schema_version(),
-            "JavatarVersion": Constant.get_version(),
-            "JavatarDebugMode": str.lower(str(Settings().get("debug_mode"))),
-            "JavatarAsPackage": str.lower(str(os.path.exists(os.path.join(
+            "Version": Constant.get_version(),
+            "DebugMode": str.lower(str(Settings().get("debug_mode"))),
+            "AsPackage": str.lower(str(os.path.exists(os.path.join(
                 sublime.installed_packages_path(),
                 "Javatar.sublime-package"
             )))),
-            "JavatarStartupTime": "{0:.2f}s".format(Constant.startup_time),
-            "JavatarActionHistory": str.lower(str(
+            "StartupTime": "{0:.2f}s".format(Constant.startup_time),
+            "ActionHistory": str.lower(str(
                 Settings().get("enable_action_history")
             )),
             "SublimeVersion": str(sublime.version()),
             "Platform": sublime.platform(),
+            "Architecture": sublime.arch()
         }
 
     def send_packages_usages(self):

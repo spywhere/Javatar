@@ -36,9 +36,9 @@ class JDKDetectorThread(threading.Thread):
         if not executable:
             output_version = None
             exes = Settings().get("java_executables")
-            for exe_type in exes:
+            if "version" in exes:
                 version = JDKDetectorThread.get_jdk_version(
-                    path, exes[exe_type]
+                    path, exes["version"]
                 )
                 if not version:
                     return None
@@ -56,6 +56,31 @@ class JDKDetectorThread(threading.Thread):
                     if match.lastindex > 1:
                         version["update"] = match.group(2)
                 return version
+        return None
+
+    @classmethod
+    def get_java_home(cls, path=None):
+        """
+        Returns the Java home directory
+
+        @param path: a path to Java executable files
+        """
+        path = path or ""
+        exes = Settings().get("java_executables")
+        if "script" not in exes:
+            return None
+        executable = os.path.join(path, exes["script"])
+        gather_script = (
+            "java.lang.System.out.println(" +
+            "java.lang.System.getProperty(\"java.home\"));"
+        )
+        output = GenericBlockShell().run((
+            shlex.quote(executable) +
+            " -e " +
+            shlex.quote(gather_script)
+        ))
+        if output["data"] and os.path.exists(output["data"]):
+            return output["data"]
         return None
 
     def is_jdk_path(self, path):
@@ -105,9 +130,11 @@ class JDKDetectorThread(threading.Thread):
             if os.path.isdir(path_name):
                 if self.is_jdk_path(path_name):
                     version = self.get_jdk_version(path_name)
-                    if version:
+                    java_home = self.get_java_home(path_name)
+                    if version and java_home:
                         jdk = {
-                            "path": path_name,
+                            "bin": path_name,
+                            "home": java_home,
                             "version": version["version"]
                         }
                         if "update" in version:
@@ -148,7 +175,8 @@ class JDKDetectorThread(threading.Thread):
         if jdks.has("use"):
             if jdks.get("use") == "":
                 version = self.get_jdk_version()
-                if version:
+                java_home = self.get_java_home()
+                if version and java_home:
                     Logger().info(
                         "Use default settings [%s]" % (
                             self.to_readable_version(version)
@@ -173,13 +201,15 @@ class JDKDetectorThread(threading.Thread):
         platform = sublime.platform()
         installaltion_paths = Settings().get("jdk_installation")
         default = self.get_jdk_version()
-        if default:
+        java_home = self.get_java_home()
+        if default and java_home:
             Logger().info(
                 "Use default JDK [%s]" % (
                     self.to_readable_version(default)
                 )
             )
             jdks.set("use", "")
+            jdks.set("home", java_home)
 
         if platform in installaltion_paths:
             for path in installaltion_paths[platform]:

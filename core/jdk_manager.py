@@ -75,8 +75,8 @@ class _JDKManager:
         )
         if not jdks.has("use"):
             return None
-        if jdks.get("use") == "":
-            return {"path": ""}
+        if jdks.get("use") == "" and jdks.get("home"):
+            return {"bin": "", "home": jdks.get("home")}
         elif jdks.has(jdks.get("use")):
             return jdks.get(jdks.get("use"))
         return None
@@ -100,14 +100,47 @@ class _JDKManager:
         return JDKDetectorThread.to_readable_version(jdk)
 
     def get_executable(self, key, path=None):
+        """
+        Returns a path to specified executable file
+
+        @param key: a key for the Java executable
+        @param path: a path to use for the executable
+        """
         if key not in Settings().get("java_executables", {}):
             return None
         if path is None:
             jdk = self.get_default_jdk()
             if not jdk:
                 return None
-            path = jdk["path"]
+            path = jdk["bin"]
         return os.path.join(path, Settings().get("java_executables")[key])
+
+    def get_runtime_file(self, key, path=None):
+        """
+        Returns a path to specified runtime file
+
+        @param key: a key for the Java runtime files
+        @param path: a path to use for the runtime file
+        """
+        if key not in Settings().get("java_runtime_files", {}):
+            return None
+        if path is None:
+            jdk = self.get_default_jdk()
+            if not jdk:
+                return None
+            path = jdk["home"]
+        if path is None:
+            return None
+        names = Settings().get("java_runtime_files")[key]
+        for file_name in os.listdir(path):
+            file_path = os.path.join(path, file_name)
+            if os.path.isfile(file_path) and file_name in names:
+                return file_path
+            elif os.path.isdir(file_path):
+                file_path = self.get_runtime_file(key, file_path)
+                if file_path:
+                    return file_path
+        return None
 
     def startup(self, on_done=None):
         """

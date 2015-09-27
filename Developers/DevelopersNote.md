@@ -27,16 +27,19 @@
   - [WIP] Organize Imports with grouping
   - [Done] Run main class without open the main class
   - [WIP] Extension API
-  - QuickMenu collect user selections (for stats)
-  - Rename/Move packages or classes [*1*]
+  - [Optional] QuickMenu collect user selections (for stats)
+  - [Optional/Major Impact] Rename/Move packages or classes [*1*]
   - .jar file export (includes executable .jar) [*2*]
   - [Done] Build only changed files
   - Dynamic method call auto-complete
   - Generate all interface methods when create an inherited class
   - Class Finding (`Ctrl+H` in eclipse)
-  - JUnit support [FAQ](http://junit.org/faq.html)
+  - [Extension] JUnit support [FAQ](http://junit.org/faq.html)
   - Language Localization (not soon except requested)
   - [Done] Action History capture all exception (so it can helps with issues)
+
+### Disclaimer
+Final version of features might be differ from the one in this document.
 
 ### Feature Description
 ##### Git feature branching
@@ -82,13 +85,9 @@ TODO:
 
 - Performances
 - Option to create new classes or enter manually when class not found
-- [Done/Need Check] duplicate imports between default imports and same package classes (prefer same package)
-- Import classes from external .jar/classes files [*3*]
+- [Done by let user select it themselve] duplicate imports between default imports and same package classes
+- Import classes from external .jar/classes files
 - Custom default import settings
-
-Allow to include a javatar-packages files into project (at least easier for bukkit autocomplete)
-
-Allow a new javatar format for packaging a custom jar file (at least easier for bukkit plugin jar file)
 
 ##### .jar File Export
 Create .jar using "jar" command
@@ -98,11 +97,9 @@ Create .jar using "jar" command
 Search for class in project
 
 ##### Dynamic method call auto-complete
-Using "javap" to decompile .class file and get some informations about it
-
-Exclude package - Exclude all classes inside (increase searching speed and performance)
+Use external .jar helper file to get class informations. See *JavatarAutocomplete* project
 
 <hr>
 *1*: Auto-refactor (references update) is not included  
 *2*: Export as executable JAR may delay after normal JAR export feature is finished  
-*3*: Import from external .jar/classes is not supported
+

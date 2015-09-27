@@ -21,8 +21,10 @@ class _StatusManager:
     CYCLE = "cycle"
 
     @classmethod
-    def instance(cls):
-        if not hasattr(cls, "_instance"):
+    def instance(cls, new=False):
+        if new and hasattr(cls, "_instance"):
+            cls._instance.reset()
+        if not hasattr(cls, "_instance") or not cls._instance or new:
             cls._instance = cls()
         return cls._instance
 
@@ -385,5 +387,5 @@ class _StatusManager:
         sublime.set_timeout(self.run, 100)
 
 
-def StatusManager():
-    return _StatusManager.instance()
+def StatusManager(new=False):
+    return _StatusManager.instance(new)

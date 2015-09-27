@@ -1,15 +1,17 @@
-##########################
-    TEMPORARY MESSAGE
-YOU SHOULD NOT SEEING THIS
-##########################
+############################
+    [TEMPORARY MESSAGE]
+ YOU SHOULD NOT SEEING THIS
+   IF YOU JUST INSTALLED
+JAVATAR FROM PACKAGE CONTROL
+############################
 
-Just install Javatar? Checkout JavatarDoc for Javatar information and guides. Link is located in README file.
+    Please note that Javatar v2.0.0 settings ARE NOT compatible with
+Javatar v1.0.0 settings
 
-Javatar 1.0.0 has been released!
+    If you upgrade your settings, please keep in mind that NOT all settings
+can be upgraded automatically. You have to check and validate the settings
+yourself once more.
 
-These are updates and fixes for Javatar {VERSION}...
-- Build logs and output consoles can be show in different groups
-- Create section now select "Class" as default
-- Fix invalid logic and proper traceback display
-
-You can report/suggest any issue on Javatar repository. Link is already located in README file.
+    You can report/suggest any issue on Javatar repository. Link is already
+located in README file. Also please state that you are using prerelease version
+so the issue can be solved with correct version of Javatar.

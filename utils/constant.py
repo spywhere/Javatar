@@ -27,11 +27,11 @@ class Constant:
 
     @staticmethod
     def get_version():
-        return "2.0.0-prebeta.1"
+        return "2.0.0-prebeta.2"
 
     @staticmethod
     def get_usages_schema_version():
-        return "1.0"
+        return "2.0"
 
     @staticmethod
     def get_usages_host():
@@ -64,7 +64,7 @@ class Constant:
     def reset():
         JDKManager().reset()
         Logger().reset()
-        StatusManager().reset()
+        StatusManager(True).reset()
         ActionHistory().reset()
         Settings().reset()
         SnippetsManager().reset()
@@ -104,8 +104,12 @@ class Constant:
             "javatar",
             "Ready within {0:.2f}s".format(Constant.startup_time)
         )
-        from ..extensions.javatar import JavatarMenu
+        from ..extensions import JavatarMenu
+        from ..extensions import JavatarAutoComplete
+        from ..extensions import JavatarProjectRestoration
         JavatarMenu
+        JavatarAutoComplete
+        JavatarProjectRestoration
         PluginManager().load_plugins()
 
     @staticmethod

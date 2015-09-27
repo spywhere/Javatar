@@ -14,7 +14,7 @@ class JavatarLinter(Linter):
     Javatar's implementation of javac linter for SublimeLinter
     """
 
-    executable = JDKManager().get_executable("lint")
+    executable = JDKManager().get_executable("lint") or "javac"
     syntax = "java"
     version_args = "-version"
     version_re = r"(?P<version>\d+\.\d+\.\d+)"
@@ -45,7 +45,7 @@ class JavatarLinter(Linter):
         classpath = pathsep.join(dependencies)
 
         return (
-            JDKManager().get_executable("lint"),
+            JDKManager().get_executable("lint") or "javac",
             "-sourcepath",
             sourcepath,
             "-classpath",

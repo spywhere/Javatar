@@ -82,10 +82,23 @@ class _PluginManager:
         return cls._instance
 
     def register_plugin(self, plugin):
+        from ..utils import Constant
+        if plugin.debug_only(plugin) and not Constant.is_debug():
+            return
         self.plugins.append(plugin)
 
     def load_plugins(self):
+        from .action_history import ActionHistory
+        from .logger import Logger
+        ActionHistory().add_action(
+            "javatar.core.plugin_manager.load_plugins", "Load plugins"
+        )
         for plugin in self.plugins:
+            Logger().info(
+                "Javatar extension plugin \"%s\" has been loaded" % (
+                    plugin.name
+                )
+            )
             plugin.on_load(plugin)
 
     def get_plugin_menu(self, menu):

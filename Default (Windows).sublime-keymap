@@ -6,7 +6,7 @@
             "util_type": "parse",
             "text": "#"
         }
-    },{
+    }, {
         "keys": ["ctrl+shift+k","ctrl+shift+k"],
         "command": "javatar",
         "args": {
@@ -14,7 +14,7 @@
                 "name": "main"
             }
         }
-    },{
+    }, {
         "keys": ["ctrl+shift+k","ctrl+shift+h"],
         "command": "javatar",
         "args": {
@@ -22,7 +22,7 @@
                 "name": "help"
             }
         }
-    },{
+    }, {
         "keys": ["ctrl+shift+k","ctrl+shift+b"],
         "command": "javatar",
         "args": {
@@ -30,7 +30,7 @@
                 "name": "builds"
             }
         }
-    },{
+    }, {
         "keys": ["ctrl+shift+k","ctrl+shift+j"],
         "command": "javatar",
         "args": {
@@ -38,7 +38,7 @@
                 "name": "calls"
             }
         }
-    },{
+    }, {
         "keys": ["ctrl+shift+k","ctrl+shift+o"],
         "command": "javatar",
         "args": {
@@ -46,7 +46,7 @@
                 "name": "operations"
             }
         }
-    },{
+    }, {
         "keys": ["ctrl+shift+k","ctrl+shift+n"],
         "command": "javatar",
         "args": {
@@ -54,7 +54,7 @@
                 "name": "creates"
             }
         }
-    },{
+    }, {
         "keys": ["ctrl+shift+k","ctrl+shift+,"],
         "command": "javatar",
         "args": {
@@ -62,7 +62,7 @@
                 "name": "project_settings"
             }
         }
-    },{
+    }, {
         "keys": ["ctrl+shift+k","ctrl+shift+."],
         "command": "javatar",
         "args": {
@@ -70,11 +70,18 @@
                 "name": "global_settings"
             }
         }
-    },{
+    }, {
         "keys": ["ctrl+shift+k","ctrl+shift+p"],
         "command": "javatar_create_package"
-    },{
+    }, {
         "keys": ["ctrl+shift+k","ctrl+shift+i"],
         "command": "javatar_organize_imports"
+    }, {
+        "keys": ["."],
+        "command": "auto_complete",
+        "context":
+        [
+            {"key": "javatar.auto_complete.trigger"}
+        ]
     }
 ]

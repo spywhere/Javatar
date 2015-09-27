@@ -17,6 +17,9 @@ class JavatarMetaPlugin(type):
 
 
 class JavatarPlugin(metaclass=JavatarMetaPlugin):
+    def debug_only(self):
+        return False
+
     def on_setup_menu(self, menu):
         pass
 

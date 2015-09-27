@@ -94,8 +94,12 @@
     "jdk_installation": {
         "osx": ["/Library/Java/JavaVirtualMachines"],
         "windows": ["C:\\Program Files\\Java", "C:\\Program Files (x86)\\Java"],
-        "linux": ["/usr/jdk"],
-        "all": ["/usr/jdk"]
+        "linux": ["/usr/jdk"]
+    },
+
+    // Runtime required files
+    "java_runtime_files": {
+        "runtime": ["rt.jar"]
     },
 
     // Executables that Javatar used
@@ -103,7 +107,8 @@
         "build": "javac",
         "run": "java",
         "lint": "javac",
-        "version": "java"
+        "version": "java",
+        "script": "jrunscript"
     },
 
     ////////////////////////////
