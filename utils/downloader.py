@@ -1,5 +1,4 @@
 import os.path
-import threading
 import hashlib
 import urllib
 
@@ -40,7 +39,8 @@ class Downloader:
         """
         try:
             if on_complete:
-                return DownloaderThread(
+                from .utils import BackgroundThread
+                return BackgroundThread(
                     func=Downloader.download,
                     args=[url, checksum, None],
                     on_complete=on_complete
@@ -71,7 +71,8 @@ class Downloader:
         """
         try:
             if on_complete:
-                return DownloaderThread(
+                from .utils import BackgroundThread
+                return BackgroundThread(
                     func=Downloader.download_file,
                     args=[url, path, checksum, None],
                     on_complete=on_complete
@@ -86,28 +87,4 @@ class Downloader:
                 f.close()
                 return os.path.exists(path)
         except Exception as e:
-            raise e
-
-
-class DownloaderThread(threading.Thread):
-
-    """
-    A downloader background thread
-    """
-
-    def __init__(self, func, args, on_complete):
-        self.func = func
-        self.args = args
-        self.on_complete = on_complete
-        threading.Thread.__init__(self)
-        self.start()
-
-    def run(self):
-        try:
-            data = self.func(*self.args)
-            if self.on_complete:
-                self.on_complete(data)
-            self.result = True
-        except Exception as e:
-            self.result = False
             raise e

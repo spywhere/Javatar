@@ -3,12 +3,13 @@ import sublime_plugin
 import re
 from ...core import (
     ActionHistory,
+    HelperService,
     JavaStructure,
     JavaClassPath,
     JavaUtils,
-    PackagesManager,
     StateProperty
 )
+from ...threads import BackgroundThread
 from ...utils import StatusManager
 
 
@@ -29,7 +30,16 @@ class JavatarOrganizeImports(sublime_plugin.TextCommand):
     def run(self, edit):
         if not StateProperty().is_java():
             sublime.error_message("Current file is not Java")
-        self.organize_step_one()
+        BackgroundThread(
+            func=self.organize_step_one,
+            args=[],
+            on_complete=self.organize_step_two
+        )
+        StatusManager().show_status(
+            "Gathering class informations...",
+            delay=-1,
+            ref="organize_imports"
+        )
 
     def organize_step_one(self):
         self.reset()
@@ -66,18 +76,32 @@ class JavatarOrganizeImports(sublime_plugin.TextCommand):
                 "Organize Imports Step 2 - Find unimport classes"
             )
         if len(self.unimportTypes) > 0 and index < len(self.unimportTypes):
-            class_paths = JavaStructure().find_class_paths_for_class(
-                self.unimportTypes[index]
-            )
-            if class_paths:
-                self.select_class_path(index, class_paths)
-            elif self.unimportTypes[index] not in self.missingTypes:
-                self.missingTypes.append(
-                    self.unimportTypes[index]
+            JavaStructure().find_class_paths_for_class(
+                self.unimportTypes[index],
+                callback=lambda cps: self.organize_step_two_callback(
+                    index, cps
                 )
-                self.organize_step_two(index + 1)
+            )
+            StatusManager().show_status(
+                "Searching package for type \"%s\" %.2f%%..." % (
+                    self.unimportTypes[index],
+                    index * 100 / len(self.unimportTypes)
+                ),
+                delay=-1,
+                ref="organize_imports"
+            )
         else:
             self.organize_step_four()
+
+    def organize_step_two_callback(self, index, class_paths):
+        StatusManager().hide_status("organize_imports")
+        if class_paths:
+            self.select_class_path(index, class_paths)
+        elif self.unimportTypes[index] not in self.missingTypes:
+            self.missingTypes.append(
+                self.unimportTypes[index]
+            )
+            self.organize_step_two(index + 1)
 
     def organize_step_three(self, index, class_path):
         if index == 0:
@@ -106,11 +130,21 @@ class JavatarOrganizeImports(sublime_plugin.TextCommand):
             ),
             "Organize Imports Step 4 - Add default imports"
         )
-        self.importedTypes.extend(
-            JavaStructure().find_class_paths_for_class(
-                "", False, self.default_package_filter
-            )
+        JavaStructure().find_class_paths_for_class(
+            "",
+            False,
+            self.default_package_filter,
+            callback=self.organize_step_four_callback
         )
+        StatusManager().show_status(
+            "Searching package for default type...",
+            delay=-1,
+            ref="organize_imports"
+        )
+
+    def organize_step_four_callback(self, class_paths):
+        StatusManager().hide_status("organize_imports")
+        self.importedTypes.extend(class_paths)
         self.organize_step_five()
 
     def organize_step_five(self, index=0):
@@ -144,6 +178,11 @@ class JavatarOrganizeImports(sublime_plugin.TextCommand):
             self.organize_step_seven()
 
     def organize_step_seven(self):
+        StatusManager().show_status(
+            "Organizing imports...",
+            delay=-1,
+            ref="organize_imports"
+        )
         ActionHistory().add_action(
             (
                 "javatar.commands.operations" +
@@ -197,22 +236,30 @@ class JavatarOrganizeImports(sublime_plugin.TextCommand):
                 "text": import_code,
                 "dest": "Organize Imports"
             })
+        StatusManager().hide_status("organize_imports")
         sublime.set_timeout(lambda: StatusManager().show_status(
             "Imports has been organized"
         ), 500)
 
-    def default_package_filter(self, class_name, package, package_data):
+    def default_package_filter(self):
         class_paths = []
-        for class_name in PackagesManager().types_in_package(package_data):
-            if class_name not in self.missingTypes:
+        missing = []
+        while len(self.missingTypes) > 0:
+            paths = HelperService().get_class_paths_for_class(
+                self.missingTypes[0]
+            )
+            if len(paths) <= 0:
+                missing.append(self.missingTypes[0])
+                self.missingTypes.remove(self.missingTypes[0])
                 continue
-            self.missingTypes.remove(class_name)
-            if "default" in package_data and package_data["default"]:
+            self.missingTypes.remove(self.missingTypes[0])
+            path = paths[0]
+            if path.startswith("java.lang."):
                 continue
-            class_path = ".".join([x for x in [package, class_name] if x])
-            if class_path not in (class_paths + self.importedTypes):
-                class_paths.append(class_path)
-        return True, class_paths
+            if path not in (class_paths + self.importedTypes):
+                class_paths.append(path)
+        self.missingTypes = missing
+        return False, class_paths
 
     def select_class_path(self, unimport_index, class_paths, index=None):
         class_paths = class_paths or []

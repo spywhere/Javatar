@@ -42,8 +42,8 @@ class Utils:
             Binary use 1024
         """
         if isinstance(filesize, str):
-            if filesize[:8] == "Packages":
-                filesize = sublime.packages_path() + filesize[8:]
+            if filesize[:9] == "Packages/":
+                filesize = os.path.join(sublime.packages_path(), filesize[9:])
             return Utils.to_readable_size(os.path.getsize(filesize), base)
         scales = [
             [base ** 5, "PB"],

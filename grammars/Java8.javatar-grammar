@@ -506,42 +506,47 @@
             "name": "MethodDeclaration",
             "parse": [
                 {
-                    "parse_any": [
+                    "name": "MethodHeader",
+                    "parse": [
                         {
-                            "include": "Type"
+                            "parse_any": [
+                                {
+                                    "include": "Type"
+                                },
+                                {
+                                    "match": "void"
+                                }
+                            ]
                         },
                         {
-                            "match": "void"
+                            "include": "Identifier"
+                        },
+                        {
+                            "include": "FormalParameters"
+                        },
+                        {
+                            "parse": [
+                                {
+                                    "match": "\\["
+                                },
+                                {
+                                    "match": "\\]"
+                                }
+                            ],
+                            "multiple": true
+                        },
+                        {
+                            "parse": [
+                                {
+                                    "match": "throws"
+                                },
+                                {
+                                    "include": "QualifiedNameList"
+                                }
+                            ],
+                            "optional": true
                         }
                     ]
-                },
-                {
-                    "include": "Identifier"
-                },
-                {
-                    "include": "FormalParameters"
-                },
-                {
-                    "parse": [
-                        {
-                            "match": "\\["
-                        },
-                        {
-                            "match": "\\]"
-                        }
-                    ],
-                    "multiple": true
-                },
-                {
-                    "parse": [
-                        {
-                            "match": "throws"
-                        },
-                        {
-                            "include": "QualifiedNameList"
-                        }
-                    ],
-                    "optional": true
                 },
                 {
                     "parse_any": [

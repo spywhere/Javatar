@@ -91,12 +91,12 @@ class JavatarRunCommand(sublime_plugin.WindowCommand):
         for cl in JavaStructure().classes_in_file(file_path):
             for method in JavaStructure().methods_in_class(cl):
                 if method["name"] != "main":
-                    break
+                    continue
                 elif len(method["params"]) != 1:
-                    break
+                    continue
                 elif not RE().get("string_type_match", "^String\\b").search(
                         method["params"][0]["type"]):
-                    break
+                    continue
                 return True
         return False
 

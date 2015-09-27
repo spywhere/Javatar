@@ -1,6 +1,7 @@
 import sublime
 import os
 from .action_history import ActionHistory
+from .helper_service import HelperService
 from .java_utils import JavaClassPath, JavaUtils
 from .state_property import StateProperty
 from .settings import Settings
@@ -39,8 +40,15 @@ class _JavaStructure:
         return None
 
     def find_class_paths_for_class(self, class_name, include_local=True,
-                                   custom_filter=None):
-        from .packages_manager import PackagesManager
+                                   custom_filter=None, callback=None):
+        from ..threads import BackgroundThread
+        if callback:
+            return BackgroundThread(
+                func=self.find_class_paths_for_class,
+                args=[class_name, include_local, custom_filter],
+                on_complete=callback
+            )
+
         class_paths = []
         found_class = False
         if include_local:
@@ -56,28 +64,17 @@ class _JavaStructure:
                             ] if x])
                         )
                         found_class = True
-        for import_package in PackagesManager().get_packages():
-            if "packages" in import_package:
-                for package in import_package["packages"]:
-                    package_data = import_package["packages"][package]
-                    if custom_filter:
-                        cont, cl_paths = custom_filter(
-                            class_name, package, package_data
-                        )
-                        class_paths.extend(cl_paths)
-                        if cont:
-                            continue
-                        else:
-                            break
-                    if (not found_class and
-                        "default" in package_data and
-                            package_data["default"]):
-                        continue
-                    if class_name in PackagesManager().types_in_package(
-                            package_data):
-                        class_paths.append(
-                            ".".join([x for x in [package, class_name] if x])
-                        )
+
+        cont = True
+        if custom_filter:
+            cont, cl_paths = custom_filter()
+            class_paths.extend(cl_paths)
+        if cont:
+            paths = HelperService().get_class_paths_for_class(class_name)
+            for path in paths:
+                if not found_class and path.startswith("java.lang."):
+                    continue
+                class_paths.append(path)
         class_paths.sort()
         return class_paths
 

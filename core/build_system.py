@@ -241,6 +241,7 @@ class _BuildSystem:
             self.total_progress,
             "s" if self.total_progress > 1 else "",
             self.current_progress * 100 / self.total_progress
+            if self.total_progress > 0 else 0
         ))
         while files:
             self.create_builder(files[:per_thread], macro_data=macro_data)

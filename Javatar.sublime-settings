@@ -249,13 +249,13 @@
     "class_constructor_name_selector": ">ConstructorDeclaration>Identifier",
 
     // Class methods selector (Use in structure parsing)
-    "class_methods_selector": ">MethodDeclaration",
+    "class_methods_selector": ">MethodDeclaration>MethodHeader",
 
     // Class method return type selector (Use in structure parsing)
-    "class_method_type_selector": ">MethodDeclaration>Type",
+    "class_method_type_selector": ">MethodDeclaration>MethodHeader>Type",
 
     // Class method name selector (Use in structure parsing)
-    "class_method_name_selector": ">MethodDeclaration>Identifier",
+    "class_method_name_selector": ">MethodDeclaration>MethodHeader>Identifier",
 
     // Constructor parameter selector (Use in structure parsing)
     "parameter_selector": ">FormalParameters>FormalParameterList>FormalParameter|>FormalParameters>FormalParameterList>LastFormalParameter",

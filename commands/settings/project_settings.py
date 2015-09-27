@@ -51,17 +51,13 @@ class JavatarProjectSettingsCommand(sublime_plugin.WindowCommand):
         """
         Settings().set("program_arguments", arguments)
 
-        self.show_menu(
-            "global_settings" if self.from_global else "project_settings"
-        )
+        self.show_menu("project_settings")
 
     def on_cancel_program_arguments(self):
         """
         A callback when cancel to set the program arguments
         """
-        self.show_menu(
-            "global_settings" if self.from_global else "project_settings"
-        )
+        self.show_menu("project_settings")
 
     def add_library_path(self, to_global):
         """

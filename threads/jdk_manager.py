@@ -173,10 +173,9 @@ class JDKDetectorThread(threading.Thread):
         )
 
         if jdks.has("use"):
-            if jdks.get("use") == "":
+            if jdks.get("use") == "" and jdks.has("home") and jdks.get("home"):
                 version = self.get_jdk_version()
-                java_home = self.get_java_home()
-                if version and java_home:
+                if version:
                     Logger().info(
                         "Use default settings [%s]" % (
                             self.to_readable_version(version)
@@ -197,6 +196,7 @@ class JDKDetectorThread(threading.Thread):
                     return jdks
             jdks.set(jdks.get("use"), None)
             jdks.set("use", None)
+            jdks.set("home", None)
             return self.verify_jdks(jdks)
         platform = sublime.platform()
         installaltion_paths = Settings().get("jdk_installation")
@@ -227,6 +227,7 @@ class JDKDetectorThread(threading.Thread):
                 )
             )
             jdks.set("use", latest_jdk)
+            jdks.set("home", None)
         return jdks
 
     def run(self, renew=False):
