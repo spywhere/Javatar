@@ -164,7 +164,7 @@ class _StateProperty:
         """
         source_folders = [
             source_folder
-            for source_folder in Settings().get("source_folders")
+            for source_folder in Settings().get("source_folders", [])
             if os.path.exists(source_folder) or include_missing
         ]
         if as_tuple:

@@ -34,12 +34,6 @@
     // Global Settings //
     /////////////////////
 
-    // Source folders (used as default package), must be specified in full path
-    //     Default is derived from...
-    //         - Project folders
-    //         - Current directory/folder
-    "source_folders": [],
-
     // Initial directory for finding dependencies
     "dependencies_path": "%project_dirs_prefix%",
 
@@ -233,15 +227,6 @@
     // Java version matching using RegEx (get from java -version)
     "java_version_match": "(\\d+.\\d+.\\d+)_?([0-9a-zA-Z]+)?",
 
-    // Method call replacement pattern using RegEx (Use in completions)
-    "method_replacement": "\\(.*?\\)(?![,\\)])",
-
-    // Package in package keyword scope selector (Use in Correct Class)
-    "package_name_selector": "storage.modifier.package.java",
-
-    // Class name scope selector (Use in Correct Class)
-    "class_name_selector": "entity.name.type.class.java",
-
     // Class declaration name selector (Use in structure parsing)
     "class_declaration_name_selector": ">ClassDeclaration>Identifier",
 
@@ -281,23 +266,20 @@
     // Class field name selector (Use in structure parsing)
     "class_field_name_selector": ">FieldDeclaration>VariableDeclarators>VariableDeclarator>VariableDeclaratorId",
 
-    // Types and classes selector (Use in Organize Imports)
+    // Types and classes selector (Use in structure parsing)
     "type_selectors": "@VariableType|@StaticClassOrInterfaceType|@CatchType",
 
-    // Declarations with children selector (Use in Organize Imports)
+    // Declarations with children selector (Use in structure parsing)
     "declarations_selector": "@PackageDeclaration|>ImportDeclaration>|>ImportDeclaration",
 
-    // Package declaration selector (Use in Organize Imports)
+    // Package declaration selector (Use in structure parsing)
     "package_declaration_selector": "@PackageDeclaration",
 
-    // Import declaration selector (Use in Organize Imports)
+    // Import declaration selector (Use in structure parsing)
     "import_declaration_selector": "@ImportDeclaration",
 
-    // Package name in import declaration selector (Use in Organize Imports)
+    // Package name in import declaration selector (Use in structure parsing)
     "import_declaration_package_selector": ">ImportDeclaration>QualifiedName",
-
-    // Main method signature matching using RegEx
-    "main_method_signature_match": "public\\s+static\\s+void\\s+main\\s*\\((\\s*final)?\\s*(String\\s*\\[\\s*\\]\\s+\\w+|String\\s*\\.\\.\\.\\s+\\w+)\\s*\\)",
 
     // Class path validation using RegEx
     "class_path_match": "^(([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*)([a-zA-Z_$][a-zA-Z\\d_$]*)$",
@@ -306,8 +288,5 @@
     "special_class_path_match": "^([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*([<:]([a-zA-Z_$][a-zA-Z\\d_$]*)(,[a-zA-Z_$][a-zA-Z\\d_$]*)*)*$",
 
     // Package path validation using RegEx
-    "package_path_match": "^([a-zA-Z_\\-$][a-zA-Z\\\\d_\\-$]*)(\\.[a-zA-Z_\\-$][a-zA-Z\\\\d_\\-$]*)*$",
-
-    // Package and Class matching using RegEx
-    "package_class_match": "((([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*)\\.)*)([a-zA-Z_\\-$][a-zA-Z\\d_\\-$]*)",
+    "package_path_match": "^([a-zA-Z_\\-$][a-zA-Z\\\\d_\\-$]*)(\\.[a-zA-Z_\\-$][a-zA-Z\\\\d_\\-$]*)*$"
 }
