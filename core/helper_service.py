@@ -126,22 +126,18 @@ class _HelperService:
         return packages
 
     def get_class_paths_for_classes(self, class_names):
-        query = "-t %s" % (";".join(class_names))
+        query = "-t %s" % (os.pathsep.join(class_names))
         output = self.query_data(query)
         class_paths = {}
         if output and output["data"] and output["return_code"] == 0:
             paths = output["data"].strip().split("\n")
             for path in paths:
-                name, cl_path = path.split(";")
+                name, class_path = path.split(";")
                 if name in class_paths:
-                    class_paths[name].append(cl_path)
+                    class_paths[name].append(class_path)
                 else:
-                    class_paths[name] = [cl_path]
+                    class_paths[name] = [class_path]
         return class_paths
-
-    def get_class_paths_for_class(self, class_name):
-        paths = self.get_class_paths_for_classes([class_name])
-        return paths[class_name] if class_name in paths else []
 
 
 def HelperService():

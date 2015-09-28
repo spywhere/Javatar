@@ -1,8 +1,10 @@
 import sublime
-from os import pathsep
+from os import pathsep, makedirs
+from os.path import isfile, isdir
 from ..core import (
     DependencyManager,
     JDKManager,
+    Macro,
     StateProperty,
     Settings
 )
@@ -42,14 +44,28 @@ class JavatarLinter(Linter):
             for dependency
             in DependencyManager().get_dependencies()
         ]
-        classpath = pathsep.join(dependencies)
+        output_location = Macro().parse(Settings().get("build_output_location"))
+        if output_location:
+            if isfile(output_location):
+                return
+            elif not isdir(output_location):
+                try:
+                    makedirs(output_location)
+                except:
+                    pass
+            output_location = ["-d", output_location]
+        else:
+            output_location = []
+        if dependencies:
+            classpath = ["-classpath", pathsep.join(dependencies)]
+        else:
+            classpath = []
 
-        return (
+        return [
             JDKManager().get_executable("lint") or "javac",
             "-sourcepath",
-            sourcepath,
-            "-classpath",
-            classpath,
+            sourcepath
+        ] + classpath + output_location + [
             sublime.active_window().active_view().file_name(),
             Settings().get("linter_arguments", "")
-        )
+        ]

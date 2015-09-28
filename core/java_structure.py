@@ -39,43 +39,56 @@ class _JavaStructure:
                 return file_path
         return None
 
-    def find_class_paths_for_class(self, class_name, include_local=True,
-                                   custom_filter=None, callback=None):
+    def find_class_paths_for_classes(self, classes, include_local=True,
+                                     custom_filter=None, callback=None):
         from ..threads import BackgroundThread
         if callback:
             return BackgroundThread(
-                func=self.find_class_paths_for_class,
-                args=[class_name, include_local, custom_filter],
+                func=self.find_class_paths_for_classes,
+                args=[classes, include_local, custom_filter],
                 on_complete=callback
             )
-
-        class_paths = []
-        found_class = False
+        class_paths = {}
+        found_classes = []
         if include_local:
             for source_folder in StateProperty().get_source_folders():
                 for root, dir_names, file_names in os.walk(source_folder):
                     for file_name in file_names:
-                        if file_name != class_name + ".java":
-                            continue
-                        class_paths.append(
-                            ".".join([x for x in [
-                                JavaUtils().to_package(root).as_class_path(),
-                                class_name
-                            ] if x])
-                        )
-                        found_class = True
+                        for class_name in classes:
+                            if file_name != class_name + ".java":
+                                continue
+                            class_path = ".".join([
+                                x for x in [
+                                    JavaUtils().to_package(
+                                        root
+                                    ).as_class_path(),
+                                    class_name
+                                ] if x
+                            ])
+                            if class_name in class_paths:
+                                class_paths[class_name].append(class_path)
+                            else:
+                                class_paths[class_name] = [class_path]
+                            if class_name not in found_classes:
+                                found_classes.append(class_name)
 
         cont = True
         if custom_filter:
             cont, cl_paths = custom_filter()
-            class_paths.extend(cl_paths)
+            for class_name in cl_paths:
+                if class_name in class_paths:
+                    class_paths[class_name] += cl_paths[class_name]
+                else:
+                    class_paths[class_name] = cl_paths[class_name]
         if cont:
-            paths = HelperService().get_class_paths_for_class(class_name)
-            for path in paths:
-                if not found_class and path.startswith("java.lang."):
-                    continue
-                class_paths.append(path)
-        class_paths.sort()
+            cl_paths = HelperService().get_class_paths_for_classes(classes)
+            for class_name in cl_paths:
+                if class_name in class_paths:
+                    class_paths[class_name] += cl_paths[class_name]
+                else:
+                    class_paths[class_name] = cl_paths[class_name]
+        for class_name in class_paths:
+            class_paths[class_name].sort()
         return class_paths
 
     def package_declarations_in_file(self, file_path):
