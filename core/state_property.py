@@ -119,7 +119,9 @@ class _StateProperty:
         ))
         cache_path = os.path.join(cache_location, ".javatar-cache")
         cache_file = open(cache_path, "w")
+        cache_file.seek(0)
         cache_file.write(sublime.encode_value(cache, True))
+        cache_file.truncate()
         cache_file.close()
 
     def get_file(self, view=None):

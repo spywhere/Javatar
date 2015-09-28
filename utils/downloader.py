@@ -39,7 +39,7 @@ class Downloader:
         """
         try:
             if on_complete:
-                from .utils import BackgroundThread
+                from ..threads import BackgroundThread
                 return BackgroundThread(
                     func=Downloader.download,
                     args=[url, checksum, None],
@@ -71,7 +71,7 @@ class Downloader:
         """
         try:
             if on_complete:
-                from .utils import BackgroundThread
+                from ..threads import BackgroundThread
                 return BackgroundThread(
                     func=Downloader.download_file,
                     args=[url, path, checksum, None],

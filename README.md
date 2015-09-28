@@ -9,26 +9,28 @@ Report Issue: [https://github.com/spywhere/Javatar/issues](https://github.com/sp
 [![Build Status](https://img.shields.io/travis/spywhere/Javatar/release.svg?style=flat)](https://travis-ci.org/spywhere/Javatar)|[![Build Status](https://img.shields.io/travis/spywhere/Javatar/master.svg?style=flat)](https://travis-ci.org/spywhere/Javatar)|[![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/spywhere/Javatar/blob/master/LICENSE)
 release|master (develop)
 
-## Javatar v2.0.0-prebeta.1
+## Javatar v2.0.0-prebeta.3
 To install a prerelease version, please add `Javatar` to the `install_preleases` list in the Package Control user's settings.
 
 Prerelease version contains a new feature which will introduce in Javatar v2.0.0 but please keep in mind that prerelease version is not a stable build to use and not all features are fully working.
 
 Please note that Javatar v1.0.0 settings **are not compatible** with Javatar v2.0.0 settings. Even though some settings remain the same.
 
-#### What's new in Javatar v2.0.0-prebeta.1
+#### What's new in Javatar v2.0.0-prebeta.3
 - Remove in v2.0.0
   - Package Channel
   - Javatar Calls
-  - **Correct Class (use Organize Imports instead)**
+  - Correct Class (use Organize Imports instead)
+  - **Packages Manager (now switched to a new searching system)**
 - Build System
   - Java library path supports
   - Multiple builder supports
   - Multiple source folders supports
   - Run main class without open the main class
-  - **Incremental builds (build only changed files)**
+  - Incremental builds (build only changed files)
 - Dependency Management
-  - **Maven dependency supports (download from the central repository)**
+  - Maven dependency supports (download from the central repository)
+  - **Java packages now search using actual files rather than Javatar packages**
 - Linter supported
   - Java linter supported via SublimeLinter
 - Status Management
@@ -39,7 +41,7 @@ Please note that Javatar v1.0.0 settings **are not compatible** with Javatar v2.
 - Macro
   - Complex macros supports
 - Plugin System
-  - **Plugin API (to extends the Javatar functionalities)**
+  - Plugin API (to extends the Javatar functionalities)
 - Miscellaneous
   - Reduce memory usage
   - Missing project settings detection

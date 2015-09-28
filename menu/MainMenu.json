@@ -12,8 +12,6 @@
       ], [
         "Javatar Settings...", "Adjust Javatar settings"
       ], [
-        "Packages Manager...", "Javatar packages manager"
-      ], [
         "Help and Support...", "Utilities for Help and Support on Javatar"
       ]
     ],
@@ -28,8 +26,6 @@
         "name": "project_settings"
       }, {
         "name": "global_settings"
-      }, {
-        "name": "package_manager"
       }, {
         "name": "help"
       }
@@ -341,114 +337,6 @@
           "to_global": true
         }
       }
-    ]
-  },
-  "package_manager": {
-    "selected_index": 1,
-    "items": [
-      [
-        "Back",
-        "Back to previous menu"
-      ], [
-        "Install Packages...",
-        "Download and install new packages"
-      ], [
-        "Uninstall Packages...",
-        "Uninstall installed packages"
-      ], [
-        "Reload and Update packages",
-        "Reload all packages and update packages list"
-      ], [
-        "Package Tools...",
-        "Tools for package creator"
-      ]
-    ],
-    "actions": [
-      {
-        "name": "main"
-      }, {
-        "name": "install_packages"
-      }, {
-        "name": "uninstall_packages"
-      }, {
-        "command": "javatar_reload_packages"
-      }, {
-        "name": "package_tools"
-      }
-    ]
-  },
-  "package_tools": {
-    "selected_index": 1,
-    "items": [
-      [
-        "Back",
-        "Back to previous menu"
-      ], [
-        "Create new Javatar Packages",
-        "Create a new .javatar-packages"
-      ], [
-        "Generate SHA-256 Hash",
-        "Calculate checksum for current document"
-      ], [
-        "Generate SHA-256 Hash from URL",
-        "Calculate checksum from url"
-      ], [
-        "Convert Imports",
-        "Convert Javatar Imports to Javatar Packages"
-      ]
-    ],
-    "actions": [
-      {
-        "name": "package_manager"
-      }, {
-        "command": "javatar_create_javatar_package"
-      }, {
-        "command": "javatar_utils",
-        "args": {
-          "util_type": "hash"
-        }
-      }, {
-        "command": "javatar_utils",
-        "args": {
-          "util_type": "remote_hash"
-        }
-      }, {
-        "command": "javatar_convert"
-      }
-    ]
-  },
-  "install_packages": {
-    "selected_index": 1,
-    "items": [
-      [
-        "Back",
-        "Back to previous menu"
-      ], [
-        "No package available",
-        "Please check back later"
-      ]
-    ],
-    "actions": [
-      {
-        "name": "package_manager"
-      }, {}
-    ]
-  },
-  "uninstall_packages": {
-    "selected_index": 1,
-    "items": [
-      [
-        "Back",
-        "Back to previous menu"
-      ], [
-        "No package available",
-        "Please check back later"
-      ]
-    ],
-    "actions": [
-      {
-        "name": "package_manager"
-      }, {}
     ]
   },
   "dev": {

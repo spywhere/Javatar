@@ -3,9 +3,9 @@ import sys
 from ..core import (
     ActionHistory,
     DependencyManager,
+    HelperService,
     JDKManager,
     Logger,
-    PackagesManager,
     PluginManager,
     ProjectRestoration,
     Settings,
@@ -27,7 +27,7 @@ class Constant:
 
     @staticmethod
     def get_version():
-        return "2.0.0-prebeta.2"
+        return "2.0.0-prebeta.3"
 
     @staticmethod
     def get_usages_schema_version():
@@ -56,8 +56,7 @@ class Constant:
     def ready():
         return (
             JDKManager().ready() and
-            SnippetsManager().ready() and
-            PackagesManager().ready()
+            SnippetsManager().ready()
         )
 
     @staticmethod
@@ -68,7 +67,6 @@ class Constant:
         ActionHistory().reset()
         Settings().reset()
         SnippetsManager().reset()
-        PackagesManager().reset()
 
     @staticmethod
     def startup():
@@ -85,7 +83,8 @@ class Constant:
         Logger().startup()
         StatusManager().pre_startup()
         ProjectRestoration().load_state()
-        SnippetsManager().startup(on_done=PackagesManager().startup)
+        SnippetsManager().startup()
+        HelperService().startup()
 
     @staticmethod
     def post_startup():

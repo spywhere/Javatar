@@ -9,7 +9,6 @@ from ..core import (
     JavaStructure,
     JSONPanel,
     Logger,
-    PackagesManager,
     StatusManager
 )
 from ..utils import (
@@ -243,17 +242,3 @@ class JavatarViewCommand(sublime_plugin.WindowCommand):
         else:
             print("Current view index is %s" % (index))
             print("Current view group is %s" % (group))
-
-
-class JavatarReloadPackagesCommand(sublime_plugin.WindowCommand):
-
-    """
-    Command to reload installed packages (used on install/uninstall packages)
-    """
-
-    def run(self):
-        ActionHistory().add_action(
-            "javatar.commands.utils.reload_packages", "Reload Packages"
-        )
-        PackagesManager().reset()
-        PackagesManager().startup()

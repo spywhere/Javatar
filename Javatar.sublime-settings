@@ -111,6 +111,12 @@
         "script": "jrunscript"
     },
 
+    // Package exclusions when search for classes
+    "java_exclude_packages": [
+        "com.sun.",
+        "sun."
+    ],
+
     ////////////////////////////
     // Run and Build Settings //
     ////////////////////////////
