@@ -3,7 +3,6 @@
 *.pyc
 
 # Package Files #
-*.jar
 *.war
 *.ear
 *.sublime-workspace
