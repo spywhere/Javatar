@@ -20,11 +20,11 @@ class JavatarOrganizeImports(sublime_plugin.TextCommand):
         self.missingTypes = []
         self.userTypes = []
 
-    def not_in_imports(self, class_name, class_paths):
+    def class_path_for_type(self, class_name, class_paths):
         for class_path in class_paths:
             if class_path.get_class().get() == class_name:
-                return False
-        return True
+                return class_path
+        return None
 
     def run(self, edit):
         if not StateProperty().is_java():
@@ -56,13 +56,17 @@ class JavatarOrganizeImports(sublime_plugin.TextCommand):
 
         for class_name in imports_and_types["types"]:
             self.useTypes.append(class_name)
+            class_path = self.class_path_for_type(
+                class_name, imports_and_types["imports"]
+            )
             unimport = (
-                self.not_in_imports(
-                    class_name, imports_and_types["imports"]
-                ) and class_name not in self.unimportTypes
+                not class_path and class_name not in self.unimportTypes
             )
             if unimport:
                 self.unimportTypes.append(class_name)
+            elif (class_path and
+                    class_path.as_class_path() not in self.importedTypes):
+                self.importedTypes.append(class_path.as_class_path())
 
     def organize_step_two(self):
         ActionHistory().add_action(
@@ -115,7 +119,7 @@ class JavatarOrganizeImports(sublime_plugin.TextCommand):
         if isinstance(class_path, int):
             if class_name not in self.userTypes:
                 self.userTypes.append(class_name)
-        elif class_path is not None:
+        elif class_path is not None and class_path not in self.importedTypes:
             self.importedTypes.append(class_path)
         if len(remains) > 0:
             self.organize_step_three(remains)
@@ -131,7 +135,7 @@ class JavatarOrganizeImports(sublime_plugin.TextCommand):
                 sublime.set_timeout(
                     self.view.window().show_quick_panel(
                         class_paths,
-                        lambda i: self.select_class_path(
+                        lambda i: self.select_class_paths(
                             remains, class_name, class_paths, i
                         )
                     ),
@@ -193,7 +197,7 @@ class JavatarOrganizeImports(sublime_plugin.TextCommand):
                 10
             )
         elif JavaUtils().is_class_path(class_path):
-            if class_path:
+            if class_path and class_path not in self.importedTypes:
                 self.importedTypes.append(class_path)
             self.organize_step_four()
         else:
@@ -251,9 +255,12 @@ class JavatarOrganizeImports(sublime_plugin.TextCommand):
 
         imported_classes = []
         for class_path in self.importedTypes:
-            if class_path.startswith("java.lang."):
-                continue
             cl_path = JavaClassPath(class_path)
+            cl_package = cl_path.get_package().as_class_path()
+            local_package = current_package.as_class_path()
+            if (class_path.startswith("java.lang.") or
+                    cl_package == local_package):
+                continue
             if (cl_path.get_class().get() in self.useTypes and
                     not cl_path.get_package().is_empty()):
                 imported_classes.append(class_path)
