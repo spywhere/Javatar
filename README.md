@@ -43,6 +43,7 @@ Please note that Javatar v1.0.0 settings **are not compatible** with Javatar v2.
 - Plugin System
   - Plugin API (to extends the Javatar functionalities)
 - Miscellaneous
+  - **Tweak build performance for large project**
   - Reduce memory usage
   - Missing project settings detection
 

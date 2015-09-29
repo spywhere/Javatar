@@ -343,7 +343,11 @@ class _StatusManager:
         """
         if not self.running:
             return
-        view = sublime.active_window().active_view()
+        window = sublime.active_window()
+        if not window:
+            sublime.set_timeout(self.run, 100)
+            return
+        view = window.active_view()
         for status_name in tuple(self.status.keys()):
             status_section = self.status[status_name]
             status_list = status_section["status"]
