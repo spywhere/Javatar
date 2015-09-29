@@ -1,4 +1,8 @@
-from ..core import SnippetsManager
+from ..core import (
+    DependencyManager,
+    SnippetsManager,
+    StateProperty
+)
 from ..utils import (
     Constant
 )
@@ -6,6 +10,11 @@ from Javatar.api import *
 
 
 class JavatarMenu(JavatarPlugin):
+    def on_presetup_menu(self):
+        DependencyManager().refresh_dependencies()
+        StateProperty().refresh_library_paths()
+        StateProperty().refresh_source_folders()
+
     def on_setup_menu(self, menu):
         # Create a menu for development channel
         if Constant.is_debug():

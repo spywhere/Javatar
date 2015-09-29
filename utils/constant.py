@@ -2,7 +2,6 @@ import sublime
 import sys
 from ..core import (
     ActionHistory,
-    DependencyManager,
     HelperService,
     JDKManager,
     Logger,
@@ -10,7 +9,6 @@ from ..core import (
     ProjectRestoration,
     Settings,
     SnippetsManager,
-    StateProperty,
     StatusManager
 )
 from .timer import Timer
@@ -90,9 +88,6 @@ class Constant:
     def post_startup():
         from ..core import Usages
         StatusManager().startup()
-        DependencyManager().refresh_dependencies()
-        StateProperty().refresh_library_paths()
-        StateProperty().refresh_source_folders()
         Constant.check_upgrade()
         Constant.check_conflicts(
             StatusManager().show_status("Javatar is ready")

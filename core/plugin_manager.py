@@ -101,6 +101,10 @@ class _PluginManager:
             )
             plugin.on_load(plugin)
 
+    def on_presetup_menu(self):
+        for plugin in self.plugins:
+            plugin.on_presetup_menu(plugin)
+
     def get_plugin_menu(self, menu):
         plugin_menu = PluginMenu(menu)
         for plugin in self.plugins:

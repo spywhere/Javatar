@@ -60,7 +60,6 @@ class JavatarLinter(Linter):
             classpath = ["-classpath", pathsep.join(dependencies)]
         else:
             classpath = []
-
         return [
             JDKManager().get_executable("lint") or "javac",
             "-sourcepath",

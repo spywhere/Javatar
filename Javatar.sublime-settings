@@ -157,7 +157,7 @@
     //    Source files will be distributed equally to all builders
     //    Increase this value can helps building done faster but also use more
     //        performances
-    "builder_threads": 2,
+    "builder_threads": 1,
 
     // Number of files to build in each builder
     //    Each builder will pass the specified amount of source files
@@ -165,7 +165,7 @@
     //    Proper set this value can helps distributed the load of each build
     //        process
     //    Set a value lower than 1 will build all files at once
-    "parallel_builds": 10,
+    "parallel_builds": 0,
 
     // Build log view creation delay (in second)
     //    Increase this value can helps prevent double view from showing but

@@ -54,6 +54,7 @@ class JavatarCommand(sublime_plugin.WindowCommand):
             self._main_menu[replaceMenu["name"]] = replaceMenu["menu"]
             return
         else:
+            PluginManager().on_presetup_menu()
             for key, menu in self.main_menu.items():
                 self.qm.setMenu(key, menu)
         self.qm.show(self.window, self.select, menu, action)
