@@ -212,7 +212,13 @@ class JDKDetectorThread(threading.Thread):
             jdks.set("home", java_home)
 
         if platform in installaltion_paths:
-            for path in installaltion_paths[platform]:
+            jdk_paths = installaltion_paths[platform]
+            java_home_env = os.getenv("JAVA_HOME")
+            if java_home_env:
+                java_home_env = os.path.dirname(java_home_env)
+                if java_home_env not in jdk_paths:
+                    jdk_paths.append(java_home_env)
+            for path in jdk_paths:
                 if os.path.exists(path) and os.path.isdir(path):
                     dirs = self.find_jdk_dirs(path)
                     for key in dirs:
