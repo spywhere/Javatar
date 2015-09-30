@@ -139,7 +139,7 @@
     "linter_arguments": "-Xlint:all",
 
     // Run the program on the first (AppKit) thread (OS X Only)
-    "always_run_on_first_thread": true,
+    "always_run_on_first_thread": false,
 
     // Location to run "run" command
     "run_location": "%project_dirs_prefix%",
