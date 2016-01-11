@@ -108,6 +108,10 @@ class GenericShell(threading.Thread):
                     {"util_type": "add", "text": self.old_data}
                 )
                 if send_eof:
+                    self.view.run_command(
+                        "javatar_utils",
+                        {"util_type": "add", "text": "\n"}
+                    )
                     self.proc.stdin.close()
                     break
             elif len(self.old_data) < self.view.size():

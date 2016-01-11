@@ -25,7 +25,7 @@ class Constant:
 
     @staticmethod
     def get_version():
-        return "2.0.0-prebeta.3"
+        return "2.0.0-prebeta.4"
 
     @staticmethod
     def get_usages_schema_version():
@@ -99,10 +99,8 @@ class Constant:
             "Ready within {0:.2f}s".format(Constant.startup_time)
         )
         from ..extensions import JavatarMenu
-        from ..extensions import JavatarAutoComplete
         from ..extensions import JavatarProjectRestoration
         JavatarMenu
-        JavatarAutoComplete
         JavatarProjectRestoration
         PluginManager().load_plugins()
 
