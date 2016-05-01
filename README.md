@@ -10,7 +10,7 @@ Report Issue: [https://github.com/spywhere/Javatar/issues](https://github.com/sp
 release|master (develop)
 
 ## Javatar v2.0.0-prebeta.4
-To install a prerelease version, please add `Javatar` to the `install_preleases` list in the Package Control user's settings.
+To install a prerelease version, please add `Javatar` to the `install_prereleases` list in the Package Control user's settings.
 
 Prerelease version contains a new feature which will introduce in Javatar v2.0.0 but please keep in mind that prerelease version is not a stable build to use and not all features are fully working.
 
