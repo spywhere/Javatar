@@ -68,11 +68,6 @@ class _Usages:
         if Settings().get("send_stats_and_usages"):
             params = self.get_usages_data()
             params["package"] = "true"
-            # Downloader.request(
-            #     Constant.get_usages_host(),
-            #     params,
-            #     on_complete=self.on_usages_sent
-            # )
 
 
 def Usages():

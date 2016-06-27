@@ -58,8 +58,44 @@ class JDKDetectorThread(threading.Thread):
                 return version
         return None
 
-    @classmethod
-    def get_java_home(cls, path=None):
+    def is_java_home_path(self, path):
+        """
+        Check whether the specified path is contains all Java runtime files
+
+        @param path: a directory path
+        """
+        required_files = set([
+            file
+            for files in
+            Settings().get("java_runtime_files").values()
+            for file in files
+        ])
+
+        existing_files = (
+            name
+            for name in os.listdir(path)
+            if os.path.isfile(os.path.join(path, name))
+        )
+        return required_files.issubset(existing_files)
+
+    def find_java_home(self, path):
+        """
+        Find all subfolder of specified path and return the path if it contains
+            all Java runtime files
+
+        @param path: a path to find
+        """
+        for name in os.listdir(path):
+            path_name = os.path.join(path, name)
+            if os.path.isdir(path_name):
+                if self.is_java_home_path(path_name):
+                    return os.path.dirname(path_name)
+                java_home = self.find_java_home(path_name)
+                if java_home:
+                    return java_home
+        return None
+
+    def get_java_home(self, path=None):
         """
         Returns the Java home directory
 
@@ -81,6 +117,9 @@ class JDKDetectorThread(threading.Thread):
         ))
         if output["data"] and os.path.exists(output["data"]):
             return output["data"]
+        if path:
+            # Move one level up, so we ends up on the JDK root directory
+            return self.find_java_home(os.path.dirname(path))
         return None
 
     def is_jdk_path(self, path):

@@ -25,7 +25,7 @@ class Constant:
 
     @staticmethod
     def get_version():
-        return "2.0.0-prebeta.5"
+        return "2.0.0-prebeta.6"
 
     @staticmethod
     def get_usages_schema_version():
@@ -33,7 +33,7 @@ class Constant:
 
     @staticmethod
     def get_usages_host():
-        return "http://javatar.digitalparticle.com/"
+        return "http://api.digitalparticle.com/1/stats/"
 
     @staticmethod
     def get_packages_schema_version():
