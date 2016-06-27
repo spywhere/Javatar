@@ -1,6 +1,7 @@
 import os.path
 import hashlib
-import urllib
+import urllib.parse
+import urllib.request
 
 
 class Downloader:
